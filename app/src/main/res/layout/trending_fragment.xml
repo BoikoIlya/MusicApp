@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:background="@color/white">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trending_header"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="@dimen/h1"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        />
+
+        <ProgressBar
+            android:visibility="gone"
+            android:indeterminateTint="@color/orange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        />
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+    <include
+        layout="@layout/playlist_item"
+        android:layout_marginStart="10dp"
+        android:layout_width="160dp"
+        android:layout_height="210dp"
+        android:layout_marginVertical="40dp"
+        />
+
+        <include
+            layout="@layout/playlist_item"
+            android:layout_marginStart="10dp"
+            android:layout_width="160dp"
+            android:layout_height="210dp"
+            android:layout_marginVertical="40dp"/>
+
+            <include
+                layout="@layout/playlist_item"
+                android:layout_marginStart="10dp"
+                android:layout_width="160dp"
+                android:layout_height="210dp"
+                android:layout_marginVertical="40dp"/>
+</LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:layout_marginStart="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Trending Songs"
+        android:textSize="@dimen/h2"
+        android:textColor="@color/black"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        tools:listitem="@layout/song_item"
+        />
+
+    </LinearLayout>
+
+</ScrollView>

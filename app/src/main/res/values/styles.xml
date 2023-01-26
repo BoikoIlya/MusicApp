@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Text_h2" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/h2</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+</resources>
