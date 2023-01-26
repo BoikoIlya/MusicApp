@@ -1,15 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.fragment.app.FragmentContainerView
-    android:id="@+id/container"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    >
+
+  <androidx.fragment.app.FragmentContainerView
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      android:id="@+id/fragment_container"
+      android:name="androidx.navigation.fragment.NavHostFragment"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:defaultNavHost="true"
+      app:navGraph="@navigation/main_nav_graph" />
 
 
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:visibility="visible"
+      android:layout_width="0dp"
+      android:layout_height="160dp"
+      android:background="@drawable/bottom_song_shape"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/bottom_nav_view"
+      app:layout_constraintStart_toStartOf="@+id/bottom_nav_view"
+      >
 
-  </androidx.fragment.app.FragmentContainerView>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="25dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+      <ImageView
+          android:id="@+id/song_item_img"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:scaleType="centerCrop"
+          android:src="@drawable/im" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/song_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Space Vandals"
+        android:textColor="@color/white"
+        android:textSize="@dimen/h3"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/bottom_play_btn"
+
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Moderator"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/body1"
+        app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+        app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
+
+    <ToggleButton
+        android:textOff=""
+        android:textOn=""
+        android:id="@+id/bottom_play_btn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/play_btn_selector"
+        android:backgroundTint="@color/orange"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottom_nav_view"
+      android:layout_width="0dp"
+      android:layout_height="60dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      android:background="@drawable/bottom_nav_bg"
+      app:itemIconTint="@drawable/bottom_nav_selector"
+      android:backgroundTint="@color/orange"
+      app:itemActiveIndicatorStyle="@color/black"
+      app:menu="@menu/bottom_nav"
+      />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>

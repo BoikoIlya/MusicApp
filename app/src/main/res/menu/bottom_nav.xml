@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/trendingFragment"
+        android:icon="@drawable/tone"
+        />
+    <item
+        android:id="@+id/favoritesFragment"
+        android:icon="@drawable/heart"
+        />
+<item
+    android:id="@+id/searchFragment"
+    android:icon="@drawable/search"
+    />
+</menu>

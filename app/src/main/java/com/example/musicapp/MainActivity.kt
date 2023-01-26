@@ -15,6 +15,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.musicapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +27,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
      binding = ActivityMainBinding.inflate(layoutInflater)
      setContentView(binding.root)
-        supportFragmentManager.beginTransaction().replace(R.id.container, SearchFragment()).commit()
+       // supportFragmentManager.beginTransaction().replace(R.id.container, SearchFragment()).commit()
+        val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHost.navController
+        binding.bottomNavView.setupWithNavController(navController)
+
     }
 
 }
