@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/trendingFragment"
-        android:name="com.example.musicapp.TrendingFragment"
+        android:name="com.example.musicapp.trending.TrendingFragment"
         android:label="TrendingFragment" >
         <action
             android:id="@+id/action_trendingFragment_to_songFragment"
@@ -14,7 +14,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.musicapp.FavoritesFragment"
+        android:name="com.example.musicapp.favorites.FavoritesFragment"
         android:label="FavoritesFragment" >
         <action
             android:id="@+id/action_favoritesFragment_to_songFragment"
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.musicapp.SearchFragment"
+        android:name="com.example.musicapp.search.SearchFragment"
         android:label="SearchFragment" >
         <action
             android:id="@+id/action_searchFragment_to_songFragment"
@@ -30,6 +30,6 @@
     </fragment>
     <fragment
         android:id="@+id/songFragment"
-        android:name="com.example.musicapp.SongFragment"
+        android:name="com.example.musicapp.song.SongFragment"
         android:label="SongFragment" />
 </navigation>
