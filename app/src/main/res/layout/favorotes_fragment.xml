@@ -11,6 +11,7 @@
     <EditText
         android:drawableStart="@drawable/search"
         android:drawableTint="@color/orange"
+        android:paddingLeft="10dp"
         android:drawablePadding="10dp"
         android:textCursorDrawable="@drawable/cursor_drawable"
         android:layout_width="match_parent"
