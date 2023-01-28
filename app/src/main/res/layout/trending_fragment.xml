@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,50 +24,12 @@
         android:layout_marginTop="25dp"
         />
 
-        <ProgressBar
-            android:visibility="gone"
-            android:indeterminateTint="@color/orange"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         
         />
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_marginStart="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-    <include
-        layout="@layout/playlist_item"
-        android:layout_marginStart="10dp"
-        android:layout_width="160dp"
-        android:layout_height="210dp"
-        android:layout_marginVertical="40dp"
-        />
-
-        <include
-            layout="@layout/playlist_item"
-            android:layout_marginStart="10dp"
-            android:layout_width="160dp"
-            android:layout_height="210dp"
-            android:layout_marginVertical="40dp"/>
-
-            <include
-                layout="@layout/playlist_item"
-                android:layout_marginStart="10dp"
-                android:layout_width="160dp"
-                android:layout_height="210dp"
-                android:layout_marginVertical="40dp"/>
-</LinearLayout>
-    </HorizontalScrollView>
 
     <TextView
         android:layout_marginStart="25dp"
@@ -76,6 +39,43 @@
         android:textSize="@dimen/h2"
         android:textColor="@color/black"
         />
+
+        <ProgressBar
+            android:visibility="gone"
+            android:indeterminateTint="@color/orange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <ImageView
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/no_internet"
+            app:tint="@color/orange" />
+
+        <TextView
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/h2"
+            android:textColor="@color/black"
+            android:text="No Internet Connection"
+
+            />
+
+        <ImageButton
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/retry"
+            app:tint="@color/orange" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"

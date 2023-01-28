@@ -10,6 +10,6 @@
         />
 <item
     android:id="@+id/searchFragment"
-    android:icon="@drawable/search"
+    android:icon="@drawable/search_png"
     />
 </menu>

@@ -1,4 +1,4 @@
-package com.example.musicapp.trending
+package com.example.musicapp.trending.presentation
 
 import androidx.fragment.app.Fragment
 import com.example.musicapp.R
