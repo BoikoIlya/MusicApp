@@ -24,7 +24,6 @@ class TrendingViewModel(
     }
 
     fun loadData() = handleTrendingResult.handle(viewModelScope){
-        trendingCommunication.showUiState(TrendingUiState.Loading)
         interactor.fetchData()
     }
 

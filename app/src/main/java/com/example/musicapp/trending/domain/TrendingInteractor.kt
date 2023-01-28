@@ -16,14 +16,14 @@ interface TrendingInteractor {
     ): TrendingInteractor{
 
         override suspend fun fetchData(): TrendingResult =
+            try {
             coroutineScope {
-                try {
                     val playlists = async { repository.fetchPlaylists() }
                     val tracks = async { repository.fetchTracks() }
                     return@coroutineScope TrendingResult.Success(Pair(playlists.await(),tracks.await()))
-                } catch (e: Exception) {
-                    return@coroutineScope TrendingResult.Error(handleError.handle(e))
                 }
+            } catch (e: Exception) {
+                 TrendingResult.Error(handleError.handle(e))
             }
     }
 

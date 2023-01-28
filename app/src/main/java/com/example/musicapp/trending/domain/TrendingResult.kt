@@ -22,7 +22,4 @@ sealed interface TrendingResult {
         override fun <T> map(mapper: Mapper<T>): T = mapper.map(Pair(emptyList(), emptyList()), message)
     }
 
-    object Loading : TrendingResult {
-        override fun <T> map(mapper: Mapper<T>): T = mapper.map(Pair(emptyList(), emptyList()), "")
-    }
 }

@@ -111,11 +111,13 @@ data class Track(
             shortcut: String,
             type: String,
         ): TrackDomain {
+            var timeResult =""
             val min = TimeUnit.SECONDS.toMinutes(playbackSeconds.toLong())
             val sec = playbackSeconds - min*60
+            timeResult = if(sec<10) "$min:0$sec" else "$min:$sec"
             return TrackDomain(
                 id = id,
-                playbackMinutes = "$min:$sec",
+                playbackMinutes = timeResult,
                 name = name,
                 artistName = artistName,
                 previewURL = previewURL,

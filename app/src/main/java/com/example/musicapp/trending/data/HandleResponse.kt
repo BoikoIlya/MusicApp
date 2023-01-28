@@ -1,5 +1,6 @@
 package com.example.musicapp.trending.data
 
+import android.util.Log
 import com.example.musicapp.core.NoInternetConnectionException
 import com.example.musicapp.core.ServiceUnavailableException
 import retrofit2.Response
@@ -23,6 +24,7 @@ interface HandleResponse {
                     is UnknownHostException -> NoInternetConnectionException()
                     else -> ServiceUnavailableException()
                 }
+
             }
         }
     }

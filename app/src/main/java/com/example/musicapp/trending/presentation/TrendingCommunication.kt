@@ -49,7 +49,7 @@ interface TrendingCommunication: CollectTrendings {
 
 interface TrendingStateCommunication: Communication.Mutable<TrendingUiState>{
     class Base @Inject constructor():
-        Communication.UiUpdate<TrendingUiState>(TrendingUiState.Success),
+        Communication.UiUpdate<TrendingUiState>(TrendingUiState.Loading),
         TrendingStateCommunication
 }
 

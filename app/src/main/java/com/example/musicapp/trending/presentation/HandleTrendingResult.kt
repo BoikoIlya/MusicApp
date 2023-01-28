@@ -27,13 +27,10 @@ interface HandleTrendingResult {
             coroutineScope: CoroutineScope,
             fetchData: suspend () -> TrendingResult,
         ) {
+            communication.showUiState(TrendingUiState.Loading)
             coroutineScope.launch(dispatchersList.io()) {
-
                 val result = fetchData.invoke()
-
-                if(result is TrendingResult.Loading) communication.showUiState(TrendingUiState.Loading)
-                else result.map(mapper)
-
+                 result.map(mapper)
             }
 
         }
