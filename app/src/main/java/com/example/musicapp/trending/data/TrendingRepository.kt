@@ -1,11 +1,11 @@
 package com.example.musicapp.trending.data
 
-import com.example.musicapp.core.dto.Playlist
-import com.example.musicapp.core.dto.Track
-import com.example.musicapp.core.dto.TracksResponse
+import com.example.musicapp.app.dto.Playlist
+import com.example.musicapp.app.dto.Track
 import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
+import javax.inject.Inject
 
 /**
  * Created by HP on 27.01.2023.
@@ -17,7 +17,7 @@ interface TrendingRepository{
 
     suspend fun fetchTracks(): List<TrackDomain>
 
-    class Base(
+    class Base @Inject constructor(
         private val service: TrendingService,
         private val toPlaylistDomainMapper:Playlist.Mapper<PlaylistDomain>,
         private val toTrackDomain: Track.Mapper<TrackDomain>,

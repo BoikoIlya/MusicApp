@@ -1,6 +1,6 @@
 package com.example.musicapp.trending.data
 
-import com.example.musicapp.core.dto.*
+import com.example.musicapp.app.dto.*
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 

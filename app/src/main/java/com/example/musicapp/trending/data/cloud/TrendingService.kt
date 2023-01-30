@@ -1,8 +1,7 @@
 package com.example.musicapp.trending.data.cloud
 
-import com.example.musicapp.core.dto.Playlists
-import com.example.musicapp.core.dto.TracksResponse
-import retrofit2.Response
+import com.example.musicapp.app.dto.Playlists
+import com.example.musicapp.app.dto.TracksResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -27,5 +26,7 @@ interface TrendingService {
     suspend fun fetchTop50Tracks(
         @Query("limit")
         limit: Int = 50,
+        @Query("apikey")
+        apiKey:String = apikey
     ): TracksResponse
 }

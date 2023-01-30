@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".main.MainActivity"
+    tools:context=".app.app.MainActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     >
@@ -24,7 +24,7 @@
 
 
   <androidx.constraintlayout.widget.ConstraintLayout
-      android:visibility="visible"
+      android:visibility="gone"
       android:layout_width="0dp"
       android:layout_height="160dp"
       android:background="@drawable/bottom_song_shape"

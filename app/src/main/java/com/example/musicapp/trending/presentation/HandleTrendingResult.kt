@@ -1,6 +1,6 @@
 package com.example.musicapp.trending.presentation
 
-import com.example.musicapp.core.DispatchersList
+import com.example.musicapp.app.DispatchersList
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +37,7 @@ interface HandleTrendingResult {
     }
 }
 
-class TrendingResultMapper(
+class TrendingResultMapper @Inject constructor(
     private val communication: TrendingCommunication,
     private val playlistsMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val tracksMapper: TrackDomain.Mapper<TrackUi>

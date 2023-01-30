@@ -40,11 +40,11 @@ sealed class TrendingUiState {
             imageButton: ImageButton,
             progress: ProgressBar
         ) {
-            textView.text = message
-            imageView.visibility = View.GONE
-            textView.visibility = View.GONE
-            imageButton.visibility = View.GONE
             progress.visibility = View.GONE
+            textView.text = message
+            imageView.visibility = View.VISIBLE
+            textView.visibility = View.VISIBLE
+            imageButton.visibility = View.VISIBLE
         }
     }
 
@@ -57,6 +57,9 @@ sealed class TrendingUiState {
             progress: ProgressBar
         ) {
             progress.visibility = View.VISIBLE
+            imageView.visibility = View.GONE
+            textView.visibility = View.GONE
+            imageButton.visibility = View.GONE
         }
 
     }

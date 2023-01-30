@@ -5,5 +5,6 @@
     <string name="no_connection_message">No internet connection</string>
     <string name="service_is_unavailable">Service is unavailable</string>
     <string name="no_element">"No tracks found"</string>
+    <string name="top_50_tracks">Top 50 Tracks</string>
 
 </resources>

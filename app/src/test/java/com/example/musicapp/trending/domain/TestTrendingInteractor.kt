@@ -1,8 +1,8 @@
 package com.example.musicapp.trending.domain
 
-import com.example.musicapp.core.HandleError
-import com.example.musicapp.core.ManagerResource
-import com.example.musicapp.core.NoInternetConnectionException
+import com.example.musicapp.app.HandleError
+import com.example.musicapp.app.ManagerResource
+import com.example.musicapp.app.NoInternetConnectionException
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
 import junit.framework.TestCase.assertEquals

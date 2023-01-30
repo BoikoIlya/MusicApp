@@ -1,7 +1,7 @@
 package com.example.musicapp.trending.presentation
 
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.core.DispatchersList
+import com.example.musicapp.app.DispatchersList
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.domain.TrendingInteractor

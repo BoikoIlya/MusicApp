@@ -24,10 +24,10 @@
         android:layout_marginTop="25dp"
         />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvPlaylists"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        
         />
 
 
@@ -35,12 +35,14 @@
         android:layout_marginStart="25dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Trending Songs"
+        android:text="@string/top_50_tracks"
         android:textSize="@dimen/h2"
         android:textColor="@color/black"
         />
 
         <ProgressBar
+            android:layout_marginTop="20dp"
+            android:id="@+id/trendingProgress"
             android:visibility="gone"
             android:indeterminateTint="@color/orange"
             android:layout_width="match_parent"
@@ -48,6 +50,8 @@
 
 
         <ImageView
+            android:layout_marginTop="20dp"
+            android:id="@+id/errorImg"
             android:visibility="gone"
             android:layout_gravity="center_horizontal"
             android:layout_width="200dp"
@@ -56,6 +60,7 @@
             app:tint="@color/orange" />
 
         <TextView
+            android:id="@+id/errorTv"
             android:visibility="gone"
             android:layout_marginTop="20dp"
             android:textAlignment="center"
@@ -68,18 +73,20 @@
             />
 
         <ImageButton
+            android:id="@+id/reloadBtn"
             android:visibility="gone"
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/retry"
-            app:tint="@color/orange" />
+            android:background="@drawable/retry"
+            android:backgroundTint="@color/orange"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvTrendingTracks"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginHorizontal="15dp"
         tools:listitem="@layout/song_item"
         />

@@ -1,7 +1,7 @@
 package com.example.musicapp.trending.presentation
 
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.core.Communication
+import com.example.musicapp.app.Communication
 import kotlinx.coroutines.flow.FlowCollector
 import javax.inject.Inject
 

@@ -1,6 +1,7 @@
 package com.example.musicapp.trending.domain
 
 import com.example.musicapp.trending.presentation.PlaylistUi
+import javax.inject.Inject
 
 /**
  * Created by HP on 27.01.2023.
@@ -25,7 +26,7 @@ data class PlaylistDomain(
 
     fun <T>map(mapper: Mapper<T>): T = mapper.map(id,name,descriptions,imgUrl,tracksUrl)
 
-    class ToPlaylistUiMapper: Mapper<PlaylistUi> {
+    class ToPlaylistUiMapper @Inject constructor(): Mapper<PlaylistUi> {
 
         override fun map(
             id: String,
