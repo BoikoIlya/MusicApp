@@ -1,6 +1,8 @@
 package com.example.musicapp.trending.presentation
 
-import com.example.musicapp.app.DispatchersList
+
+import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +42,7 @@ interface HandleTrendingResult {
 class TrendingResultMapper @Inject constructor(
     private val communication: TrendingCommunication,
     private val playlistsMapper: PlaylistDomain.Mapper<PlaylistUi>,
-    private val tracksMapper: TrackDomain.Mapper<TrackUi>
+    private val tracksMapper: TrackDomain.Mapper<MediaItem>
 ): TrendingResult.Mapper<Unit>{
 
     override fun map(data: Pair<List<PlaylistDomain>, List<TrackDomain>>, message: String) {

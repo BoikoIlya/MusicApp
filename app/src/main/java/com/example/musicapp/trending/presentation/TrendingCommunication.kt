@@ -1,7 +1,9 @@
 package com.example.musicapp.trending.presentation
 
+
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.app.Communication
+import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.Communication
 import kotlinx.coroutines.flow.FlowCollector
 import javax.inject.Inject
 
@@ -12,7 +14,7 @@ interface TrendingCommunication: CollectTrendings {
 
     fun showUiState(state: TrendingUiState)
 
-    fun showTracks(tracks: List<TrackUi>)
+    fun showTracks(tracks: List<MediaItem>)
 
     fun showPlayLists(playlists: List<PlaylistUi>)
 
@@ -24,7 +26,7 @@ interface TrendingCommunication: CollectTrendings {
 
         override fun showUiState(state: TrendingUiState) = trendingStateCommunication.map(state)
 
-        override fun showTracks(tracks: List<TrackUi>) = trendingTracksCommunication.map(tracks)
+        override fun showTracks(tracks: List<MediaItem>) = trendingTracksCommunication.map(tracks)
 
         override fun showPlayLists(playlists: List<PlaylistUi>) = trendingPlaylistsCommunication.map(playlists)
 
@@ -40,7 +42,7 @@ interface TrendingCommunication: CollectTrendings {
 
         override suspend fun collectTracks(
             owner: LifecycleOwner,
-            collector: FlowCollector<List<TrackUi>>,
+            collector: FlowCollector<List<MediaItem>>,
         ) = trendingTracksCommunication.collect(owner,collector)
 
     }
@@ -59,9 +61,9 @@ interface TrendingPlaylistsCommunication: Communication.Mutable<List<PlaylistUi>
         TrendingPlaylistsCommunication
 }
 
-interface TrendingTracksCommunication: Communication.Mutable<List<TrackUi>>{
+interface TrendingTracksCommunication: Communication.Mutable<List<MediaItem>>{
     class Base @Inject constructor():
-        Communication.UiUpdate<List<TrackUi>>(emptyList()),
+        Communication.UiUpdate<List<MediaItem>>(emptyList()),
         TrendingTracksCommunication
 }
 
@@ -71,5 +73,5 @@ interface CollectTrendings{
 
     suspend fun collectPlaylists(owner: LifecycleOwner, collector: FlowCollector<List<PlaylistUi>>)
 
-    suspend fun collectTracks(owner: LifecycleOwner, collector: FlowCollector<List<TrackUi>>)
+    suspend fun collectTracks(owner: LifecycleOwner, collector: FlowCollector<List<MediaItem>>)
 }

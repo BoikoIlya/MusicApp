@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".app.app.MainActivity"
+    tools:context=".app.main.presentation.MainActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     >
@@ -24,38 +24,25 @@
 
 
   <androidx.constraintlayout.widget.ConstraintLayout
+      android:paddingHorizontal="15dp"
+      android:clickable="true"
+      android:id="@+id/bottomPlayerBar"
       android:visibility="gone"
       android:layout_width="0dp"
-      android:layout_height="160dp"
+      android:layout_height="140dp"
       android:background="@drawable/bottom_song_shape"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="@+id/bottom_nav_view"
       app:layout_constraintStart_toStartOf="@+id/bottom_nav_view"
       >
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="25dp"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-      <ImageView
-          android:id="@+id/song_item_img"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:scaleType="centerCrop"
-          android:src="@drawable/im" />
-    </androidx.cardview.widget.CardView>
 
     <TextView
+        android:paddingHorizontal="15dp"
         android:id="@+id/song_name_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:text="Space Vandals"
         android:textColor="@color/white"
         android:textSize="@dimen/h3"
@@ -63,21 +50,25 @@
         android:ellipsize="end"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/bottom_play_btn"
-
         app:layout_constraintHorizontal_bias="0.15"
-        app:layout_constraintStart_toEndOf="@+id/cardView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/bottom_play_btn"
+        />
 
     <TextView
+        android:paddingHorizontal="15dp"
+        android:id="@+id/song_author_name"
         android:maxLines="1"
         android:ellipsize="end"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Moderator"
         android:textColor="@color/gray"
         android:textSize="@dimen/body1"
         app:layout_constraintStart_toStartOf="@+id/song_name_tv"
-        app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
+        app:layout_constraintTop_toBottomOf="@id/song_name_tv"
+       />
 
     <ToggleButton
         android:textOff=""
@@ -88,10 +79,11 @@
         android:layout_marginEnd="40dp"
         android:background="@drawable/play_btn_selector"
         android:backgroundTint="@color/orange"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7" />
+        app:layout_constraintVertical_bias="0.65"
+        />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

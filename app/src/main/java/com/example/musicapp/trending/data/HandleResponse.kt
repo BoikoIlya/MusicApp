@@ -1,8 +1,8 @@
 package com.example.musicapp.trending.data
 
 import android.util.Log
-import com.example.musicapp.app.NoInternetConnectionException
-import com.example.musicapp.app.ServiceUnavailableException
+import com.example.musicapp.app.core.NoInternetConnectionException
+import com.example.musicapp.app.core.ServiceUnavailableException
 import java.net.UnknownHostException
 import javax.inject.Inject
 

@@ -30,6 +30,18 @@ sealed class TrendingUiState {
         }
     }
 
+    object PlayingTrack: TrendingUiState(){
+        override fun apply(
+            imageView: ImageView,
+            textView: TextView,
+            imageButton: ImageButton,
+            progress: ProgressBar,
+        ) {
+
+        }
+    }
+
+
     data class Error(
         private val message: String
     ): TrendingUiState(){
@@ -63,5 +75,8 @@ sealed class TrendingUiState {
         }
 
     }
+
+
+
 
 }

@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        tools:listitem="@layout/song_item"
+        tools:listitem="@layout/track_item"
         />
 
 </LinearLayout>

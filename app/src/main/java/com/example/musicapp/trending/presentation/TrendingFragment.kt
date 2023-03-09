@@ -2,18 +2,21 @@ package com.example.musicapp.trending.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.musicapp.ClickListener
-import com.example.musicapp.ImageLoader
+import com.example.musicapp.app.core.ClickListener
+import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.R
-import com.example.musicapp.app.app.di.App
+import com.example.musicapp.app.main.di.App
+import com.example.musicapp.app.main.presentation.ItemPositionState
+import com.example.musicapp.app.core.ManagerResource
+import com.example.musicapp.app.core.Selector
 import com.example.musicapp.databinding.TrendingFragmentBinding
 import com.example.musicapp.trending.di.TrendingComponent
 import kotlinx.coroutines.launch
@@ -34,6 +37,12 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var mapper: TrackUi.Mapper<TrackUi>
+
+    @Inject
+    lateinit var managerResource: ManagerResource
 
     private lateinit var trendingComponent: TrendingComponent
 
@@ -59,6 +68,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         lifecycleScope.launch {
             viewModel.collectState(this@TrendingFragment){
                 it.apply(
@@ -74,7 +84,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false )
 
         val playlistsAdapter = PlaylistsAdapter(imageLoader,
-            object : ClickListener<PlaylistUi>{
+            object : ClickListener<PlaylistUi> {
                 override fun onClick(data: PlaylistUi) {
                     //TODO
                 }
@@ -99,23 +109,33 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
         binding.rcvTrendingTracks.layoutManager = LinearLayoutManager(requireContext())
 
         val tracksAdapter = TrendingTracksAdapter(
-            object:ClickListener<TrackUi>{
-                override fun onClick(data: TrackUi) {
-                    //TODO
+            this.requireContext(),
+           playClickListener = object: Selector<MediaItem> {
+                override fun onSelect(data: MediaItem, position: Int) {
+                    viewModel.playMusic(data, position)
                 }
-            }, object :ClickListener<TrackUi>{
-            override fun onClick(data: TrackUi) {
+            }, saveClickListener = object : ClickListener<MediaItem> {
+            override fun onClick(data: MediaItem) {
                 //TODO
             }
-        })
+        },mapper)
 
         binding.rcvTrendingTracks.adapter = tracksAdapter
 
         lifecycleScope.launch{
             viewModel.collectTracks(this@TrendingFragment){
                 tracksAdapter.map(it)
+                viewModel.setQuery(it)
             }
         }
+
+        lifecycleScope.launch{
+            viewModel.collectSelectedTrackPosition(this@TrendingFragment){
+              //  it.apply(tracksAdapter)
+                tracksAdapter.newPosition(it)
+            }
+        }
+
     }
     }
 

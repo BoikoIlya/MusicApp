@@ -30,6 +30,6 @@
     </fragment>
     <fragment
         android:id="@+id/songFragment"
-        android:name="com.example.musicapp.song.SongFragment"
+        android:name="com.example.musicapp.player.presentation.PlayerFragment"
         android:label="SongFragment" />
 </navigation>

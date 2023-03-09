@@ -1,7 +1,7 @@
 package com.example.musicapp.trending.presentation
 
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.app.DispatchersList
+import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.domain.TrendingInteractor
@@ -68,7 +68,7 @@ class TestTrendingViewModel {
     @ExperimentalCoroutinesApi
     class TestDispatcherList(
         private val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
-    ): DispatchersList{
+    ): DispatchersList {
         override fun io(): CoroutineDispatcher = dispatcher
 
         override fun ui(): CoroutineDispatcher = dispatcher

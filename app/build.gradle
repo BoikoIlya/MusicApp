@@ -16,6 +16,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -73,4 +74,13 @@ dependencies {
 
     // Tests
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+
+    // LifecycleService
+    implementation "androidx.lifecycle:lifecycle-service:2.5.1"
+
+    // Media
+    implementation "androidx.media3:media3-exoplayer:1.0.0-rc02"
+    implementation "androidx.media3:media3-ui:1.0.0-rc02"
+    implementation "androidx.media3:media3-exoplayer-dash:1.0.0-rc02"
+    implementation "androidx.media3:media3-session:1.0.0-rc02"
 }

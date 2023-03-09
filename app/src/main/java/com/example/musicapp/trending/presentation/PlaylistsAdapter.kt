@@ -4,20 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.musicapp.ClickListener
-import com.example.musicapp.ImageLoader
-import com.example.musicapp.app.Mapper
+import com.example.musicapp.app.core.ClickListener
+import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.Mapper
 import com.example.musicapp.databinding.PlaylistItemBinding
 
 /**
  * Created by HP on 30.01.2023.
  **/
+
 class PlaylistsAdapter(
     private val imageLoader: ImageLoader,
     private val clickListener: ClickListener<PlaylistUi>
 ): RecyclerView.Adapter<PlaylistsViewHolder>(), Mapper<List<PlaylistUi>, Unit> {
 
     private val playlists = mutableListOf<PlaylistUi>()
+    private var selectedItemPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         return PlaylistsViewHolder(
@@ -42,6 +44,8 @@ class PlaylistsAdapter(
         playlists.addAll(data)
         result.dispatchUpdatesTo(this)
     }
+
+
 }
 
 class PlaylistsViewHolder(
@@ -58,7 +62,6 @@ class PlaylistsViewHolder(
             clickListener.onClick(item)
         }
     }
-
 }
 
 class PlaylistsDiffUtilCallback(

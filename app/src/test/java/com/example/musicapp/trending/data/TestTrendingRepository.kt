@@ -1,6 +1,6 @@
 package com.example.musicapp.trending.data
 
-import com.example.musicapp.app.NoInternetConnectionException
+import com.example.musicapp.app.core.NoInternetConnectionException
 import com.example.musicapp.app.dto.Playlist
 import com.example.musicapp.app.dto.Playlists
 import com.example.musicapp.app.dto.Track

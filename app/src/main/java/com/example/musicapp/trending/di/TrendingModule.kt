@@ -1,10 +1,10 @@
 package com.example.musicapp.trending.di
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.example.musicapp.ImageLoader
-import com.example.musicapp.app.HandleError
-import com.example.musicapp.app.app.di.ViewModelKey
+import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.HandleError
+import com.example.musicapp.app.main.di.ViewModelKey
 import com.example.musicapp.app.dto.Playlist
 import com.example.musicapp.app.dto.Track
 import com.example.musicapp.trending.data.HandleResponse
@@ -15,18 +15,27 @@ import com.example.musicapp.trending.domain.TrendingInteractor
 import com.example.musicapp.trending.presentation.*
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
 /**
  * Created by HP on 28.01.2023.
  **/
 
+@Module
+class ProvideTrendingModule{
+
+
+
+}
 
 @Module
 interface TrendingModule{
 
+
+
+    @Binds
+    @TrendingScope
+    fun bindChangePlayingItemBgMapper(obj: TrackUi.ChangeSelectedItemBg): TrackUi.Mapper<TrackUi>
     @Binds
     @TrendingScope
     fun bindImageLoaderForPlaylists(obj: ImageLoader.Base): ImageLoader
@@ -85,7 +94,7 @@ interface TrendingModule{
 
     @Binds
     @TrendingScope
-    fun bindTrackUiMapper(obj: TrackDomain.ToTrackUiMapper): TrackDomain.Mapper<TrackUi>
+    fun bindTrackUiMapper(obj: TrackDomain.ToTrackUiMapper): TrackDomain.Mapper<MediaItem>
 
     @Binds
     @[IntoMap ViewModelKey(TrendingViewModel::class)]

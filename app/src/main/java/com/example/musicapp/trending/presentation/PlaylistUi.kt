@@ -1,8 +1,6 @@
 package com.example.musicapp.trending.presentation
 
-import com.bumptech.glide.Glide
-import com.example.musicapp.ImageLoader
-import com.example.musicapp.R
+import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.databinding.PlaylistItemBinding
 
 data class PlaylistUi(
@@ -37,7 +35,7 @@ data class PlaylistUi(
             tracksUrl: String,
         ) {
             with(binding){
-                imageLoader.loadImage(imgUrl,playlistImg, R.drawable.playlist)
+                imageLoader.loadImage(imgUrl,playlistImg)
                 playlistName.text = name
             }
         }

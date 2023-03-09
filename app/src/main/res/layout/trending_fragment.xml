@@ -1,96 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    app:layoutDescription="@xml/trending_fragment_scene">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:background="@color/white">
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/trending_header"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="@dimen/h1"
         android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
-        />
+        android:text="@string/trending_header"
+        android:textColor="@color/black"
+        android:textSize="@dimen/h1"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvPlaylists"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:visibility="visible" />
 
 
     <TextView
-        android:layout_marginStart="25dp"
+        android:background="@color/white"
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="25dp"
+        android:text="@string/top_50_tracks"
+        android:textColor="@color/black"
+        android:textSize="@dimen/h2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rcvPlaylists"
+        tools:visibility="visible"
+        android:paddingBottom="5dp"/>
+
+    <ProgressBar
+        android:id="@+id/trendingProgress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/top_50_tracks"
-        android:textSize="@dimen/h2"
+        android:layout_marginTop="20dp"
+        android:indeterminateTint="@color/orange"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:visibility="gone" />
+
+
+    <ImageView
+        android:id="@+id/errorImg"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/no_internet"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trendingProgress"
+        app:tint="@color/orange"
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/errorTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="No Internet Connection"
+        android:textAlignment="center"
         android:textColor="@color/black"
-        />
+        android:textSize="@dimen/h2"
 
-        <ProgressBar
-            android:layout_marginTop="20dp"
-            android:id="@+id/trendingProgress"
-            android:visibility="gone"
-            android:indeterminateTint="@color/orange"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorImg"
+        tools:visibility="gone" />
 
-
-        <ImageView
-            android:layout_marginTop="20dp"
-            android:id="@+id/errorImg"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/no_internet"
-            app:tint="@color/orange" />
-
-        <TextView
-            android:id="@+id/errorTv"
-            android:visibility="gone"
-            android:layout_marginTop="20dp"
-            android:textAlignment="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/h2"
-            android:textColor="@color/black"
-            android:text="No Internet Connection"
-
-            />
-
-        <ImageButton
-            android:id="@+id/reloadBtn"
-            android:visibility="gone"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/retry"
-            android:backgroundTint="@color/orange"/>
+    <ImageButton
+        android:id="@+id/reloadBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/retry"
+        android:backgroundTint="@color/orange"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/errorTv"
+        tools:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvTrendingTracks"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="15dp"
-        tools:listitem="@layout/song_item"
-        />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reloadBtn"
+        tools:listitem="@layout/track_item"
+        android:paddingBottom="130dp"
+        android:clipToPadding="false"/>
 
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

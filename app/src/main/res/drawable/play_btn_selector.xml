@@ -4,7 +4,7 @@
         android:state_checked="true"
         android:drawable="@drawable/play">
     </item>
-    <item android:drawable="@drawable/pause"
+    <item android:drawable="@drawable/pausee"
         android:state_checked="false">
     </item>
 </selector>

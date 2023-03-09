@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="15dp"
+    android:paddingHorizontal="15dp"
+    >
+
+    <TextView
+        android:id="@+id/playbackTimeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3:23"
+        android:textColor="@color/gray"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:layout_marginStart="25dp"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="0.15"
+        android:id="@+id/song_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Space Vandals"
+        android:textSize="@dimen/h3"
+
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/add_btn"
+        app:layout_constraintStart_toEndOf="@+id/playbackTimeTv"
+
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Moderator"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/body1"
+        android:id="@+id/authorNameTv"
+        app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+        app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
+
+    <ImageButton
+        android:id="@+id/add_btn"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/song_item_shape"
+        android:src="@drawable/baseline_add_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
