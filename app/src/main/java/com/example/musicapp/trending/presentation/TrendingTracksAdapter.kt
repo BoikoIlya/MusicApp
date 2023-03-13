@@ -3,6 +3,7 @@ package com.example.musicapp.trending.presentation
 import android.content.Context
 import android.graphics.Color
 import android.icu.text.Transliterator.Position
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -11,11 +12,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.musicapp.R
-import com.example.musicapp.app.core.ClickListener
-import com.example.musicapp.app.core.ManagerResource
-import com.example.musicapp.app.core.Mapper
-import com.example.musicapp.app.core.Selector
+import com.example.musicapp.app.core.*
 import com.example.musicapp.databinding.TrackItemBinding
+import kotlin.math.log
 
 /**
  * Created by HP on 30.01.2023.
@@ -29,6 +28,7 @@ class TrendingTracksAdapter(
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
     private val mapper: TrackUi.Mapper<TrackUi>,
+    private val imageLoader: ImageLoader
 ): RecyclerView.Adapter<TrendingTracksViewHolder>(),
     Mapper<List<MediaItem>, Unit>,Select {
 
@@ -43,7 +43,7 @@ class TrendingTracksAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), playClickListener, saveClickListener,mapper
+            ), playClickListener, saveClickListener,mapper, imageLoader
         )
     }
 
@@ -82,12 +82,18 @@ class TrendingTracksViewHolder(
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
     private val selectItemMapper: TrackUi.Mapper<TrackUi>,
+    private val imageLoader: ImageLoader
 ): ViewHolder(binding.root){
 
     private val mapper = TrackUi.ListItemUi(binding)
 
     fun bind(item: MediaItem, position: Int, selectedPosition: Int) =  with(binding){
-        playbackTimeTv.text = item.mediaMetadata.description
+      //  playbackTimeTv.text = ""/*item.mediaMetadata.description*/
+        imageLoader.loadImage(
+            "https://"+
+            item.mediaMetadata.artworkUri?.host+
+            item.mediaMetadata.artworkUri?.path,
+            trackImg)
         songNameTv.text = item.mediaMetadata.title
         authorNameTv.text = item.mediaMetadata.artist
         root.setBackgroundColor(context.getColor(

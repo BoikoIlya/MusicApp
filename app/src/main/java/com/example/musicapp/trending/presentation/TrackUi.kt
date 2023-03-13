@@ -56,7 +56,7 @@ data class TrackUi(
             bgColor: Int
         ) {
             with(binding){
-               playbackTimeTv.text = playbackMinutes
+              // playbackTimeTv.text = playbackMinutes
                 songNameTv.text = name
                 authorNameTv.text = artistName
                 root.setBackgroundColor(bgColor)

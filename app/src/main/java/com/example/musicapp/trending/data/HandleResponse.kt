@@ -3,6 +3,7 @@ package com.example.musicapp.trending.data
 import android.util.Log
 import com.example.musicapp.app.core.NoInternetConnectionException
 import com.example.musicapp.app.core.ServiceUnavailableException
+import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -21,7 +22,8 @@ interface HandleResponse {
             }catch (e:Exception){
                 Log.d("tag", "handle: ${e.message}")
                 throw when(e){
-                    is UnknownHostException -> NoInternetConnectionException()
+                    is UnknownHostException -> NoInternetConnectionException("")
+                    is HttpException -> e
                     else -> ServiceUnavailableException()
                 }
 

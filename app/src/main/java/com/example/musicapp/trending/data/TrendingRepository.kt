@@ -1,11 +1,14 @@
 package com.example.musicapp.trending.data
 
-import com.example.musicapp.app.dto.Playlist
-import com.example.musicapp.app.dto.Track
+import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.app.main.data.TemporaryTracksCache
-import com.example.musicapp.trending.data.cloud.TrendingService
+import com.example.musicapp.app.main.data.cache.SharedPref
+import com.example.musicapp.app.main.data.cache.TokenStore
+import com.example.musicapp.app.main.data.cloud.MusicDataService
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
+import com.example.testapp.spotifyDto.Track
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -19,23 +22,25 @@ interface TrendingRepository{
     suspend fun fetchTracks(): List<TrackDomain>
 
     class Base @Inject constructor(
-        private val service: TrendingService,
-        private val toPlaylistDomainMapper:Playlist.Mapper<PlaylistDomain>,
+        private val service: MusicDataService,
+        //private val service: TrendingService,
+        private val toPlaylistDomainMapper:Item.Mapper<PlaylistDomain>,
         private val toTrackDomain: Track.Mapper<TrackDomain>,
-        private val handleResponse: HandleResponse,
-        private val tempCache: TemporaryTracksCache
+        //private val handleResponse: HandleResponse,
+        private val tempCache: TemporaryTracksCache,
+        private val token: TokenStore
     ): TrendingRepository {
 
         override suspend fun fetchPlaylists(): List<PlaylistDomain> =
-            handleResponse.handle {
-                service.fetchPlaylists().playlists.map { it.map(toPlaylistDomainMapper) }
-            }
+            service.getFeaturedPlaylists(
+               auth =  token.read(),
+                timestamps = Calendar.getInstance().time.toString()
+            ).playlists.items.map { it.map(toPlaylistDomainMapper) }
 
 
         override suspend fun fetchTracks(): List<TrackDomain> =
-            handleResponse.handle {
-                 service.fetchTop50Tracks().tracks.map { it.map(toTrackDomain) }
-            }
+            service.getRecommendations(token.read(), market = "ES", seed_genres = "classical,country").tracks
+                .filter { it.map() }.map { it.map(toTrackDomain) }
 
 
     }

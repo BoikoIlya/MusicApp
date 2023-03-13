@@ -3,9 +3,7 @@ package com.example.musicapp.trending.domain
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.example.musicapp.R
 import com.example.musicapp.app.core.ManagerResource
-import com.example.musicapp.trending.presentation.TrackUi
 import javax.inject.Inject
 
 /**
@@ -14,7 +12,7 @@ import javax.inject.Inject
 
 data class TrackDomain(
     private val id: String,
-    private val playbackMinutes: String,
+    private val imageUrl: String,
     private val name: String,
     private val artistName: String,
     private val previewURL: String,
@@ -23,7 +21,7 @@ data class TrackDomain(
     interface Mapper<T>{
         fun map(
             id: String,
-            playbackMinutes: String,
+            imageUrl: String,
             name: String,
             artistName: String,
             previewURL: String,
@@ -31,14 +29,14 @@ data class TrackDomain(
         ): T
     }
 
-    fun <T>map(mapper: Mapper<T>): T  = mapper.map(id, playbackMinutes, name, artistName, previewURL, albumName)
+    fun <T>map(mapper: Mapper<T>): T  = mapper.map(id, imageUrl, name, artistName, previewURL, albumName)
 
     class ToTrackUiMapper @Inject constructor(
         private val managerResource: ManagerResource
     ): Mapper<MediaItem>{
         override fun map(
             id: String,
-            playbackMinutes: String,
+            imageUrl: String,
             name: String,
             artistName: String,
             previewURL: String,
@@ -61,8 +59,7 @@ data class TrackDomain(
                         .setTitle(name)
                         .setArtist(artistName)
                         .setAlbumTitle(albumName)
-                        .setArtworkUri(Uri.parse("android.resource://com.example.musicapp/drawable/notification_bg"))
-                        .setDescription(playbackMinutes)
+                        .setArtworkUri(Uri.parse(imageUrl))
                         .build()
                         )
                 .build()

@@ -4,12 +4,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.main.presentation.ItemPositionState
 import com.example.musicapp.app.main.presentation.PlayerCommunication
 import com.example.musicapp.app.main.presentation.PlayerCommunicationState
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.trending.domain.TrendingInteractor
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -34,7 +34,7 @@ class TrendingViewModel @Inject constructor(
     }
 
     fun playMusic(item: MediaItem, position: Int) /*= viewModelScope.launch(dispatchersList.io())*/ {
-        playerCommunication.map(PlayerCommunicationState.Play(item, position))
+        playerCommunication.map(PlayerCommunicationState.PlayControlFromApp(item, position))
     }
 
     fun setQuery(tracks: List<MediaItem>){

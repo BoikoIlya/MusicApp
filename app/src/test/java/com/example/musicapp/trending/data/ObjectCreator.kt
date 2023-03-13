@@ -109,7 +109,7 @@ abstract class ObjectCreator {
     fun getTrackDomain(): TrackDomain{
         return TrackDomain(
             id = "1",
-            playbackMinutes = "0:01",
+            imageUrl = "0:01",
             name = "1",
             artistName = "1",
             previewURL = "1",

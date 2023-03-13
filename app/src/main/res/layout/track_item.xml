@@ -7,40 +7,62 @@
     android:paddingHorizontal="15dp"
     >
 
-    <TextView
-        android:id="@+id/playbackTimeTv"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="3:23"
-        android:textColor="@color/gray"
-        app:cardCornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="12dp"
+        >
+
+        <ImageView
+            android:background="@color/white"
+            android:id="@+id/trackImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@color/white"
+            />
+
+    </androidx.cardview.widget.CardView>
+<!--    <TextView-->
+<!--        android:id="@+id/playbackTimeTv"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="3:23"-->
+<!--        android:textColor="@color/gray"-->
+<!--        app:cardCornerRadius="15dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
 
     <TextView
-        android:layout_marginStart="25dp"
-        android:textColor="@color/black"
-        app:layout_constraintHorizontal_bias="0.15"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
         android:id="@+id/song_name_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Space Vandals"
+        android:textColor="@color/black"
         android:textSize="@dimen/h3"
-
         android:textStyle="bold"
+
         app:layout_constraintEnd_toStartOf="@+id/add_btn"
-        app:layout_constraintStart_toEndOf="@+id/playbackTimeTv"
+        app:flow_horizontalBias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
 
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/authorNameTv"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Moderator"
         android:textColor="@color/gray"
         android:textSize="@dimen/body1"
-        android:id="@+id/authorNameTv"
+        app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
         app:layout_constraintStart_toStartOf="@+id/song_name_tv"
         app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
 
@@ -48,12 +70,12 @@
         android:id="@+id/add_btn"
         android:layout_width="30dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/song_item_shape"
         android:src="@drawable/baseline_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

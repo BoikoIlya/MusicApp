@@ -2,6 +2,7 @@ package com.example.musicapp.app.core
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.example.musicapp.R
 import javax.inject.Inject
 
 /**
@@ -21,7 +22,8 @@ interface ImageLoader {
         override fun loadImage(url: String, target: ImageView) {
             Glide.with(target)
                 .load(url)
-                .thumbnail(Glide.with(target).asDrawable().sizeMultiplier(0.05f))
+                .thumbnail(Glide.with(target).asDrawable().sizeMultiplier(0.2f))
+                .placeholder(R.drawable.tone)
                 .into(target)
         }
 

@@ -5,6 +5,14 @@
     <string name="no_connection_message">No internet connection</string>
     <string name="service_is_unavailable">Service is unavailable</string>
     <string name="no_element">"No tracks found"</string>
-    <string name="top_50_tracks">Top 50 Tracks</string>
+    <string name="top_50_recommendations">Top 50 Recommendations</string>
+    <string name="bad_gatawey_message">Bad Gateway</string>
+    <string name="server_error_message">Internal Server Error</string>
+    <string name="too_many_requests">Too Many Requests</string>
+    <string name="not_found">Not Found</string>
+    <string name="forbidenn">Forbidden Request</string>
+    <string name="bad_request">Bad Request</string>
+    <string name="no_content">No Content</string>
+    <string name="accepted_message">The request has been accepted for processing, but the processing has not been completed</string>
 
 </resources>

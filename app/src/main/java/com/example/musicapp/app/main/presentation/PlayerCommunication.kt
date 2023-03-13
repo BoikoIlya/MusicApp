@@ -122,6 +122,15 @@ sealed interface PlayerCommunicationState{
             controller.addMediaItems(tracks)
 
             controller.addListener(object : Player.Listener{
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if(isPlaying) bottomPlayerBarCommunication.map(BottomPlayerBarState.Resume)
+                    else bottomPlayerBarCommunication.map(BottomPlayerBarState.Pause(
+                        controller.currentMediaItem!!
+                    ))
+                }
+
                 override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
                     Log.d("tag", "${error.message}")
@@ -141,6 +150,8 @@ sealed interface PlayerCommunicationState{
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     super.onMediaItemTransition(mediaItem, reason)
+                    Log.d("tag", "onMediaItemTransition: ")
+                    bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(mediaItem?: MediaItem.Builder().build()))
                     selectedTrackPositionCommunication.map(controller.currentMediaItemIndex /*ItemPositionState.UpdateRecyclerViewSelectedItem(controller.currentMediaItemIndex)*/)
                 }
             })
@@ -148,7 +159,35 @@ sealed interface PlayerCommunicationState{
 
     }
 
-    data class Play(
+    data class PlayControlFromApp(
+        private val track: MediaItem,
+        private val position: Int
+    ): PlayerCommunicationState{
+
+        override fun apply(
+            bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
+            playerServiceCommunication: PlayerServiceCommunication,
+            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
+            toServicePlayState: TrackUi.Mapper<Unit>,
+            controller: MediaController
+        ) {
+            selectedTrackPositionCommunication.map(position)
+            bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(track))///////////////////////
+            //playerServiceCommunication.map(track.map(toServicePlayState))
+
+            //position.apply { if(it!=0) controller.seekToDefaultPosition(it) else controller.seekToDefaultPosition() }
+
+            controller.seekToDefaultPosition(position)
+
+            controller.prepare()
+            controller.play()
+
+
+        }
+    }
+
+    data class PlayControlFromNotification(
         private val track: MediaItem,
         private val position: Int
     ): PlayerCommunicationState{
@@ -189,7 +228,7 @@ sealed interface PlayerCommunicationState{
         ) {
             Log.d("tag", "call pause in communication")
             controller.pause()
-            bottomPlayerBarCommunication.map(BottomPlayerBarState.Pause(track))
+            //bottomPlayerBarCommunication.map(BottomPlayerBarState.Pause(track))
             //playerServiceCommunication.map(PlayerServiceState.Pause)
 
         }
@@ -207,7 +246,7 @@ sealed interface PlayerCommunicationState{
             controller: MediaController
         ) {
             //playerServiceCommunication.map(PlayerServiceState.Resume)
-            bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(track))
+            bottomPlayerBarCommunication.map(BottomPlayerBarState.Resume)
             controller.play()
         }
 

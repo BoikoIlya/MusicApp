@@ -114,7 +114,7 @@ class TestTrendingViewModel {
              ), listOf(
                  TrackDomain(
                      id = "",
-                     playbackMinutes = "",
+                     imageUrl = "",
                      name = "",
                      artistName = "",
                      previewURL = "",

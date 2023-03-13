@@ -65,7 +65,7 @@ class TestTrendingInteractor {
 
         var trackResult = listOf(TrackDomain(
             id = "",
-            playbackMinutes = "",
+            imageUrl = "",
             name = "",
             artistName = "",
             previewURL = "",

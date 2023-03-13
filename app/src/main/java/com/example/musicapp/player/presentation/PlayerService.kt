@@ -4,13 +4,21 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.media.session.PlaybackState
+import androidx.media3.common.Player
 import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.example.musicapp.app.main.di.App
 import com.example.musicapp.app.main.presentation.MainActivity
+import com.example.musicapp.app.main.presentation.PlayerCommunication
+import com.example.musicapp.app.main.presentation.PlayerCommunicationState
+import com.example.musicapp.player.di.PlayerServiceComponent
+import javax.inject.Inject
 
-/**
+@UnstableApi /**
  * Created by HP on 30.01.2023.
  **/
 //class PlayerService: LifecycleService() {
@@ -112,38 +120,36 @@ import com.example.musicapp.app.main.presentation.MainActivity
 
 class PlayerService: MediaSessionService(){
 
+    @Inject
     lateinit var player: ExoPlayer
+
+    @Inject
     lateinit var mediaSession: MediaSession
 
+    @Inject
+    lateinit var communication: PlayerCommunication
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate() {
-
         super.onCreate()
         Log.d("tag","----------------------------- MediaSessionService, onCreate")
 
-        player = ExoPlayer.Builder(this).build()
-
-
-        val sessionActivityPendingIntent =
-        TaskStackBuilder.create(this).run {
-            addNextIntent(Intent(this@PlayerService , MainActivity::class.java))
-            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        mediaSession = MediaSession.Builder(this, player)
-            .setSessionActivity(sessionActivityPendingIntent)
-            .setCallback(MediaSessionCallBack())
+        (this.applicationContext as App).appComponent
+            .playerServiceComponent()
             .build()
+            .inject(this)
+
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession = mediaSession
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        android.util.Log.d("tag", "onTaskRemoved: ")
         if (!player.playWhenReady) {
             stopSelf()
         }
     }
+    //todo move tracks up trand frag
 
     override fun onDestroy() {
         player.release()

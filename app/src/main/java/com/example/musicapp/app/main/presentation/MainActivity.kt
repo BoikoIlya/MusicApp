@@ -11,6 +11,7 @@ import androidx.media3.common.MediaMetadata
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.musicapp.R
+import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.main.di.App
 import com.example.musicapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
@@ -22,6 +23,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     lateinit var viewModel: MainActivityViewModel
 
@@ -44,10 +48,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch{
             viewModel.collect(this@MainActivity){
                 it.apply(
-                    binding.bottomPlayBtn,
-                    binding.bottomPlayerBar,
-                    binding.songNameTv,
-                    binding.songAuthorName
+                    binding,
+                    imageLoader
                 )
             }
         }

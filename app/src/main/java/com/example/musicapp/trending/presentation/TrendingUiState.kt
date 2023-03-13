@@ -23,10 +23,10 @@ sealed class TrendingUiState {
             imageButton: ImageButton,
             progress: ProgressBar
         ) {
+            progress.visibility = View.GONE
             imageView.visibility = View.GONE
             textView.visibility = View.GONE
             imageButton.visibility = View.GONE
-            progress.visibility = View.GONE
         }
     }
 
@@ -37,7 +37,7 @@ sealed class TrendingUiState {
             imageButton: ImageButton,
             progress: ProgressBar,
         ) {
-
+                    //todo maybe should delete
         }
     }
 

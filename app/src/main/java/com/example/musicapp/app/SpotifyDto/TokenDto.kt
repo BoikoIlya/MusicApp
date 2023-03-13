@@ -1,5 +1,12 @@
+import com.example.musicapp.app.main.data.cache.SharedPref
+
+
 data class TokenDto(
-    val access_token: String,
-    val expires_in: Int,
-    val token_type: String
-)
+   private val access_token: String,
+   private val expires_in: Int,
+   private val token_type: String
+){
+
+    fun map(cache: SharedPref<String>) = cache.save(access_token)
+
+}
