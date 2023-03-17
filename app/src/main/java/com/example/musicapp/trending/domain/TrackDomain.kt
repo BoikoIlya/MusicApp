@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.core.ManagerResource
+import java.net.URL
 import javax.inject.Inject
 
 /**
@@ -32,7 +33,7 @@ data class TrackDomain(
     fun <T>map(mapper: Mapper<T>): T  = mapper.map(id, imageUrl, name, artistName, previewURL, albumName)
 
     class ToTrackUiMapper @Inject constructor(
-        private val managerResource: ManagerResource
+        //private val uriWrapper: UriWrapper
     ): Mapper<MediaItem>{
         override fun map(
             id: String,

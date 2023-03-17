@@ -1,9 +1,10 @@
 package com.example.musicapp.trending.domain
 
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.main.data.TemporaryTracksCache
+import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.app.core.HandleError
-import com.example.musicapp.app.main.data.AuthorizationRepository
+import com.example.musicapp.main.data.AuthorizationRepository
+import com.example.musicapp.main.domain.QueryResult
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
 import kotlinx.coroutines.async
@@ -11,7 +12,12 @@ import kotlinx.coroutines.coroutineScope
 import retrofit2.HttpException
 import javax.inject.Inject
 
-interface TrendingInteractor {
+interface MusicInteractor{
+
+   suspend fun checkForNewQuery(): List<MediaItem>
+
+}
+interface TrendingInteractor: MusicInteractor {
 
     suspend fun fetchData(): TrendingResult
 
@@ -22,7 +28,7 @@ interface TrendingInteractor {
         private val mapper: TrackDomain.Mapper<MediaItem>,
         private val tempCache: TemporaryTracksCache,
         private val auth: AuthorizationRepository
-    ): TrendingInteractor{
+    ): TrendingInteractor, MusicInteractor{
 
         companion object{
             private const val unauthorized_response = 401
@@ -46,6 +52,9 @@ interface TrendingInteractor {
                     fetchData()
                 }else TrendingResult.Error(handleError.handle(e))
             }
+
+        override suspend fun checkForNewQuery(): List<MediaItem>  = tempCache.map()
+
 
     }
 

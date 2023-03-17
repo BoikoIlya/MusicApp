@@ -1,10 +1,10 @@
 package com.example.musicapp.trending.data
 
 import com.example.musicapp.app.SpotifyDto.Item
-import com.example.musicapp.app.main.data.TemporaryTracksCache
-import com.example.musicapp.app.main.data.cache.SharedPref
-import com.example.musicapp.app.main.data.cache.TokenStore
-import com.example.musicapp.app.main.data.cloud.MusicDataService
+import com.example.musicapp.main.data.TemporaryTracksCache
+import com.example.musicapp.main.data.cache.SharedPref
+import com.example.musicapp.main.data.cache.TokenStore
+import com.example.musicapp.main.data.cloud.MusicDataService
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.testapp.spotifyDto.Track
@@ -23,11 +23,8 @@ interface TrendingRepository{
 
     class Base @Inject constructor(
         private val service: MusicDataService,
-        //private val service: TrendingService,
         private val toPlaylistDomainMapper:Item.Mapper<PlaylistDomain>,
         private val toTrackDomain: Track.Mapper<TrackDomain>,
-        //private val handleResponse: HandleResponse,
-        private val tempCache: TemporaryTracksCache,
         private val token: TokenStore
     ): TrendingRepository {
 

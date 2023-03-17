@@ -1,6 +1,7 @@
 package com.example.musicapp.app.core
 
-import com.example.musicapp.app.main.presentation.BottomPlayerBarState
+import android.util.Log
+import com.example.musicapp.main.presentation.BottomPlayerBarState
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,6 +12,14 @@ interface BottomPlayerBarCommunicatin: Communication.Mutable<BottomPlayerBarStat
 
 
     @Singleton
-    class Base @Inject constructor(): Communication.UiUpdate<BottomPlayerBarState>(BottomPlayerBarState.Disabled),
-        BottomPlayerBarCommunicatin
+    class Base @Inject constructor(): Communication.UiUpdate<BottomPlayerBarState>(
+        BottomPlayerBarState.Disabled),
+        BottomPlayerBarCommunicatin{
+
+            init {
+                Log.d("vminit", "init constr $this")
+            }
+
+
+        }
 }

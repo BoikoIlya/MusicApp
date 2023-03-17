@@ -1,22 +1,21 @@
 package com.example.musicapp.player.presentation
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
+import android.app.NotificationManager
 import android.content.Intent
-import android.media.session.PlaybackState
-import androidx.media3.common.Player
+import android.os.Bundle
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.CommandButton
+import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.example.musicapp.app.main.di.App
-import com.example.musicapp.app.main.presentation.MainActivity
+import com.example.musicapp.main.di.App
 import com.example.musicapp.app.main.presentation.PlayerCommunication
-import com.example.musicapp.app.main.presentation.PlayerCommunicationState
-import com.example.musicapp.player.di.PlayerServiceComponent
+import com.google.common.collect.ImmutableList
 import javax.inject.Inject
+
 
 @UnstableApi /**
  * Created by HP on 30.01.2023.
@@ -144,12 +143,11 @@ class PlayerService: MediaSessionService(){
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession = mediaSession
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        android.util.Log.d("tag", "onTaskRemoved: ")
         if (!player.playWhenReady) {
-            stopSelf()
+             stopSelf()
         }
     }
-    //todo move tracks up trand frag
+
 
     override fun onDestroy() {
         player.release()

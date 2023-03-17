@@ -5,7 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import com.example.musicapp.R
-import com.example.musicapp.app.main.presentation.BottomPlayerBarState
+import com.example.musicapp.main.presentation.BottomPlayerBarState
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.databinding.TrackItemBinding
 import com.google.common.util.concurrent.ListenableFuture

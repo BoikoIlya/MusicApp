@@ -48,7 +48,8 @@
         android:textColor="@color/black"
         android:textSize="@dimen/h3"
         android:textStyle="bold"
-
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:flow_horizontalBias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView"
@@ -56,6 +57,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:maxLines="1"
+        android:ellipsize="end"
         android:id="@+id/authorNameTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

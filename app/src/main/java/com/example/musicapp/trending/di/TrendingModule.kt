@@ -5,7 +5,7 @@ import androidx.media3.common.MediaItem
 import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.HandleError
-import com.example.musicapp.app.main.di.ViewModelKey
+import com.example.musicapp.main.di.ViewModelKey
 import com.example.musicapp.trending.data.HandleResponse
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.domain.PlaylistDomain

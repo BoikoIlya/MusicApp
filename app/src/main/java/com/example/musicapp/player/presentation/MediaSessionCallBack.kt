@@ -6,7 +6,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player.COMMAND_PLAY_PAUSE
 import androidx.media3.session.MediaSession
 import com.example.musicapp.app.core.BottomPlayerBarCommunicatin
-import com.example.musicapp.app.main.presentation.BottomPlayerBarState
+import com.example.musicapp.main.presentation.BottomPlayerBarState
 import com.example.musicapp.app.main.presentation.PlayerCommunication
 import com.example.musicapp.app.main.presentation.PlayerCommunicationState
 import com.google.common.util.concurrent.Futures
@@ -63,9 +63,9 @@ class MediaSessionCallBack @Inject constructor(
         return super.onPlayerCommandRequest(session, controller, playerCommand)
     }
 
-    override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
-        super.onDisconnected(session, controller)
-        playerCommunication.map(PlayerCommunicationState.Disabled)
-    }
+//    override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
+//        super.onDisconnected(session, controller)
+//        playerCommunication.map(PlayerCommunicationState.Disabled)
+//    }
 
 }

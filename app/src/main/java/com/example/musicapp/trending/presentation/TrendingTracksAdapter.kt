@@ -1,12 +1,9 @@
 package com.example.musicapp.trending.presentation
 
 import android.content.Context
-import android.graphics.Color
-import android.icu.text.Transliterator.Position
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +18,7 @@ import kotlin.math.log
  **/
 interface Select{
     fun updateSelectedItem(position: Int)
-    fun newPosition(position: Int)
+    fun newPosition(mediaItem: MediaItem)
 }
 class TrendingTracksAdapter(
     private val context: Context,
@@ -62,16 +59,21 @@ class TrendingTracksAdapter(
     }
 
     override fun updateSelectedItem(newPosition: Int) { //TODO MAYBE CAN REMOVE
-        newPosition(newPosition)
-        notifyItemChanged(selectedTrackPosition)
+      //  newPosition(newPosition)
+        //notifyItemChanged(selectedTrackPosition)
     }
 
-    override fun newPosition(newPosition: Int) {
-        if (newPosition < 0 ) return
-        val oldPos = selectedTrackPosition
-        selectedTrackPosition = newPosition
-        if (oldPos >= 0) notifyItemChanged(oldPos)
-        notifyItemChanged(selectedTrackPosition)
+    override fun newPosition(mediaItem: MediaItem) {
+        if (mediaItem.mediaId.isEmpty()) return
+        val old = selectedTrackPosition
+        val position = tracks.indexOf(mediaItem)
+        if (position!=-1 ){
+            selectedTrackPosition = position
+
+            if(old!=-1) notifyItemChanged(old)
+            Log.d("tag", "newPosition: ")
+            notifyItemChanged(position)
+        }
     }
 
 }
@@ -82,13 +84,12 @@ class TrendingTracksViewHolder(
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
     private val selectItemMapper: TrackUi.Mapper<TrackUi>,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
 ): ViewHolder(binding.root){
 
     private val mapper = TrackUi.ListItemUi(binding)
 
     fun bind(item: MediaItem, position: Int, selectedPosition: Int) =  with(binding){
-      //  playbackTimeTv.text = ""/*item.mediaMetadata.description*/
         imageLoader.loadImage(
             "https://"+
             item.mediaMetadata.artworkUri?.host+

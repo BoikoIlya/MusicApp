@@ -27,16 +27,18 @@
       android:paddingHorizontal="15dp"
       android:clickable="true"
       android:id="@+id/bottomPlayerBar"
-      android:visibility="gone"
+      android:visibility="visible"
       android:layout_width="0dp"
       android:layout_height="140dp"
       android:background="@drawable/bottom_song_shape"
       app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="@+id/bottom_nav_view"
-          app:layout_constraintStart_toStartOf="@+id/bottom_nav_view"
+
+      app:layout_constraintEnd_toEndOf="@+id/bottom_nav_view"
+      app:layout_constraintStart_toStartOf="@+id/bottom_nav_view"
     >
 
-
+<!--      app:layout_constraintEnd_toEndOf="parent"-->
+<!--      app:layout_constraintStart_toStartOf="parent"-->
       <androidx.cardview.widget.CardView
           android:layout_marginStart="10dp"
           android:layout_marginTop="15dp"
@@ -69,25 +71,36 @@
           android:textColor="@color/white"
           android:textSize="@dimen/h3"
           android:textStyle="bold"
-          app:layout_constraintEnd_toEndOf="@id/bottom_play_btn"
-          app:layout_constraintEnd_toStartOf="@id/bottom_play_btn"
+          app:layout_constraintEnd_toStartOf="@id/bottom_previous_btn"
           app:layout_constraintHorizontal_bias="0.15"
           app:layout_constraintStart_toEndOf="@+id/cardView"
           app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:paddingHorizontal="15dp"
-        android:id="@+id/song_author_name"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Moderator"
-        android:textColor="@color/gray"
-        android:textSize="@dimen/body1"
-        app:layout_constraintStart_toStartOf="@+id/song_name_tv"
-        app:layout_constraintTop_toBottomOf="@id/song_name_tv"
-       />
+      <TextView
+          android:id="@+id/song_author_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="1"
+          android:paddingHorizontal="15dp"
+          android:text="Moderator"
+          android:textColor="@color/gray"
+          android:textSize="@dimen/body1"
+          app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
+          app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+          app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
+
+      <ImageButton
+          android:id="@+id/bottom_previous_btn"
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/previouss"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
+          app:layout_constraintEnd_toStartOf="@id/bottom_play_btn"
+          app:layout_constraintVertical_bias="0.65"
+          android:layout_marginEnd="12dp"
+          />
 
     <ToggleButton
         android:textOff=""
@@ -95,14 +108,26 @@
         android:id="@+id/bottom_play_btn"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="20dp"
         android:background="@drawable/play_btn_selector"
         android:backgroundTint="@color/orange"
         app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bottom_next_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65"
+        android:layout_marginEnd="10dp"
         />
+
+      <ImageButton
+          android:id="@+id/bottom_next_btn"
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/nextt"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintVertical_bias="0.65"
+          android:layout_marginEnd="12dp"
+          />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

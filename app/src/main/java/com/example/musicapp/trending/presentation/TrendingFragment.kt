@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.R
-import com.example.musicapp.app.main.di.App
-import com.example.musicapp.app.main.presentation.ItemPositionState
+import com.example.musicapp.main.di.App
+import com.example.musicapp.main.presentation.ItemPositionState
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.Selector
 import com.example.musicapp.databinding.TrendingFragmentBinding
