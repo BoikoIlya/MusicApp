@@ -1,8 +1,8 @@
 package com.example.musicapp.main.domain
 
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.main.presentation.PlayerCommunication
-import com.example.musicapp.app.main.presentation.PlayerCommunicationState
+import com.example.musicapp.main.presentation.PlayerCommunication
+import com.example.musicapp.main.presentation.PlayerCommunicationState
 
 /**
  * Created by HP on 15.03.2023.

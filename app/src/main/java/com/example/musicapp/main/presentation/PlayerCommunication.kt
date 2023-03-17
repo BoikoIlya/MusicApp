@@ -28,7 +28,7 @@ interface PlayerCommunication: CollectBottomPlayerBar, CollectPlayerService, Col
     class Base @Inject constructor(
         private val bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
         private val playerServiceCommunication: PlayerServiceCommunication,
-        private val selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+        private val selectedTrackPositionCommunication: SelectedTrackCommunication,
         private val toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
         private val toServicePlayState: TrackUi.Mapper<Unit>,
         private val controllerFuture: ListenableFuture<MediaController>
@@ -101,7 +101,7 @@ sealed interface PlayerCommunicationState{
     fun apply(
         bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
         playerServiceCommunication: PlayerServiceCommunication,
-        selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+        selectedTrackPositionCommunication: SelectedTrackCommunication,
         toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
         toServicePlayState: TrackUi.Mapper<Unit>,
         controller: MediaController,
@@ -114,12 +114,12 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
         ) {
-            controller.addMediaItems(tracks)
+            controller.setMediaItems(tracks)
 
             controller.addListener(object : Player.Listener{
 
@@ -152,9 +152,7 @@ sealed interface PlayerCommunicationState{
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     super.onMediaItemTransition(mediaItem, reason)
-                    Log.d("tag", "onMediaItemTransition: ")
                     bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(mediaItem?: MediaItem.Builder().build()))
-                    //selectedTrackPositionCommunication.map(controller.currentMediaItemIndex /*ItemPositionState.UpdateRecyclerViewSelectedItem(controller.currentMediaItemIndex)*/)
                     selectedTrackPositionCommunication.map(controller.currentMediaItem!!)
                 }
             })
@@ -170,18 +168,15 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
         ) {
 
-                selectedTrackPositionCommunication.map(track)
-                bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(track))///////////////////////
+            selectedTrackPositionCommunication.map(track)
+            bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(track))
 
-            //playerServiceCommunication.map(track.map(toServicePlayState))
-
-            //position.apply { if(it!=0) controller.seekToDefaultPosition(it) else controller.seekToDefaultPosition() }
             controller.seekToDefaultPosition(position)
 
             controller.prepare()
@@ -198,15 +193,12 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
         ) {
-            Log.d("tag", "call pause in communication")
             controller.pause()
-            //bottomPlayerBarCommunication.map(BottomPlayerBarState.Pause(track))
-            //playerServiceCommunication.map(PlayerServiceState.Pause)
         }
     }
 
@@ -216,13 +208,11 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
         ) {
-            //playerServiceCommunication.map(PlayerServiceState.Resume)
-            Log.d("tag", "resume in apply: ")
             bottomPlayerBarCommunication.map(BottomPlayerBarState.Play(controller.currentMediaItem!!))
             controller.play()
         }
@@ -233,13 +223,12 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
         ) {
             bottomPlayerBarCommunication.map(BottomPlayerBarState.Disabled)
-            //playerServiceCommunication.map(PlayerServiceState.Disabled)
             selectedTrackPositionCommunication.map(MediaItem.Builder().build())
         }
 
@@ -249,7 +238,7 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,
@@ -262,7 +251,7 @@ sealed interface PlayerCommunicationState{
         override fun apply(
             bottomPlayerBarCommunication: BottomPlayerBarCommunicatin,
             playerServiceCommunication: PlayerServiceCommunication,
-            selectedTrackPositionCommunication: SelectedTrackPositionCommunication,
+            selectedTrackPositionCommunication: SelectedTrackCommunication,
             toBottomBarPlayState: TrackUi.Mapper<BottomPlayerBarState.Play>,
             toServicePlayState: TrackUi.Mapper<Unit>,
             controller: MediaController,

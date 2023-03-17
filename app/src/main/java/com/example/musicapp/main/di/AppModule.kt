@@ -6,10 +6,10 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.app.main.presentation.*
 import com.example.musicapp.app.core.BottomPlayerBarCommunicatin
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.ImageLoader
@@ -18,7 +18,7 @@ import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import com.example.musicapp.main.data.cloud.MusicDataService
-import com.example.musicapp.main.presentation.BottomPlayerBarState
+import com.example.musicapp.main.presentation.*
 import com.example.musicapp.player.presentation.PlayerService
 import com.example.musicapp.trending.presentation.TrackUi
 import com.google.common.util.concurrent.ListenableFuture
@@ -33,7 +33,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-/**
+@UnstableApi /**
  * Created by HP on 29.01.2023.
  **/
 @Module
@@ -47,18 +47,6 @@ class AppModule {
         private const val token_key = "tken_key"
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideTrendingService(
-//        builder: Retrofit.Builder,
-//        converterFactory: GsonConverterFactory
-//    ): TrendingService {
-//        return builder
-//            .baseUrl(baseUrl)
-//            .addConverterFactory(converterFactory)
-//            .build()
-//            .create(TrendingService::class.java)
-//    }
 
 
     @Provides
@@ -167,8 +155,8 @@ interface AppBindModule{
 
     @Singleton
     @Binds
-    fun bindSelectedTrackPositionCommunication(obj: SelectedTrackPositionCommunication.Base):
-            SelectedTrackPositionCommunication
+    fun bindSelectedTrackPositionCommunication(obj: SelectedTrackCommunication.Base):
+            SelectedTrackCommunication
 
     @Singleton
     @Binds

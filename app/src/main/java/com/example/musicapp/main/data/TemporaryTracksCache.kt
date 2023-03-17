@@ -2,9 +2,6 @@ package com.example.musicapp.main.data
 
 import android.util.Log
 import androidx.media3.common.MediaItem
-import com.example.musicapp.main.domain.QueryResult
-import com.example.musicapp.app.main.presentation.PlayerCommunication
-import com.example.musicapp.app.main.presentation.PlayerCommunicationState
 import javax.inject.Inject
 
 /**
@@ -33,9 +30,8 @@ interface TemporaryTracksCache {
             val newQueryId = tracks.hashCode()
             return if(queryId!=newQueryId){
                 queryId = newQueryId
-                Log.d("tag", "map hashcode: $newQueryId")
                 tracks
-            }else tracks
+            }else emptyList()
         }
     }
 }

@@ -58,7 +58,7 @@ data class TrackUi(
             with(binding){
               // playbackTimeTv.text = playbackMinutes
                 songNameTv.text = name
-                authorNameTv.text = artistName
+                authorNameTv.text = artistName//todo maybe remove class
                 root.setBackgroundColor(bgColor)
             }
         }

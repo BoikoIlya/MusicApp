@@ -40,7 +40,6 @@ interface BottomPlayerBarState {
                 bottomPlayerBar.visibility = View.VISIBLE
 
             }
-            Log.d("tag", "active: ")
         }
 
     }
@@ -64,7 +63,6 @@ interface BottomPlayerBarState {
         override fun apply( binding: ActivityMainBinding,
                             imageLoader: ImageLoader) = with(binding) {
 
-            Log.d("tag", "play: ")
             super.apply(this, imageLoader)
             bottomPlayBtn.isChecked = false
         }

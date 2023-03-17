@@ -17,7 +17,6 @@ import kotlin.math.log
  * Created by HP on 30.01.2023.
  **/
 interface Select{
-    fun updateSelectedItem(position: Int)
     fun newPosition(mediaItem: MediaItem)
 }
 class TrendingTracksAdapter(
@@ -40,7 +39,7 @@ class TrendingTracksAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), playClickListener, saveClickListener,mapper, imageLoader
+            ), playClickListener, saveClickListener,imageLoader
         )
     }
 
@@ -58,11 +57,6 @@ class TrendingTracksAdapter(
         result.dispatchUpdatesTo(this)
     }
 
-    override fun updateSelectedItem(newPosition: Int) { //TODO MAYBE CAN REMOVE
-      //  newPosition(newPosition)
-        //notifyItemChanged(selectedTrackPosition)
-    }
-
     override fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
@@ -71,7 +65,6 @@ class TrendingTracksAdapter(
             selectedTrackPosition = position
 
             if(old!=-1) notifyItemChanged(old)
-            Log.d("tag", "newPosition: ")
             notifyItemChanged(position)
         }
     }
@@ -83,11 +76,9 @@ class TrendingTracksViewHolder(
     private val binding: TrackItemBinding,
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
-    private val selectItemMapper: TrackUi.Mapper<TrackUi>,
     private val imageLoader: ImageLoader,
 ): ViewHolder(binding.root){
 
-    private val mapper = TrackUi.ListItemUi(binding)
 
     fun bind(item: MediaItem, position: Int, selectedPosition: Int) =  with(binding){
         imageLoader.loadImage(

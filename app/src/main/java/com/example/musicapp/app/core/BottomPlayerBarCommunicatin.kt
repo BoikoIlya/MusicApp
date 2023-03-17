@@ -14,12 +14,5 @@ interface BottomPlayerBarCommunicatin: Communication.Mutable<BottomPlayerBarStat
     @Singleton
     class Base @Inject constructor(): Communication.UiUpdate<BottomPlayerBarState>(
         BottomPlayerBarState.Disabled),
-        BottomPlayerBarCommunicatin{
-
-            init {
-                Log.d("vminit", "init constr $this")
-            }
-
-
-        }
+        BottomPlayerBarCommunicatin
 }

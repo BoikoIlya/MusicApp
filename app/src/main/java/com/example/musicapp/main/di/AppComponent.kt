@@ -1,6 +1,7 @@
 package com.example.musicapp.main.di
 
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.player.di.PlayerServiceComponent
 import com.example.musicapp.trending.di.TrendingComponent
@@ -8,7 +9,7 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-/**
+@UnstableApi /**
  * Created by HP on 29.01.2023.
  **/
 @Singleton
@@ -24,7 +25,7 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(mainActivity: _root_ide_package_.com.example.musicapp.main.presentation.MainActivity)
+    fun inject(mainActivity: MainActivity)
 
     fun trendingComponent(): TrendingComponent.Builder
 

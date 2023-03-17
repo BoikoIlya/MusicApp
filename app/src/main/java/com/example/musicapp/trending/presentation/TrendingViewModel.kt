@@ -5,11 +5,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.main.presentation.PlayerCommunication
-import com.example.musicapp.app.main.presentation.PlayerCommunicationState
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.domain.QueryResult
+import com.example.musicapp.main.presentation.PlayerCommunication
+import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.trending.domain.TrendingInteractor
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch

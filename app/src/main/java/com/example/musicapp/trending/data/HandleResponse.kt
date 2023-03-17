@@ -1,7 +1,6 @@
 package com.example.musicapp.trending.data
 
 import android.util.Log
-import com.example.musicapp.app.core.NoInternetConnectionException
 import com.example.musicapp.app.core.ServiceUnavailableException
 import retrofit2.HttpException
 import java.net.UnknownHostException
@@ -12,7 +11,7 @@ interface HandleResponse {
    suspend fun <T>handle(
         block: suspend ()->T
     ):T
-
+   //todo maybe should remove class
     class Base @Inject constructor(): HandleResponse{
 
         override suspend fun <T> handle(block: suspend () -> T): T {
@@ -22,7 +21,7 @@ interface HandleResponse {
             }catch (e:Exception){
                 Log.d("tag", "handle: ${e.message}")
                 throw when(e){
-                    is UnknownHostException -> NoInternetConnectionException("")
+                    is UnknownHostException -> e
                     is HttpException -> e
                     else -> ServiceUnavailableException()
                 }

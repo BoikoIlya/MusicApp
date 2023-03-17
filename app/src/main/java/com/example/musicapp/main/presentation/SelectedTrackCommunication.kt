@@ -8,10 +8,10 @@ import javax.inject.Singleton
 /**
  * Created by HP on 31.01.2023.
  **/
-interface SelectedTrackPositionCommunication: Communication.Mutable<MediaItem> {
+interface SelectedTrackCommunication: Communication.Mutable<MediaItem> {
 
 
     @Singleton
     class Base @Inject constructor(): Communication.UiUpdate<MediaItem>(MediaItem.Builder().build()),
-        SelectedTrackPositionCommunication
+        SelectedTrackCommunication
 }

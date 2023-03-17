@@ -1,7 +1,6 @@
 package com.example.musicapp.main.di
 
 import android.app.Application
-import com.example.musicapp.app.main.di.DaggerAppComponent
 
 /**
  * Created by HP on 28.01.2023.

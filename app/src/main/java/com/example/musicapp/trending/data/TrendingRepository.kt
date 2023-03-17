@@ -37,7 +37,7 @@ interface TrendingRepository{
 
         override suspend fun fetchTracks(): List<TrackDomain> =
             service.getRecommendations(token.read(), market = "ES", seed_genres = "classical,country").tracks
-                .filter { it.map() }.map { it.map(toTrackDomain) }
+                .filter { it.map() }.map { it.map(toTrackDomain) } //TODO HARDCODED STRINGS
 
 
     }
