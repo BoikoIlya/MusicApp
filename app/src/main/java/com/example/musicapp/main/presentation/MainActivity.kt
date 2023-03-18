@@ -2,7 +2,6 @@ package com.example.musicapp.main.presentation
 
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +14,7 @@ import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.main.di.App
 import com.example.musicapp.databinding.ActivityMainBinding
+import com.example.musicapp.player.di.PlayerModule
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,11 +44,13 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-
         val navHost =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHost.navController
         binding.bottomNavView.setupWithNavController(navController)
+
+        if(intent.getBooleanExtra(PlayerModule.ACTION_SONG_FRAG,false))
+            navController.navigate(R.id.songFragment)
 
         lifecycleScope.launch {
             viewModel.collect(this@MainActivity) {
