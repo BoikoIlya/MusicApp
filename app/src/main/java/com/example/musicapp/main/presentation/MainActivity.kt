@@ -33,8 +33,6 @@ import javax.inject.Inject
 
     lateinit var viewModel: MainViewModel
 
-    val player = MediaPlayer()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(intent.getBooleanExtra(PlayerModule.ACTION_SONG_ACT,false))
