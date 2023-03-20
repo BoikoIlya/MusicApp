@@ -1,18 +1,12 @@
 package com.example.musicapp.player.presentation
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Bundle
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.CommandButton
-import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.example.musicapp.main.di.App
-import com.google.common.collect.ImmutableList
 import javax.inject.Inject
 
 
@@ -34,7 +28,7 @@ class PlayerService: MediaSessionService(){
         super.onCreate()
 
         (this.applicationContext as App).appComponent
-            .playerServiceComponent()
+            .playerComponent()
             .build()
             .inject(this)
 

@@ -14,8 +14,8 @@ class MainViewModel @Inject constructor(
 
      suspend fun collect(
          lifecycleOwner: LifecycleOwner,
-         collector: FlowCollector<BottomPlayerBarState>,
-    ) = playerCommunication.collectBottomBarState(lifecycleOwner, collector)
+         collector: FlowCollector<PlayerControlsState>,
+    ) = playerCommunication.collectPlayerControls(lifecycleOwner, collector)
 
     fun playerAction(state: PlayerCommunicationState){
         playerCommunication.map(state)

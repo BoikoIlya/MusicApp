@@ -3,7 +3,7 @@ package com.example.musicapp.main.di
 import android.content.Context
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.main.presentation.MainActivity
-import com.example.musicapp.player.di.PlayerServiceComponent
+import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.trending.di.TrendingComponent
 import dagger.BindsInstance
 import dagger.Component
@@ -29,7 +29,7 @@ interface AppComponent {
 
     fun trendingComponent(): TrendingComponent.Builder
 
-    fun playerServiceComponent(): PlayerServiceComponent.Builder
+    fun playerComponent(): PlayerComponent.Builder
 
 
 

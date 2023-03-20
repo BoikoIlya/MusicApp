@@ -23,7 +23,6 @@ class TrendingTracksAdapter(
     private val context: Context,
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
-    private val mapper: TrackUi.Mapper<TrackUi>,
     private val imageLoader: ImageLoader
 ): RecyclerView.Adapter<TrendingTracksViewHolder>(),
     Mapper<List<MediaItem>, Unit>,Select {

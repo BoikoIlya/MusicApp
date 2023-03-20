@@ -117,7 +117,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             override fun onClick(data: MediaItem) {
                 //TODO
             }
-        },mapper, imageLoader)
+        }, imageLoader)
 
         binding.rcvTrendingTracks.adapter = tracksAdapter
 

@@ -4,7 +4,6 @@ import androidx.media3.common.MediaItem
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.main.data.AuthorizationRepository
-import com.example.musicapp.main.domain.QueryResult
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
 import kotlinx.coroutines.async
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 interface MusicInteractor{
 
-   suspend fun checkForNewQuery(): List<MediaItem>
+   suspend fun checkForNewQueue(): List<MediaItem>
 
 }
 interface TrendingInteractor: MusicInteractor {
@@ -39,7 +38,7 @@ interface TrendingInteractor: MusicInteractor {
             coroutineScope {
                     val playlists = async { repository.fetchPlaylists() }
                     val tracks = async { repository.fetchTracks() }
-                    tempCache.saveTracks(tracks.await().map { it.map(mapper) })
+                    tempCache.saveCurrentPageTracks(tracks.await().map { it.map(mapper) })
                     return@coroutineScope TrendingResult.Success(Pair(playlists.await(),tracks.await()))
                 }
             } catch (e: Exception) {
@@ -53,7 +52,7 @@ interface TrendingInteractor: MusicInteractor {
                 }else TrendingResult.Error(handleError.handle(e))
             }
 
-        override suspend fun checkForNewQuery(): List<MediaItem>  = tempCache.map()
+        override suspend fun checkForNewQueue(): List<MediaItem>  = tempCache.map()
 
 
     }

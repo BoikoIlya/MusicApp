@@ -10,7 +10,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.app.core.BottomPlayerBarCommunicatin
+import com.example.musicapp.app.core.PlayerControlsCommunication
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.ManagerResource
@@ -20,6 +20,7 @@ import com.example.musicapp.main.data.cloud.AuthorizationService
 import com.example.musicapp.main.data.cloud.MusicDataService
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.player.presentation.PlayerService
+import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.trending.presentation.TrackUi
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.Binds
@@ -40,7 +41,6 @@ import javax.inject.Singleton
 class AppModule {
 
     companion object{
-        private const val baseUrl = "https://api.napster.com"
         private const val baseUrlAuthorization = "https://accounts.spotify.com/"
         private const val baseUrlMusicData = "https://api.spotify.com/v1/"
         private const val shared_pref_name = "settings"
@@ -144,6 +144,10 @@ interface AppBindModule{
 
     @Binds
     @Singleton
+    fun bindMediaControllerWrapper(mediaControllerWrapper: MediaControllerWrapper.Base): MediaControllerWrapper
+
+    @Binds
+    @Singleton
     fun bindImageLoaderForPlaylists(obj: ImageLoader.Base): ImageLoader
 
     @Binds
@@ -165,12 +169,12 @@ interface AppBindModule{
     @Singleton
     @Binds
     fun bindToPlayStateBottomBar(obj: TrackUi.ToPlayStateBottomBar):
-            TrackUi.Mapper<BottomPlayerBarState.Play>
+            TrackUi.Mapper<PlayerControlsState.Play>
 
     @Singleton
     @Binds
-    fun bindPlayerServiceCommunication(obj: PlayerServiceCommunication.Base):
-            PlayerServiceCommunication
+    fun bindCurrentQueueCommunication(obj: CurrentQueueCommunication.Base):
+            CurrentQueueCommunication
 
     @Binds
     @[IntoMap ViewModelKey(MainViewModel::class)]
@@ -179,8 +183,8 @@ interface AppBindModule{
 
     @Singleton
     @Binds
-    fun bindBottomPlayerBarCommunication(obj: BottomPlayerBarCommunicatin.Base):
-            BottomPlayerBarCommunicatin
+    fun bindBottomPlayerBarCommunication(obj: PlayerControlsCommunication.Base):
+            PlayerControlsCommunication
 
     @Singleton
     @Binds

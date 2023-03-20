@@ -1,8 +1,6 @@
 package com.example.musicapp.trending.data
 
 import com.example.musicapp.app.SpotifyDto.Item
-import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.main.data.cache.SharedPref
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.MusicDataService
 import com.example.musicapp.trending.domain.PlaylistDomain

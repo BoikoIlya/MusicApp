@@ -17,7 +17,7 @@ interface SharedPref<T> {
         private val store: SharedPreferences
     ): SharedPref<String> {
 
-        override fun read(): String = store.getString(key,"")?: ""
+        override fun read(): String = store.getString(key,"0")?: "0"
 
         override fun save(data: String) {
             val editor = store.edit()

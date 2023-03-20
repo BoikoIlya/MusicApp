@@ -32,9 +32,7 @@ data class TrackDomain(
 
     fun <T>map(mapper: Mapper<T>): T  = mapper.map(id, imageUrl, name, artistName, previewURL, albumName)
 
-    class ToTrackUiMapper @Inject constructor(
-        //private val uriWrapper: UriWrapper
-    ): Mapper<MediaItem>{
+    class ToTrackUiMapper @Inject constructor(): Mapper<MediaItem>{
         override fun map(
             id: String,
             imageUrl: String,
@@ -43,15 +41,6 @@ data class TrackDomain(
             previewURL: String,
             albumName: String
         ): MediaItem {
-//            return TrackUi(
-//                id = id,
-//                playbackMinutes = playbackMinutes,
-//                name = name,
-//                artistName = artistName,
-//                previewURL = previewURL,
-//                albumName = albumName,
-//                bgColor = managerResource.getColor(R.color.white)
-//            )
 
             return MediaItem.Builder()
                 .setMediaId(previewURL)

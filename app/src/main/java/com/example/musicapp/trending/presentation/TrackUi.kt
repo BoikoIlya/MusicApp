@@ -5,7 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import com.example.musicapp.R
-import com.example.musicapp.main.presentation.BottomPlayerBarState
+import com.example.musicapp.main.presentation.PlayerControlsState
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.databinding.TrackItemBinding
 import com.google.common.util.concurrent.ListenableFuture
@@ -56,7 +56,6 @@ data class TrackUi(
             bgColor: Int
         ) {
             with(binding){
-              // playbackTimeTv.text = playbackMinutes
                 songNameTv.text = name
                 authorNameTv.text = artistName//todo maybe remove class
                 root.setBackgroundColor(bgColor)
@@ -91,34 +90,10 @@ data class TrackUi(
 
     }
 
-//    class ReturnDefItemBg @Inject constructor(
-//        private val managerResource: ManagerResource
-//    ): Mapper<TrackUi>{
-//        override fun map(
-//            id: String,
-//            playbackMinutes: String,
-//            name: String,
-//            artistName: String,
-//            previewURL: String,
-//            albumName: String,
-//            bgColor: Int,
-//        ): TrackUi {
-//            return TrackUi(
-//                id = id,
-//                playbackMinutes = playbackMinutes,
-//                name = name,
-//                artistName = artistName,
-//                previewURL = previewURL,
-//                albumName = albumName,
-//                bgColor = managerResource.getColor(R.color.white)
-//            )
-//        }
-//
-//    }
 
     fun map(item: TrackUi):Boolean =  id == item.id
 
-    class ToPlayStateBottomBar @Inject constructor(): Mapper<BottomPlayerBarState.Play>{
+    class ToPlayStateBottomBar @Inject constructor(): Mapper<PlayerControlsState.Play>{
         override fun map(
             id: String,
             playbackMinutes: String,
@@ -127,9 +102,8 @@ data class TrackUi(
             previewURL: String,
             albumName: String,
             bgColor: Int,
-        ): BottomPlayerBarState.Play {
-            //return BottomPlayerBarState.Play(name,artistName)
-            return BottomPlayerBarState.Play(MediaItem.Builder().build())
+        ): PlayerControlsState.Play {
+            return PlayerControlsState.Play(MediaItem.Builder().build())
         }
 
     }
@@ -146,7 +120,6 @@ data class TrackUi(
             albumName: String,
             bgColor: Int,
         ): Unit {
-           // return PlayerServiceState.Play(previewURL,name,artistName)
 
             controllerFuture.get().setMediaItem(
                 MediaItem.Builder()

@@ -139,7 +139,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:background="@drawable/repeat"
+            android:background="@drawable/repeat_black"
             />
 
         <ImageButton

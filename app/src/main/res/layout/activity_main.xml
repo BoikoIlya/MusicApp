@@ -71,7 +71,7 @@
           android:textColor="@color/white"
           android:textSize="@dimen/h3"
           android:textStyle="bold"
-          app:layout_constraintEnd_toStartOf="@id/bottom_previous_btn"
+          app:layout_constraintEnd_toStartOf="@id/previous_btn"
           app:layout_constraintHorizontal_bias="0.15"
           app:layout_constraintStart_toEndOf="@+id/cardView"
           app:layout_constraintTop_toTopOf="parent" />
@@ -91,13 +91,13 @@
           app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
 
       <ImageButton
-          android:id="@+id/bottom_previous_btn"
+          android:id="@+id/previous_btn"
           android:layout_width="30dp"
           android:layout_height="30dp"
           android:background="@drawable/previouss"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
-          app:layout_constraintEnd_toStartOf="@id/bottom_play_btn"
+          app:layout_constraintEnd_toStartOf="@id/play_btn"
           app:layout_constraintVertical_bias="0.65"
           android:layout_marginEnd="12dp"
           />
@@ -105,20 +105,20 @@
     <ToggleButton
         android:textOff=""
         android:textOn=""
-        android:id="@+id/bottom_play_btn"
+        android:id="@+id/play_btn"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/play_btn_selector"
         android:backgroundTint="@color/orange"
         app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
-        app:layout_constraintEnd_toStartOf="@id/bottom_next_btn"
+        app:layout_constraintEnd_toStartOf="@id/next_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65"
         android:layout_marginEnd="10dp"
         />
 
       <ImageButton
-          android:id="@+id/bottom_next_btn"
+          android:id="@+id/next_btn"
           android:layout_width="30dp"
           android:layout_height="30dp"
           android:background="@drawable/nextt"

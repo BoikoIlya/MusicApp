@@ -1,13 +1,11 @@
 package com.example.musicapp.trending.presentation
 
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.main.domain.QueryResult
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.trending.domain.TrendingInteractor
@@ -38,16 +36,19 @@ class TrendingViewModel @Inject constructor(
 
 
     fun playMusic(item: MediaItem, position: Int) = viewModelScope.launch(dispatchersList.io()) {
-        val query = interactor.checkForNewQuery()
+        val queue = interactor.checkForNewQueue()
+        if(queue.isNotEmpty()){
+            val newQueue = mutableListOf<MediaItem>()
+            newQueue.addAll(queue)
+            withContext(dispatchersList.ui()) {
+                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue))
+            }
+        }
         withContext(dispatchersList.ui()) {
-            if (query.isNotEmpty()) playerCommunication.map(PlayerCommunicationState.SetQuery(query))
             playerCommunication.map(PlayerCommunicationState.Play(item, position))
         }
     }
 
-    fun setQuery(tracks: List<MediaItem>) {
-        playerCommunication.map(PlayerCommunicationState.SetQuery(tracks))
-    }
 
     suspend fun collectSelectedTrackPosition(
         owner: LifecycleOwner,

@@ -1,6 +1,5 @@
 package com.example.musicapp.main.data
 
-import android.util.Log
 import androidx.media3.common.MediaItem
 import javax.inject.Inject
 
@@ -9,28 +8,30 @@ import javax.inject.Inject
  **/
 interface TemporaryTracksCache {
 
-    fun readTracks(): List<MediaItem>
+    suspend fun readCurrentPageTracks(): List<MediaItem>
 
-    fun saveTracks(list: List<MediaItem>)
+    suspend fun saveCurrentPageTracks(list: List<MediaItem>)
+
 
    suspend fun map(): List<MediaItem>
 
     class Base @Inject constructor(): TemporaryTracksCache {
-        private val tracks = mutableListOf<MediaItem>()
-        private var queryId = 0
+        private val currentPageTracks = mutableListOf<MediaItem>()
+        private var queueId = 0
 
-        override fun readTracks(): List<MediaItem> = tracks
+        override suspend fun readCurrentPageTracks(): List<MediaItem> = currentPageTracks
 
-        override fun saveTracks(list: List<MediaItem>) {
-            tracks.clear()
-            tracks.addAll(list)
+        override suspend fun saveCurrentPageTracks(list: List<MediaItem>) {
+            currentPageTracks.clear()
+            currentPageTracks.addAll(list)
         }
 
+
         override suspend fun map(): List<MediaItem> {
-            val newQueryId = tracks.hashCode()
-            return if(queryId!=newQueryId){
-                queryId = newQueryId
-                tracks
+            val newQueueId = currentPageTracks.hashCode()
+            return if(queueId!=newQueueId){
+                queueId = newQueueId
+                currentPageTracks
             }else emptyList()
         }
     }
