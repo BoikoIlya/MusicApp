@@ -10,7 +10,7 @@ import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 /**
  * Created by HP on 20.03.2023.
  **/
-@Database(entities = [TrackCache::class, HistoryItemCache::class], version = 1)
+@Database(entities = [TrackCache::class], version = 1, )
 abstract class MusicDatabase: RoomDatabase() {
 
     abstract fun getTracksDao(): TracksDao

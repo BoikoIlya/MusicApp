@@ -6,7 +6,7 @@ import androidx.room.Dao
  * Created by HP on 29.04.2023.
  **/
 @Dao
-class HistoryDao {
+interface HistoryDao {
 
     companion object{
         const val history_table_name = "history_table"

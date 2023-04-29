@@ -7,5 +7,5 @@ import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
  **/
 class SearchRepositoryTest {
 
-    lateinit var repository:
+  //  lateinit var repository:
 }
