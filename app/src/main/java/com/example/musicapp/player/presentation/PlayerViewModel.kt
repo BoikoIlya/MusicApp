@@ -1,12 +1,14 @@
 package com.example.musicapp.player.presentation
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
-import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.*
+import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import kotlinx.coroutines.delay
@@ -20,20 +22,30 @@ import javax.inject.Inject
  **/
 class PlayerViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
-    //private val controllerFuture: ListenableFuture<MediaController>,
+    private val isSavedCommunication: IsSavedCommunication,
     private val communication: TrackPlaybackPositionCommunication,
     private val dispatchersList: DispatchersList,
-    private val controller: MediaControllerWrapper
-): ViewModel(), CollectCurrentQueue, CollectSelectedTrack, CollectPlayerControls {
+    private val controller: MediaControllerWrapper,
+    private val favoriteTracksRepository: FavoriteTracksRepository,
+    private val mapper: TracksResultToSingleUiEventCommunicationMapper,
+    private val bottomSheetCommunication: BottomSheetCommunication,
+    private val slideViewPagerCommunication: SlideViewPagerCommunication,
+    private val trackDurationCommunication: TrackDurationCommunication,
+    temporaryTracksCache: TemporaryTracksCache
+):  BottomSheetPlayerViewModel(
+    playerCommunication,
+    temporaryTracksCache,
+    dispatchersList,
+    slideViewPagerCommunication),
+    CollectPlayerControls {
 
-//    private val controller: MediaController?
-//        get() = if (controllerFuture.isDone) controllerFuture.get() else null
+
 
     init {
         currentPosition()
     }
 
-    fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
+
 
     fun currentPosition() = viewModelScope.launch(dispatchersList.ui())  {
         while (true){
@@ -47,9 +59,11 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    fun durationSeekBar(): Int = controller.duration.toInt()
 
-    fun durationForTextView(time: Long = controller.duration?:0): String{
+    fun durationForTextView(
+        duration: Long = controller.duration
+    ): String{
+       val time = if(duration<0) 0 else duration
         val minutes: Long = TimeUnit.MILLISECONDS.toMinutes(time)
         val seconds: Long = TimeUnit.MILLISECONDS.toSeconds(time) -
                 TimeUnit.MINUTES.toSeconds(minutes)
@@ -60,23 +74,39 @@ class PlayerViewModel @Inject constructor(
 
     fun isRepeatEnabled():Boolean = controller.repeatMode == REPEAT_MODE_ONE
 
+    fun isSaved(id: String) = viewModelScope.launch(dispatchersList.io()) {
+        isSavedCommunication.map(favoriteTracksRepository.contains(id))
+    }
+
+    fun saveTrack(data: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+        favoriteTracksRepository.insertData(data).map(mapper)
+    }
+
+    fun removeTrack(id: String) = viewModelScope.launch(dispatchersList.io()) {
+        favoriteTracksRepository.removeTrack(id).map(mapper)
+    }
+
+    fun bottomSheetState(newState: Int){
+        bottomSheetCommunication.map(newState)
+    }
+    suspend fun collectIsSaved(
+        owner: LifecycleOwner,
+        collector: FlowCollector<Boolean>,
+    ) = isSavedCommunication.collect(owner, collector)
+
     suspend fun collectTrackPosition(
         owner: LifecycleOwner,
         collector: FlowCollector<Pair<Int,String>>,
     ) = communication.collect(owner,collector)
 
-    override suspend fun collectCurrentQueue(
-        owner: LifecycleOwner,
-        collector: FlowCollector<List<MediaItem>>,
-    ) = playerCommunication.collectCurrentQueue(owner, collector)
-
-    override suspend fun collectSelectedTrack(
-        owner: LifecycleOwner,
-        collector: FlowCollector<MediaItem>,
-    ) = playerCommunication.collectSelectedTrack(owner, collector)
 
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
         collector: FlowCollector<PlayerControlsState>,
     ) = playerCommunication.collectPlayerControls(owner,collector)
+
+    suspend fun collectTrackDurationCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<Long>
+    ) = trackDurationCommunication.collect(owner, collector)
 }

@@ -1,6 +1,7 @@
 package com.example.musicapp.app.core
 
 import com.example.musicapp.R
+import com.example.musicapp.main.data.AuthorizationRepository
 import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -10,13 +11,16 @@ import javax.inject.Inject
  **/
 interface HandleError {
 
-    fun handle(e: Exception): String
+   suspend fun handle(e: Exception): String
+
 
     class Base @Inject constructor(
-        private val managerResource: ManagerResource
+        private val managerResource: ManagerResource,
+        private val auth: AuthorizationRepository
     ): HandleError {
 
-        override fun handle(e: Exception): String {
+
+        override suspend fun handle(e: Exception): String {
             var id = 0
             if(e is HttpException){
                id = when(e.code()){
@@ -35,6 +39,8 @@ interface HandleError {
 
        return managerResource.getString(id)
         }
+
+
 
     }
 }

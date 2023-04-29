@@ -1,4 +1,4 @@
-import com.example.musicapp.main.data.cache.SharedPref
+import com.example.musicapp.app.core.SharedPref
 
 
 data class TokenDto(

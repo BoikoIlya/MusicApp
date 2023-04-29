@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".app.main.presentation.MainActivity"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     >
 
+
   <androidx.fragment.app.FragmentContainerView
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintBottom_toBottomOf="parent"
       android:id="@+id/fragment_container"
       android:name="androidx.navigation.fragment.NavHostFragment"
-      android:layout_width="0dp"
-      android:layout_height="0dp"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
       app:defaultNavHost="true"
+      android:background="@color/white"
       app:navGraph="@navigation/main_nav_graph" />
 
-
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    >
   <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_gravity="bottom"
+      app:layout_anchorGravity="top"
       android:paddingHorizontal="15dp"
       android:clickable="true"
       android:id="@+id/bottomPlayerBar"
       android:visibility="visible"
-      android:layout_width="0dp"
+      android:layout_width="match_parent"
       android:layout_height="140dp"
       android:background="@drawable/bottom_song_shape"
-      app:layout_constraintBottom_toBottomOf="parent"
-
-      app:layout_constraintEnd_toEndOf="@+id/bottom_nav_view"
-      app:layout_constraintStart_toStartOf="@+id/bottom_nav_view"
+      android:animateLayoutChanges="true"
     >
 
-<!--      app:layout_constraintEnd_toEndOf="parent"-->
-<!--      app:layout_constraintStart_toStartOf="parent"-->
       <androidx.cardview.widget.CardView
           android:layout_marginStart="10dp"
           android:layout_marginTop="15dp"
-          android:id="@+id/cardView"
+          android:id="@+id/bottomImgBg"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +71,7 @@
           android:textStyle="bold"
           app:layout_constraintEnd_toStartOf="@id/previous_btn"
           app:layout_constraintHorizontal_bias="0.15"
-          app:layout_constraintStart_toEndOf="@+id/cardView"
+          app:layout_constraintStart_toEndOf="@+id/bottomImgBg"
           app:layout_constraintTop_toTopOf="parent" />
 
       <TextView
@@ -117,33 +115,67 @@
         android:layout_marginEnd="10dp"
         />
 
-      <ImageButton
-          android:id="@+id/next_btn"
-          android:layout_width="30dp"
-          android:layout_height="30dp"
-          android:background="@drawable/nextt"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintVertical_bias="0.65"
-          android:layout_marginEnd="12dp"
-          />
+          <ImageButton
+              android:id="@+id/next_btn"
+              android:layout_width="30dp"
+              android:layout_height="30dp"
+              android:background="@drawable/nextt"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintVertical_bias="0.65"
+              android:layout_marginEnd="12dp"
+              />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 
 
   <com.google.android.material.bottomnavigation.BottomNavigationView
       android:id="@+id/bottom_nav_view"
-      android:layout_width="0dp"
+      android:layout_width="match_parent"
       android:layout_height="60dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_gravity="bottom"
       android:background="@drawable/bottom_nav_bg"
       app:itemIconTint="@drawable/bottom_nav_selector"
       android:backgroundTint="@color/orange"
       app:itemActiveIndicatorStyle="@color/black"
       app:menu="@menu/bottom_nav"
       />
+</FrameLayout>
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:visibility="visible"
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:background="@drawable/bottom_sheet_shape"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/playerRoot"
+                android:layout_width="50dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/gray"
+                app:cardCornerRadius="50dp"
+                android:layout_gravity="center_horizontal" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:layout_marginTop="25dp"
+                android:id="@+id/bottom_sheet_vp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 />
+
+        </LinearLayout>
+
+
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

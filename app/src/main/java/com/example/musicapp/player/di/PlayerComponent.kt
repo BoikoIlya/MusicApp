@@ -1,7 +1,8 @@
 package com.example.musicapp.player.di
 
-import com.example.musicapp.player.presentation.PlayerActivity
+import com.example.musicapp.player.presentation.PlayerFragment
 import com.example.musicapp.player.presentation.PlayerService
+import com.example.musicapp.queue.presenatation.QueueFragment
 import dagger.Subcomponent
 
 /**
@@ -16,6 +17,6 @@ interface PlayerComponent {
         fun build(): PlayerComponent
     }
 
-    fun inject(playerActivity: PlayerActivity)
+    fun inject(playerFragment: PlayerFragment)
     fun inject(playerService: PlayerService)
 }

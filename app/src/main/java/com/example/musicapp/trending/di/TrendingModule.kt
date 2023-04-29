@@ -21,12 +21,6 @@ import dagger.multibindings.IntoMap
  * Created by HP on 28.01.2023.
  **/
 
-@Module
-class ProvideTrendingModule{
-
-
-
-}
 
 @Module
 interface TrendingModule{

@@ -12,7 +12,7 @@ import javax.inject.Inject
  **/
 interface TrendingCommunication: CollectTrendings {
 
-    fun showUiState(state: TrendingUiState)
+    fun showUiState(state: TracksUiState)
 
     fun showTracks(tracks: List<MediaItem>)
 
@@ -24,7 +24,7 @@ interface TrendingCommunication: CollectTrendings {
         private val trendingTracksCommunication: TrendingTracksCommunication
     ): TrendingCommunication{
 
-        override fun showUiState(state: TrendingUiState) = trendingStateCommunication.map(state)
+        override fun showUiState(state: TracksUiState) = trendingStateCommunication.map(state)
 
         override fun showTracks(tracks: List<MediaItem>) = trendingTracksCommunication.map(tracks)
 
@@ -32,7 +32,7 @@ interface TrendingCommunication: CollectTrendings {
 
         override suspend fun collectState(
             owner: LifecycleOwner,
-            collector: FlowCollector<TrendingUiState>,
+            collector: FlowCollector<TracksUiState>,
         ) = trendingStateCommunication.collect(owner, collector)
 
         override suspend fun collectPlaylists(
@@ -49,9 +49,9 @@ interface TrendingCommunication: CollectTrendings {
 
 }
 
-interface TrendingStateCommunication: Communication.Mutable<TrendingUiState>{
+interface TrendingStateCommunication: Communication.Mutable<TracksUiState>{
     class Base @Inject constructor():
-        Communication.UiUpdate<TrendingUiState>(TrendingUiState.Loading),
+        Communication.UiUpdate<TracksUiState>(TracksUiState.Loading),
         TrendingStateCommunication
 }
 
@@ -69,7 +69,7 @@ interface TrendingTracksCommunication: Communication.Mutable<List<MediaItem>>{
 
 interface CollectTrendings{
 
-    suspend fun collectState(owner: LifecycleOwner, collector: FlowCollector<TrendingUiState>)
+    suspend fun collectState(owner: LifecycleOwner, collector: FlowCollector<TracksUiState>)
 
     suspend fun collectPlaylists(owner: LifecycleOwner, collector: FlowCollector<List<PlaylistUi>>)
 

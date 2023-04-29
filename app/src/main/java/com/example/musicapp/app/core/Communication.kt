@@ -28,7 +28,7 @@ interface Communication {
     interface MutableSingle<T>: Collector<T>, SuspendUpdate<T>
 
     abstract class UiUpdate<T>(private val defaultValue: T): Mutable<T> {
-        private val stateFlow = MutableStateFlow(defaultValue)
+        protected val stateFlow = MutableStateFlow(defaultValue)
 
         override fun map(newValue: T) {
             stateFlow.value = newValue

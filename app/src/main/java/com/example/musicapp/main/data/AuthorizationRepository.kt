@@ -1,6 +1,5 @@
 package com.example.musicapp.main.data
 
-import com.example.musicapp.main.data.cache.SharedPref
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import javax.inject.Inject
 import android.util.Base64

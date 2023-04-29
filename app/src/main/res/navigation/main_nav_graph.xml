@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/trendingFragment">
 
     <fragment
         android:id="@+id/trendingFragment"
         android:name="com.example.musicapp.trending.presentation.TrendingFragment"
-        android:label="TrendingFragment" >
-        <action
-            android:id="@+id/action_trendingFragment_to_songFragment"
-            app:destination="@id/songFragment" />
-    </fragment>
+        android:label="TrendingFragment" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.musicapp.favorites.FavoritesFragment"
-        android:label="FavoritesFragment" >
-        <action
-            android:id="@+id/action_favoritesFragment_to_songFragment"
-            app:destination="@id/songFragment" />
-    </fragment>
+        android:name="com.example.musicapp.favorites.presentation.FavoritesFragment"
+        android:label="FavoritesFragment" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.musicapp.search.SearchFragment"
-        android:label="SearchFragment" >
-        <action
-            android:id="@+id/action_searchFragment_to_songFragment"
-            app:destination="@id/songFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/songFragment"
-        android:name="com.example.musicapp.player.presentation.PlayerFragment"
-        android:label="SongFragment" />
+        android:name="com.example.musicapp.search.presentation.SearchFragment"
+        android:label="SearchFragment" />
 </navigation>

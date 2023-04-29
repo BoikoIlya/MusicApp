@@ -3,6 +3,7 @@ package com.example.musicapp.trending.domain
 import androidx.media3.common.MediaItem
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.app.core.HandleError
+import com.example.musicapp.app.core.Interactor
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
@@ -11,28 +12,31 @@ import kotlinx.coroutines.coroutineScope
 import retrofit2.HttpException
 import javax.inject.Inject
 
-interface MusicInteractor{
+interface MusicInteractor<T>: Interactor<T>{
 
    suspend fun checkForNewQueue(): List<MediaItem>
 
+   abstract class Abstract<T>(
+       protected val tempCache: TemporaryTracksCache
+   ): MusicInteractor<T>{
+       override suspend fun checkForNewQueue(): List<MediaItem> = tempCache.map()
+
+   }
+
 }
-interface TrendingInteractor: MusicInteractor {
-
-    suspend fun fetchData(): TrendingResult
-
+interface TrendingInteractor: MusicInteractor<TrendingResult> {
 
     class Base @Inject constructor(
         private val repository: TrendingRepository,
         private val handleError: HandleError,
         private val mapper: TrackDomain.Mapper<MediaItem>,
-        private val tempCache: TemporaryTracksCache,
-        private val auth: AuthorizationRepository
-    ): TrendingInteractor, MusicInteractor{
+        private val auth: AuthorizationRepository,
+        tempCache: TemporaryTracksCache
+    ): TrendingInteractor, MusicInteractor.Abstract<TrendingResult>(tempCache){
 
         companion object{
             private const val unauthorized_response = 401
         }
-
         override suspend fun fetchData(): TrendingResult =
             try {
             coroutineScope {
@@ -51,9 +55,6 @@ interface TrendingInteractor: MusicInteractor {
                     fetchData()
                 }else TrendingResult.Error(handleError.handle(e))
             }
-
-        override suspend fun checkForNewQueue(): List<MediaItem>  = tempCache.map()
-
 
     }
 

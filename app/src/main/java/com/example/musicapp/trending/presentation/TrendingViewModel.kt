@@ -1,11 +1,14 @@
 package com.example.musicapp.trending.presentation
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.trending.domain.TrendingInteractor
@@ -23,7 +26,10 @@ class TrendingViewModel @Inject constructor(
     private val handleTrendingResult: HandleTrendingResult,
     private val dispatchersList: DispatchersList,
     private val playerCommunication: PlayerCommunication,
-) : ViewModel(), CollectTrendings {
+    private val favoriteTracksRepository: FavoriteTracksRepository,
+    private val temporaryTracksCache: TemporaryTracksCache,
+    private val mapper: TracksResultToSingleUiEventCommunicationMapper,
+) : BaseViewModel(playerCommunication, temporaryTracksCache,dispatchersList), CollectTrendings {
 
 
     init {
@@ -41,7 +47,7 @@ class TrendingViewModel @Inject constructor(
             val newQueue = mutableListOf<MediaItem>()
             newQueue.addAll(queue)
             withContext(dispatchersList.ui()) {
-                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue))
+                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
             }
         }
         withContext(dispatchersList.ui()) {
@@ -49,11 +55,10 @@ class TrendingViewModel @Inject constructor(
         }
     }
 
+    fun addTrackToFavorites(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+        favoriteTracksRepository.checkInsertData(item).map(mapper)
+    }
 
-    suspend fun collectSelectedTrackPosition(
-        owner: LifecycleOwner,
-        collector: FlowCollector<MediaItem>,
-    ) = playerCommunication.collectSelectedTrack(owner, collector)
 
     override suspend fun collectPlaylists(
         owner: LifecycleOwner,
@@ -62,7 +67,7 @@ class TrendingViewModel @Inject constructor(
 
     override suspend fun collectState(
         owner: LifecycleOwner,
-        collector: FlowCollector<TrendingUiState>,
+        collector: FlowCollector<TracksUiState>,
     ) = trendingCommunication.collectState(owner, collector)
 
     override suspend fun collectTracks(

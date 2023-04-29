@@ -37,7 +37,7 @@ class PlaylistsAdapter(
        holder.bind(playlists[position])
     }
 
-    override fun map(data: List<PlaylistUi>) {
+    override  fun map(data: List<PlaylistUi>) {
         val diff = PlaylistsDiffUtilCallback(data, playlists)
         val result = DiffUtil.calculateDiff(diff)
         playlists.clear()

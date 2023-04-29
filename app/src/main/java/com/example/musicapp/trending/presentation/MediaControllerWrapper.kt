@@ -29,6 +29,7 @@ interface MediaControllerWrapper: Player {
          private val controller: MediaController?
              get() = if (controllerFuture.isDone) controllerFuture.get() else null
 
+
          override fun getApplicationLooper(): Looper {
              TODO("Not yet implemented")
          }
@@ -147,12 +148,10 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun setPlayWhenReady(playWhenReady: Boolean) {
-             TODO("Not yet implemented")
+             controller?.playWhenReady = playWhenReady
          }
 
-         override fun getPlayWhenReady(): Boolean {
-             TODO("Not yet implemented")
-         }
+         override fun getPlayWhenReady(): Boolean = controller?.playWhenReady?: false
 
          override fun setRepeatMode(repeatMode: Int) {
              controller?.repeatMode = repeatMode
@@ -413,9 +412,7 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
-         override fun getContentDuration(): Long {
-             TODO("Not yet implemented")
-         }
+         override fun getContentDuration(): Long  = controller?.contentDuration?:0
 
          override fun getContentPosition(): Long {
              TODO("Not yet implemented")

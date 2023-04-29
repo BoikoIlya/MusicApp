@@ -231,7 +231,7 @@ class TestMediaController: MediaControllerWrapper{
     }
 
     override fun setPlayWhenReady(playWhenReady: Boolean) {
-        TODO("Not yet implemented")
+        isPlayingg = true
     }
 
     override fun getPlayWhenReady(): Boolean {

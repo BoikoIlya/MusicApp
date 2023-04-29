@@ -1,9 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.MusicApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/orange</item>
+
+        <item name="colorPrimaryVariant">@color/orange</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/gray</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Transparent system bars for edge-to-edge. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+
+        <item name="actionOverflowMenuStyle">@style/popupOverflowMenu</item>
     </style>
 
-    <style name="Theme.MusicApp" parent="Base.Theme.MusicApp" />
+    <style name="popupOverflowMenu" parent="@style/Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">@drawable/rounded_corners_shape</item>
+        <item name="android:background">@color/black</item>
+        <item name="colorSecondary">@color/black</item>
+        //todo возможно в shape перекрывает
+    </style>
+
 </resources>

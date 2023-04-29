@@ -3,7 +3,7 @@ package com.example.musicapp.trending.data
 import com.example.musicapp.app.SpotifyDto.FetauredPlaylists
 import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.main.data.cloud.MusicDataService
-import com.example.musicapp.core.TokenStoreTest
+import com.example.musicapp.core.testcore.TokenStoreTest
 import com.example.testapp.spotifyDto.Recomendations
 import com.example.testapp.spotifyDto.Track
 import junit.framework.TestCase.assertEquals
