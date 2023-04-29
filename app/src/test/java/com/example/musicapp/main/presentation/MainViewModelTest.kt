@@ -1,8 +1,23 @@
 package com.example.musicapp.main.presentation
 
-import androidx.media3.common.MediaItem
+import androidx.lifecycle.LifecycleOwner
+import com.example.musicapp.app.core.DataTransfer
+import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.app.core.UiEventState
+import com.example.musicapp.core.testcore.TestTemporaryTracksCache
+import com.example.musicapp.core.testcore.TestDispatcherList
+import com.example.musicapp.core.testcore.TestManagerResource
+import com.example.musicapp.core.testcore.TestUiEventsCommunication
+import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.trending.data.ObjectCreator
+import com.example.musicapp.updatesystem.data.MainViewModelMapper
+import com.example.musicapp.updatesystem.data.UpdateResult
+import com.example.musicapp.updatesystem.data.UpdateSystemRepository
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
@@ -19,22 +34,63 @@ class MainViewModelTest: ObjectCreator() {
     lateinit var currentQueueCommunication: TestCurrentQueueCommunication
     lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
     lateinit var mediaController: TestMediaController
-
+    lateinit var bottomSheetCommunication: TestBottomSheetCommunication
+    lateinit var updateSystemRepo: TestUpdateSystemRepo
+    lateinit var uiEventsCommunication: TestUiEventsCommunication
+    lateinit var firebaseMessagingWrapper: TestFirebaseMessagingWrapper
+    lateinit var temporaryTracksCache: TemporaryTracksCache
 
     @Before
     fun setup(){
+        temporaryTracksCache = TestTemporaryTracksCache()
         playerControlsCommunication = TestPlayerControlsCommunication()
         currentQueueCommunication = TestCurrentQueueCommunication()
         selectedTrackCommunication = TestSelectedTrackCommunication()
         mediaController = TestMediaController()
-        viewModel = MainViewModel(
-            playerCommunication = PlayerCommunication.Base(
-                playerControlsCommunication,
-                currentQueueCommunication,
-                selectedTrackCommunication,
-                mediaController
-            )
+        bottomSheetCommunication = TestBottomSheetCommunication()
+        updateSystemRepo = TestUpdateSystemRepo()
+        uiEventsCommunication = TestUiEventsCommunication()
+        firebaseMessagingWrapper = TestFirebaseMessagingWrapper()
+        playerCommunication = PlayerCommunication.Base(
+            playerControlsCommunication =playerControlsCommunication,
+            currentQueueCommunication =currentQueueCommunication,
+            selectedTrackCommunication =selectedTrackCommunication,
+            singleUiEventCommunication = SingleUiEventCommunication.Base(),
+            trackDurationCommunication = TrackDurationCommunication.Base(),
+            controller = mediaController
         )
+        viewModel = MainViewModel(
+            playerCommunication = playerCommunication,
+            temporaryTracksCache = temporaryTracksCache,
+            dispatchersList = TestDispatcherList(),
+            singleUiEventCommunication = SingleUiEventCommunication.Base(),
+            bottomSheetCommunication = bottomSheetCommunication,
+            slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
+            updateSystemRepository = updateSystemRepo,
+            mapper = MainViewModelMapper.Base(
+                DataTransfer.UpdateDialogTransfer.Base(),
+                TestManagerResource(),uiEventsCommunication),
+            uiEventsCommunication = uiEventsCommunication,
+            firebaseMessagingWrapper
+        )
+    }
+
+    @Test
+    fun `test init`(){
+        assertEquals(1,firebaseMessagingWrapper.list.size)
+        assertEquals(UiEventState.ShowDialog::class, uiEventsCommunication.stateList.first()::class)
+
+        updateSystemRepo.result = UpdateResult.NoUpdate
+        viewModel.checkForUpdate()
+        assertEquals(1,uiEventsCommunication.stateList.size)
+    }
+
+    @Test
+    fun `test bottom sheet communication`(){
+
+        viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
+        assertEquals(1, bottomSheetCommunication.list.size)
+        assertEquals(BottomSheetBehavior.STATE_EXPANDED, bottomSheetCommunication.list[0])
     }
 
     @Test
@@ -52,5 +108,46 @@ class MainViewModelTest: ObjectCreator() {
 
         viewModel.playerAction(PlayerCommunicationState.Resume)
         assertEquals(true, mediaController.isPlayingg)
+    }
+
+    @Test
+    fun `test save current page queue`()= runBlocking{
+        viewModel.saveCurrentPageQueue(listOf(getMediaItem("2")))
+
+        assertEquals("2", temporaryTracksCache.readCurrentPageTracks().first().mediaId)
+    }
+
+    class TestBottomSheetCommunication: BottomSheetCommunication{
+        val list = emptyList<Int>().toMutableList()
+
+
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<Int>,
+        ) = Unit
+
+        override fun map(newValue: Int) {
+           list.add(newValue)
+        }
+
+    }
+
+    class TestUpdateSystemRepo: UpdateSystemRepository{
+        var result: UpdateResult = UpdateResult.NewUpdateInfo("x","x")
+        override suspend fun checkForNewVersion(): UpdateResult = result
+
+        override suspend fun retriveApkUrl(): UpdateResult = result
+
+
+    }
+
+
+
+    class TestFirebaseMessagingWrapper: FirebaseMessagingWrapper{
+        val list = emptyList<Int>().toMutableList()
+        override fun subscribeToTopic() {
+            list.add(1)
+        }
+
     }
 }

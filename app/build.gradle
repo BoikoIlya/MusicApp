@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -42,10 +44,11 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -74,17 +77,31 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.15.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
+    kapt 'com.github.bumptech.glide:compiler:4.15.0'
 
     // Tests
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
-
-    // LifecycleService
-    implementation "androidx.lifecycle:lifecycle-service:2.5.1"
+    testImplementation("app.cash.turbine:turbine:0.12.1")
 
     // Media
     implementation "androidx.media3:media3-exoplayer:1.0.0-rc02"
     implementation "androidx.media3:media3-ui:1.0.0-rc02"
     implementation "androidx.media3:media3-exoplayer-dash:1.0.0-rc02"
     implementation "androidx.media3:media3-session:1.0.0-rc02"
+
+    //SwipeDecorator
+    implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'
+
+    //Palette
+    implementation 'androidx.palette:palette:1.0.0'
+
+    //BindingDelegate
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.8'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.5.0'
+
+
 }

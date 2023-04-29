@@ -14,6 +14,7 @@ import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.player.presentation.MediaSessionCallBack
 import com.example.musicapp.player.presentation.PlayerViewModel
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
+import com.example.musicapp.queue.presenatation.QueueViewModel
 import dagger.Binds
 
 import dagger.Module
@@ -35,6 +36,8 @@ class PlayerModule {
     fun provideMediaPlayer(context: Context): ExoPlayer {
         return ExoPlayer.Builder(context).build()
     }
+
+
 
     @Provides
     @PlayerServiceScope
@@ -66,10 +69,8 @@ class PlayerModule {
 interface BindsPlayerModule{
 
     @Binds
-    @PlayerServiceScope
-    fun bindTrackPositionCommunication(communication: TrackPlaybackPositionCommunication.Base): TrackPlaybackPositionCommunication
-
-    @Binds
     @[IntoMap ViewModelKey(PlayerViewModel::class)]
     fun bindPlayerViewModel(playerViewModel: PlayerViewModel): ViewModel
+
+
 }

@@ -6,23 +6,43 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.room.Room
+import com.example.musicapp.app.core.*
+import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.favorites.data.cache.TracksDao
+import com.example.musicapp.favorites.presentation.FavoritesTracksCommunication
+import com.example.musicapp.favorites.presentation.FavoritesTracksStateCommunication
+import com.example.musicapp.favorites.presentation.TracksCommunication
+import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToTracksCommunicationMapper
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.app.core.PlayerControlsCommunication
-import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.ImageLoader
-import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import com.example.musicapp.main.data.cloud.MusicDataService
 import com.example.musicapp.main.presentation.*
+import com.example.musicapp.musicdialog.presentation.MusicDialogViewModel
+import com.example.musicapp.player.presentation.IsSavedCommunication
 import com.example.musicapp.player.presentation.PlayerService
+import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
+import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.trending.presentation.TrackUi
+import com.example.musicapp.updatesystem.data.MainViewModelMapper
+import com.example.musicapp.updatesystem.data.UpdateDialogMapper
+import com.example.musicapp.updatesystem.data.UpdateSystemRepository
+import com.example.musicapp.updatesystem.data.cache.UpdateDataStore
+import com.example.musicapp.updatesystem.data.cloud.UpdateFirebaseService
+import com.example.musicapp.updatesystem.presentation.UpdateDialogViewModel
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,8 +65,29 @@ class AppModule {
         private const val baseUrlMusicData = "https://api.spotify.com/v1/"
         private const val shared_pref_name = "settings"
         private const val token_key = "tken_key"
+        private const val version_key = "version_key"
+        private const val apk_url_key = "apk_url_key"
+        private const val update_description_key = "description_key"
+        private const val db_name = "music_app_db"
+        private const val topic_name = "update_topic"
+
     }
 
+    @Provides
+    @Singleton
+    fun provideMusicAppDB(context: Context): MusicDatabase{
+        return Room.databaseBuilder(
+            context,
+            MusicDatabase::class.java,
+            db_name
+        ).allowMainThreadQueries().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDao(db: MusicDatabase): TracksDao{
+        return db.getTracksDao()
+    }
 
 
     @Provides
@@ -137,10 +178,71 @@ class AppModule {
     fun provideTokenStore(sharedPreferences: SharedPreferences): TokenStore {
         return TokenStore.Base(token_key, sharedPreferences)
     }
+
+    @Singleton
+    @Provides
+    fun provideVersionStore(sharedPreferences: SharedPreferences): UpdateDataStore.Version {
+        return  UpdateDataStore.Version(sharedPreferences, version_key)
+    }
+
+    @Singleton
+    @Provides
+    fun provideApkUrlStore(sharedPreferences: SharedPreferences): UpdateDataStore.ApkUrl {
+        return UpdateDataStore.ApkUrl(sharedPreferences, apk_url_key)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUpdateDataStore(sharedPreferences: SharedPreferences): UpdateDataStore.Description {
+        return UpdateDataStore.Description(sharedPreferences, update_description_key)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUpdateFirebaseService(context: Context): UpdateFirebaseService.Base{
+        return UpdateFirebaseService.Base(Firebase.firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
+        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
+    }
+
 }
 
 @Module
 interface AppBindModule{
+
+    @Binds
+    @Singleton
+    fun bindMediaItemTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<MediaItem>
+    @Binds
+    @Singleton
+    fun bindUpdateDialogTransfer(obj: DataTransfer.UpdateDialogTransfer.Base): DataTransfer.UpdateDialogTransfer
+
+    @Binds
+    @Singleton
+    fun bindToMediaItemMapper(obj: ToMediaItemMapper): Mapper<TrackCache, MediaItem>
+
+    @Binds
+    @Singleton
+    fun bindUpdateDialogMapper(obj: UpdateDialogMapper.Base): UpdateDialogMapper
+
+    @Binds
+    @Singleton
+    fun bindMainViewModelMapper(obj: MainViewModelMapper.Base): MainViewModelMapper
+
+    @Binds
+    @Singleton
+    fun bindToTrackCacheMapper(obj: ToTrackCacheMapper): Mapper<MediaItem, TrackCache>
+    @Binds
+    @Singleton
+    fun bindFavoritesRepo(obj: FavoriteTracksRepository.Base): FavoriteTracksRepository
+
+    @Binds
+    @Singleton
+    fun bindTracksRepo(obj: FavoriteTracksRepository.Base): TracksRepository
 
     @Binds
     @Singleton
@@ -156,6 +258,15 @@ interface AppBindModule{
     @Singleton
     @Binds
     fun bindPlayerCommunication(obj: PlayerCommunication.Base): PlayerCommunication
+
+    @Singleton
+    @Binds
+    fun bindShuffleModeEnabledCommunication(obj: ShuffleModeEnabledCommunication.Base): ShuffleModeEnabledCommunication
+
+    @Singleton
+    @Binds
+    fun bindSingleUiEventCommunication(obj: SingleUiEventCommunication.Base):
+            SingleUiEventCommunication
 
     @Singleton
     @Binds
@@ -176,9 +287,26 @@ interface AppBindModule{
     fun bindCurrentQueueCommunication(obj: CurrentQueueCommunication.Base):
             CurrentQueueCommunication
 
+    @Singleton
+    @Binds
+    fun bindSlideViewPagerCommunication(obj: SlideViewPagerCommunication.Base):
+            SlideViewPagerCommunication
+    @Singleton
+    @Binds
+    fun bindTrackDurationCommunication(obj: TrackDurationCommunication.Base):
+            TrackDurationCommunication
+
     @Binds
     @[IntoMap ViewModelKey(MainViewModel::class)]
     fun bindMainActivityViewModel(trendingViewModel: MainViewModel): ViewModel
+
+    @Binds
+    @[IntoMap ViewModelKey(MusicDialogViewModel::class)]
+    fun bindMusicDialogViewModel(musicDialogViewModel: MusicDialogViewModel): ViewModel
+
+    @Binds
+    @[IntoMap ViewModelKey(UpdateDialogViewModel::class)]
+    fun bindUpdateDialogViewModel(updateDialogViewModel: UpdateDialogViewModel): ViewModel
 
 
     @Singleton
@@ -188,10 +316,53 @@ interface AppBindModule{
 
     @Singleton
     @Binds
+    fun bindBottomSheetCommunication(obj: BottomSheetCommunication.Base):
+            BottomSheetCommunication
+
+    @Singleton
+    @Binds
     fun bindDispatcherList(obj: DispatchersList.Base): DispatchersList
 
     @Binds
      fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
+
+
+    @Binds
+    @Singleton
+    fun bindIsSavedCommunication(communication: IsSavedCommunication.Base): IsSavedCommunication
+
+    @Binds
+    @Singleton
+    fun bindUiEventsCommunication(communication: UiEventsCommunication.Base): UiEventsCommunication
+
+    @Binds
+    @Singleton
+    fun bindTrackPositionCommunication(communication: TrackPlaybackPositionCommunication.Base): TrackPlaybackPositionCommunication
+
+    @Binds
+    @Singleton
+    fun bingUpdateSystemRepository(obj: UpdateSystemRepository.Base): UpdateSystemRepository
+
+    @Binds
+    @Singleton
+    fun bindTracksResultToTracksCommunicationMapper(obj: TracksResultToTracksCommunicationMapper.Base): TracksResultToTracksCommunicationMapper
+
+    @Binds
+    @Singleton
+    fun bindTracksResultToSingleUiEventCommunicationMapper(obj: TracksResultToSingleUiEventCommunicationMapper.Base): TracksResultToSingleUiEventCommunicationMapper
+
+    @Binds
+    @Singleton
+    fun bindTracksCommunication(obj: TracksCommunication.Base): TracksCommunication
+
+
+    @Binds
+    @Singleton
+    fun bindFavoritesTracksStateCommunication(obj: FavoritesTracksStateCommunication.Base): FavoritesTracksStateCommunication
+
+    @Binds
+    @Singleton
+    fun bindFavoritesTracksCommunication(obj: FavoritesTracksCommunication.Base): FavoritesTracksCommunication
 
 }

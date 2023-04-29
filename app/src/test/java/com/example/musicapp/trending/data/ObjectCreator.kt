@@ -4,9 +4,13 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.SpotifyDto.*
+import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.testapp.spotifyDto.*
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.Calendar
 
 /**
  * Created by HP on 28.01.2023.
@@ -126,11 +130,24 @@ abstract class ObjectCreator {
     }
 
     val testImgUrl = "https://www.google.by/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
-    fun getMediaItem(): MediaItem =
+    fun getMediaItem(id: String="1", name: String="", artist: String=""): MediaItem =
         MediaItem.Builder()
-            .setMediaId("https://www.google.by/")
+            .setMediaId(id)
             .setMediaMetadata(MediaMetadata.Builder()
+                .setTitle(name)
+                .setArtist(artist)
                 .setArtworkUri(Uri.parse(testImgUrl))
                 .build())
             .build()
+
+
+    fun getTrackCache(id: String="1", name: String="", artist: String=""): TrackCache =
+        TrackCache(
+            id = id,
+            name = name,
+            artistName = artist,
+            imgUrl = "",
+            albumName = "",
+            time = Calendar.getInstance().timeInMillis
+        )
 }

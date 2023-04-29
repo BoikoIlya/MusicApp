@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:background="@color/white"
+        app:contentScrim="@android:color/transparent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
     <EditText
+        android:id="@+id/searchFavorites"
         android:drawableStart="@drawable/search"
         android:drawableTint="@color/orange"
         android:paddingLeft="10dp"
@@ -34,21 +51,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <TextView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Favorites Songs"
-        android:textSize="@dimen/h2"
-        android:textColor="@color/black"
-        />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Favorites Songs"
+            android:textColor="@color/black"
+            android:textSize="@dimen/h2"
+            app:layout_constraintEnd_toStartOf="@+id/shuffleFavorites"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
 
         <ImageButton
+            android:id="@+id/shuffleFavorites"
             android:layout_width="30dp"
             android:layout_height="30dp"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@drawable/shuffle_black"
+            android:backgroundTint="@color/black"
             app:layout_constraintEnd_toStartOf="@id/menu"
             android:layout_marginEnd="20dp"
             />
@@ -60,14 +81,47 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/menu"
+            android:clickable="true"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ProgressBar
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/favoritesProgress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        tools:listitem="@layout/track_item"
+        android:layout_marginTop="150dp"
+        android:indeterminateTint="@color/orange"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="200dp"
+        android:visibility="gone"
+        android:id="@+id/noFavoriteTracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_favorite_tracks"
+        android:textColor="@color/black"
+        android:textSize="@dimen/h1"
+        android:textAlignment="center"
         />
 
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoritesRcv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/track_item"
+        android:paddingBottom="50dp"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:overScrollMode="never"
+        android:fadeScrollbars="false"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

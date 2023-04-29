@@ -1,189 +1,260 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    >
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/song_action_bar"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="25dp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageButton
-            android:focusable="true"
-            android:clickable="true"
-            android:id="@+id/back_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@color/white"
-            android:src="@drawable/baseline_arrow_back_ios_24"
-            app:tint="@color/gray"
-/>
-
-        <TextView
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/playerRoot"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="90`s Old School"
-            android:textColor="@color/black"
-            android:textSize="@dimen/h3"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/like_btn"
-            app:layout_constraintStart_toEndOf="@id/back_btn"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@drawable/bottom_sheet_shape"
+            android:paddingBottom="20dp"
+            >
 
-        <ToggleButton
-            android:id="@+id/like_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/heart_btn_selector"
-            android:textOff=""
-            android:textOn=""
-            />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageButton
+                android:layout_marginStart="20dp"
+                android:id="@+id/back_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/down_arrow"
+                android:backgroundTint="@color/gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/gray" />
 
+            <TextView
+                android:id="@+id/albumName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="10dp"
+                android:text="90`s Old School"
+                android:textColor="@color/black"
+                android:textSize="@dimen/h3"
+                app:layout_constraintEnd_toStartOf="@id/like_btn"
+                app:layout_constraintBottom_toBottomOf="@+id/back_btn"
+                app:layout_constraintStart_toEndOf="@id/back_btn"
+                app:layout_constraintTop_toTopOf="@+id/back_btn" />
+
+            <ToggleButton
+                android:id="@+id/like_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/heart_btn_selector"
+                android:textOff=""
+                android:textOn=""
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/imgBg"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_marginTop="30dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="50dp"
+                android:outlineSpotShadowColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/albumName">
+
+                <ImageView
+                    android:id="@+id/songImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:scaleType="centerCrop"
+                    android:src="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/songName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="35dp"
+                android:gravity="center"
+                android:text="Skys`s The Limit (feat. 112)"
+                android:textColor="@color/black"
+                android:textSize="@dimen/h2"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgBg" />
+
+            <TextView
+                android:id="@+id/songAuthor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="Notorious B.I.G."
+                android:textColor="@color/gray"
+                android:textSize="@dimen/h3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/songName" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="35dp"
+                android:progress="30"
+                android:progressTint="@color/orange"
+                android:thumbTint="@color/orange"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/songAuthor" />
+
+
+            <TextView
+                android:id="@+id/currentPosition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="00:00"
+                android:textColor="@color/gray"
+                app:layout_constraintStart_toStartOf="@id/seekBar"
+                app:layout_constraintTop_toBottomOf="@id/seekBar"
+                android:textSize="@dimen/body1" />
+
+            <TextView
+                android:id="@+id/totalDuration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                app:layout_constraintEnd_toEndOf="@id/seekBar"
+                app:layout_constraintTop_toBottomOf="@id/seekBar"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/body1" />
+
+
+            <ToggleButton
+                android:id="@+id/repeat_song_btn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/repeat_btn_selector"
+                android:textOff=""
+                android:textOn=""
+                app:layout_constraintStart_toStartOf="@+id/currentPosition"
+                app:layout_constraintTop_toBottomOf="@id/currentPosition" />
+
+            <ImageButton
+                android:id="@+id/previous_song_btn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/previous"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/repeat_song_btn"
+                app:layout_constraintStart_toEndOf="@id/repeat_song_btn"
+                app:layout_constraintTop_toTopOf="@+id/repeat_song_btn"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView2"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:background="@color/orange"
+                android:backgroundTint="@color/orange"
+                app:cardCornerRadius="25dp"
+                app:layout_constraintBottom_toBottomOf="@+id/previous_song_btn"
+                app:layout_constraintEnd_toStartOf="@+id/next_song_btn"
+                app:layout_constraintStart_toEndOf="@+id/previous_song_btn"
+                app:layout_constraintTop_toTopOf="@+id/previous_song_btn">
+
+                <ToggleButton
+                    android:layout_gravity="center"
+                    android:id="@+id/play_song_btn"
+                    android:layout_width="42dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/play_btn_selector"
+                    android:backgroundTint="@color/white"
+                    android:textOff=""
+                    android:textOn="" />
+            </androidx.cardview.widget.CardView>
+
+            <ImageButton
+                android:id="@+id/next_song_btn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="@+id/shuffle_song_btn"
+                app:layout_constraintEnd_toStartOf="@+id/shuffle_song_btn"
+                app:layout_constraintTop_toTopOf="@+id/shuffle_song_btn" />
+
+            <ToggleButton
+                android:id="@+id/shuffle_song_btn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/shuffle_btn_selector"
+                android:textOff=""
+                android:textOn=""
+                android:layout_marginTop="35dp"
+                app:layout_constraintEnd_toEndOf="@+id/totalDuration"
+                app:layout_constraintHorizontal_bias="0.545"
+                app:layout_constraintTop_toBottomOf="@+id/totalDuration"
+                 />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="30dp"
-        app:cardCornerRadius="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="35dp"
+        android:backgroundTint="@color/black"
+        android:elevation="50dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/shuffle_song_btn"
+        app:layout_constraintStart_toStartOf="@id/repeat_song_btn"
+        app:layout_constraintTop_toBottomOf="@+id/cardView2"
+        >
 
-        app:cardElevation="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/song_action_bar">
-
-        <ImageView
-            android:id="@+id/songImg"
+        <LinearLayout
+            android:id="@+id/moveToQueue"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/im" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:text="@string/current_queue"
+                android:textColor="@color/white"
+                android:textSize="@dimen/h3"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/baseline_keyboard_arrow_right_24"
+                android:backgroundTint="@color/white"
+
+                />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:id="@+id/textView2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:text="Skys`s The Limit (feat. 112)"
-        android:textSize="@dimen/h2"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2" />
-
-    <TextView
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:text="Notorious B.I.G."
-        android:textColor="@color/gray"
-        android:textSize="@dimen/h3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="50dp"
-        android:progressTint="@color/orange"
-        android:thumbTint="@color/orange"
-        android:progress="30"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginStart="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar">
-
-        <ImageButton
-            android:backgroundTint="@color/gray"
-            android:id="@+id/repeat_song_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/repeat_black"
-            />
-
-        <ImageButton
-            android:layout_marginStart="30dp"
-            android:id="@+id/previous_song_btn"
-            app:layout_constraintStart_toEndOf="@id/repeat_song_btn"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/previous"
-            android:clickable="true"
-            />
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        app:cardCornerRadius="25dp"
-        android:background="@color/orange"
-        android:backgroundTint="@color/orange"
-        app:layout_constraintEnd_toStartOf="@id/next_song_btn"
-        app:layout_constraintStart_toEndOf="@+id/previous_song_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-    <ToggleButton
-       android:layout_margin="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/play_btn_selector"
-        android:backgroundTint="@color/white"
-        android:textOn=""
-        android:textOff=""
-        />
-    </androidx.cardview.widget.CardView>
-
-        <ImageButton
-            android:id="@+id/next_song_btn"
-           app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/nextt"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

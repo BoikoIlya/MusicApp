@@ -14,5 +14,26 @@
     <string name="bad_request">Bad Request</string>
     <string name="no_content">No Content</string>
     <string name="accepted_message">The request has been accepted for processing, but the processing has not been completed</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_favorite_tracks">No tracks</string>
+    <string name="by_name">By name</string>
+    <string name="by_time">By time</string>
+    <string name="by_artist">By artist</string>
+    <string name="success_add_message">Successfully added!</string>
+    <string name="success_remove_message">Successfully removed!</string>
+    <string name="yes_btn_text">Yes</string>
+    <string name="update_btn_text">Update</string>
+    <string name="no_btn_text">No</string>
+    <string name="later_btn_text">Later</string>
+    <string name="dublicated_track_message">"You have added this track before. Do you want to replace?"</string>
+    <string name="current_queue">Current queue</string>
+    <string name="update_notif_channel_name">Updates</string>
+    <string name="new_version">New version:&#160;</string>
+    <string name="load_update">Update is loading… </string>
+    <string name="download_error">Error with downloading</string>
+    <string name="loading_update_error">Loading checking error</string>
+    <string name="empty_url_error">Download url is empty</string>
+
 
 </resources>

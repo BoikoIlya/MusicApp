@@ -5,4 +5,6 @@
     <color name="orange">#ff6428</color>
     <color name="gray">#acacac</color>
     <color name="light_gray">#E6E6E3</color>
+    <color name="green">#4BB543</color>
+    <color name="red">#f44336</color>
 </resources>

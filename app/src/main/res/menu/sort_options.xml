@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+
+    <item
+        android:id="@+id/byTime"
+        android:title="@string/by_time"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/byName"
+        android:title="@string/by_name"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/byArtist"
+        android:title="@string/by_artist"
+        app:showAsAction="never"/>
+</menu>

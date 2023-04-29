@@ -96,7 +96,7 @@ data class Track(
                 id =  id,
                 imageUrl = album.images.first().url,
                 name = name,
-                artistName = artists.joinToString(separator = " "){ it.name },
+                artistName = artists.joinToString(separator = " & "){ it.name },
                 previewURL = preview_url?:"",
                 albumName = album.name,
             )

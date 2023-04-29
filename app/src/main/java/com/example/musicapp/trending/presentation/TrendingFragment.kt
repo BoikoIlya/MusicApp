@@ -2,6 +2,7 @@ package com.example.musicapp.trending.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +10,22 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.R
 import com.example.musicapp.main.di.App
-import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.Selector
+import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.databinding.TrendingFragmentBinding
+import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.trending.di.TrendingComponent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -27,7 +34,7 @@ import javax.inject.Inject
 class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
 
-    private lateinit var binding: TrendingFragmentBinding
+    private val binding by viewBinding(TrendingFragmentBinding::bind)
 
     private lateinit var viewModel: TrendingViewModel
 
@@ -37,13 +44,8 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
     @Inject
     lateinit var imageLoader: ImageLoader
 
-    @Inject
-    lateinit var mapper: TrackUi.Mapper<TrackUi>
-
-    @Inject
-    lateinit var managerResource: ManagerResource
-
     private lateinit var trendingComponent: TrendingComponent
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -54,28 +56,19 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = TrendingFragmentBinding.inflate(inflater,container,false)
-        return binding.root
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             viewModel.collectState(this@TrendingFragment){
-                it.apply(
-                    binding.errorImg,
-                    binding.errorTv,
-                    binding.reloadBtn,
-                    binding.trendingProgress
-                )
+
+                    it.apply(
+                        binding.errorImg,
+                        binding.errorTv,
+                        binding.reloadBtn,
+                        binding.trendingProgress,
+                    )
             }
         }
 
@@ -107,7 +100,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
         binding.rcvTrendingTracks.layoutManager = LinearLayoutManager(requireContext())
 
-        val tracksAdapter = TrendingTracksAdapter(
+        val tracksAdapter = TracksAdapter(
             this.requireContext(),
            playClickListener = object: Selector<MediaItem> {
                 override fun onSelect(data: MediaItem, position: Int) {
@@ -115,20 +108,22 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
             override fun onClick(data: MediaItem) {
-                //TODO
+                viewModel.addTrackToFavorites(data)
             }
         }, imageLoader)
 
         binding.rcvTrendingTracks.adapter = tracksAdapter
+        (binding.rcvTrendingTracks.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
         lifecycleScope.launch{
             viewModel.collectTracks(this@TrendingFragment){
                 tracksAdapter.map(it)
+                viewModel.saveCurrentPageQueue(it)
             }
         }
 
         lifecycleScope.launch{
-            viewModel.collectSelectedTrackPosition(this@TrendingFragment){
+            viewModel.collectSelectedTrack(this@TrendingFragment){
                 tracksAdapter.newPosition(it)
             }
         }

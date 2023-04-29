@@ -2,6 +2,7 @@ package com.example.musicapp.main.data
 
 import androidx.media3.common.MediaItem
 import javax.inject.Inject
+import kotlin.random.Random
 
 /**
  * Created by HP on 31.01.2023.
@@ -11,9 +12,7 @@ interface TemporaryTracksCache {
     suspend fun readCurrentPageTracks(): List<MediaItem>
 
     suspend fun saveCurrentPageTracks(list: List<MediaItem>)
-
-
-   suspend fun map(): List<MediaItem>
+    suspend fun map(): List<MediaItem>
 
     class Base @Inject constructor(): TemporaryTracksCache {
         private val currentPageTracks = mutableListOf<MediaItem>()
@@ -34,5 +33,6 @@ interface TemporaryTracksCache {
                 currentPageTracks
             }else emptyList()
         }
+
     }
 }

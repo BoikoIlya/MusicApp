@@ -3,6 +3,16 @@ package com.example.musicapp.trending.presentation
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.app.core.UiEventState
+import com.example.musicapp.core.testcore.TestDispatcherList
+import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
+import com.example.musicapp.core.testcore.TestUiEventsCommunication
+import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.FavoritesTracksCommunication
+import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
+import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
@@ -31,23 +41,30 @@ class TestTrendingViewModel: ObjectCreator() {
     lateinit var currentQueueCommunication: TestCurrentQueueCommunication
     lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
     lateinit var mediaController: TestMediaController
+    lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    lateinit var favoriteTracksRepository: FavoritesViewModelTest.TestFavoriteRepository
+    lateinit var uiEventsCommunication: TestUiEventsCommunication
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup(){
         val dispatchersList = TestDispatcherList()
+        uiEventsCommunication = TestUiEventsCommunication()
         communication = TestTrendingCommunication()
+        favoriteTracksRepository = FavoritesViewModelTest.TestFavoriteRepository()
         interactor = TestInteractor()
         playerControlsCommunication = TestPlayerControlsCommunication()
         currentQueueCommunication = TestCurrentQueueCommunication()
         selectedTrackCommunication = TestSelectedTrackCommunication()
         mediaController = TestMediaController()
-
+        singleUiStateCommunication = TestSingleUiStateCommunication()
         playerCommunication = PlayerCommunication.Base(
-           playerControlsCommunication,
-            currentQueueCommunication,
-            selectedTrackCommunication,
-            mediaController
+            playerControlsCommunication =playerControlsCommunication,
+            currentQueueCommunication = currentQueueCommunication,
+            selectedTrackCommunication =selectedTrackCommunication,
+            singleUiEventCommunication = singleUiStateCommunication,
+            trackDurationCommunication = TrackDurationCommunication.Base(),
+            controller = mediaController,
         )
         val handleTrendingResult = HandleTrendingResult.Base(
             communication,
@@ -63,15 +80,19 @@ class TestTrendingViewModel: ObjectCreator() {
             trendingCommunication = communication,
             handleTrendingResult = handleTrendingResult,
             dispatchersList = TestDispatcherList(),
-            playerCommunication = playerCommunication
+            playerCommunication = playerCommunication,
+            favoriteTracksRepository = favoriteTracksRepository,
+            temporaryTracksCache = TemporaryTracksCache.Base(),
+            mapper = TracksResultToSingleUiEventCommunicationMapper.Base(singleUiStateCommunication, uiEventsCommunication),
+
         )
     }
 
     @Test
     fun `test init success and error`() {
 
-        assertEquals(TrendingUiState.Loading,communication.stateList[0])
-        assertEquals(TrendingUiState.Success, communication.stateList[1])
+        assertEquals(TracksUiState.Loading,communication.stateList[0])
+        assertEquals(TracksUiState.Success, communication.stateList[1])
         assertEquals( 1, communication.playlistCommunicationCallCount)
         assertEquals( 1, communication.trackCommunicationCallCount)
 
@@ -79,8 +100,8 @@ class TestTrendingViewModel: ObjectCreator() {
         interactor.result = expected
         viewModel.loadData()
 
-        assertEquals(TrendingUiState.Loading,communication.stateList[2])
-        assertEquals(TrendingUiState.Error(""), communication.stateList[3])
+        assertEquals(TracksUiState.Loading,communication.stateList[2])
+        assertEquals(TracksUiState.Error(""), communication.stateList[3])
         assertEquals( 1, communication.playlistCommunicationCallCount)
         assertEquals( 1, communication.trackCommunicationCallCount)
 
@@ -101,23 +122,19 @@ class TestTrendingViewModel: ObjectCreator() {
 
     }
 
-
-
-    @ExperimentalCoroutinesApi
-    class TestDispatcherList(
-        private val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
-    ): DispatchersList {
-        override fun io(): CoroutineDispatcher = dispatcher
-
-        override fun ui(): CoroutineDispatcher = dispatcher
-
+    @Test
+    fun `test add tracks to favorites`() {
+        viewModel.addTrackToFavorites(getMediaItem("2"))
+        assertEquals(1, uiEventsCommunication.stateList.size)
+        assertEquals(UiEventState.ShowDialog::class, uiEventsCommunication.stateList.last()::class)
     }
 
-    class TestTrendingCommunication: TrendingCommunication {
-        val stateList = mutableListOf<TrendingUiState>()
+
+   open class TestTrendingCommunication: TrendingCommunication {
+        val stateList = mutableListOf<TracksUiState>()
         var trackCommunicationCallCount = 0
         var playlistCommunicationCallCount = 0
-        override fun showUiState(state: TrendingUiState) {
+        override fun showUiState(state: TracksUiState) {
             stateList.add(state)
         }
 
@@ -131,7 +148,7 @@ class TestTrendingViewModel: ObjectCreator() {
 
         override suspend fun collectState(
             owner: LifecycleOwner,
-            collector: FlowCollector<TrendingUiState>,
+            collector: FlowCollector<TracksUiState>,
         ) = Unit
 
         override suspend fun collectPlaylists(

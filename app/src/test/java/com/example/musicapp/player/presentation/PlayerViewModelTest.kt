@@ -1,13 +1,19 @@
 package com.example.musicapp.player.presentation
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.Player.REPEAT_MODE_ONE
+import com.example.musicapp.core.testcore.TestTemporaryTracksCache
+import com.example.musicapp.core.testcore.TestDispatcherList
+import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
+import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
+import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.*
-import com.example.musicapp.main.presentation.PlayerCommunicationState.ShuffleMode.Companion.ENABLE_SHUFFLE
 import com.example.musicapp.trending.data.ObjectCreator
-import com.example.musicapp.trending.presentation.TestTrendingViewModel
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.FlowCollector
 import org.junit.Before
 import org.junit.Test
+import java.time.Duration
 
 /**
  * Created by HP on 18.03.2023.
@@ -22,58 +28,50 @@ class PlayerViewModelTest: ObjectCreator() {
     lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
     lateinit var mediaController: TestMediaController
     lateinit var playbackPositionCommunication: TestTrackPlaybackPositionCommunication
-
+    lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    lateinit var isSavedCommunication: TestIsSavedCommunication
+    lateinit var repository:  FavoritesViewModelTest.TestFavoriteRepository
 
     @Before
     fun setup(){
-        val dispatchersList = TestTrendingViewModel.TestDispatcherList()
+        val dispatchersList = TestDispatcherList()
+        repository =  FavoritesViewModelTest.TestFavoriteRepository()
+        singleUiStateCommunication = TestSingleUiStateCommunication()
         playbackPositionCommunication = TestTrackPlaybackPositionCommunication()
         playerControlsCommunication = TestPlayerControlsCommunication()
         currentQueueCommunication = TestCurrentQueueCommunication()
         selectedTrackCommunication = TestSelectedTrackCommunication()
+        isSavedCommunication = TestIsSavedCommunication()
         mediaController = TestMediaController()
         viewModel = PlayerViewModel(
             playerCommunication = PlayerCommunication.Base(
-                playerControlsCommunication,
-                currentQueueCommunication,
-                selectedTrackCommunication,
-                mediaController
+                playerControlsCommunication =playerControlsCommunication,
+                currentQueueCommunication = currentQueueCommunication,
+                selectedTrackCommunication =selectedTrackCommunication,
+                singleUiEventCommunication = singleUiStateCommunication,
+                trackDurationCommunication = TrackDurationCommunication.Base(),
+                controller = mediaController,
             ),
-            communication = playbackPositionCommunication
-            , dispatchersList = dispatchersList,
+            communication = playbackPositionCommunication, dispatchersList = dispatchersList,
             controller = mediaController,
+            isSavedCommunication = isSavedCommunication,
+            favoriteTracksRepository = repository,
+            mapper = TracksResultToSingleUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
+            bottomSheetCommunication = MainViewModelTest.TestBottomSheetCommunication(),
+            slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
+            trackDurationCommunication = TrackDurationCommunication.Base(),
+            temporaryTracksCache = TestTemporaryTracksCache(),
 
-        )
+            )
     }
 
 
-    @Test
-    fun `test player action`(){
-        viewModel.playerAction(PlayerCommunicationState.Next)
-        assertEquals(1, mediaController.nextTrackClicked)
 
-        viewModel.playerAction(PlayerCommunicationState.Previous)
-        assertEquals(1, mediaController.previousTrackClicked)
-
-
-        viewModel.playerAction(PlayerCommunicationState.Pause)
-        assertEquals(false, mediaController.isPlayingg)
-
-        viewModel.playerAction(PlayerCommunicationState.Resume)
-        assertEquals(true, mediaController.isPlayingg)
-
-        viewModel.playerAction(PlayerCommunicationState.ShuffleMode(ENABLE_SHUFFLE))
-        assertEquals(ENABLE_SHUFFLE, mediaController.shuffleModeEnabledd)
-
-        viewModel.playerAction(PlayerCommunicationState.RepeatMode(REPEAT_MODE_ONE))
-        assertEquals(ENABLE_SHUFFLE, mediaController.shuffleModeEnabledd)
-    }
 
     @Test
-    fun  `test duration seekbar`(){
-        mediaController.durationn = 10
-       val result = viewModel.durationSeekBar()
-        assertEquals(10,result)
+    fun  `test duration for text view`(){
+       val result = viewModel.durationForTextView(Duration.ofSeconds(61).toMillis())
+        assertEquals("01:01",result)
     }
 
     @Test
@@ -89,4 +87,29 @@ class PlayerViewModelTest: ObjectCreator() {
         val result = viewModel.isRepeatEnabled()
         assertEquals(true,result)
     }
+
+    @Test
+    fun `is saved`(){
+        repository.list.addAll(listOf(getMediaItem("2")))
+        viewModel.isSaved("2")
+        assertEquals(true, isSavedCommunication.value)
+
+        repository.list.clear()
+        viewModel.isSaved("2")
+        assertEquals(false, isSavedCommunication.value)
+    }
+
+    class TestIsSavedCommunication: IsSavedCommunication{
+
+        var value = false
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<Boolean>,
+        ) = Unit
+
+        override suspend fun map(newValue: Boolean) {
+            value = newValue
+        }
+    }
+
 }

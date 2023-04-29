@@ -3,6 +3,7 @@ package com.example.musicapp.trending.presentation
 
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +30,7 @@ interface HandleTrendingResult {
             coroutineScope: CoroutineScope,
             fetchData: suspend () -> TrendingResult,
         ) {
-            communication.showUiState(TrendingUiState.Loading)
+            communication.showUiState(TracksUiState.Loading)
             coroutineScope.launch(dispatchersList.io()) {
                 val result = fetchData.invoke()
                  result.map(mapper)
@@ -47,11 +48,11 @@ class TrendingResultMapper @Inject constructor(
 
     override fun map(data: Pair<List<PlaylistDomain>, List<TrackDomain>>, message: String) {
         communication.showUiState(
-        if(data.first.isEmpty() || data.second.isEmpty()) TrendingUiState.Error(message)
+        if(data.first.isEmpty() || data.second.isEmpty()) TracksUiState.Error(message)
         else {
             communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
             communication.showTracks(data.second.map { it.map(tracksMapper) })
-            TrendingUiState.Success
+            TracksUiState.Success
         }
         )
     }
