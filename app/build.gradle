@@ -15,7 +15,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "0.1-beta"
+        versionName "2.0-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -103,5 +103,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.5.0'
 
-
+    //Paging
+    implementation "androidx.paging:paging-runtime:3.1.1"
 }

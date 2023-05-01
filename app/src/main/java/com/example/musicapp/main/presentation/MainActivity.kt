@@ -154,9 +154,15 @@ import javax.inject.Inject
             if(bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
                 bottomSheet.state != BottomSheetBehavior.STATE_HIDDEN)
                 viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
-            else finish()
+            else if(navController.backQueue.size > minimal_back_stack_size){
+                navController.popBackStack()
+            }else finish()
         }
 
+    }
+
+    companion object{
+        private const val minimal_back_stack_size = 2
     }
 
 }

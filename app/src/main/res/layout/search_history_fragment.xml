@@ -7,7 +7,7 @@
     android:background="@color/white">
 
     <EditText
-        android:id="@+id/search_edt"
+        android:id="@+id/search_history_edt"
         android:drawableStart="@drawable/search"
         android:drawableTint="@color/orange"
         android:paddingLeft="10dp"
@@ -28,7 +28,7 @@
         />
 
     <ProgressBar
-        android:visibility="visible"
+        android:visibility="gone"
         android:indeterminateTint="@color/orange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
-        android:text="Results"
+        android:text="History"
         android:textColor="@color/black"
         android:textSize="@dimen/h2"
         android:layout_marginBottom="20dp"

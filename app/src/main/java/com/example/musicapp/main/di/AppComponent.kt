@@ -7,6 +7,7 @@ import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.musicdialog.presentation.MusicDialogFragment
 import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.queue.di.QueueComponent
+import com.example.musicapp.search.di.SearchComponent
 import com.example.musicapp.trending.di.TrendingComponent
 import com.example.musicapp.updatesystem.presentation.FCMUpdateService
 import com.example.musicapp.updatesystem.presentation.UpdateDialogFragment
@@ -40,8 +41,9 @@ interface AppComponent {
 
     fun queueComponent(): QueueComponent.Builder
 
+    fun searchComponent(): SearchComponent.Builder
+
     fun inject(dialogFragment: MusicDialogFragment)
     fun inject(dialogFragment: UpdateDialogFragment)
-    fun inject(fcmUpdateService: FCMUpdateService)
 
 }

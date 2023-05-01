@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-interface MusicDataService{
+interface TrendingService{
 
     companion object{
         private const val limitResponse = 50

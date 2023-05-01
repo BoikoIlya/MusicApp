@@ -11,6 +11,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import androidx.room.Room
+import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
@@ -24,13 +25,14 @@ import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
-import com.example.musicapp.main.data.cloud.MusicDataService
+import com.example.musicapp.main.data.cloud.TrendingService
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.musicdialog.presentation.MusicDialogViewModel
 import com.example.musicapp.player.presentation.IsSavedCommunication
 import com.example.musicapp.player.presentation.PlayerService
 import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
+import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.trending.presentation.TrackUi
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
@@ -126,13 +128,27 @@ class AppModule {
     fun provideMusicDataService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory): MusicDataService {
+        converterFactory: GsonConverterFactory): TrendingService {
         return builder
             .baseUrl(baseUrlMusicData)
             .addConverterFactory(converterFactory)
             .client(client)
             .build()
-            .create(MusicDataService::class.java)
+            .create(TrendingService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchTracksService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: GsonConverterFactory): SearchTrackService {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(SearchTrackService::class.java)
     }
 
     @Provides

@@ -9,7 +9,7 @@
         android:icon="@drawable/heart"
         />
 <item
-    android:id="@+id/searchFragment"
+    android:id="@+id/searchHistoryFragment"
     android:icon="@drawable/search_png"
     />
 </menu>
