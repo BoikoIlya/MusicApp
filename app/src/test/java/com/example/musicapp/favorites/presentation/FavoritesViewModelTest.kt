@@ -49,7 +49,7 @@ class FavoritesViewModelTest: ObjectCreator() {
             dispatchersList = dispatchersList,
             favoritesTracksCommunication = favoriteTracksCommunion,
             tracksResultToTracksCommunicationMapper =  TracksResultToTracksCommunicationMapper.Base(favoriteTracksCommunion),
-            tracksResultToSingleUiEventCommunicationMapper =  TracksResultToSingleUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
+            tracksResultToSingleUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
         )
     }
 

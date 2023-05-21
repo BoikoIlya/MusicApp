@@ -12,7 +12,6 @@ import javax.inject.Singleton
 interface CurrentQueueCommunication: Communication.Mutable<List<MediaItem>> {
 
 
-    @Singleton
     class Base @Inject constructor(): Communication.UiUpdate<List<MediaItem>>(emptyList()),
         CurrentQueueCommunication
 

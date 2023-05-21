@@ -34,6 +34,14 @@
     <string name="download_error">Error with downloading</string>
     <string name="loading_update_error">Loading checking error</string>
     <string name="empty_url_error">Download url is empty</string>
+    <string name="oops_can_t_load_data">Oops, can`t load data</string>
+    <string name="nothing_found_message">Nothing found</string>
+    <string name="history">History</string>
+    <string name="clear">Clear</string>
+    <string name="successfully_cleared">History successfully cleared</string>
+    <string name="the_history_is_empty">The history is empty</string>
+    <string name="favorites_songs">Favorites Songs</string>
+    <string name="results">Results</string>
 
 
 </resources>

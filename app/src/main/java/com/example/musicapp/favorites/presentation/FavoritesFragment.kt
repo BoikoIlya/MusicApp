@@ -1,24 +1,14 @@
 package com.example.musicapp.favorites.presentation
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.ToggleButton
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import androidx.core.view.MenuHost
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -26,20 +16,15 @@ import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
 import com.example.musicapp.databinding.FavorotesFragmentBinding
 import com.example.musicapp.favorites.data.SortingState
-import com.example.musicapp.favorites.data.cache.TracksDao
 import com.example.musicapp.favorites.di.FavoriteComponent
 import com.example.musicapp.main.di.App
-import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.trending.presentation.*
-import com.google.android.material.snackbar.Snackbar
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -148,11 +133,16 @@ class FavoritesFragment: Fragment() {
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.collectPlayerControls(this@FavoritesFragment){
+                it.apply(binding.favoritesRcv)
+            }
+        }
+
 
         binding.shuffleFavorites.setOnClickListener {
             viewModel.shuffle()
         }
-
 
 
         binding.menu.setOnClickListener {

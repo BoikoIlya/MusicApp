@@ -1,9 +1,14 @@
 package com.example.musicapp.main.presentation
 
+import android.animation.ValueAnimator
+import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.databinding.ActivityMainBinding
@@ -25,6 +30,10 @@ interface PlayerControlsState {
     fun apply(
         binding: PlayerFragmentBinding,
         viewModel: PlayerViewModel
+    )
+
+    fun apply(
+        rcv: RecyclerView
     )
 
     @UnstableApi
@@ -61,7 +70,25 @@ interface PlayerControlsState {
             }
         }
 
+        override fun apply(rcv: RecyclerView) {
+            val context: Context = rcv.context
+            val density = context.resources.displayMetrics.density
+            val marginBottomPx = (140 * density).toInt()
 
+            val initialMargin = (rcv.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+            ValueAnimator.ofInt(initialMargin, marginBottomPx).apply {
+                addUpdateListener { valueAnimator ->
+                    val layoutParams = rcv.layoutParams as ViewGroup.MarginLayoutParams
+                    layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin, layoutParams.rightMargin, valueAnimator.animatedValue as Int)
+                    rcv.requestLayout()
+                }
+                interpolator = AccelerateDecelerateInterpolator()
+                this.duration = duration
+                start()
+            }
+
+        }
     }
 
     @UnstableApi data class Pause(
@@ -114,6 +141,17 @@ interface PlayerControlsState {
 
         override fun apply(binding: PlayerFragmentBinding, viewModel: PlayerViewModel) {
             binding.playSongBtn.isChecked = true
+        }
+
+        override fun apply(rcv: RecyclerView) {
+            val context: Context = rcv.context
+            val density = context.resources.displayMetrics.density
+            val marginDp = 60 // The desired margin in dp
+            val marginPx = (marginDp * density).toInt()
+
+            val layoutParams = rcv.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.setMargins(0, 0, 0, marginPx)
+            rcv.layoutParams = layoutParams
         }
 
 

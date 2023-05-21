@@ -6,7 +6,6 @@ import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.main.di.ViewModelKey
-import com.example.musicapp.trending.data.HandleResponse
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
@@ -45,15 +44,7 @@ interface TrendingModule{
 
     @Binds
     @TrendingScope
-    fun bindHandleResponse(obj: HandleResponse.Base): HandleResponse
-
-    @Binds
-    @TrendingScope
     fun bindTrendingInteractor(obj: TrendingInteractor.Base): TrendingInteractor
-
-    @Binds
-    @TrendingScope
-    fun bindHandleError(obj: HandleError.Base): HandleError
 
     @Binds
     @TrendingScope

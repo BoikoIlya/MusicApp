@@ -11,7 +11,7 @@ class TestTemporaryTracksCache: TemporaryTracksCache, ObjectCreator() {
     var isNewQuery = false
     val tracks = emptyList<MediaItem>().toMutableList()
 
-    override suspend fun readCurrentPageTracks(): List<MediaItem> = tracks
+    override  fun readCurrentPageTracks(): List<MediaItem> = tracks
 
     override suspend fun saveCurrentPageTracks(list: List<MediaItem>) {
         tracks.addAll(list)
@@ -20,5 +20,10 @@ class TestTemporaryTracksCache: TemporaryTracksCache, ObjectCreator() {
     override suspend fun map(): List<MediaItem> {
         return if(isNewQuery) tracks
         else emptyList<MediaItem>()
+    }
+
+    override suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean) {
+        if(isNewFirstPage) tracks.clear()
+        tracks.addAll(list)
     }
 }

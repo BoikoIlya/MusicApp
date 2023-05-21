@@ -1,12 +1,10 @@
 package com.example.musicapp.trending.presentation
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.media3.common.MediaItem
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -14,11 +12,6 @@ import com.example.musicapp.R
 import com.example.musicapp.app.core.*
 import com.example.musicapp.databinding.TrackItemBinding
 import com.example.musicapp.favorites.presentation.Remover
-import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
-import kotlin.system.measureTimeMillis
-import kotlin.time.Duration.Companion.microseconds
-import kotlin.time.measureTime
 
 /**
  * Created by HP on 30.01.2023.
@@ -34,7 +27,7 @@ interface Scroller{
 interface RemoveItem{
     fun removeFromAdapter(viewModel: Remover, position: Int)
 }
-class TracksAdapter(
+ class TracksAdapter(
     private val context: Context,
     private val playClickListener: Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
@@ -43,8 +36,9 @@ class TracksAdapter(
 ): RecyclerView.Adapter<TrendingTracksViewHolder>(),
     Mapper<List<MediaItem>, Unit>,Select, Scroller, RemoveItem {
 
-    private val tracks = mutableListOf<MediaItem>()
-    private var selectedTrackPosition = -1
+    private val tracksCurrentList = mutableListOf<MediaItem>()
+    protected var selectedTrackPosition = -1
+    protected var selectedTrack: MediaItem? = null //For case when selected track will collect faster than tracks
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrendingTracksViewHolder {
@@ -58,34 +52,39 @@ class TracksAdapter(
         )
     }
 
-    override fun getItemCount(): Int = tracks.size
+    override fun getItemCount(): Int = tracksCurrentList.size
 
     override fun onBindViewHolder(holder: TrendingTracksViewHolder, position: Int) {
-            holder.bind(tracks[position], position, selectedTrackPosition)
+            holder.bind(tracksCurrentList[position], position, selectedTrackPosition)
     }
 
-    lateinit var result: DiffUtil.DiffResult
+    private lateinit var result: DiffUtil.DiffResult
     override  fun map(data: List<MediaItem>) {
+        val diff = TendingTracksDiffUtilCallback(data, tracksCurrentList)
+        result = DiffUtil.calculateDiff(diff)
+        tracksCurrentList.clear()
+        tracksCurrentList.addAll(data)
+        if (selectedTrackPosition != -1)
+            selectedTrackPosition = result.convertOldPositionToNew(selectedTrackPosition)
 
-            val diff = TendingTracksDiffUtilCallback(data, tracks)
-             result = DiffUtil.calculateDiff(diff)
-            tracks.clear()
-            tracks.addAll(data)
-            if (selectedTrackPosition != -1)
-                selectedTrackPosition = result.convertOldPositionToNew(selectedTrackPosition)
+        result.dispatchUpdatesTo(this@TracksAdapter)
 
-            result.dispatchUpdatesTo(this@TracksAdapter)
+        if(selectedTrack!=null) newPosition(selectedTrack!!)
+        else selectedTrack = null
     }
 
 
     override fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
-        val position = tracks.indexOf(mediaItem)
+        val position = tracksCurrentList.indexOf(mediaItem)
         if (position!=-1 ){
             selectedTrackPosition = position
             notifyItemChanged(position)
-        }else selectedTrackPosition = -1
+        }else {
+            selectedTrackPosition = -1
+            selectedTrack = mediaItem
+        }
         notifyItemChanged(old)
     }
 
@@ -95,13 +94,14 @@ class TracksAdapter(
     }
 
     override fun removeFromAdapter(viewModel: Remover, position: Int) {
-        viewModel.removeItem(tracks[position].mediaId)
+        viewModel.removeItem(tracksCurrentList[position].mediaId)
     }
 
 
 
-
 }
+
+
 
 class TrendingTracksViewHolder(
     private val context: Context,

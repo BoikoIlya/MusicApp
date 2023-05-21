@@ -1,62 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:background="@color/white">
 
-    <EditText
-        android:drawableStart="@drawable/search"
-        android:drawableTint="@color/orange"
-        android:paddingLeft="10dp"
-        android:drawablePadding="10dp"
-        android:textCursorDrawable="@drawable/cursor_drawable"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/search_bg"
-        android:inputType="text"
-        android:hint="@string/search_track"
-        android:textColorHint="@color/gray"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="25dp"
-        android:textColor="@color/black"
-        android:textColorLink="@color/orange"
-        android:textColorHighlight="@color/orange"
-        android:foregroundTint="@color/orange"
-        />
-
-    <ProgressBar
-        android:visibility="visible"
-        android:indeterminateTint="@color/orange"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:text="Results"
-        android:textColor="@color/black"
-        android:textSize="@dimen/h2"
-        android:layout_marginBottom="20dp"
-        />
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:background="@color/white"
+            app:contentScrim="@android:color/transparent"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <EditText
+                        android:id="@+id/search_edt"
+                        android:drawableStart="@drawable/search"
+                        android:drawableTint="@color/orange"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:drawablePadding="10dp"
+                        android:textCursorDrawable="@drawable/cursor_drawable"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/search_bg"
+                        android:inputType="text"
+                        android:hint="@string/search_track"
+                        android:textColorHint="@color/gray"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="25dp"
+                        android:textColor="@color/black"
+                        android:textColorLink="@color/orange"
+                        android:textColorHighlight="@color/orange"
+                        android:foregroundTint="@color/orange"
+                        android:imeOptions="actionSearch"
+                        />
+
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="25dp"
+                        android:text="@string/results"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/h2"
+                        android:layout_marginBottom="10dp"
+                        />
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <include
+            android:id="@+id/search_load_state_bar"
+            layout="@layout/default_load_state"
+            android:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        tools:listitem="@layout/track_item"
-        />
+            android:id="@+id/searchRcv"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="140dp"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        tools:listitem="@layout/serach_history_item"
-        />
+            />
 
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

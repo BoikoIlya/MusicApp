@@ -8,6 +8,7 @@ import com.example.musicapp.app.core.UiEventState
 import com.example.musicapp.core.testcore.TestTemporaryTracksCache
 import com.example.musicapp.core.testcore.TestDispatcherList
 import com.example.musicapp.core.testcore.TestManagerResource
+import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.core.testcore.TestUiEventsCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.trending.data.ObjectCreator
@@ -39,9 +40,11 @@ class MainViewModelTest: ObjectCreator() {
     lateinit var uiEventsCommunication: TestUiEventsCommunication
     lateinit var firebaseMessagingWrapper: TestFirebaseMessagingWrapper
     lateinit var temporaryTracksCache: TemporaryTracksCache
+    lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
 
     @Before
     fun setup(){
+        singleUiStateCommunication = TestSingleUiStateCommunication()
         temporaryTracksCache = TestTemporaryTracksCache()
         playerControlsCommunication = TestPlayerControlsCommunication()
         currentQueueCommunication = TestCurrentQueueCommunication()
@@ -55,7 +58,7 @@ class MainViewModelTest: ObjectCreator() {
             playerControlsCommunication =playerControlsCommunication,
             currentQueueCommunication =currentQueueCommunication,
             selectedTrackCommunication =selectedTrackCommunication,
-            singleUiEventCommunication = SingleUiEventCommunication.Base(),
+            singleUiEventCommunication = singleUiStateCommunication,
             trackDurationCommunication = TrackDurationCommunication.Base(),
             controller = mediaController
         )
@@ -63,7 +66,7 @@ class MainViewModelTest: ObjectCreator() {
             playerCommunication = playerCommunication,
             temporaryTracksCache = temporaryTracksCache,
             dispatchersList = TestDispatcherList(),
-            singleUiEventCommunication = SingleUiEventCommunication.Base(),
+            singleUiEventCommunication = singleUiStateCommunication,
             bottomSheetCommunication = bottomSheetCommunication,
             slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
             updateSystemRepository = updateSystemRepo,
@@ -115,6 +118,18 @@ class MainViewModelTest: ObjectCreator() {
         viewModel.saveCurrentPageQueue(listOf(getMediaItem("2")))
 
         assertEquals("2", temporaryTracksCache.readCurrentPageTracks().first().mediaId)
+    }
+
+    @Test
+    fun `test notification permission`(){
+        viewModel.notificationPermissionCheck()
+        assertEquals(SingleUiEventState.CheckForPermission::class,singleUiStateCommunication.stateList.last()::class)
+    }
+
+    @Test
+    fun `test dont show permission`(){
+        viewModel.dontShowPermission()
+        assertEquals(0,singleUiStateCommunication.stateList.size)
     }
 
     class TestBottomSheetCommunication: BottomSheetCommunication{

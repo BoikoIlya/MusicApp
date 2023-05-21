@@ -2,7 +2,7 @@ package com.example.musicapp.trending.data
 
 import com.example.musicapp.app.SpotifyDto.FetauredPlaylists
 import com.example.musicapp.app.SpotifyDto.Item
-import com.example.musicapp.main.data.cloud.MusicDataService
+import com.example.musicapp.main.data.cloud.TrendingService
 import com.example.musicapp.core.testcore.TokenStoreTest
 import com.example.testapp.spotifyDto.Recomendations
 import com.example.testapp.spotifyDto.Track
@@ -40,7 +40,7 @@ class TestTrendingRepository: ObjectCreator() {
     }
 
 
-    class TestTrendingService: MusicDataService, ObjectCreator(){
+    class TestTrendingService: TrendingService, ObjectCreator(){
 
         override suspend fun getRecommendations(
             auth: String,

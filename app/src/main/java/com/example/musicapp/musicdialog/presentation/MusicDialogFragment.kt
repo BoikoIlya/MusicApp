@@ -39,6 +39,7 @@ import javax.inject.Inject
         val listener = DialogInterface.OnClickListener { p0, buttonId ->
             if(buttonId == DialogInterface.BUTTON_POSITIVE)
                 viewModel.saveTrack(viewModel.fetchData()!!)
+            else viewModel.notSave()
         }
         val dialog= AlertDialog.Builder(requireContext())
             .setCancelable(false)

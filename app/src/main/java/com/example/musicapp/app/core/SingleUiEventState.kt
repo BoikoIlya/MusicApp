@@ -2,15 +2,20 @@ package com.example.musicapp.app.core
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
+import com.example.musicapp.main.presentation.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -56,6 +61,22 @@ sealed interface SingleUiEventState{
         data class Success(
             private val message: String
         ) : ShowSnackBar(message, R.color.green)
+    }
+
+    data class CheckForPermission(
+        private val permission: String,
+        private val permissionRequestCode: Int
+    ): SingleUiEventState{
+        override fun apply(
+            fragmentManager: FragmentManager,
+            context: Context,
+            binding: ActivityMainBinding,
+        ) {
+            Log.d("tag", "apply: MANIFEST PERM")
+            if(ContextCompat.checkSelfPermission(context,permission) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(context as MainActivity, arrayOf(permission),permissionRequestCode)
+        }
+
     }
 
 }

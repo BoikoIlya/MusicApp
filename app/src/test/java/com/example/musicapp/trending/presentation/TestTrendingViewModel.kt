@@ -2,17 +2,13 @@ package com.example.musicapp.trending.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.app.core.UiEventState
+import com.example.musicapp.core.testcore.TestTemporaryTracksCache
 import com.example.musicapp.core.testcore.TestDispatcherList
 import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.core.testcore.TestUiEventsCommunication
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.FavoritesTracksCommunication
 import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
-import com.example.musicapp.main.data.TemporaryTracksCache
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
@@ -20,10 +16,9 @@ import com.example.musicapp.trending.domain.TrendingInteractor
 import com.example.musicapp.trending.presentation.*
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
@@ -44,6 +39,7 @@ class TestTrendingViewModel: ObjectCreator() {
     lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
     lateinit var favoriteTracksRepository: FavoritesViewModelTest.TestFavoriteRepository
     lateinit var uiEventsCommunication: TestUiEventsCommunication
+    lateinit var tracksCache: TestTemporaryTracksCache
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
@@ -58,6 +54,7 @@ class TestTrendingViewModel: ObjectCreator() {
         selectedTrackCommunication = TestSelectedTrackCommunication()
         mediaController = TestMediaController()
         singleUiStateCommunication = TestSingleUiStateCommunication()
+        tracksCache = TestTemporaryTracksCache()
         playerCommunication = PlayerCommunication.Base(
             playerControlsCommunication =playerControlsCommunication,
             currentQueueCommunication = currentQueueCommunication,
@@ -82,8 +79,8 @@ class TestTrendingViewModel: ObjectCreator() {
             dispatchersList = TestDispatcherList(),
             playerCommunication = playerCommunication,
             favoriteTracksRepository = favoriteTracksRepository,
-            temporaryTracksCache = TemporaryTracksCache.Base(),
-            mapper = TracksResultToSingleUiEventCommunicationMapper.Base(singleUiStateCommunication, uiEventsCommunication),
+            temporaryTracksCache = tracksCache,
+            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, uiEventsCommunication),
 
         )
     }
@@ -109,12 +106,13 @@ class TestTrendingViewModel: ObjectCreator() {
 
     @Test
     fun `test play music`() {
-        interactor.isNewQuerry = true
-        viewModel.playMusic(getMediaItem(), 1)
+        tracksCache.isNewQuery = true
+       runBlocking {   tracksCache.saveCurrentPageTracks(listOf(getMediaItem()))}
+        viewModel.playMusic(getMediaItem())
 
         assertEquals(listOf(getMediaItem()), currentQueueCommunication.data)
         assertEquals(listOf(getMediaItem()), mediaController.mediaItemList)
-        assertEquals(1, mediaController.seekToDefaultPositionIndex)
+        assertEquals(0, mediaController.seekToDefaultPositionIndex)
         assertEquals(true, mediaController.isPrepared)
         assertEquals(true, mediaController.isPlayingg)
         assertEquals(PlayerControlsState.Play(getMediaItem()),playerControlsCommunication.data)

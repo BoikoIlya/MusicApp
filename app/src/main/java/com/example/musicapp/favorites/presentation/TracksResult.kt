@@ -56,12 +56,12 @@ interface TracksResultToTracksCommunicationMapper: TracksResult.Mapper<Unit>{
     }
 }
 
-interface TracksResultToSingleUiEventCommunicationMapper: TracksResult.Mapper<Unit>{
+interface TracksResultToUiEventCommunicationMapper: TracksResult.Mapper<Unit>{
 
     class Base @Inject constructor(
         private val singleUiEventCommunication: SingleUiEventCommunication,
         private val uiEventsCommunication: UiEventsCommunication
-    ) : TracksResultToSingleUiEventCommunicationMapper{
+    ) : TracksResultToUiEventCommunicationMapper{
 
         override suspend fun map(message: String, list: List<MediaItem>) {
             if(message.isNotEmpty())

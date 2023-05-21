@@ -2,25 +2,19 @@ package com.example.musicapp.favorites.presentation
 
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.CollectSelectedTrack
 import com.example.musicapp.main.presentation.PlayerCommunication
-import com.example.musicapp.main.presentation.PlayerCommunicationState
-import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.Random
 import javax.inject.Inject
 
 /**
@@ -33,7 +27,7 @@ class FavoritesViewModel @Inject constructor(
     private val temporaryTracksCache: TemporaryTracksCache,
     private val favoritesTracksCommunication: TracksCommunication,
     private val tracksResultToTracksCommunicationMapper: TracksResultToTracksCommunicationMapper,
-    private val tracksResultToSingleUiEventCommunicationMapper: TracksResultToSingleUiEventCommunicationMapper,
+    private val tracksResultToSingleUiEventCommunicationMapper: TracksResultToUiEventCommunicationMapper,
 ): BaseViewModel(playerCommunication, temporaryTracksCache,dispatchersList),
     CollectTracks,CollectSelectedTrack, Remover {
 
@@ -56,7 +50,6 @@ class FavoritesViewModel @Inject constructor(
             this@FavoritesViewModel.sortState = sortingState
             repository.fetchData(sortingState.copyObj(query)).collectLatest {
                 it.map(tracksResultToTracksCommunicationMapper)
-                Log.d("tag", "fetchData: ${sortingState.copyObj(query)}")
             }
         }
     }
@@ -67,23 +60,9 @@ class FavoritesViewModel @Inject constructor(
     }
 
 
-    fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
-        val queue = temporaryTracksCache.map()
-        if(queue.isNotEmpty()){
-            val newQueue = mutableListOf<MediaItem>()
-            newQueue.addAll(queue)
-            withContext(dispatchersList.ui()) {
-                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
-            }
-        }
-        val positionn = temporaryTracksCache.readCurrentPageTracks().indexOfFirst { it.mediaId==item.mediaId }
-        withContext(dispatchersList.ui()) {
-            playerCommunication.map(PlayerCommunicationState.Play(item,positionn))
-        }
-    }
+
 
     fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
-        Log.d("tag", "shuffle: ")
         val newShuffledList = temporaryTracksCache.readCurrentPageTracks()
         favoritesTracksCommunication.showTracks(newShuffledList.shuffled())
     }

@@ -15,10 +15,16 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "2.0-beta"
+        versionName "3.0-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -81,7 +87,10 @@ dependencies {
 
     // Tests
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
-    testImplementation("app.cash.turbine:turbine:0.12.1")
+    testImplementation 'app.cash.turbine:turbine:0.12.1'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+
 
     // Media
     implementation "androidx.media3:media3-exoplayer:1.0.0-rc02"
@@ -103,5 +112,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.5.0'
 
-
+    //Paging
+    implementation "androidx.paging:paging-runtime:3.1.1"
 }

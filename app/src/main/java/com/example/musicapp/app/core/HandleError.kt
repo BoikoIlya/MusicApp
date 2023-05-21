@@ -16,7 +16,6 @@ interface HandleError {
 
     class Base @Inject constructor(
         private val managerResource: ManagerResource,
-        private val auth: AuthorizationRepository
     ): HandleError {
 
 
@@ -32,10 +31,11 @@ interface HandleError {
                     429 -> R.string.too_many_requests
                     500 -> R.string.server_error_message
                     502 -> R.string.bad_gatawey_message
-                    else -> R.string.service_is_unavailable
+                    else -> R.string.oops_can_t_load_data
                 }
             }else if(e is UnknownHostException) id = R.string.no_connection_message
-            else id =  R.string.service_is_unavailable
+            else if(e is NoSuchElementException) id = R.string.nothing_found_message
+            else id =  R.string.oops_can_t_load_data
 
        return managerResource.getString(id)
         }

@@ -20,13 +20,12 @@
                 android:id="@+id/back_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="@drawable/down_arrow"
-                android:backgroundTint="@color/gray"
+                android:src="@drawable/down_arrow"
+                android:tint="@color/gray"
+                android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/gray" />
+                 />
 
             <TextView
                 android:id="@+id/albumName"
@@ -157,11 +156,12 @@
 
             <ImageButton
                 android:id="@+id/previous_song_btn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:background="@drawable/previous"
-                android:clickable="true"
+                android:src="@drawable/previous"
+                android:tint="@color/black"
+                android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintBottom_toBottomOf="@+id/repeat_song_btn"
                 app:layout_constraintStart_toEndOf="@id/repeat_song_btn"
                 app:layout_constraintTop_toTopOf="@+id/repeat_song_btn"
@@ -196,7 +196,9 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginEnd="30dp"
-                android:background="@drawable/next"
+                android:src="@drawable/next"
+                android:tint="@color/black"
+                android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintBottom_toBottomOf="@+id/shuffle_song_btn"
                 app:layout_constraintEnd_toStartOf="@+id/shuffle_song_btn"
                 app:layout_constraintTop_toTopOf="@+id/shuffle_song_btn" />
@@ -233,7 +235,9 @@
             android:id="@+id/moveToQueue"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:foreground="?selectableItemBackground"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
