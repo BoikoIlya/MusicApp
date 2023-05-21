@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="10dp"
+    android:foreground="?selectableItemBackground"
+    >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/access_time"
+        android:layout_gravity="start|center_vertical"
+        android:layout_weight="0.01"
+        />
+
+    <TextView
+        android:layout_weight="0.98"
+        android:layout_marginHorizontal="20dp"
+        android:id="@+id/history_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="hello world!"
+        android:textSize="@dimen/h3"
+        android:textColor="@color/black"
+        />
+
+        <ImageButton
+            android:id="@+id/remove_history_btn"
+            android:layout_weight="0.01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/close"
+            android:tint="@color/gray"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_gravity="end|center_vertical"
+            />
+</LinearLayout>

@@ -3,6 +3,20 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
+        <entry key="-1937904166">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="R58M44GZKDL" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-A705FN" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-333670248">
           <value>
             <AndroidTestResultsTableState>
@@ -32,6 +46,20 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-137208343">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="R58M44GZKDL" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-A705FN" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-4409899">
           <value>
             <AndroidTestResultsTableState>
@@ -40,6 +68,20 @@
                   <entry key="6.7_Horizontal_Fold-in_API_31" value="120" />
                   <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="78687399">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="R58M44GZKDL" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-A705FN" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -58,7 +100,35 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="913731174">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="R58M44GZKDL" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-A705FN" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="1422790802">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="R58M44GZKDL" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-A705FN" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1439444944">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">

@@ -1,10 +1,10 @@
 package com.example.musicapp.app.SpotifyDto
 
+import android.util.Log
 import androidx.media3.common.MediaItem
-import com.example.musicapp.trending.domain.TrackDomain
-import com.example.testapp.spotifyDto.ExternalUrls
-import com.example.testapp.spotifyDto.Image
+import com.example.musicapp.main.data.TemporaryTracksCache
 import javax.inject.Inject
+
 
 /**
  * Created by HP on 29.04.2023.
@@ -13,11 +13,13 @@ data class SearchTracks(
    private val href: String,
    private val items: List<SearchItem>,
    private val limit: Int,
-   private val next: String,
+   private val next: String?,
    private val offset: Int,
    private val previous: Any,
    private val total: Int
 ){
+
+    fun isEmpty() = items.isEmpty()
     fun <T> map(mapper: Mapper<T>):T = mapper.map(
         href,
         items,
@@ -33,7 +35,7 @@ data class SearchTracks(
             href: String,
             items: List<SearchItem>,
             limit: Int,
-            next: String,
+            next: String?,
             offset: Int,
             previous: Any,
             total: Int
@@ -41,17 +43,18 @@ data class SearchTracks(
     }
 
 
-    class SearchTracksToMediaItemMapper @Inject constructor(): Mapper<List<MediaItem>>{
+    class Base @Inject constructor(): Mapper<List<MediaItem>>{
         override fun map(
             href: String,
             items: List<SearchItem>,
             limit: Int,
-            next: String,
+            next: String?,
             offset: Int,
             previous: Any,
             total: Int,
         ): List<MediaItem> {
-            return items.filter { it.preview_url.isNotEmpty() }.map { it.map() }
+            val tracks = items.filter { it.preview_url.isNotEmpty() }.map { it.map() }.distinctBy { it.mediaId }
+            return tracks
         }
 
     }

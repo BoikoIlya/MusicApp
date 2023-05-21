@@ -2,6 +2,7 @@ package com.example.musicapp.queue.presenatation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -70,12 +71,14 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
 
         lifecycleScope.launch{
             viewModel.collectCurrentQueue(this@QueueFragment){
+                Log.d("tag", "CURRENT QUEUE: ${it.size} ")
                 tracksAdapter.map(it)
             }
         }
 
         lifecycleScope.launch{
             viewModel.collectSelectedTrack(this@QueueFragment){
+                Log.d("tag", "queue frag elected track: ${it} ")
                 tracksAdapter.newPosition(it)
             }
         }

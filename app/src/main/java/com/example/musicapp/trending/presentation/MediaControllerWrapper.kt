@@ -1,6 +1,7 @@
 package com.example.musicapp.trending.presentation
 
 import android.os.Looper
+import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -80,7 +81,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun addMediaItems(mediaItems: MutableList<MediaItem>) {
-             TODO("Not yet implemented")
+             controller?.addMediaItems(mediaItems)
          }
 
          override fun addMediaItems(index: Int, mediaItems: MutableList<MediaItem>) {
@@ -174,6 +175,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
+             Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
              controller?.seekToDefaultPosition(mediaItemIndex)
          }
 
@@ -325,9 +327,7 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
-         override fun getCurrentMediaItemIndex(): Int {
-             TODO("Not yet implemented")
-         }
+         override fun getCurrentMediaItemIndex(): Int = controller!!.currentMediaItemIndex
 
          override fun getNextWindowIndex(): Int {
              TODO("Not yet implemented")

@@ -1,7 +1,9 @@
 package com.example.musicapp.main.presentation
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -96,7 +98,6 @@ import javax.inject.Inject
 
         lifecycleScope.launch {
             viewModel.collectUiEventsCommunication(this@MainActivity){
-                Log.d("tag", "apply: $it")
                 it.apply(supportFragmentManager,this@MainActivity, binding)
             }
         }
@@ -165,4 +166,20 @@ import javax.inject.Inject
         private const val minimal_back_stack_size = 2
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            viewModel.notificationPermissionCheck()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode==MainViewModel.permissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+            viewModel.dontShowPermission()
+        }
+    }
 }

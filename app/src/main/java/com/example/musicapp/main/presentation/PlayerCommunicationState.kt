@@ -106,7 +106,6 @@ sealed interface PlayerCommunicationState{
 
             selectedTrackCommunication.map(track)
             playerControls.map(PlayerControlsState.Play(track))
-
             controller.seekToDefaultPosition(position)
             controller.prepare()
             controller.playWhenReady = true
@@ -242,5 +241,22 @@ sealed interface PlayerCommunicationState{
         }
     }
 
+    data class AddMediaItems(
+        private val newPageMediaItems:  List<MediaItem>,
+        private val allQueue: List<MediaItem>
+    ): PlayerCommunicationState{
+        override fun apply(
+            playerControls: PlayerControlsCommunication,
+            currentQueueCommunication: CurrentQueueCommunication,
+            selectedTrackCommunication: SelectedTrackCommunication,
+            controller: MediaControllerWrapper,
+            singleUiEventCommunication: SingleUiEventCommunication,
+            trackDurationCommunication: TrackDurationCommunication,
+        ) {
+            controller.addMediaItems(newPageMediaItems)
+            currentQueueCommunication.map(allQueue)
+        }
+
+    }
 
 }

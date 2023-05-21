@@ -1,122 +1,120 @@
 package com.example.musicapp.search.data
 
-import android.util.Log
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.filter
-import androidx.paging.map
+import androidx.media3.common.MediaItem
+import androidx.paging.PagingSource
 import com.example.musicapp.app.SpotifyDto.SearchDto
 import com.example.musicapp.app.SpotifyDto.SearchItem
 import com.example.musicapp.app.SpotifyDto.SearchTracks
-import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
+import com.example.musicapp.app.core.HandleError
+import com.example.musicapp.app.core.HandleResponse
+import com.example.musicapp.core.testcore.TestAuthRepo
+import com.example.musicapp.core.testcore.TestManagerResource
+import com.example.musicapp.core.testcore.TestTemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepositoryTest
-import com.example.musicapp.main.data.cache.TokenStore
-import com.example.musicapp.main.di.AppComponent
-import com.example.musicapp.main.di.AppModule
 import com.example.musicapp.search.data.cloud.SearchTrackService
+import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
+import com.example.musicapp.trending.data.ObjectCreator
 import com.example.testapp.spotifyDto.Album
 import com.example.testapp.spotifyDto.ExternalIds
 import com.example.testapp.spotifyDto.ExternalUrls
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.given
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.MockitoAnnotations
+import java.lang.Exception
+import java.lang.RuntimeException
+import java.net.UnknownHostException
 
 /**
  * Created by HP on 29.04.2023.
  **/
 
-
-
-
-class SearchRepositoryTest {
+class SearchRepositoryTest: ObjectCreator() {
 
     lateinit var repository: SearchRepository
-    lateinit var service: TestSearchService
+    @Mock
+    lateinit var service: SearchTrackService
     lateinit var tokenStore: AuthorizationRepositoryTest.TestTokenStore
-
+    lateinit var cache: TestTemporaryTracksCache
+    lateinit var authorizationRepositoryTest: TestAuthRepo
+    lateinit var managerResource: TestManagerResource
+    lateinit var paggingSource: SearchPagingSource
 
     @Before
-    fun setup(){
-        service = TestSearchService()
-        tokenStore = AuthorizationRepositoryTest.TestTokenStore()
-        repository = SearchRepository.Base(
+    fun setup() = runBlocking{
+        MockitoAnnotations.openMocks(this)
 
+        managerResource = TestManagerResource()
+        authorizationRepositoryTest = TestAuthRepo()
+        cache = TestTemporaryTracksCache()
+        tokenStore = AuthorizationRepositoryTest.TestTokenStore()
+
+        service = mock(SearchTrackService::class.java)
+        repository = SearchRepository.Base(
             service =service,
-            mapper = SearchTracks.ToMediaItemMapper(),
-            tokenStore = tokenStore
+            mapper = SearchTracks.Base(),
+            tokenStore = tokenStore,
+            cachedTracks = cache,
+            handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
+            transfer = SearchQueryTransfer.Base()
+        )
+        paggingSource = SearchPagingSource(
+            service = service,
+            query = "",
+            mapper = SearchTracks.Base(),
+            tokenStore = AuthorizationRepositoryTest.TestTokenStore(),
+            handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
+            cachedTracks = cache
         )
     }
 
 
     @Test
-    fun `test search tracks by name`() = runBlocking {
+    fun `test search tracks by name error`() = runTest {
 
+        val message = "message"
+        val error = RuntimeException(message, Throwable())
+        given(service.searchTrack(any(),any(),any(),any(),any(),any())).willThrow(error)
+        managerResource.valueString = message
+        repository.searchTracksByName("")
 
-
-
-    }
-
-
-    class TestSearchService: SearchTrackService{
-        var dto = SearchDto(
-            SearchTracks(
-                href = "1",
-                items = listOf(SearchItem(
-                    album = Album(
-                        album_type = "1",
-                        artists = listOf(),
-                        external_urls = ExternalUrls(spotify = ""),
-                        href = "1",
-                        id = "1",
-                        images = listOf(),
-                        name = "1",
-                        release_date = "1",
-                        release_date_precision = "1",
-                        total_tracks = 1,
-                        type = "1",
-                        uri = "1"
-                    ),
-                    artists = listOf(),
-                    available_markets = listOf(),
-                    disc_number = 0,
-                    duration_ms = 0,
-                    explicit = false,
-                    external_ids = ExternalIds(isrc = ""),
-                    external_urls = ExternalUrls(spotify = ""),
-                    href = "1",
-                    id = "1",
-                    is_local = false,
-                    name = "1",
-                    popularity = 1,
-                    preview_url = "1",
-                    track_number = 1,
-                    type = "1",
-                    uri = "1"
-                )),
-                limit = 1,
-                next = "",
-                offset = 0,
-                previous =1,
-                total = 0
-            )
+        val expectedResult = PagingSource.LoadResult.Error<Int, MediaItem>(Exception(message))
+        assertEquals(
+            expectedResult::class, paggingSource.load(
+                PagingSource.LoadParams.Refresh(
+                    key = 0,
+                    loadSize = 1,
+                    placeholdersEnabled = false
+                )
+            )::class
         )
-        override suspend fun searchTrack(
-            auth: String,
-            query: String,
-            market: String,
-            limit: Int,
-            offset: Int,
-        ): SearchDto {
-            return dto
-        }
-
     }
+
+    @Test
+    fun `test refresh`() = runTest {
+        given(service.searchTrack(any(),any(),any(),any(),any(),any())).willReturn(getSearchDto())
+        val expectedResult = PagingSource.LoadResult.Page(
+            data = getSearchDto().tracks.map(SearchTracks.Base()),
+            prevKey = null,
+            nextKey = 1
+        )
+        assertEquals(
+            expectedResult::class, paggingSource.load(
+                PagingSource.LoadParams.Refresh(
+                    key = 0,
+                    loadSize = 1,
+                    placeholdersEnabled = false
+                )
+            )::class
+        )
+    }
+
+
 }

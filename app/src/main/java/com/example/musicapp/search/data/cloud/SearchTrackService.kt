@@ -14,11 +14,13 @@ interface SearchTrackService {
 
     companion object{
         private const val content_market = "ES"
+        private const val search_type = "track"
     }
 
     @GET("search")
     suspend fun searchTrack(
         @Header("Authorization") auth: String,
+        @Query("type") type: String = search_type,
         @Query("q") query: String,
         @Query("market") market: String = content_market,
         @Query("limit") limit: Int,

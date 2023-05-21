@@ -1,5 +1,7 @@
 package com.example.musicapp.main.presentation
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -41,7 +43,11 @@ class MainViewModel @Inject constructor(
 ): BaseViewModel(playerCommunication, temporaryTracksCache,dispatchersList),
     CollectPlayerControls{
 
+    private var showPermission = true
 
+    companion object{
+        const val permissionRequestCode = 0
+    }
 
     init {
        firebaseMessagingWrapper.subscribeToTopic()
@@ -55,6 +61,15 @@ class MainViewModel @Inject constructor(
         bottomSheetCommunication.map(state)
     }
 
+    fun notificationPermissionCheck() = viewModelScope.launch(dispatchersList.io()) {
+        if (showPermission)
+            singleUiEventCommunication.map(
+                SingleUiEventState.CheckForPermission(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    permissionRequestCode))
+    }
+
+    fun dontShowPermission() { showPermission = false}
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
         collector: FlowCollector<PlayerControlsState>,

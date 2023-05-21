@@ -7,7 +7,7 @@ import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.TracksRepository
 import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.UiEventsCommunication
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +19,7 @@ class MusicDialogViewModel @Inject constructor(
     private val cache: DataTransfer<MediaItem>,
     private val repository: TracksRepository,
     private val dispatchersList: DispatchersList,
-    private val mapper: TracksResultToSingleUiEventCommunicationMapper,
+    private val mapper: TracksResultToUiEventCommunicationMapper,
     private val uiEventsCommunication: UiEventsCommunication
 ): ViewModel() {
 
@@ -29,5 +29,7 @@ class MusicDialogViewModel @Inject constructor(
         uiEventsCommunication.map(UiEventState.ClearCommunication)
         repository.insertData(data).map(mapper)
     }
+
+    fun notSave() = uiEventsCommunication.map(UiEventState.ClearCommunication)
 
 }

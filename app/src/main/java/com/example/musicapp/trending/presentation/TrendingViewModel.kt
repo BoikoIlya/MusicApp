@@ -5,16 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
-import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.trending.domain.TrendingInteractor
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -28,7 +25,7 @@ class TrendingViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
     private val favoriteTracksRepository: FavoriteTracksRepository,
     private val temporaryTracksCache: TemporaryTracksCache,
-    private val mapper: TracksResultToSingleUiEventCommunicationMapper,
+    private val mapper: TracksResultToUiEventCommunicationMapper,
 ) : BaseViewModel(playerCommunication, temporaryTracksCache,dispatchersList), CollectTrendings {
 
 
@@ -41,19 +38,6 @@ class TrendingViewModel @Inject constructor(
     }
 
 
-    fun playMusic(item: MediaItem, position: Int) = viewModelScope.launch(dispatchersList.io()) {
-        val queue = interactor.checkForNewQueue()
-        if(queue.isNotEmpty()){
-            val newQueue = mutableListOf<MediaItem>()
-            newQueue.addAll(queue)
-            withContext(dispatchersList.ui()) {
-                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
-            }
-        }
-        withContext(dispatchersList.ui()) {
-            playerCommunication.map(PlayerCommunicationState.Play(item, position))
-        }
-    }
 
     fun addTrackToFavorites(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
         favoriteTracksRepository.checkInsertData(item).map(mapper)

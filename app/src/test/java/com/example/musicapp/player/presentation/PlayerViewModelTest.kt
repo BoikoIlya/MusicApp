@@ -6,7 +6,7 @@ import com.example.musicapp.core.testcore.TestTemporaryTracksCache
 import com.example.musicapp.core.testcore.TestDispatcherList
 import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
@@ -56,7 +56,7 @@ class PlayerViewModelTest: ObjectCreator() {
             controller = mediaController,
             isSavedCommunication = isSavedCommunication,
             favoriteTracksRepository = repository,
-            mapper = TracksResultToSingleUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
+            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
             bottomSheetCommunication = MainViewModelTest.TestBottomSheetCommunication(),
             slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
             trackDurationCommunication = TrackDurationCommunication.Base(),

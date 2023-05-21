@@ -7,7 +7,7 @@ import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
@@ -27,7 +27,7 @@ class PlayerViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val controller: MediaControllerWrapper,
     private val favoriteTracksRepository: FavoriteTracksRepository,
-    private val mapper: TracksResultToSingleUiEventCommunicationMapper,
+    private val mapper: TracksResultToUiEventCommunicationMapper,
     private val bottomSheetCommunication: BottomSheetCommunication,
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val trackDurationCommunication: TrackDurationCommunication,

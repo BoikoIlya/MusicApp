@@ -11,7 +11,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import androidx.room.Room
-import com.example.musicapp.app.SpotifyDto.SearchTracks
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
@@ -19,7 +20,7 @@ import com.example.musicapp.favorites.data.cache.TracksDao
 import com.example.musicapp.favorites.presentation.FavoritesTracksCommunication
 import com.example.musicapp.favorites.presentation.FavoritesTracksStateCommunication
 import com.example.musicapp.favorites.presentation.TracksCommunication
-import com.example.musicapp.favorites.presentation.TracksResultToSingleUiEventCommunicationMapper
+import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.favorites.presentation.TracksResultToTracksCommunicationMapper
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepository
@@ -33,8 +34,11 @@ import com.example.musicapp.player.presentation.PlayerService
 import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
 import com.example.musicapp.search.data.cloud.SearchTrackService
+import com.example.musicapp.searchhistory.data.cache.HistoryDao
+import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.trending.presentation.TrackUi
+import com.example.musicapp.trending.presentation.TrendingResult
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateDialogMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
@@ -72,25 +76,42 @@ class AppModule {
         private const val update_description_key = "description_key"
         private const val db_name = "music_app_db"
         private const val topic_name = "update_topic"
+        private const val test_topic_name = "test_topic_name"
 
     }
 
     @Provides
     @Singleton
-    fun provideMusicAppDB(context: Context): MusicDatabase{
+    fun provideMigrationDBFrom1To2(): Migration {
+        return  object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `history_table` " +
+                        "(`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))")
+            }
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideMusicAppDB(context: Context, migration: Migration): MusicDatabase{
         return Room.databaseBuilder(
             context,
             MusicDatabase::class.java,
             db_name
-        ).allowMainThreadQueries().build()
+        ).addMigrations(migration).build()
     }
 
     @Provides
     @Singleton
-    fun provideDao(db: MusicDatabase): TracksDao{
+    fun provideTracksDao(db: MusicDatabase): TracksDao{
         return db.getTracksDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideHistoryDao(db: MusicDatabase): HistoryDao{
+        return db.getHistoryDao()
+    }
 
     @Provides
     @Singleton
@@ -132,7 +153,7 @@ class AppModule {
         return builder
             .baseUrl(baseUrlMusicData)
             .addConverterFactory(converterFactory)
-            .client(client)
+           // .client(client)
             .build()
             .create(TrendingService::class.java)
     }
@@ -215,14 +236,14 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideUpdateFirebaseService(context: Context): UpdateFirebaseService.Base{
+    fun provideUpdateFirebaseService(): UpdateFirebaseService.Base{
         return UpdateFirebaseService.Base(Firebase.firestore)
     }
 
     @Provides
     @Singleton
     fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
-        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
+        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), test_topic_name)
     }
 
 }
@@ -305,6 +326,11 @@ interface AppBindModule{
 
     @Singleton
     @Binds
+    fun bindSearchQueryAndKeyBoardFocusTransfer(obj: SearchQueryTransfer.Base):
+            SearchQueryTransfer
+
+    @Singleton
+    @Binds
     fun bindSlideViewPagerCommunication(obj: SlideViewPagerCommunication.Base):
             SlideViewPagerCommunication
     @Singleton
@@ -366,12 +392,15 @@ interface AppBindModule{
 
     @Binds
     @Singleton
-    fun bindTracksResultToSingleUiEventCommunicationMapper(obj: TracksResultToSingleUiEventCommunicationMapper.Base): TracksResultToSingleUiEventCommunicationMapper
+    fun bindTracksResultToSingleUiEventCommunicationMapper(obj: TracksResultToUiEventCommunicationMapper.Base): TracksResultToUiEventCommunicationMapper
 
     @Binds
     @Singleton
     fun bindTracksCommunication(obj: TracksCommunication.Base): TracksCommunication
 
+    @Binds
+    @Singleton
+    fun bindHandleError(obj: HandleError.Base): HandleError
 
     @Binds
     @Singleton
@@ -380,5 +409,9 @@ interface AppBindModule{
     @Binds
     @Singleton
     fun bindFavoritesTracksCommunication(obj: FavoritesTracksCommunication.Base): FavoritesTracksCommunication
+
+    @Binds
+    @Singleton
+    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TrendingResult>): HandleResponse<TrendingResult>
 
 }

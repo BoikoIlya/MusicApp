@@ -3,6 +3,7 @@ package com.example.musicapp.app.SpotifyDto
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.example.musicapp.R
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.testapp.spotifyDto.Album
 import com.example.testapp.spotifyDto.Artist
@@ -39,7 +40,8 @@ data class SearchItem(
                 .setTitle(name)
                 .setArtist(artists.joinToString(separator = " & "){ it.name })
                 .setAlbumTitle(album.name)
-                .setArtworkUri(Uri.parse(album.images.first().url))
+                .setArtworkUri(Uri.parse(if(album.images.isNotEmpty()) album.images.first().url else ""))
+                .setDescription(id)
                 .build()
         )
         .build()
