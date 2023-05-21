@@ -243,7 +243,7 @@ class AppModule {
     @Provides
     @Singleton
     fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
-        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), test_topic_name)
+        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
     }
 
 }
