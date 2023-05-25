@@ -64,13 +64,14 @@
                     app:layout_constraintTop_toTopOf="@+id/playlist_img_card" />
 
                 <TextView
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:layout_marginTop="10dp"
                     android:id="@+id/description"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:maxLines="6"
+                    android:maxLines="5"
                     android:ellipsize="end"
-                    android:paddingHorizontal="20dp"
+                    android:layout_marginHorizontal="20dp"
                     android:text="Våra bästa lokala stjärnor hela vägen från Kalix till Höör. Cover: Lisa Ekdahl"
                     android:textColor="@color/gray"
                     android:textSize="@dimen/body1"

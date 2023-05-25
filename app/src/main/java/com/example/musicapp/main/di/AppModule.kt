@@ -117,8 +117,6 @@ class AppModule {
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
             .setLevel(
-//                if(BuildConfig.DEBUG)
-//                else HttpLoggingInterceptor.Level.NONE
                 HttpLoggingInterceptor.Level.BODY
             )
     }

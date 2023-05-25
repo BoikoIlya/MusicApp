@@ -1,6 +1,7 @@
 package com.example.musicapp.playlist.presentation
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Base64
@@ -120,6 +121,16 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
             viewModel.shuffle()
         }
 
+        binding.description.setOnClickListener {
+           if (binding.description.layout.getEllipsisCount(binding.description.lineCount - 1) <= 0)
+               return@setOnClickListener
+           val dialog = AlertDialog.Builder(requireContext())
+                .setMessage(binding.description.text.toString())
+                .create()
+
+            dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_corners_shape)
+            dialog.show()
+        }
     }
 
 }
