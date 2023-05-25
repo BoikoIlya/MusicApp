@@ -9,11 +9,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.example.musicapp.app.core.BaseViewModel
+import com.example.musicapp.app.core.CollectTracksAndUiState
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.UiEventState
+import com.example.musicapp.app.core.TracksResultEmptyMapper
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
@@ -38,9 +40,16 @@ class MainViewModel @Inject constructor(
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val updateSystemRepository: UpdateSystemRepository,
     private val mapper: MainViewModelMapper,
-    private val uiEventsCommunication: UiEventsCommunication,
-    private val firebaseMessagingWrapper: FirebaseMessagingWrapper
-): BaseViewModel(playerCommunication, temporaryTracksCache,dispatchersList),
+    private val firebaseMessagingWrapper: FirebaseMessagingWrapper,
+    private val favoriteTracksRepository: FavoriteTracksRepository,
+): BaseViewModel<Unit>(
+    playerCommunication,
+    TracksCommunication.EmptyCommunication(),
+    temporaryTracksCache,
+    dispatchersList,
+    favoriteTracksRepository,
+    TracksResultEmptyMapper()
+    ),
     CollectPlayerControls{
 
     private var showPermission = true
@@ -89,11 +98,6 @@ class MainViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<Int>
     ) = slideViewPagerCommunication.collect(owner,collector)
-
-    suspend fun collectUiEventsCommunication(
-        owner: LifecycleOwner,
-        collector: FlowCollector<UiEventState>
-    ) = uiEventsCommunication.collect(owner,collector)
 
 
 }

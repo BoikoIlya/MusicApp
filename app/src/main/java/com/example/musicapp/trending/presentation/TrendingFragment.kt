@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -57,9 +58,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             viewModel.collectState(this@TrendingFragment){
 
                     it.apply(
-                        binding.errorImg,
-                        binding.errorTv,
-                        binding.reloadBtn,
+                        binding.errorLayout,
                         binding.trendingProgress,
                     )
             }
@@ -69,18 +68,18 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false )
 
         val playlistsAdapter = PlaylistsAdapter(imageLoader,
-            object : ClickListener<PlaylistUi> {
-                override fun onClick(data: PlaylistUi) {
-                    //TODO
+            object : ClickListener<String> {
+                override fun onClick(data: String) {
+                    viewModel.savePlaylistId(data)
+                    findNavController().navigate(R.id.action_trendingFragment_to_playlistFragment)
                 }
-
             }
         )
 
         binding.rcvPlaylists.adapter = playlistsAdapter
 
 
-        binding.reloadBtn.setOnClickListener {
+        binding.errorLayout.reloadBtn.setOnClickListener {
             viewModel.loadData()
         }
 

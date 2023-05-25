@@ -2,8 +2,9 @@ package com.example.musicapp.updatesystem.data.cloud
 
 import android.os.Parcelable
 import com.example.musicapp.BuildConfig
+import com.example.musicapp.app.core.DataTransfer
+import com.example.musicapp.app.core.Mapper
 import com.example.musicapp.updatesystem.data.UpdateResult
-import com.example.musicapp.updatesystem.data.cache.UpdateDataStore
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -14,21 +15,15 @@ data class UpdateDataCloud(
      val apkUrl: String,
      val description: String,
      val version: String,
-) : Parcelable {
+) : Parcelable, Mapper<Unit, UpdateResult> {
 
     constructor(): this("", "", "")
 
-    fun map(
-         versionStore: UpdateDataStore.Version,
-         apkUrlStore: UpdateDataStore.ApkUrl,
-         descriptionStore: UpdateDataStore.Description,
-    ): UpdateResult{
+
+    override fun map(data: Unit): UpdateResult {
         return if(version == BuildConfig.VERSION_NAME) UpdateResult.NoUpdate
         else {
-            versionStore.save(version)
-            apkUrlStore.save(apkUrl)
-            descriptionStore.save(description)
-            UpdateResult.NewUpdateInfo(version, description)
+            UpdateResult.NewUpdateInfo(version, description,apkUrl)
         }
     }
 }

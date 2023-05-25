@@ -279,10 +279,6 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
-         override fun stop(reset: Boolean) {
-             TODO("Not yet implemented")
-         }
-
          override fun release() {
              TODO("Not yet implemented")
          }
@@ -498,7 +494,15 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
+         override fun setDeviceVolume(volume: Int, flags: Int) {
+             TODO("Not yet implemented")
+         }
+
          override fun increaseDeviceVolume() {
+             TODO("Not yet implemented")
+         }
+
+         override fun increaseDeviceVolume(flags: Int) {
              TODO("Not yet implemented")
          }
 
@@ -506,7 +510,15 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
+         override fun decreaseDeviceVolume(flags: Int) {
+             TODO("Not yet implemented")
+         }
+
          override fun setDeviceMuted(muted: Boolean) {
+             TODO("Not yet implemented")
+         }
+
+         override fun setDeviceMuted(muted: Boolean, flags: Int) {
              TODO("Not yet implemented")
          }
      }

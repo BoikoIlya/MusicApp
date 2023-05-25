@@ -18,7 +18,21 @@ import dagger.multibindings.IntoMap
 @Module
 interface FavoritesModule {
 
+    @FavoritesScope
+    @Binds
+    fun bindFavoritesCommunication(obj: FavoritesCommunication.Base): FavoritesCommunication
 
+    @FavoritesScope
+    @Binds
+    fun bindFavoritesStateCommunication(obj: FavoritesStateCommunication.Base): FavoritesStateCommunication
+
+    @FavoritesScope
+    @Binds
+    fun bindFavoritesTrackListCommunication(obj: FavoritesTrackListCommunication.Base): FavoritesTrackListCommunication
+
+    @FavoritesScope
+    @Binds
+    fun bindTracksResultToFavoriteTracksCommunicationMapper(obj: TracksResultToFavoriteTracksCommunicationMapper.Base): TracksResultToFavoriteTracksCommunicationMapper
 
     @Binds
     @[IntoMap ViewModelKey(FavoritesViewModel::class)]

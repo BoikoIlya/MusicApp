@@ -2,7 +2,7 @@ package com.example.musicapp.trending.data
 
 import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.main.data.cache.TokenStore
-import com.example.musicapp.main.data.cloud.TrendingService
+import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.testapp.spotifyDto.Track
@@ -26,6 +26,11 @@ interface TrendingRepository{
         private val token: TokenStore
     ): TrendingRepository {
 
+        companion object{
+            private const val market = "ES"
+            private const val seed_genres = "classical,country"
+        }
+
         override suspend fun fetchPlaylists(): List<PlaylistDomain> =
             service.getFeaturedPlaylists(
                auth =  token.read(),
@@ -34,8 +39,8 @@ interface TrendingRepository{
 
 
         override suspend fun fetchTracks(): List<TrackDomain> =
-            service.getRecommendations(token.read(), market = "ES", seed_genres = "classical,country").tracks
-                .filter { it.map() }.map { it.map(toTrackDomain) } //TODO HARDCODED STRINGS
+            service.getRecommendations(token.read(), market = market, seed_genres = seed_genres).tracks
+                .filter { it.map() }.map { it.map(toTrackDomain) }
 
 
     }

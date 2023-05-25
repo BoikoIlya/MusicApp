@@ -79,45 +79,9 @@ sealed interface SingleUiEventState{
 
     }
 
-}
-
-sealed interface UiEventState{
-
-
-    fun apply(
-        fragmentManager: FragmentManager,
-        context: Context,
-        binding: ActivityMainBinding,
-    )
-
-    @UnstableApi
-    data class ShowDialog(
-        private val dialog: DialogFragment
-    ) : UiEventState{
-
-        override fun apply(
-            fragmentManager: FragmentManager,
-            context: Context,
-            binding: ActivityMainBinding,
-        ) {
-            dialog.show(fragmentManager, dialog.tag)
-        }
-    }
-
-
-
-    object ClearCommunication: UiEventState{
-        override fun apply(
-            fragmentManager: FragmentManager,
-            context: Context,
-            binding: ActivityMainBinding,
-        ) = Unit
-
-    }
-
     data class LoadUpdate(
         private val apkUrl: String
-    ) : UiEventState{
+    ) : SingleUiEventState{
 
 
         override fun apply(
@@ -133,5 +97,21 @@ sealed interface UiEventState{
         }
 
     }
+
+
+    @UnstableApi
+    data class ShowDialog(
+        private val dialog: DialogFragment
+    ) : SingleUiEventState{
+
+        override fun apply(
+            fragmentManager: FragmentManager,
+            context: Context,
+            binding: ActivityMainBinding,
+        ) {
+            dialog.show(fragmentManager, dialog.tag)
+        }
+    }
+
 }
 

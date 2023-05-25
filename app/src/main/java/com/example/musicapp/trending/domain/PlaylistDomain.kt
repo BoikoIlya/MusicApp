@@ -9,7 +9,6 @@ import javax.inject.Inject
 data class PlaylistDomain(
     private val id: String,
     private val name: String,
-    private val descriptions: String,
     private val imgUrl: String,
     private val tracksUrl: String
 ){
@@ -18,27 +17,24 @@ data class PlaylistDomain(
         fun map(
             id: String,
             name: String,
-            descriptions: String,
             imgUrl: String,
             tracksUrl: String
         ): T
     }
 
-    fun <T>map(mapper: Mapper<T>): T = mapper.map(id,name,descriptions,imgUrl,tracksUrl)
+    fun <T>map(mapper: Mapper<T>): T = mapper.map(id,name,imgUrl,tracksUrl)
 
     class ToPlaylistUiMapper @Inject constructor(): Mapper<PlaylistUi> {
 
         override fun map(
             id: String,
             name: String,
-            descriptions: String,
             imgUrl: String,
             tracksUrl: String,
         ): PlaylistUi {
             return PlaylistUi(
                 id = id,
                 name = name,
-                descriptions = descriptions,
                 imgUrl = imgUrl,
                 tracksUrl = tracksUrl
             )

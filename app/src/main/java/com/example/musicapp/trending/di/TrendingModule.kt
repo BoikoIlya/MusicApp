@@ -24,8 +24,6 @@ import dagger.multibindings.IntoMap
 @Module
 interface TrendingModule{
 
-
-
     @Binds
     @TrendingScope
     fun bindChangePlayingItemBgMapper(obj: TrackUi.ChangeSelectedItemBg): TrackUi.Mapper<TrackUi>

@@ -1,10 +1,8 @@
-package com.example.musicapp.core.testcore
+package com.example.musicapp.favorites.testcore
 
 import androidx.lifecycle.LifecycleOwner
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.main.presentation.UiEventsCommunication
 import kotlinx.coroutines.flow.FlowCollector
 
 /**
@@ -23,17 +21,4 @@ class TestSingleUiStateCommunication: SingleUiEventCommunication {
 
 }
 
-
-class TestUiEventsCommunication: UiEventsCommunication {
-    val stateList = emptyList<UiEventState>().toMutableList()
-
-    override suspend fun collect(
-        lifecycleOwner: LifecycleOwner,
-        collector: FlowCollector<UiEventState>,
-    ) = Unit
-    override  fun map(newValue: UiEventState) {
-        stateList.add(newValue)
-    }
-
-}
 

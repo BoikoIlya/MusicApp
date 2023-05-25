@@ -6,8 +6,6 @@ import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.main.presentation.UiEventsCommunication
 import com.example.musicapp.updatesystem.presentation.UpdateDialogFragment
 import javax.inject.Inject
 
@@ -21,21 +19,22 @@ sealed interface UpdateResult{
     interface Mapper<T>{
        suspend fun map(  version: String,
                   description: String,
-                  apkUrl: String ="",
+                  apkUrl: String,
                   error: Int = -1): T
     }
 
     data class NewUpdateInfo(
         private val version: String,
-        private val description: String
+        private val description: String,
+        private val apkUrl: String
     ): UpdateResult {
 
-        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(version, description)
+        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(version, description, apkUrl)
     }
 
     object NoUpdate: UpdateResult{
 
-        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map("","")
+        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map("","","")
     }
 
 
@@ -49,9 +48,9 @@ sealed interface UpdateResult{
         }
 
         data class Failure(
-            private val error: Int
+            private val error: Int =-1
         ) : UpdateResult {
-            override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map("", "",error = error)
+            override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map("", "","", error)
 
         }
 
@@ -66,7 +65,7 @@ sealed interface UpdateResult{
         @UnstableApi class Base @Inject constructor(
             private val updateDialogTransfer: DataTransfer.UpdateDialogTransfer,
             private val resourceManager: ManagerResource,
-            private val uiEventCommunication: UiEventsCommunication,
+            private val singleUiEventCommunication: SingleUiEventCommunication
         ) : MainViewModelMapper {
 
             override suspend fun map(
@@ -77,9 +76,9 @@ sealed interface UpdateResult{
             ) {
                 if (version.isNotEmpty() && description.isNotEmpty()) {
                     updateDialogTransfer.save(
-                        resourceManager.getString(R.string.new_version) + version + "\n" + description
+                       Pair( resourceManager.getString(R.string.new_version) + version + "\n" + description,apkUrl)
                     )
-                    uiEventCommunication.map(UiEventState.ShowDialog(UpdateDialogFragment()))
+                    singleUiEventCommunication.map(SingleUiEventState.ShowDialog(UpdateDialogFragment()))
                 }
             }
 
@@ -87,33 +86,5 @@ sealed interface UpdateResult{
     }
 
 
-    interface UpdateDialogMapper : UpdateResult.Mapper<Unit> {
 
-        class Base @Inject constructor(
-            private val singleUiEventCommunication: SingleUiEventCommunication,
-            private val resourceManager: ManagerResource,
-            private val uiEventCommunication: UiEventsCommunication,
-        ) : UpdateDialogMapper {
-
-            override suspend fun map(
-                version: String,
-                description: String,
-                apkUrl: String,
-                errorId: Int,
-            ) {
-                if (apkUrl.isNotEmpty()) {
-                    uiEventCommunication.map(UiEventState.LoadUpdate(apkUrl))
-                } else if (errorId != -1) {
-                    singleUiEventCommunication.map(
-                        SingleUiEventState.ShowSnackBar.Error(
-                            resourceManager.getString(errorId)
-                        )
-                    )
-                    uiEventCommunication.map(UiEventState.ShowDialog(UpdateDialogFragment()))
-                }
-            }
-
-        }
-
-    }
 

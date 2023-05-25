@@ -1,4 +1,4 @@
-package com.example.musicapp.main.data.cloud
+package com.example.musicapp.trending.data.cloud
 
 import com.example.musicapp.app.SpotifyDto.FetauredPlaylists
 import com.example.testapp.spotifyDto.Recomendations
@@ -11,8 +11,8 @@ interface TrendingService{
     companion object{
         private const val limitResponse = 50
         private const val offsetResponse = 0
-        private const val localeResponse = "sv_SE"
-        private const val countryResponse = "SE"
+        private const val localeResponse = "sv_US"
+        private const val countryResponse = "US"
         private const val seedArtists = "4NHQUGzhtTLFvgF5SZesLK"
         private const val seedTracks = "0c6xIDDpzE81m2q797ordA"
     }

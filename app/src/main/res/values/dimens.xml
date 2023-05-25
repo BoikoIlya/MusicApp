@@ -3,4 +3,5 @@
       <dimen name="h2">22sp</dimen>
       <dimen name="h3">18sp</dimen>
       <dimen name="body1">16sp</dimen>
+      <dimen name="body2">12sp</dimen>
    </resources>

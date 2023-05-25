@@ -5,6 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.SpotifyDto.*
 import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.playlist.data.PlaylistDataDomain
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
@@ -124,7 +125,6 @@ abstract class ObjectCreator {
         return PlaylistDomain(
             id = "1",
             name = "1",
-            descriptions = "1",
             imgUrl = "1",
             tracksUrl = "1"
         )
@@ -188,4 +188,102 @@ abstract class ObjectCreator {
             uri = "1"
         )
     ),1,"1",1,1,1))
+
+    fun getPlaylistDto() = PlaylistDto(
+        collaborative = false,
+        description = "1",
+        external_urls = ExternalUrls(spotify = "1"),
+        followers = Followers(href = "1", total = 0),
+        href = "1",
+        id = "1",
+        images = listOf(Image(1,"1",1)),
+        name = "1",
+        owner = Owner(
+            display_name = "",
+            external_urls = ExternalUrls(spotify = ""),
+            href = "",
+            id = "",
+            type = "",
+            uri = ""
+        ),
+        primary_color =1,
+        public = false,
+        snapshot_id = "",
+        tracks = PlaylistTracks(
+            href = "1",
+            items = listOf(
+                PlaylistTrackItem(
+                    added_at = "", added_by = AddedBy(
+                        external_urls = ExternalUrls(
+                            spotify = ""
+                        ), href = "", id = "", type = "", uri = ""
+                    ), is_local = false, primary_color =1, track = TrackItemPlaylist(
+                        album = AlbumPlaylist(
+                            album_type = "",
+                            artists = listOf(
+                                Artist(
+                                    external_urls = ExternalUrls(spotify = ""),
+                                    href = "",
+                                    id = "",
+                                    name = "1",
+                                    type = "",
+                                    uri = ""
+                                )
+                            ),
+                            available_markets = listOf(),
+                            external_urls = ExternalUrls(spotify = ""),
+                            href = "",
+                            id = "1",
+                            images = listOf(Image(1,testImgUrl,1)),
+                            name = "1",
+                            release_date = "",
+                            release_date_precision = "",
+                            total_tracks = 0,
+                            type = "",
+                            uri = "1"
+                        ),
+                        artists = listOf(
+                            Artist(
+                                external_urls = ExternalUrls(spotify = ""),
+                                href = "",
+                                id = "",
+                                name = "1",
+                                type = "",
+                                uri = ""
+                            )
+                        ),
+                        available_markets = listOf(),
+                        disc_number = 0,
+                        duration_ms = 0,
+                        episode = false,
+                        explicit = false,
+                        external_ids = ExternalIds(isrc = ""),
+                        external_urls = ExternalUrls(spotify = ""),
+                        href = "",
+                        id = "1",
+                        is_local = false,
+                        name = "1",
+                        popularity = 0,
+                        preview_url = "https://www.google.by/",
+                        track = false,
+                        track_number = 0,
+                        type = "",
+                        uri = ""
+                    ), video_thumbnail = VideoThumbnail(url =1)
+                )
+            ),
+            limit = 1,
+            next ="",
+            offset = 0,
+            previous =1,
+            total = 0
+        ),
+        type = "1",
+        uri = "1"
+    )
+
+    fun getPlaylistDataDomain() = PlaylistDataDomain(
+        tracks = listOf(getTrackDomain()), albumDescription = "1", albumName = "1", albumImgUrl = "1"
+
+    )
 }

@@ -29,12 +29,12 @@ interface DataTransfer<T> {
         DataTransfer<MediaItem>, DataTransfer.Abstract<MediaItem>()
 
 
-    interface UpdateDialogTransfer: DataTransfer<String> {
+    interface UpdateDialogTransfer: DataTransfer<Pair<String,String>> {
 
         class Base @Inject constructor() :
-            UpdateDialogTransfer, DataTransfer.Abstract<String>()
-
+            UpdateDialogTransfer, DataTransfer.Abstract<Pair<String,String>>()
     }
+
 
 }
 

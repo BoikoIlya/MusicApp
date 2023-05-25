@@ -8,6 +8,7 @@ import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.BottomSheetPlayerViewModel
 import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.TracksRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.CollectCurrentQueue
 import com.example.musicapp.main.presentation.PlayerCommunication
@@ -21,14 +22,16 @@ import javax.inject.Inject
  **/
 class QueueViewModel @Inject constructor(
    private val playerCommunication: PlayerCommunication,
-    tracksCache: TemporaryTracksCache,
+   tracksCache: TemporaryTracksCache,
+   tracksRepository: TracksRepository,
    private val dispatchersList: DispatchersList,
-   private val slideViewPagerCommunication: SlideViewPagerCommunication
+   private val slideViewPagerCommunication: SlideViewPagerCommunication,
 ): BottomSheetPlayerViewModel(
     playerCommunication,
     tracksCache,
+    tracksRepository,
     dispatchersList,
-    slideViewPagerCommunication
+    slideViewPagerCommunication,
 ), CollectCurrentQueue {
 
     override suspend fun collectCurrentQueue(

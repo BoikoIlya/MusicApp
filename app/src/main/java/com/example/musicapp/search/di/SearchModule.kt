@@ -43,8 +43,5 @@ class SearchProvidesModule{
     fun bindSearchTracksToMediaItemsMapper(obj: SearchTracks.Base): SearchTracks.Mapper<List<MediaItem>>
     = obj
 
-//    @Provides
-//    @SearchScope
-//    fun bindSearchTracksToMediaItemsMapperBase(): SearchTracks.Base
-//            = SearchTracks.Base()
+
 }

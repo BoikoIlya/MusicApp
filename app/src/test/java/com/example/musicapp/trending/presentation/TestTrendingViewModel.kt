@@ -2,13 +2,13 @@ package com.example.musicapp.trending.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
-import com.example.musicapp.core.testcore.TestDispatcherList
-import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
-import com.example.musicapp.core.testcore.TestUiEventsCommunication
+import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestDispatcherList
+import com.example.musicapp.favorites.testcore.TestFavoriteRepository
+import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
-import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
@@ -37,17 +37,15 @@ class TestTrendingViewModel: ObjectCreator() {
     lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
     lateinit var mediaController: TestMediaController
     lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
-    lateinit var favoriteTracksRepository: FavoritesViewModelTest.TestFavoriteRepository
-    lateinit var uiEventsCommunication: TestUiEventsCommunication
+    lateinit var favoriteTracksRepository: TestFavoriteRepository
     lateinit var tracksCache: TestTemporaryTracksCache
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup(){
         val dispatchersList = TestDispatcherList()
-        uiEventsCommunication = TestUiEventsCommunication()
         communication = TestTrendingCommunication()
-        favoriteTracksRepository = FavoritesViewModelTest.TestFavoriteRepository()
+        favoriteTracksRepository = TestFavoriteRepository()
         interactor = TestInteractor()
         playerControlsCommunication = TestPlayerControlsCommunication()
         currentQueueCommunication = TestCurrentQueueCommunication()
@@ -78,9 +76,9 @@ class TestTrendingViewModel: ObjectCreator() {
             handleTrendingResult = handleTrendingResult,
             dispatchersList = TestDispatcherList(),
             playerCommunication = playerCommunication,
-            favoriteTracksRepository = favoriteTracksRepository,
+            tracksRepository = favoriteTracksRepository,
             temporaryTracksCache = tracksCache,
-            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, uiEventsCommunication),
+            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication),
 
         )
     }
@@ -123,8 +121,8 @@ class TestTrendingViewModel: ObjectCreator() {
     @Test
     fun `test add tracks to favorites`() {
         viewModel.addTrackToFavorites(getMediaItem("2"))
-        assertEquals(1, uiEventsCommunication.stateList.size)
-        assertEquals(UiEventState.ShowDialog::class, uiEventsCommunication.stateList.last()::class)
+        assertEquals(1, singleUiStateCommunication.stateList.size)
+        assertEquals(SingleUiEventState.ShowDialog::class, singleUiStateCommunication.stateList.last()::class)
     }
 
 
@@ -164,9 +162,14 @@ class TestTrendingViewModel: ObjectCreator() {
         var isNewQuerry = false
         val tracks = listOf(getTrackDomain())
         val playlists = listOf(getPlaylistDomain())
+        var playlistId = ""
 
          var result: TrendingResult = TrendingResult.Success(Pair(playlists, tracks))
         override suspend fun fetchData(): TrendingResult = result
+        override fun savePlaylistId(id: String) {
+            playlistId = id
+        }
+
         override suspend fun checkForNewQueue(): List<MediaItem>  {
             return if(isNewQuerry) listOf(getMediaItem())
             else emptyList()

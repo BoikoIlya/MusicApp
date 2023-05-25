@@ -6,6 +6,7 @@ import com.example.musicapp.favorites.di.FavoriteComponent
 import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.musicdialog.presentation.MusicDialogFragment
 import com.example.musicapp.player.di.PlayerComponent
+import com.example.musicapp.playlist.di.PlaylistComponent
 import com.example.musicapp.queue.di.QueueComponent
 import com.example.musicapp.search.di.SearchComponent
 import com.example.musicapp.searchhistory.di.SearchHistoryComponent
@@ -49,6 +50,6 @@ interface AppComponent {
 
     fun searchHistoryComponent(): SearchHistoryComponent.Builder
 
-
+    fun playlistComponent(): PlaylistComponent.Builder
 
 }

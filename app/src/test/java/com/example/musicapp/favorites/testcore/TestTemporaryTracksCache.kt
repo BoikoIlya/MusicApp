@@ -1,4 +1,4 @@
-package com.example.musicapp.core.testcore
+package com.example.musicapp.favorites.testcore
 
 import androidx.media3.common.MediaItem
 import com.example.musicapp.main.data.TemporaryTracksCache

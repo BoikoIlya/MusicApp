@@ -3,9 +3,9 @@ package com.example.musicapp.searchhistory.presentation
 import androidx.lifecycle.LifecycleOwner
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.core.testcore.TestDispatcherList
-import com.example.musicapp.core.testcore.TestSearchQueryRepository
-import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
+import com.example.musicapp.favorites.testcore.TestDispatcherList
+import com.example.musicapp.favorites.testcore.TestSearchQueryRepository
+import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.searchhistory.data.HistoryDeleteResult
 import com.example.musicapp.searchhistory.data.SearchHistoryRepository
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache

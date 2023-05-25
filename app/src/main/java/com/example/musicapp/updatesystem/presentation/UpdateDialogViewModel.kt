@@ -2,12 +2,12 @@ package com.example.musicapp.updatesystem.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musicapp.R
 import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.main.presentation.UiEventsCommunication
-import com.example.musicapp.updatesystem.data.UpdateDialogMapper
-import com.example.musicapp.updatesystem.data.UpdateSystemRepository
+import com.example.musicapp.app.core.ManagerResource
+import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.SingleUiEventState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,22 +15,26 @@ import javax.inject.Inject
  * Created by HP on 23.04.2023.
  **/
 class UpdateDialogViewModel @Inject constructor(
-    private val updateSystemRepository: UpdateSystemRepository,
     private val dateTransfer: DataTransfer.UpdateDialogTransfer,
-    private val uiEventsCommunication: UiEventsCommunication,
+    private val singleUiEventCommunication: SingleUiEventCommunication,
     private val dispatchersList: DispatchersList,
-    private val mapper: UpdateDialogMapper,
+    private val managerResource: ManagerResource,
 ): ViewModel() {
 
-    fun readDialogMessage() = dateTransfer.read()
+    fun readDialogMessageAndUrl() = dateTransfer.read()
 
-    fun loadUpdate() = viewModelScope.launch(dispatchersList.io()) {
-        dismiss()
-        updateSystemRepository.retriveApkUrl().map(mapper)
+    fun loadUpdate(url: String) = viewModelScope.launch(dispatchersList.io()) {
+        if (url.isNotEmpty()) {
+            singleUiEventCommunication.map(SingleUiEventState.LoadUpdate(url))
+        } else {
+            singleUiEventCommunication.map(
+                SingleUiEventState.ShowSnackBar.Error(
+                    managerResource.getString(R.string.empty_url_error)
+                )
+            )
+            singleUiEventCommunication.map(SingleUiEventState.ShowDialog(UpdateDialogFragment()))
+        }
     }
 
-    fun dismiss(){
-        uiEventsCommunication.map(UiEventState.ClearCommunication)
-    }
 
 }

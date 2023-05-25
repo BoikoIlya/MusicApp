@@ -21,6 +21,7 @@
     <string name="by_time">By time</string>
     <string name="by_artist">By artist</string>
     <string name="success_add_message">Successfully added!</string>
+    <string name="success_replace_message">Successfully replaced!</string>
     <string name="success_remove_message">Successfully removed!</string>
     <string name="yes_btn_text">Yes</string>
     <string name="update_btn_text">Update</string>
@@ -42,6 +43,8 @@
     <string name="the_history_is_empty">The history is empty</string>
     <string name="favorites_songs">Favorites Songs</string>
     <string name="results">Results</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="tracks">tracks</string>
 
 
 </resources>

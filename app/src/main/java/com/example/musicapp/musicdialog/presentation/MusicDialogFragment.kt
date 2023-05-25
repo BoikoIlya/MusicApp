@@ -36,10 +36,9 @@ import javax.inject.Inject
         appCoponent.inject(this)
         viewModel = ViewModelProvider(this, factory)[MusicDialogViewModel::class.java]
 
-        val listener = DialogInterface.OnClickListener { p0, buttonId ->
+        val listener = DialogInterface.OnClickListener { _, buttonId ->
             if(buttonId == DialogInterface.BUTTON_POSITIVE)
                 viewModel.saveTrack(viewModel.fetchData()!!)
-            else viewModel.notSave()
         }
         val dialog= AlertDialog.Builder(requireContext())
             .setCancelable(false)
