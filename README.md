@@ -1,12 +1,11 @@
 # MusicApp
 
-An application with music. At the moment 25.05.23, this is my biggest pet project after more then a year of android development. all logic + tests is 12k lines. Project covered with Unit tests and was written with idea of testable and extensible code. A free API from Spotify, authorization by token and XML layout is used. The project is single-module divided into 11 packages, each of which has a clean architecture structure inside.
+An application with music. At the moment 25.05.23, this is my biggest pet project after more then a year of android development. All logic + tests is 12k lines. Project covered with Unit tests and was written with idea of testable and extensible code followed SOLID. A free API from Spotify, authorization by token and XML layout is used. The project is single-module divided into 11 packages, each of which has a clean architecture structure inside.
 
-Release build apk: [4.1-alpha.zip](https://github.com/BoikoIlya/MusicApp/files/11568281/4.1-alpha.zip)
+### Release build apk: [4.1-alpha.zip](https://github.com/BoikoIlya/MusicApp/files/11568281/4.1-alpha.zip)
 
 
-
-##Stack:
+## Stack:
 - Unit tests Junit
 - Kotlin
 - XML
@@ -23,7 +22,7 @@ Release build apk: [4.1-alpha.zip](https://github.com/BoikoIlya/MusicApp/files/1
 - Nav Component
 - SharedPrefs
 
-##Features:
+## Features:
 - Trending: The first page displays popular playlists as well as tracks. It has add to favorites button in front of every item in list. If you have added track before and try to click this button, you will see dialog that offer you to replace track.   
 - Favorites: Displays the added tracks that are in the room database. There is a sorting, search and a shuffle button. Also, the deletion takes place by swipe.
 - Search history: displays the search history that is stored in the room database, it is possible to delete items separately and also clear the entire history at once. When entering data in the input field, a history search is performed, if 0 matches are found, 1 element is displayed with text as in the input field.
