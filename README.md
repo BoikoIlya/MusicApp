@@ -1,6 +1,6 @@
 # MusicApp
 
-An application with music. At the moment 25.05.23, this is my biggest pet project after a year and half of android development. All logic + tests is 12k lines it took 4 monthes  or 200+ hr was tracked by WakaTime plagin in AndroidStudio. Project covered with Unit tests and was written with idea of testable and extensible code followed SOLID. A free API from Spotify, authorization by token and XML layout is used. The project is single-module divided into 11 packages, each of which has a clean architecture structure inside.
+An application with music. At the moment 25.05.23, this is my biggest pet project after a year and half of android development. All logic + tests is 12k lines, it took 4 monthes  or 200+ hr was tracked by WakaTime plagin(thacks only when you typing or clicking) in AndroidStudio. Project covered with Unit tests and was written with idea of testable and extensible code followed SOLID. A free API from Spotify, authorization by token and XML layout is used. The project is single-module divided into 11 packages, each of which has a clean architecture structure inside.
 
 ### Release build apk: [4.1-alpha.zip](https://github.com/BoikoIlya/MusicApp/files/11568281/4.1-alpha.zip)
 
