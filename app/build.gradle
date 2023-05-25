@@ -15,7 +15,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "2.0-beta"
+        versionName "3.0-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -93,10 +93,10 @@ dependencies {
 
 
     // Media
-    implementation "androidx.media3:media3-exoplayer:1.0.0-rc02"
-    implementation "androidx.media3:media3-ui:1.0.0-rc02"
-    implementation "androidx.media3:media3-exoplayer-dash:1.0.0-rc02"
-    implementation "androidx.media3:media3-session:1.0.0-rc02"
+    implementation "androidx.media3:media3-exoplayer:1.1.0-alpha01"
+    implementation "androidx.media3:media3-ui:1.1.0-alpha01"
+    implementation "androidx.media3:media3-exoplayer-dash:1.1.0-alpha01"
+    implementation "androidx.media3:media3-session:1.1.0-alpha01"
 
     //SwipeDecorator
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'

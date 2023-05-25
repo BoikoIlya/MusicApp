@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
+import com.example.musicapp.app.core.Remover
 import com.example.musicapp.trending.presentation.RemoveItem
 import com.example.musicapp.trending.presentation.TracksAdapter
 import com.google.android.material.snackbar.Snackbar

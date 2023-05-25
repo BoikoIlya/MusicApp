@@ -77,7 +77,7 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
         binding.searchHistoryRcv.layoutManager = LinearLayoutManager(requireContext())
         (binding.searchHistoryRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
-        binding.searchHistoryEdt.setOnKeyListener { view, keyCode, keyEvent ->
+        binding.searchHistoryEdt.setOnKeyListener { _, keyCode, keyEvent ->
             return@setOnKeyListener if(keyCode== KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP){
                 viewModel.saveQuery(binding.searchHistoryEdt.text.toString())
                 findNavController().navigate(R.id.action_searchHistoryFragment_to_searchFragment)

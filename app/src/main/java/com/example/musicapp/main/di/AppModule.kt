@@ -6,6 +6,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.BuildConfig
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
@@ -17,22 +18,22 @@ import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TracksDao
-import com.example.musicapp.favorites.presentation.FavoritesTracksCommunication
-import com.example.musicapp.favorites.presentation.FavoritesTracksStateCommunication
+import com.example.musicapp.favorites.presentation.FavoritesTrackListCommunication
+import com.example.musicapp.favorites.presentation.FavoritesStateCommunication
 import com.example.musicapp.favorites.presentation.TracksCommunication
-import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
-import com.example.musicapp.favorites.presentation.TracksResultToTracksCommunicationMapper
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
-import com.example.musicapp.main.data.cloud.TrendingService
+import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.musicdialog.presentation.MusicDialogViewModel
 import com.example.musicapp.player.presentation.IsSavedCommunication
 import com.example.musicapp.player.presentation.PlayerService
 import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
+import com.example.musicapp.playlist.data.cache.PlaylistIdTransfer
+import com.example.musicapp.playlist.data.cloud.PlaylistService
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.HistoryDao
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
@@ -40,9 +41,7 @@ import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.trending.presentation.TrackUi
 import com.example.musicapp.trending.presentation.TrendingResult
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
-import com.example.musicapp.updatesystem.data.UpdateDialogMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
-import com.example.musicapp.updatesystem.data.cache.UpdateDataStore
 import com.example.musicapp.updatesystem.data.cloud.UpdateFirebaseService
 import com.example.musicapp.updatesystem.presentation.UpdateDialogViewModel
 import com.google.common.util.concurrent.ListenableFuture
@@ -117,7 +116,11 @@ class AppModule {
     @Singleton
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+            .setLevel(
+//                if(BuildConfig.DEBUG)
+//                else HttpLoggingInterceptor.Level.NONE
+                HttpLoggingInterceptor.Level.BODY
+            )
     }
 
     @Provides
@@ -153,7 +156,7 @@ class AppModule {
         return builder
             .baseUrl(baseUrlMusicData)
             .addConverterFactory(converterFactory)
-           // .client(client)
+            .client(client)
             .build()
             .create(TrendingService::class.java)
     }
@@ -170,6 +173,21 @@ class AppModule {
             .client(client)
             .build()
             .create(SearchTrackService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: GsonConverterFactory
+    ): PlaylistService {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(PlaylistService::class.java)
     }
 
     @Provides
@@ -216,23 +234,6 @@ class AppModule {
         return TokenStore.Base(token_key, sharedPreferences)
     }
 
-    @Singleton
-    @Provides
-    fun provideVersionStore(sharedPreferences: SharedPreferences): UpdateDataStore.Version {
-        return  UpdateDataStore.Version(sharedPreferences, version_key)
-    }
-
-    @Singleton
-    @Provides
-    fun provideApkUrlStore(sharedPreferences: SharedPreferences): UpdateDataStore.ApkUrl {
-        return UpdateDataStore.ApkUrl(sharedPreferences, apk_url_key)
-    }
-
-    @Singleton
-    @Provides
-    fun provideUpdateDataStore(sharedPreferences: SharedPreferences): UpdateDataStore.Description {
-        return UpdateDataStore.Description(sharedPreferences, update_description_key)
-    }
 
     @Singleton
     @Provides
@@ -243,7 +244,7 @@ class AppModule {
     @Provides
     @Singleton
     fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
-        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), test_topic_name)
+        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
     }
 
 }
@@ -253,18 +254,20 @@ interface AppBindModule{
 
     @Binds
     @Singleton
+    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TrendingResult>): HandleResponse<TrendingResult>
+    @Binds
+    @Singleton
     fun bindMediaItemTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<MediaItem>
     @Binds
     @Singleton
     fun bindUpdateDialogTransfer(obj: DataTransfer.UpdateDialogTransfer.Base): DataTransfer.UpdateDialogTransfer
+    @Binds
+    @Singleton
+    fun bindPlaylistIdTransfer(obj: PlaylistIdTransfer.Base): PlaylistIdTransfer
 
     @Binds
     @Singleton
     fun bindToMediaItemMapper(obj: ToMediaItemMapper): Mapper<TrackCache, MediaItem>
-
-    @Binds
-    @Singleton
-    fun bindUpdateDialogMapper(obj: UpdateDialogMapper.Base): UpdateDialogMapper
 
     @Binds
     @Singleton
@@ -376,10 +379,6 @@ interface AppBindModule{
 
     @Binds
     @Singleton
-    fun bindUiEventsCommunication(communication: UiEventsCommunication.Base): UiEventsCommunication
-
-    @Binds
-    @Singleton
     fun bindTrackPositionCommunication(communication: TrackPlaybackPositionCommunication.Base): TrackPlaybackPositionCommunication
 
     @Binds
@@ -388,30 +387,14 @@ interface AppBindModule{
 
     @Binds
     @Singleton
-    fun bindTracksResultToTracksCommunicationMapper(obj: TracksResultToTracksCommunicationMapper.Base): TracksResultToTracksCommunicationMapper
-
-    @Binds
-    @Singleton
     fun bindTracksResultToSingleUiEventCommunicationMapper(obj: TracksResultToUiEventCommunicationMapper.Base): TracksResultToUiEventCommunicationMapper
 
-    @Binds
-    @Singleton
-    fun bindTracksCommunication(obj: TracksCommunication.Base): TracksCommunication
 
     @Binds
     @Singleton
     fun bindHandleError(obj: HandleError.Base): HandleError
 
-    @Binds
-    @Singleton
-    fun bindFavoritesTracksStateCommunication(obj: FavoritesTracksStateCommunication.Base): FavoritesTracksStateCommunication
 
-    @Binds
-    @Singleton
-    fun bindFavoritesTracksCommunication(obj: FavoritesTracksCommunication.Base): FavoritesTracksCommunication
 
-    @Binds
-    @Singleton
-    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TrendingResult>): HandleResponse<TrendingResult>
 
 }

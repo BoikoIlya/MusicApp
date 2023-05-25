@@ -2,11 +2,12 @@ package com.example.musicapp.player.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.Player.REPEAT_MODE_ONE
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
-import com.example.musicapp.core.testcore.TestDispatcherList
-import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
+import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestDispatcherList
+import com.example.musicapp.favorites.testcore.TestFavoriteRepository
+import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.favorites.presentation.FavoritesViewModelTest
-import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
@@ -30,12 +31,12 @@ class PlayerViewModelTest: ObjectCreator() {
     lateinit var playbackPositionCommunication: TestTrackPlaybackPositionCommunication
     lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
     lateinit var isSavedCommunication: TestIsSavedCommunication
-    lateinit var repository:  FavoritesViewModelTest.TestFavoriteRepository
+    lateinit var repository: TestFavoriteRepository
 
     @Before
     fun setup(){
         val dispatchersList = TestDispatcherList()
-        repository =  FavoritesViewModelTest.TestFavoriteRepository()
+        repository =  TestFavoriteRepository()
         singleUiStateCommunication = TestSingleUiStateCommunication()
         playbackPositionCommunication = TestTrackPlaybackPositionCommunication()
         playerControlsCommunication = TestPlayerControlsCommunication()
@@ -56,7 +57,7 @@ class PlayerViewModelTest: ObjectCreator() {
             controller = mediaController,
             isSavedCommunication = isSavedCommunication,
             favoriteTracksRepository = repository,
-            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
+            mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication),
             bottomSheetCommunication = MainViewModelTest.TestBottomSheetCommunication(),
             slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
             trackDurationCommunication = TrackDurationCommunication.Base(),

@@ -15,7 +15,7 @@ import com.example.musicapp.databinding.PlaylistItemBinding
 
 class PlaylistsAdapter(
     private val imageLoader: ImageLoader,
-    private val clickListener: ClickListener<PlaylistUi>
+    private val clickListener: ClickListener<String>
 ): RecyclerView.Adapter<PlaylistsViewHolder>(), Mapper<List<PlaylistUi>, Unit> {
 
     private val playlists = mutableListOf<PlaylistUi>()
@@ -50,17 +50,15 @@ class PlaylistsAdapter(
 
 class PlaylistsViewHolder(
     private val binding: PlaylistItemBinding,
-    private val clickListener: ClickListener<PlaylistUi>,
+    private val clickListener: ClickListener<String>,
     private val imageLoader: ImageLoader
 ): RecyclerView.ViewHolder(binding.root){
 
-    private val mapper = PlaylistUi.ListItemUi(binding, imageLoader)
+    private val mapper = PlaylistUi.ListItemUi(binding, imageLoader, clickListener)
 
     fun bind(item: PlaylistUi){
         item.map(mapper)
-        binding.root.setOnClickListener {
-            clickListener.onClick(item)
-        }
+
     }
 }
 

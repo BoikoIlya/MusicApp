@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface SearchTrackService {
 
     companion object{
-        private const val content_market = "ES"
+        private const val content_market = "US"
         private const val search_type = "track"
     }
 

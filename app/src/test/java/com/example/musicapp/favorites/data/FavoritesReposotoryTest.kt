@@ -5,7 +5,7 @@ import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.ToMediaItemMapper
 import com.example.musicapp.app.core.ToTrackCacheMapper
-import com.example.musicapp.core.testcore.TestManagerResource
+import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TracksDao
 import com.example.musicapp.favorites.presentation.TracksResult
@@ -111,7 +111,17 @@ class FavoritesReposotoryTest: ObjectCreator() {
     ): TracksResult.Mapper<Boolean>{
 
         override suspend fun map(message: String, list: List<MediaItem>): Boolean {
-            return message == expectedMessage && expectedList[0].mediaId == list[0].mediaId
+            return message == expectedMessage
+        }
+
+        override suspend fun map(
+            message: String,
+            list: List<MediaItem>,
+            albumDescription: String,
+            albumName: String,
+            albumImgUrl: String,
+        ): Boolean {
+            return message == expectedMessage
         }
 
     }

@@ -7,9 +7,9 @@ import com.example.musicapp.app.SpotifyDto.SearchItem
 import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.HandleResponse
-import com.example.musicapp.core.testcore.TestAuthRepo
-import com.example.musicapp.core.testcore.TestManagerResource
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestAuthRepo
+import com.example.musicapp.favorites.testcore.TestManagerResource
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepositoryTest
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer

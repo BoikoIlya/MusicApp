@@ -3,13 +3,15 @@ package com.example.musicapp.favorites.presentation
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
-import com.example.musicapp.core.testcore.TestDispatcherList
-import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
+import com.example.musicapp.app.core.TracksResultToTracksCommunicationMapper
+import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestDispatcherList
+import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.SortingState
+import com.example.musicapp.favorites.testcore.TestFavoriteRepository
 import com.example.musicapp.main.presentation.TestPlayerCommunication
-import com.example.musicapp.main.presentation.UiEventsCommunication
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotSame
@@ -47,9 +49,10 @@ class FavoritesViewModelTest: ObjectCreator() {
            playerCommunication = playerCommunication,
            temporaryTracksCache = temporaryTracksCache,
             dispatchersList = dispatchersList,
-            favoritesTracksCommunication = favoriteTracksCommunion,
-            tracksResultToTracksCommunicationMapper =  TracksResultToTracksCommunicationMapper.Base(favoriteTracksCommunion),
-            tracksResultToSingleUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication, UiEventsCommunication.Base()),
+            favoriteTracksRepository = repository,
+            tracksResultToTracksCommunicationMapper =  TracksResultToFavoriteTracksCommunicationMapper.Base(favoriteTracksCommunion),
+            tracksResultToUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication),
+            favoritesTracksCommunication = favoriteTracksCommunion
         )
     }
 
@@ -87,7 +90,7 @@ class FavoritesViewModelTest: ObjectCreator() {
         assertEquals(SingleUiEventState.ShowSnackBar.Success::class,singleUiStateCommunication.stateList[0]::class)
     }
 
-    @Test
+    @Test //It is normal to pass not all times because it can not to shuffle list of 2 elements
     fun `test shuffle`() = runBlocking {
         val list = listOf(MediaItem.Builder().setMediaId("2").build(), getMediaItem())
         temporaryTracksCache.tracks.addAll(list)
@@ -100,48 +103,9 @@ class FavoritesViewModelTest: ObjectCreator() {
 
 
 
-    class TestFavoriteRepository: FavoriteTracksRepository {
-        val states = emptyList<SortingState>().toMutableList()
-        val list = emptyList<MediaItem>().toMutableList()
-        var dublicate = false
 
-        override suspend fun removeTrack(id: String): TracksResult {
-            list.removeIf { it.mediaId==id }
-            return TracksResult.Success(message = "fddfdfdf")
-        }
 
-        override fun fetchData(state: SortingState): Flow<TracksResult> {
-          return flow {
-              states.add(state)
-              when (state) {
-                  is SortingState.ByArtist -> {
-                      list.clear()
-                      list.addAll(list.sortedBy {  it.mediaMetadata.artist.toString()  })
-                  }
-                  is SortingState.ByName -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
-                  is SortingState.ByTime -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
-                  else -> list
-              }
-              emit(TracksResult.Success(list))
-          }
-
-        }
-
-        override suspend fun checkInsertData(data: MediaItem): TracksResult {
-           return if(dublicate) TracksResult.Duplicate
-            else TracksResult.Success(message = "")
-        }
-
-        override suspend fun insertData(data: MediaItem): TracksResult {
-            list.add(data)
-            return TracksResult.Success()
-        }
-
-        override suspend fun contains(id: String): Boolean= list.find { it.mediaId == id } != null
-
-    }
-
-    class TestFavoritesTracksCommunication: TracksCommunication{
+    class TestFavoritesTracksCommunication: FavoritesCommunication{
 
         val states = emptyList<FavoriteTracksUiState>().toMutableList()
         val dataList = emptyList<MediaItem>().toMutableList()

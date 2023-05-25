@@ -4,8 +4,9 @@ import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.ServiceUnavailableException
-import com.example.musicapp.core.testcore.TestAuthRepo
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestAuthRepo
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
+import com.example.musicapp.playlist.data.cache.PlaylistIdTransfer
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
 import com.example.musicapp.trending.data.ObjectCreator
@@ -40,7 +41,8 @@ class TestTrendingInteractor: ObjectCreator() {
             repository = repository,
             mapper = TrackDomain.ToTrackUiMapper(),
             tempCache = cache,
-            handleUnauthorizedResponse = HandleResponse.Base<TrendingResult>(auth, HandleError.Base(managerResource))
+            handleUnauthorizedResponse = HandleResponse.Base<TrendingResult>(auth, HandleError.Base(managerResource)),
+            transfer = PlaylistIdTransfer.Base()
         )
     }
 

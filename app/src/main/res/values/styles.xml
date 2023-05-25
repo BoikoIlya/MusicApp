@@ -10,4 +10,17 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="plyalistImageCorners">
+        <item name="cornerSizeBottomLeft">40dp</item>
+        <item name="cornerFamilyBottomLeft">rounded</item>
+
+        <item name="cornerSizeBottomRight">40dp</item>
+        <item name="cornerFamilyBottomRight">rounded</item>
+    </style>
+
+    <style name="ShuffleButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
+    </style>
+
 </resources>

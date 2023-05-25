@@ -13,7 +13,6 @@ import com.example.musicapp.R
 import com.example.musicapp.main.di.App
 import com.example.musicapp.main.di.AppComponent
 import com.example.musicapp.main.presentation.MainActivity
-import com.example.musicapp.updatesystem.data.cache.UpdateDataStore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import javax.inject.Inject

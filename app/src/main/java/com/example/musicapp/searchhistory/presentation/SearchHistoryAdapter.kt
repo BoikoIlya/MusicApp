@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.musicapp.app.core.*
 import com.example.musicapp.databinding.HistoryItemBinding
-import com.example.musicapp.databinding.TrackItemBinding
-import com.example.musicapp.favorites.presentation.Remover
-import com.example.musicapp.trending.presentation.RemoveItem
+
 
 /**
  * Created by HP on 30.01.2023.

@@ -8,9 +8,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.musicapp.app.core.BaseViewModel
+import com.example.musicapp.app.core.CollectTracksAndUiState
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.TracksRepository
-import com.example.musicapp.favorites.presentation.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.app.core.TracksResultEmptyMapper
+import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.main.presentation.PlayerCommunicationState
@@ -38,7 +42,14 @@ class SearchViewModel @Inject constructor(
     temporaryTracksCache: TemporaryTracksCache,
     private val tracksRepository: TracksRepository,
     private val mapper: TracksResultToUiEventCommunicationMapper,
-): BaseViewModel(playerCommunication, temporaryTracksCache, dispatchersList){
+): BaseViewModel<Unit>(
+    playerCommunication,
+    TracksCommunication.EmptyCommunication(),
+    temporaryTracksCache,
+    dispatchersList,
+    tracksRepository,
+    mapper
+){
 
     private var errorMessage = ""
 
@@ -76,13 +87,6 @@ class SearchViewModel @Inject constructor(
         searchTermStr = query
         return query
     }
-
-    fun addTrackToFavorites(data: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
-        tracksRepository.checkInsertData(data).map(mapper)
-    }
-
-
-
 
 
 }

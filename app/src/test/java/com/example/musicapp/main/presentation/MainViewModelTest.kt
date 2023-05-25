@@ -4,12 +4,11 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.UiEventState
-import com.example.musicapp.core.testcore.TestTemporaryTracksCache
-import com.example.musicapp.core.testcore.TestDispatcherList
-import com.example.musicapp.core.testcore.TestManagerResource
-import com.example.musicapp.core.testcore.TestSingleUiStateCommunication
-import com.example.musicapp.core.testcore.TestUiEventsCommunication
+import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
+import com.example.musicapp.favorites.testcore.TestDispatcherList
+import com.example.musicapp.favorites.testcore.TestFavoriteRepository
+import com.example.musicapp.favorites.testcore.TestManagerResource
+import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.trending.data.ObjectCreator
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
@@ -37,7 +36,6 @@ class MainViewModelTest: ObjectCreator() {
     lateinit var mediaController: TestMediaController
     lateinit var bottomSheetCommunication: TestBottomSheetCommunication
     lateinit var updateSystemRepo: TestUpdateSystemRepo
-    lateinit var uiEventsCommunication: TestUiEventsCommunication
     lateinit var firebaseMessagingWrapper: TestFirebaseMessagingWrapper
     lateinit var temporaryTracksCache: TemporaryTracksCache
     lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
@@ -52,7 +50,6 @@ class MainViewModelTest: ObjectCreator() {
         mediaController = TestMediaController()
         bottomSheetCommunication = TestBottomSheetCommunication()
         updateSystemRepo = TestUpdateSystemRepo()
-        uiEventsCommunication = TestUiEventsCommunication()
         firebaseMessagingWrapper = TestFirebaseMessagingWrapper()
         playerCommunication = PlayerCommunication.Base(
             playerControlsCommunication =playerControlsCommunication,
@@ -72,20 +69,18 @@ class MainViewModelTest: ObjectCreator() {
             updateSystemRepository = updateSystemRepo,
             mapper = MainViewModelMapper.Base(
                 DataTransfer.UpdateDialogTransfer.Base(),
-                TestManagerResource(),uiEventsCommunication),
-            uiEventsCommunication = uiEventsCommunication,
-            firebaseMessagingWrapper
+                TestManagerResource(),singleUiStateCommunication),
+            firebaseMessagingWrapper,
+            TestFavoriteRepository()
         )
     }
 
     @Test
     fun `test init`(){
         assertEquals(1,firebaseMessagingWrapper.list.size)
-        assertEquals(UiEventState.ShowDialog::class, uiEventsCommunication.stateList.first()::class)
 
         updateSystemRepo.result = UpdateResult.NoUpdate
         viewModel.checkForUpdate()
-        assertEquals(1,uiEventsCommunication.stateList.size)
     }
 
     @Test
@@ -129,7 +124,7 @@ class MainViewModelTest: ObjectCreator() {
     @Test
     fun `test dont show permission`(){
         viewModel.dontShowPermission()
-        assertEquals(0,singleUiStateCommunication.stateList.size)
+        assertEquals(1,singleUiStateCommunication.stateList.size)
     }
 
     class TestBottomSheetCommunication: BottomSheetCommunication{
@@ -148,10 +143,8 @@ class MainViewModelTest: ObjectCreator() {
     }
 
     class TestUpdateSystemRepo: UpdateSystemRepository{
-        var result: UpdateResult = UpdateResult.NewUpdateInfo("x","x")
+        var result: UpdateResult = UpdateResult.NewUpdateInfo("x","x","x")
         override suspend fun checkForNewVersion(): UpdateResult = result
-
-        override suspend fun retriveApkUrl(): UpdateResult = result
 
 
     }

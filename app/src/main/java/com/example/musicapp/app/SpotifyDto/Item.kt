@@ -78,7 +78,6 @@ data class Item(
                 return PlaylistDomain(
                     id = id,
                     name = name,
-                    descriptions = description,
                     imgUrl = images.first().url,
                     tracksUrl = href
                 )

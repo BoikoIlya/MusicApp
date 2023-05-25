@@ -96,11 +96,6 @@ import javax.inject.Inject
         })
 
 
-        lifecycleScope.launch {
-            viewModel.collectUiEventsCommunication(this@MainActivity){
-                it.apply(supportFragmentManager,this@MainActivity, binding)
-            }
-        }
 
         lifecycleScope.launch {
             viewModel.collectBottomSheetState(this@MainActivity){

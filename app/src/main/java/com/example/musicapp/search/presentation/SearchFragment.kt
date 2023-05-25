@@ -103,7 +103,7 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
         viewModel.saveCurrentPageQueue(emptyList())
 
 
-        binding.searchEdt.setOnFocusChangeListener { view, isFocused ->
+        binding.searchEdt.setOnFocusChangeListener { _, isFocused ->
             if (isFocused) findNavController().popBackStack()
         }
 

@@ -1,6 +1,6 @@
 package com.example.musicapp.searchhistory.data
 
-import com.example.musicapp.core.testcore.TestManagerResource
+import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.searchhistory.data.cache.HistoryDao
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
