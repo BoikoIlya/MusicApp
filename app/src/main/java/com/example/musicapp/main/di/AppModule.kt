@@ -70,9 +70,6 @@ class AppModule {
         private const val baseUrlMusicData = "https://api.spotify.com/v1/"
         private const val shared_pref_name = "settings"
         private const val token_key = "tken_key"
-        private const val version_key = "version_key"
-        private const val apk_url_key = "apk_url_key"
-        private const val update_description_key = "description_key"
         private const val db_name = "music_app_db"
         private const val topic_name = "update_topic"
         private const val test_topic_name = "test_topic_name"
@@ -117,9 +114,7 @@ class AppModule {
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
             .setLevel(
-//                if(BuildConfig.DEBUG)
-//                else HttpLoggingInterceptor.Level.NONE
-                HttpLoggingInterceptor.Level.BODY
+                HttpLoggingInterceptor.Level.NONE
             )
     }
 

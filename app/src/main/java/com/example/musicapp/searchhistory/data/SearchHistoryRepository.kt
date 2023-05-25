@@ -27,12 +27,15 @@ interface SearchHistoryRepository: SearchQueryRepository {
         private val cache: HistoryDao,
         private val mapper: ToHistoryItemMapper,
         private val managerResource: ManagerResource,
-        transfer: SearchQueryTransfer
+        private val transfer: SearchQueryTransfer
     ): SearchHistoryRepository, SearchQueryRepository.Abstract(transfer){
 
 
         override fun getHistoryItems(query: String): Flow<List<String>> =
-            if(query.isEmpty()) cache.getAllHistoryByTime().map {list-> list.map { it.queryTerm } }
+            if(query.isEmpty()) {
+                transfer.save("")
+                cache.getAllHistoryByTime().map {list-> list.map { it.queryTerm } }
+            }
             else cache.searchHistory(query).map {list->
                 if(list.isEmpty() && query.isNotBlank()) listOf(query)
                 else list.map { it.queryTerm }

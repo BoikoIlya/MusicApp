@@ -26,6 +26,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicapp.R
@@ -145,6 +146,10 @@ import javax.inject.Inject
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
+        binding.bottomNavView.setOnItemSelectedListener {
+            NavigationUI.onNavDestinationSelected(it,navController)
+            return@setOnItemSelectedListener true
+        }
 
         onBackPressedDispatcher.addCallback(this){
             if(bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
