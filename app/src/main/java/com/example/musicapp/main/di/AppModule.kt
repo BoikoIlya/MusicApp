@@ -6,7 +6,6 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.BuildConfig
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
@@ -18,11 +17,12 @@ import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TracksDao
-import com.example.musicapp.favorites.presentation.FavoritesTrackListCommunication
-import com.example.musicapp.favorites.presentation.FavoritesStateCommunication
-import com.example.musicapp.favorites.presentation.TracksCommunication
+import com.example.musicapp.favorites.data.cloud.FavoritesService
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepository
+import com.example.musicapp.main.data.CheckAuthRepository
+import com.example.musicapp.main.data.cache.AccountDataStore
+import com.example.musicapp.main.data.cache.OwnerIdStore
 import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import com.example.musicapp.trending.data.cloud.TrendingService
@@ -66,10 +66,11 @@ import javax.inject.Singleton
 class AppModule {
 
     companion object{
-        private const val baseUrlAuthorization = "https://accounts.spotify.com/"
-        private const val baseUrlMusicData = "https://api.spotify.com/v1/"
+        private const val baseUrlAuthorization = "https://oauth.vk.com/"
+        private const val baseUrlMusicData = "https://api.vk.com/"
         private const val shared_pref_name = "settings"
         private const val token_key = "tken_key"
+        private const val owner_id_key = "owner_id_key"
         private const val version_key = "version_key"
         private const val apk_url_key = "apk_url_key"
         private const val update_description_key = "description_key"
@@ -190,6 +191,21 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideFavoritesService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: GsonConverterFactory
+    ): FavoritesService {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(FavoritesService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideConverterFactory(): GsonConverterFactory{
         return GsonConverterFactory.create()
     }
@@ -216,8 +232,8 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthorizationRepo(service: AuthorizationService, cache: TokenStore): AuthorizationRepository {
-        return AuthorizationRepository.Base(service,cache)
+    fun provideAuthorizationRepo(service: AuthorizationService, cache: AccountDataStore, handleError: HandleError): AuthorizationRepository {
+        return AuthorizationRepository.Base(service,cache,handleError)
     }
 
     @Singleton
@@ -231,6 +247,13 @@ class AppModule {
     fun provideTokenStore(sharedPreferences: SharedPreferences): TokenStore {
         return TokenStore.Base(token_key, sharedPreferences)
     }
+
+    @Singleton
+    @Provides
+    fun provideOwnerIdStore(sharedPreferences: SharedPreferences): OwnerIdStore {
+        return OwnerIdStore.Base(owner_id_key, sharedPreferences)
+    }
+
 
 
     @Singleton
@@ -250,6 +273,9 @@ class AppModule {
 @Module
 interface AppBindModule{
 
+    @Singleton
+    @Binds
+    fun bindCheckAuthRepository(obj: AuthorizationRepository.Base): CheckAuthRepository
     @Binds
     @Singleton
     fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TrendingResult>): HandleResponse<TrendingResult>
@@ -327,6 +353,16 @@ interface AppBindModule{
 
     @Singleton
     @Binds
+    fun bindAccountDataStore(obj: AccountDataStore.Base):
+            AccountDataStore
+
+    @Singleton
+    @Binds
+    fun bindFragmentManagerCommunication(obj: FragmentManagerCommunication.Base):
+            FragmentManagerCommunication
+
+    @Singleton
+    @Binds
     fun bindSearchQueryAndKeyBoardFocusTransfer(obj: SearchQueryTransfer.Base):
             SearchQueryTransfer
 
@@ -338,6 +374,11 @@ interface AppBindModule{
     @Binds
     fun bindTrackDurationCommunication(obj: TrackDurationCommunication.Base):
             TrackDurationCommunication
+
+    @Singleton
+    @Binds
+    fun bindBottomNavCommunication(obj: BottomNavCommunication.Base):
+            BottomNavCommunication
 
     @Binds
     @[IntoMap ViewModelKey(MainViewModel::class)]

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".vkauth.presentation.AuthFragment"
+    android:background="@color/white"
+    >
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:src="@drawable/login_pic"
+        />
+    
+    <TextView
+        android:textColor="#776e45"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login with VK"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:textSize="@dimen/h1"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:hint="@string/phone"
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:hint="@string/password"
+        app:endIconMode="password_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+   <ProgressBar
+       android:visibility="gone"
+       android:id="@+id/authProgress"
+       android:layout_marginTop="20dp"
+       android:indeterminateTint="@color/orange"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/login_btn"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:textSize="@dimen/h3"
+        android:paddingVertical="10dp"
+        />
+</LinearLayout>

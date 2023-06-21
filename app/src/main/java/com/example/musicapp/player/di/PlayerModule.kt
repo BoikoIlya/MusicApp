@@ -5,21 +5,25 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
-
+import androidx.media3.datasource.DefaultDataSourceFactory
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.DefaultHlsDataSourceFactory
+import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.session.MediaSession
 import com.example.musicapp.main.di.ViewModelKey
 import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.player.presentation.MediaSessionCallBack
 import com.example.musicapp.player.presentation.PlayerViewModel
-import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
-import com.example.musicapp.queue.presenatation.QueueViewModel
 import dagger.Binds
-
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+
 
 @UnstableApi /**
  * Created by HP on 30.01.2023.
@@ -34,7 +38,11 @@ class PlayerModule {
     @Provides
     @PlayerServiceScope
     fun provideMediaPlayer(context: Context): ExoPlayer {
-        return ExoPlayer.Builder(context).build()
+        return ExoPlayer.Builder(context)
+            .setMediaSourceFactory(
+                HlsMediaSource.Factory(
+                    DefaultHlsDataSourceFactory(DefaultHttpDataSource.Factory())))
+            .build()
     }
 
 
@@ -54,7 +62,7 @@ class PlayerModule {
         context: Context,
         player: ExoPlayer,
         pendingIntent: PendingIntent,
-        callBack: MediaSessionCallBack
+        callBack: MediaSessionCallBack,
     ): MediaSession {
         return MediaSession.Builder(context, player)
             .setSessionActivity(pendingIntent)

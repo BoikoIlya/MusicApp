@@ -7,11 +7,12 @@
     <string name="no_element">"No tracks found"</string>
     <string name="top_50_recommendations">Top 50 Recommendations</string>
     <string name="bad_gatawey_message">Bad Gateway</string>
-    <string name="server_error_message">Internal Server Error</string>
+    <string name="server_error_message">Internal server error: Unknown error, try later</string>
     <string name="too_many_requests">Too Many Requests</string>
     <string name="not_found">Not Found</string>
     <string name="forbidenn">Forbidden Request</string>
     <string name="bad_request">Bad Request</string>
+    <string name="incorrect_credentials">Incorrect credentials</string>
     <string name="no_content">No Content</string>
     <string name="accepted_message">The request has been accepted for processing, but the processing has not been completed</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -45,6 +46,9 @@
     <string name="results">Results</string>
     <string name="shuffle">Shuffle</string>
     <string name="tracks">tracks</string>
-
+    <string name="phone">Phone</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="fill_all_fields">Fill all fields</string>
 
 </resources>

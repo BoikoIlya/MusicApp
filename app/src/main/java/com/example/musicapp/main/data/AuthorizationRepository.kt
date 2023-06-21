@@ -2,34 +2,45 @@ package com.example.musicapp.main.data
 
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import javax.inject.Inject
-import android.util.Base64
-import com.example.musicapp.main.data.cache.TokenStore
+import com.example.musicapp.app.core.HandleError
+import com.example.musicapp.main.data.cache.AccountDataStore
 
 /**
  * Created by HP on 09.03.2023.
  **/
-interface AuthorizationRepository {
+interface AuthorizationRepository: CheckAuthRepository {
 
    suspend fun updateToken()
+
+   suspend fun token(login: String, password: String): String
+
 
 
     class Base @Inject constructor(
         private val authorizationService: AuthorizationService,
-        private val cache: TokenStore
+        private val accountData: AccountDataStore,
+        private val handleError: HandleError
     ): AuthorizationRepository {
 
-        companion object{
-            private const val client_id = "60c4c91a06044b06b6db1066699eeb13"
-            private const val client_secret = "487d1386b22243c18ce3a90945f2b944"
-            private val auth = "Basic "+ Base64.encodeToString(("$client_id:$client_secret").toByteArray(), Base64.NO_WRAP)
-            private const val content = "application/x-www-form-urlencoded"
-            private const val grand_type = "client_credentials"
-        }
+
 
 
 
         override suspend fun updateToken() {
-            authorizationService.getToken(auth, content, grand_type).map(cache)
+          //  authorizationService.getToken(auth, content, grand_type).map(cache)
+        }
+
+        override suspend fun token(login: String, password: String): String {
+            return try {
+                authorizationService.getToken(username = login, password = password).map(accountData)
+                ""
+            }catch (e: Exception){
+                handleError.handle(e)
+            }
+        }
+
+        override suspend fun isAuthorized(notAuthorized: () -> Unit) {
+            if(accountData.isDataEmpty()) notAuthorized.invoke()
         }
 
     }

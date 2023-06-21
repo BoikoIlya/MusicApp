@@ -5,6 +5,7 @@ import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.*
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.favorites.domain.FavoritesInteractor
 import com.example.musicapp.favorites.presentation.*
 import com.example.musicapp.main.di.ViewModelKey
 import com.example.musicapp.trending.presentation.TrendingViewModel
@@ -17,6 +18,10 @@ import dagger.multibindings.IntoMap
  **/
 @Module
 interface FavoritesModule {
+
+    @FavoritesScope
+    @Binds
+    fun bindFavoritesInteractor(obj: FavoritesInteractor.Base): FavoritesInteractor
 
     @FavoritesScope
     @Binds

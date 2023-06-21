@@ -1,6 +1,7 @@
 package com.example.musicapp.trending.presentation
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,7 +89,7 @@ interface RemoveItem{
     }
 
     override fun scrollToSelectedTrack(rcv: RecyclerView) {
-        rcv.smoothScrollToPosition(selectedTrackPosition)
+        rcv.scrollToPosition(selectedTrackPosition)
 
     }
 
@@ -113,7 +114,9 @@ class TrendingTracksViewHolder(
 
     fun bind(item: MediaItem, position: Int, selectedPosition: Int) =  with(binding){
         with(item.mediaMetadata) {
-            imageLoader.loadImage("https://${artworkUri?.host}${artworkUri?.path}", trackImg)
+            imageLoader.loadImage(
+                "https://${artworkUri?.host}${artworkUri?.path}?${artworkUri?.query}",
+                trackImg)
             songNameTv.text = title
             authorNameTv.text = artist
             addBtn.visibility = addBtnVisibility

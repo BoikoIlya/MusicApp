@@ -1,7 +1,7 @@
 package com.example.musicapp.main.data
 
 import TokenDto
-import com.example.musicapp.main.data.cache.TokenStore
+import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -24,7 +24,7 @@ class AuthorizationRepositoryTest {
         tokenStore = TestTokenStore()
         authorizationRepository = AuthorizationRepository.Base(
             authorizationService = service,
-            cache = tokenStore
+            accountData = tokenStore
         )
     }
 
@@ -38,7 +38,7 @@ class AuthorizationRepositoryTest {
         assertEquals(expected,tokenStore.read())
     }
 
-    class TestTokenStore: TokenStore{
+    class TestTokenStore: AccountDataStore{
        private var token = ""
 
         override fun read(): String = token

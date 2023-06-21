@@ -67,7 +67,7 @@
           android:paddingHorizontal="15dp"
           android:text="Space Vandals"
           android:textColor="@color/white"
-          android:textSize="@dimen/h3"
+          android:textSize="@dimen/body1"
           android:textStyle="bold"
           app:layout_constraintEnd_toStartOf="@id/previous_btn"
           app:layout_constraintHorizontal_bias="0.15"
@@ -83,7 +83,7 @@
           android:paddingHorizontal="15dp"
           android:text="Moderator"
           android:textColor="@color/gray"
-          android:textSize="@dimen/body1"
+          android:textSize="@dimen/body2"
           app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
           app:layout_constraintStart_toStartOf="@+id/song_name_tv"
           app:layout_constraintTop_toBottomOf="@id/song_name_tv" />

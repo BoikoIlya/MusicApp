@@ -9,10 +9,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = TracksDao.table_name )
 data class TrackCache(
     @PrimaryKey(autoGenerate = false)
-    val id: String,
+    val id: Int,
+    val url: String,
     val name: String,
     val artistName: String,
-    val imgUrl: String,
+    val bigImgUrl: String,
+    val smallImgUrl: String,
     val albumName: String,
-    val time: Long
+    val date: Int
 )

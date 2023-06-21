@@ -9,7 +9,7 @@ import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.core.SearchQueryRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.main.data.cache.TokenStore
+import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ interface SearchRepository: SearchQueryRepository {
     class Base @Inject constructor(
         private val service: SearchTrackService,
         private val mapper: SearchTracks.Mapper<List<MediaItem>>,
-        private val tokenStore: TokenStore,
+        private val tokenStore: AccountDataStore,
         private val cachedTracks: TemporaryTracksCache,
         private val handleResponse: HandleResponse<PagingSource.LoadResult<Int, MediaItem>>,
         transfer: SearchQueryTransfer

@@ -49,6 +49,7 @@
                     android:hint="@string/search_track"
                     android:inputType="text"
                     android:paddingStart="10dp"
+                    android:textSize="@dimen/body1"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/orange"
                     android:textColorHint="@color/gray"
@@ -58,12 +59,12 @@
 
 
             <TextView
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/favorites_songs"
                 android:textColor="@color/black"
-                android:textSize="@dimen/h2"
+                android:textSize="@dimen/h3"
                 app:layout_constraintEnd_toStartOf="@+id/shuffleFavorites"
                 app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
@@ -71,7 +72,7 @@
 
 
         <ImageButton
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/shuffleFavorites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,7 +84,7 @@
             />
 
         <ImageButton
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

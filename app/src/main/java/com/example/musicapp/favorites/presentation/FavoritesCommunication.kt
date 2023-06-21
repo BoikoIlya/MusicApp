@@ -1,5 +1,6 @@
 package com.example.musicapp.favorites.presentation
 
+import android.util.Log
 import javax.inject.Inject
 
 /**
@@ -14,6 +15,11 @@ interface FavoritesCommunication: TracksCommunication<FavoriteTracksUiState> {
     ) : TracksCommunication.Abstract<FavoriteTracksUiState>(
         uiStateCommunication,
         favoritesTracksCommunication
-    ), FavoritesCommunication
+    ), FavoritesCommunication {
+
+//        override fun showUiState(state: FavoriteTracksUiState) {
+//            Log.d("tag", "showUiState: $state")
+//        }
+    }
 
 }

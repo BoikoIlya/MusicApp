@@ -37,7 +37,7 @@
                 android:paddingHorizontal="10dp"
                 android:text="90`s Old School"
                 android:textColor="@color/black"
-                android:textSize="@dimen/h3"
+                android:textSize="@dimen/body1"
                 app:layout_constraintEnd_toStartOf="@id/like_btn"
                 app:layout_constraintBottom_toBottomOf="@+id/back_btn"
                 app:layout_constraintStart_toEndOf="@id/back_btn"
@@ -74,7 +74,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:scaleType="centerCrop"
-                    android:src="@color/white" />
+                    android:src="@drawable/tone" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -86,7 +86,7 @@
                 android:gravity="center"
                 android:text="Skys`s The Limit (feat. 112)"
                 android:textColor="@color/black"
-                android:textSize="@dimen/h2"
+                android:textSize="@dimen/h3"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -101,18 +101,22 @@
                 android:gravity="center"
                 android:text="Notorious B.I.G."
                 android:textColor="@color/gray"
-                android:textSize="@dimen/h3"
+                android:textSize="@dimen/body1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/songName" />
 
-            <SeekBar
-                android:id="@+id/seekBar"
+
+
+            <com.google.android.material.slider.Slider
+                app:thumbRadius="8dp"
+                app:labelBehavior="gone"
+                android:id="@+id/slider"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="35dp"
-                android:progress="30"
+                android:valueFrom="-0.1"
                 android:progressTint="@color/orange"
                 android:thumbTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -127,19 +131,19 @@
                 android:layout_weight="1"
                 android:text="00:00"
                 android:textColor="@color/gray"
-                app:layout_constraintStart_toStartOf="@id/seekBar"
-                app:layout_constraintTop_toBottomOf="@id/seekBar"
-                android:textSize="@dimen/body1" />
+                app:layout_constraintStart_toStartOf="@id/slider"
+                app:layout_constraintTop_toBottomOf="@id/slider"
+                android:textSize="@dimen/body2" />
 
             <TextView
                 android:id="@+id/totalDuration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                app:layout_constraintEnd_toEndOf="@id/seekBar"
-                app:layout_constraintTop_toBottomOf="@id/seekBar"
+                app:layout_constraintEnd_toEndOf="@id/slider"
+                app:layout_constraintTop_toBottomOf="@id/slider"
                 android:textColor="@color/gray"
-                android:textSize="@dimen/body1" />
+                android:textSize="@dimen/body2" />
 
 
             <ToggleButton
@@ -246,7 +250,7 @@
                 android:layout_marginStart="20dp"
                 android:text="@string/current_queue"
                 android:textColor="@color/white"
-                android:textSize="@dimen/h3"
+                android:textSize="@dimen/body1"
                 android:textStyle="bold" />
 
             <ImageView

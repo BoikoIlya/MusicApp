@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="hello world!"
-        android:textSize="@dimen/h3"
+        android:textSize="@dimen/body1"
         android:textColor="@color/black"
         />
 

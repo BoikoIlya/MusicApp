@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/trendingFragment"
+    app:startDestination="@id/favoritesFragment"
     >
 
     <fragment
@@ -37,4 +37,9 @@
         android:id="@+id/playlistFragment"
         android:name="com.example.musicapp.playlist.presentation.PlaylistFragment"
         android:label="PlaylistFragment" />
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.musicapp.vkauth.presentation.AuthFragment"
+        android:label="fragment_auth"
+        tools:layout="@layout/fragment_auth" />
 </navigation>

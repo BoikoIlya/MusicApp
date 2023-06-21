@@ -38,6 +38,7 @@ import com.example.musicapp.main.di.App
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.player.di.PlayerModule
 import com.example.musicapp.updatesystem.presentation.FCMUpdateService
+import com.example.musicapp.vkauth.presentation.AuthFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.launch
@@ -97,6 +98,11 @@ import javax.inject.Inject
         })
 
 
+        lifecycleScope.launch{
+            viewModel.collectFragmentManagerCommunication(this@MainActivity){
+                it.apply(supportFragmentManager)
+            }
+        }
 
         lifecycleScope.launch {
             viewModel.collectBottomSheetState(this@MainActivity){
@@ -127,6 +133,12 @@ import javax.inject.Inject
             }
         }
 
+        lifecycleScope.launch{
+            viewModel.collectBottomNav(this@MainActivity){
+                binding.bottomNavView.visibility = it
+            }
+        }
+
         binding.playBtn.setOnClickListener {
             if ((it as ToggleButton).isChecked)
                 viewModel.playerAction(PlayerCommunicationState.Pause)
@@ -145,6 +157,7 @@ import javax.inject.Inject
         binding.bottomPlayerBar.setOnClickListener {
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
+
 
         binding.bottomNavView.setOnItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it,navController)

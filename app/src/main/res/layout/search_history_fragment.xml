@@ -52,6 +52,7 @@
                         android:paddingStart="10dp"
                         android:textColor="@color/black"
                         android:textColorHighlight="@color/orange"
+                        android:textSize="@dimen/body1"
                         android:textColorHint="@color/gray"
                         android:textColorLink="@color/orange"
                         android:textCursorDrawable="@drawable/cursor_drawable" />
@@ -67,7 +68,7 @@
                     android:layout_weight="1"
                     android:text="@string/history"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/h2"
+                    android:textSize="@dimen/h3"
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
                     app:layout_constraintStart_toStartOf="@+id/textInputLayout"
                     />

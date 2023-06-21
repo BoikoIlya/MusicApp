@@ -26,11 +26,13 @@ interface HandleError {
                     202 -> R.string.accepted_message
                     204 -> R.string.no_content
                     400 -> R.string.bad_request
+                    401 -> R.string.incorrect_credentials
                     403 -> R.string.forbidenn
                     404 -> R.string.not_found
                     429 -> R.string.too_many_requests
                     500 -> R.string.server_error_message
                     502 -> R.string.bad_gatawey_message
+                    504 -> R.string.server_error_message
                     else -> R.string.oops_can_t_load_data
                 }
             }else if(e is UnknownHostException) id = R.string.no_connection_message

@@ -96,6 +96,18 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
+         override fun replaceMediaItem(index: Int, mediaItem: MediaItem) {
+             TODO("Not yet implemented")
+         }
+
+         override fun replaceMediaItems(
+             fromIndex: Int,
+             toIndex: Int,
+             mediaItems: MutableList<MediaItem>,
+         ) {
+             TODO("Not yet implemented")
+         }
+
          override fun removeMediaItem(index: Int) {
              TODO("Not yet implemented")
          }

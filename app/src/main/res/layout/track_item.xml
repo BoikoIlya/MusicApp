@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="15dp"
+    android:paddingVertical="10dp"
     android:paddingHorizontal="15dp"
     android:foreground="?attr/selectableItemBackground"
     >
@@ -22,9 +22,8 @@
         <ImageView
             android:background="@color/white"
             android:id="@+id/trackImg"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@color/white"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             />
 
     </androidx.cardview.widget.CardView>
@@ -38,7 +37,7 @@
         android:layout_height="wrap_content"
         android:text="Space Vandals"
         android:textColor="@color/black"
-        android:textSize="@dimen/h3"
+        android:textSize="@dimen/body1"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"

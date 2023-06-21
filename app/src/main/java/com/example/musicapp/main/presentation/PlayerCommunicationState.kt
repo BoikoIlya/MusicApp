@@ -1,7 +1,10 @@
 package com.example.musicapp.main.presentation
 
+import android.app.Application
+import android.media.MediaPlayer
 import android.provider.Settings.Global
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -19,7 +22,6 @@ import okhttp3.internal.checkDuration
 /**
  * Created by HP on 18.03.2023.
  **/
-
 sealed interface PlayerCommunicationState{
 
     fun apply(
@@ -76,6 +78,8 @@ sealed interface PlayerCommunicationState{
                             SingleUiEventState.ShowSnackBar.Error(error.message.toString()))
                         this.cancel()
                     }
+                    controller.seekToNextMediaItem()
+                    controller.play()
                     super.onPlayerError(error)
                 }
 
@@ -84,6 +88,7 @@ sealed interface PlayerCommunicationState{
                     super.onMediaItemTransition(mediaItem, reason)
                     playerControls.map(PlayerControlsState.Play(mediaItem?: MediaItem.Builder().build()))
                     selectedTrackCommunication.map(controller.currentMediaItem!!)
+                    Log.d("tag", "onMediaItemTransition: ${mediaItem?.mediaMetadata?.title}")
                 }
             })
         }
@@ -103,13 +108,11 @@ sealed interface PlayerCommunicationState{
             singleUiEventCommunication: SingleUiEventCommunication,
             trackDurationCommunication: TrackDurationCommunication
         ) {
-
             selectedTrackCommunication.map(track)
             playerControls.map(PlayerControlsState.Play(track))
             controller.seekToDefaultPosition(position)
             controller.prepare()
             controller.playWhenReady = true
-
         }
     }
 

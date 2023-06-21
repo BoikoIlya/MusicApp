@@ -16,6 +16,8 @@ interface TracksRepository {
 
      fun fetchData(state: SortingState):  Flow<TracksResult>
 
+     suspend fun updateData()
+
     suspend fun checkInsertData(data: MediaItem): TracksResult
 
     suspend fun insertData(data: MediaItem): TracksResult
@@ -31,6 +33,7 @@ interface TracksRepository {
     ): TracksRepository{
 
         override fun fetchData(state: SortingState): Flow<TracksResult> = state.fetch(cache,toMediaItemMapper)
+
 
         override suspend fun checkInsertData(data: MediaItem): TracksResult {
             val item = cache.contains(data.mediaId)
@@ -48,7 +51,7 @@ interface TracksRepository {
             return TracksResult.Success(message = managerResource.getString(R.string.success_add_message))
         }
 
-        override suspend fun contains(id: String): Boolean = cache.contains(id)!=null
+        override suspend fun contains(url: String): Boolean = cache.contains(url)!=null
 
     }
 }

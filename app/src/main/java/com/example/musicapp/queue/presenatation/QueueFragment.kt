@@ -90,7 +90,7 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
         }
 
         binding.moveUp.setOnClickListener {
-            binding.queueRcv.smoothScrollToPosition(0)
+            binding.queueRcv.scrollToPosition(0)
         }
 
         binding.backBtnQueue.setOnClickListener{

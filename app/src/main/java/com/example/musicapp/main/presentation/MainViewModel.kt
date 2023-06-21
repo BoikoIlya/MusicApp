@@ -1,31 +1,22 @@
 package com.example.musicapp.main.presentation
 
 import android.Manifest
-import android.os.Build
-import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import com.example.musicapp.app.core.BaseViewModel
-import com.example.musicapp.app.core.CollectTracksAndUiState
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.SingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.app.core.TracksResultEmptyMapper
 import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.presentation.TracksCommunication
+import com.example.musicapp.main.data.CheckAuthRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
-import com.example.musicapp.updatesystem.presentation.FCMUpdateService
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.delay
+import com.example.musicapp.vkauth.presentation.AuthFragment
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -42,6 +33,9 @@ class MainViewModel @Inject constructor(
     private val mapper: MainViewModelMapper,
     private val firebaseMessagingWrapper: FirebaseMessagingWrapper,
     private val favoriteTracksRepository: FavoriteTracksRepository,
+    private val bottomNavCommunication: BottomNavCommunication,
+    private val authorizationRepository: CheckAuthRepository,
+    private val fragmentManagerCommunication: FragmentManagerCommunication
 ): BaseViewModel<Unit>(
     playerCommunication,
     TracksCommunication.EmptyCommunication(),
@@ -59,7 +53,8 @@ class MainViewModel @Inject constructor(
     }
 
     init {
-       firebaseMessagingWrapper.subscribeToTopic()
+        checkAuth()
+        firebaseMessagingWrapper.subscribeToTopic()
         checkForUpdate()
     }
 
@@ -76,6 +71,12 @@ class MainViewModel @Inject constructor(
                 SingleUiEventState.CheckForPermission(
                     Manifest.permission.POST_NOTIFICATIONS,
                     permissionRequestCode))
+    }
+
+    fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
+        authorizationRepository.isAuthorized {
+            fragmentManagerCommunication.map(FragmentManagerState.Replace.WithAnimation(AuthFragment()))
+        }
     }
 
     fun dontShowPermission() { showPermission = false}
@@ -99,5 +100,13 @@ class MainViewModel @Inject constructor(
         collector: FlowCollector<Int>
     ) = slideViewPagerCommunication.collect(owner,collector)
 
+    suspend fun collectBottomNav(
+        owner: LifecycleOwner,
+        collector: FlowCollector<Int>
+    ) = bottomNavCommunication.collect(owner,collector)
 
+    suspend fun collectFragmentManagerCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<FragmentManagerState>
+    ) = fragmentManagerCommunication.collect(owner,collector)
 }

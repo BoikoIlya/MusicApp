@@ -7,7 +7,7 @@ import androidx.paging.PagingState
 import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.main.data.cache.TokenStore
+import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import java.lang.Exception
 
@@ -18,7 +18,7 @@ class SearchPagingSource(
     private val service: SearchTrackService,
     private val query: String,
     private val mapper: SearchTracks.Mapper<List<MediaItem>>,
-    private val tokenStore: TokenStore,
+    private val tokenStore: AccountDataStore,
     private val handleResponse: HandleResponse<LoadResult<Int, MediaItem>>,
     private val cachedTracks: TemporaryTracksCache
 ): PagingSource<Int, MediaItem>() {
@@ -30,7 +30,7 @@ class SearchPagingSource(
             val position = params.key ?: 1
 
                 val cloudData = service.searchTrack(
-                    auth = tokenStore.read(),
+                    auth = tokenStore.token(),
                     query = query,
                     limit = params.loadSize,
                     offset = position

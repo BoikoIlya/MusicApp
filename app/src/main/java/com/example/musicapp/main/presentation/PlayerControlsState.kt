@@ -51,7 +51,8 @@ interface PlayerControlsState {
                 imageLoader.loadImage(
                     "https://" +
                             track.mediaMetadata.artworkUri?.host +
-                            track.mediaMetadata.artworkUri?.path,
+                            track.mediaMetadata.artworkUri?.path+
+                            "?"+track.mediaMetadata.artworkUri?.query,
                     trackImg
                 )
                 songNameTv.text = track.mediaMetadata.title

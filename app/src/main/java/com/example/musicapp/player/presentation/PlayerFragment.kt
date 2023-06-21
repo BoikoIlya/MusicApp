@@ -2,6 +2,7 @@ package com.example.musicapp.player.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.ToggleButton
@@ -21,6 +22,7 @@ import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.trending.presentation.TrendingViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.slider.Slider
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,7 +69,7 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
                     with(it.mediaMetadata) {
                         albumName.text = albumTitle
                         imageLoader.loadImage(
-                            "https://${artworkUri?.host}${artworkUri?.path}",
+                            description.toString(),// description contain big img url
                             songImg,
                             imgBg
                         )
@@ -79,9 +81,9 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
             }
         }
 
-        lifecycleScope.launch{
-            viewModel.collectPlayerControls(this@PlayerFragment){
-                it.apply(binding,viewModel)
+        lifecycleScope.launch {
+            viewModel.collectPlayerControls(this@PlayerFragment) {
+                it.apply(binding, viewModel)
             }
         }
 
@@ -91,27 +93,22 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
         lifecycleScope.launch {
             viewModel.collectTrackPosition(this@PlayerFragment) {
-                binding.seekBar.progress = it.first
+                binding.slider.value = it.first.toFloat()
                 binding.currentPosition.text = it.second
             }
         }
 
-        lifecycleScope.launch{
-            viewModel.collectTrackDurationCommunication(this@PlayerFragment){
-               binding.totalDuration.text = viewModel.durationForTextView(it)
-               binding.seekBar.max = it.toInt()
+        lifecycleScope.launch {
+            viewModel.collectTrackDurationCommunication(this@PlayerFragment) {
+                binding.totalDuration.text = viewModel.durationForTextView(it)
+                binding.slider.valueTo = it.toFloat()
             }
         }
 
-
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, position: Int, p2: Boolean) {
-                if (p2) viewModel.playerAction(PlayerCommunicationState.SeekToPosition(position.toLong()))
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        binding.slider.addOnChangeListener(Slider.OnChangeListener { _, value, user ->
+           if(user) viewModel.playerAction(PlayerCommunicationState.SeekToPosition(value.toLong()))
         })
+
 
         binding.backBtn.setOnClickListener {
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)

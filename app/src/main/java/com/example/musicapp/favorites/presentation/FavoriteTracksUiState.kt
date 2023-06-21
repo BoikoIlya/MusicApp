@@ -59,6 +59,7 @@ sealed class FavoriteTracksUiState {
         ) {
             progress.visibility = View.VISIBLE
             textView.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
 
     }

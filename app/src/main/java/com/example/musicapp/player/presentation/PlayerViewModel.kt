@@ -74,8 +74,8 @@ class PlayerViewModel @Inject constructor(
 
     fun isRepeatEnabled():Boolean = controller.repeatMode == REPEAT_MODE_ONE
 
-    fun isSaved(id: String) = viewModelScope.launch(dispatchersList.io()) {
-        isSavedCommunication.map(favoriteTracksRepository.contains(id))
+    fun isSaved(url: String) = viewModelScope.launch(dispatchersList.io()) {
+        isSavedCommunication.map(favoriteTracksRepository.contains(url))
     }
 
     fun saveTrack(data: MediaItem) = viewModelScope.launch(dispatchersList.io()) {

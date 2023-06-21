@@ -13,6 +13,7 @@ import com.example.musicapp.searchhistory.di.SearchHistoryComponent
 import com.example.musicapp.trending.di.TrendingComponent
 import com.example.musicapp.updatesystem.presentation.FCMUpdateService
 import com.example.musicapp.updatesystem.presentation.UpdateDialogFragment
+import com.example.musicapp.vkauth.di.AuthComponent
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -51,5 +52,7 @@ interface AppComponent {
     fun searchHistoryComponent(): SearchHistoryComponent.Builder
 
     fun playlistComponent(): PlaylistComponent.Builder
+
+    fun authComponent(): AuthComponent.Builder
 
 }
