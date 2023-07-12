@@ -10,7 +10,7 @@ abstract class TestSearchQueryRepository: SearchQueryRepository {
 
     override fun readQuery(): String = query
 
-    override suspend fun saveQuery(query: String) {
+    override suspend fun saveQueryInDB(query: String) {
        this.query = query
     }
 }

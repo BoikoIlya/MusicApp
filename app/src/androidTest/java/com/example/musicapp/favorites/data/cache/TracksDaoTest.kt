@@ -64,7 +64,7 @@ class TracksDaoTest {
 
         val expected =  list.sortedByDescending { it.time }
 
-        assertEquals(expected.first(), dao.getTracksByTime("").first().first())
+        assertEquals(expected.first(), dao.searchTracksOrderByTime("").first().first())
 
     }
 
@@ -97,7 +97,7 @@ class TracksDaoTest {
 
         dao.removeTrack(list.first().id)
 
-        assertEquals(2,dao.getTracksByTime("").first().size)
+        assertEquals(2,dao.searchTracksOrderByTime("").first().size)
 
     }
 

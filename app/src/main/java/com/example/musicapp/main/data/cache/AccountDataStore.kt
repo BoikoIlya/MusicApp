@@ -1,5 +1,8 @@
 package com.example.musicapp.main.data.cache
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 /**
@@ -14,7 +17,7 @@ interface AccountDataStore {
 
     suspend fun ownerId(): String
 
-    suspend fun isDataEmpty(): Boolean
+    suspend fun isAccountDataEmpty(): Flow<Boolean>
 
     class Base @Inject constructor(
         private val tokenStore: TokenStore,
@@ -26,12 +29,16 @@ interface AccountDataStore {
             ownerIdStore.save(ownerId)
         }
 
-        override suspend fun token(): String = tokenStore.read()
+        override suspend fun token(): String = tokenStore.read().first()
 
-        override suspend fun ownerId(): String = ownerIdStore.read()
+        override suspend fun ownerId(): String = ownerIdStore.read().first()
 
-        override suspend fun isDataEmpty(): Boolean
-        = ownerIdStore.read().isEmpty() || tokenStore.read().isEmpty()
+        override suspend fun isAccountDataEmpty(): Flow<Boolean>
+        = ownerIdStore.read().combine(tokenStore.read())
+        {ownerId,token->
+            return@combine ownerId.isEmpty() || token.isEmpty()
+        }
+
 
     }
 }

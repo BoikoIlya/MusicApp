@@ -4,7 +4,7 @@ import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.ManagerResource
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.updatesystem.presentation.UpdateDialogFragment
 import javax.inject.Inject
@@ -65,7 +65,7 @@ sealed interface UpdateResult{
         @UnstableApi class Base @Inject constructor(
             private val updateDialogTransfer: DataTransfer.UpdateDialogTransfer,
             private val resourceManager: ManagerResource,
-            private val singleUiEventCommunication: SingleUiEventCommunication
+            private val singleUiEventCommunication: GlobalSingleUiEventCommunication
         ) : MainViewModelMapper {
 
             override suspend fun map(

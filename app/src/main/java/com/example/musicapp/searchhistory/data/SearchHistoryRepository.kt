@@ -64,8 +64,8 @@ interface SearchHistoryRepository: SearchQueryRepository {
             }
         }
 
-        override suspend fun saveQuery(query: String) {
-            super.saveQuery(query)
+        override suspend fun saveQueryInDB(query: String) {
+            super.saveQueryInDB(query)
             if(query.isNotBlank()) cache.insertHistoryItem(mapper.map(query))
         }
     }

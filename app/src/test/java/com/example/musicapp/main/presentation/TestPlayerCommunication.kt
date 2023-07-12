@@ -33,14 +33,20 @@ class TestPlayerControlsCommunication: PlayerControlsCommunication{
 }
 
 class TestTrackPlaybackPositionCommunication: TrackPlaybackPositionCommunication{
-    var data = Pair(0,"")
+    var data = Pair(0f,"")
+
+
+
+    override fun clearPosition() {
+        data = Pair(0f,"")
+    }
 
     override suspend fun collect(
         lifecycleOwner: LifecycleOwner,
-        collector: FlowCollector<Pair<Int, String>>,
-    ) = Unit
+        collector: FlowCollector<Pair<Float, String>>,
+    )  = Unit
 
-    override fun map(newValue: Pair<Int, String>) {
+    override fun map(newValue: Pair<Float, String>) {
         data = newValue
     }
 
@@ -175,6 +181,18 @@ class TestMediaController: MediaControllerWrapper{
     }
 
     override fun moveMediaItems(fromIndex: Int, toIndex: Int, newIndex: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun replaceMediaItem(index: Int, mediaItem: MediaItem) {
+        TODO("Not yet implemented")
+    }
+
+    override fun replaceMediaItems(
+        fromIndex: Int,
+        toIndex: Int,
+        mediaItems: MutableList<MediaItem>,
+    ) {
         TODO("Not yet implemented")
     }
 

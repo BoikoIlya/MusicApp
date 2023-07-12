@@ -26,8 +26,12 @@ interface TemporaryTracksCache {
         override  fun readCurrentPageTracks(): List<MediaItem> = currentPageTracks
 
         override suspend fun saveCurrentPageTracks(list: List<MediaItem>) {
-            currentPageTracks.clear()
-            currentPageTracks.addAll(list)
+            synchronized(currentPageTracks) {
+                if (list == currentPageTracks) return
+
+                currentPageTracks.clear()
+                currentPageTracks.addAll(list)
+            }
         }
 
 

@@ -6,10 +6,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
-import com.example.musicapp.app.core.Remover
+import com.example.musicapp.app.core.DeleteItemDialog
 import com.example.musicapp.trending.presentation.RemoveItem
 import com.example.musicapp.trending.presentation.TracksAdapter
-import com.google.android.material.snackbar.Snackbar
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import javax.inject.Inject
 
@@ -18,7 +17,7 @@ import javax.inject.Inject
  **/
 class ItemTouchHelperCallBack @Inject constructor(
     private val adapter: RemoveItem,
-    private val viewModel: Remover,
+    private val viewModel: DeleteItemDialog,
     private val context: Context
 ) : ItemTouchHelper.SimpleCallback(
 0,
@@ -35,6 +34,7 @@ ItemTouchHelper.RIGHT
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         adapter.removeFromAdapter(viewModel,viewHolder.absoluteAdapterPosition)
     }
+
 
     override fun onChildDraw(
         c: Canvas,

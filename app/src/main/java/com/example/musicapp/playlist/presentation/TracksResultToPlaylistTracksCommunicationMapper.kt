@@ -26,7 +26,7 @@ interface TracksResultToPlaylistTracksCommunicationMapper:
             albumImgUrl: String
         ) {
             communication.showAdditionalPlaylistInfo(Triple(albumName,albumImgUrl,albumDescription))
-            super.map(message,list)
+            super.map(message,list,false,-1)
         }
 
         override fun showError(message: String): TracksUiState = TracksUiState.Error(message)

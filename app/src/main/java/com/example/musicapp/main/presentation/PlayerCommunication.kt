@@ -1,15 +1,9 @@
 package com.example.musicapp.main.presentation
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.Player.STATE_ENDED
-import androidx.media3.exoplayer.upstream.BandwidthMeter.EventListener
 import com.example.musicapp.app.core.PlayerControlsCommunication
-import com.example.musicapp.app.core.SingleUiEventCommunication
-import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import kotlinx.coroutines.flow.FlowCollector
 import javax.inject.Inject
@@ -28,7 +22,7 @@ interface PlayerCommunication: CollectPlayerControls, CollectCurrentQueue, Colle
         private val playerControlsCommunication: PlayerControlsCommunication,
         private val currentQueueCommunication: CurrentQueueCommunication,
         private val selectedTrackCommunication: SelectedTrackCommunication,
-        private val singleUiEventCommunication: SingleUiEventCommunication,
+        private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
         private val trackDurationCommunication: TrackDurationCommunication,
         private val controller: MediaControllerWrapper
     ): PlayerCommunication{

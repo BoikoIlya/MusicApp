@@ -7,4 +7,11 @@
     <color name="light_gray">#E6E6E3</color>
     <color name="green">#4BB543</color>
     <color name="red">#f44336</color>
+
+    <color name="soft_pink">#d2afae</color>
+    <color name="soft_green">#a5c6b1</color>
+    <color name="soft_yellow">#f4c88c</color>
+    <color name="soft_brown">#cc883e</color>
+
+
 </resources>

@@ -3,6 +3,7 @@ package com.example.musicapp.favorites.presentation
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -16,6 +17,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
@@ -25,6 +27,7 @@ import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.di.FavoriteComponent
 import com.example.musicapp.main.di.App
 import com.example.musicapp.trending.presentation.*
+import com.simform.refresh.SSPullToRefreshLayout
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,9 +53,15 @@ class FavoritesFragment: Fragment() {
 
     private lateinit var textWatcher: TextWatcher
 
-    private lateinit var itemTouchHelperCallBack: ItemTouchHelperCallBack
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     private lateinit var tracksAdapter: TracksAdapter
+
+    private lateinit var layoutManager: LinearLayoutManager
+
+    companion object{
+        private const val loading_animation = "loading.json"
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -85,19 +94,31 @@ class FavoritesFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.pullToRefresh.setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+        binding.pullToRefresh.setLottieAnimation(loading_animation)
+        binding.pullToRefresh.setRefreshViewParams(ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            250,
+        ))
+
+
+
+        binding.pullToRefresh.setOnRefreshListener{
+            viewModel.update(true)
+        }
+
 
         lifecycleScope.launch {
             viewModel.collectState(this@FavoritesFragment) {
                 it.apply(
                     binding.noFavoriteTracks,
-                    binding.favoritesProgress,
-                    binding.favoritesRcv
+                    binding.pullToRefresh,
+                    binding.favoritesRcv,
                 )
             }
         }
-
-
-        binding.favoritesRcv.layoutManager = LinearLayoutManager(requireContext())
+        layoutManager =  LinearLayoutManager(requireContext())
+        binding.favoritesRcv.layoutManager = layoutManager
 
          tracksAdapter = TracksAdapter(
             this.requireContext(),
@@ -111,17 +132,19 @@ class FavoritesFragment: Fragment() {
         )
 
         (binding.favoritesRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-        itemTouchHelperCallBack = ItemTouchHelperCallBack(tracksAdapter, viewModel, requireContext())
-        ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(binding.favoritesRcv)
-
+        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallBack(tracksAdapter, viewModel, requireContext()))
+        itemTouchHelper.attachToRecyclerView(binding.favoritesRcv)
         binding.favoritesRcv.adapter = tracksAdapter
+
+        binding.scrollUpButton.setupWithRecycler(binding.favoritesRcv)
+
 
         lifecycleScope.launch {
             viewModel.collectTracks(this@FavoritesFragment) {
+                val recyclerViewState = layoutManager.onSaveInstanceState()
                 tracksAdapter.map(it)
+                layoutManager.onRestoreInstanceState(recyclerViewState)
                 viewModel.saveCurrentPageQueue(it)
-                binding.favoritesRcv.scrollToPosition(0)
-
             }
         }
 
@@ -135,6 +158,13 @@ class FavoritesFragment: Fragment() {
         lifecycleScope.launch {
             viewModel.collectPlayerControls(this@FavoritesFragment){
                 it.apply(binding.favoritesRcv)
+            }
+        }
+
+      viewLifecycleOwner.lifecycleScope.launch{
+            viewModel.collectDeleteDialogCommunication(this@FavoritesFragment){
+                itemTouchHelper.attachToRecyclerView(null)
+                itemTouchHelper.attachToRecyclerView(binding.favoritesRcv)
             }
         }
 

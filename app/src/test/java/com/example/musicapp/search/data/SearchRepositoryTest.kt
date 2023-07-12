@@ -2,21 +2,16 @@ package com.example.musicapp.search.data
 
 import androidx.media3.common.MediaItem
 import androidx.paging.PagingSource
-import com.example.musicapp.app.SpotifyDto.SearchDto
-import com.example.musicapp.app.SpotifyDto.SearchItem
-import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.HandleResponse
-import com.example.musicapp.favorites.testcore.TestAuthRepo
+import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.favorites.testcore.TestAuthRepository
 import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepositoryTest
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
 import com.example.musicapp.trending.data.ObjectCreator
-import com.example.testapp.spotifyDto.Album
-import com.example.testapp.spotifyDto.ExternalIds
-import com.example.testapp.spotifyDto.ExternalUrls
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import junit.framework.TestCase.assertEquals
@@ -43,7 +38,7 @@ class SearchRepositoryTest: ObjectCreator() {
     lateinit var service: SearchTrackService
     lateinit var tokenStore: AuthorizationRepositoryTest.TestTokenStore
     lateinit var cache: TestTemporaryTracksCache
-    lateinit var authorizationRepositoryTest: TestAuthRepo
+    lateinit var authorizationRepositoryTest: TestAuthRepository
     lateinit var managerResource: TestManagerResource
     lateinit var paggingSource: SearchPagingSource
 
@@ -52,14 +47,14 @@ class SearchRepositoryTest: ObjectCreator() {
         MockitoAnnotations.openMocks(this)
 
         managerResource = TestManagerResource()
-        authorizationRepositoryTest = TestAuthRepo()
+        authorizationRepositoryTest = TestAuthRepository()
         cache = TestTemporaryTracksCache()
         tokenStore = AuthorizationRepositoryTest.TestTokenStore()
 
         service = mock(SearchTrackService::class.java)
         repository = SearchRepository.Base(
             service =service,
-            mapper = SearchTracks.Base(),
+            mapper = Item.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = tokenStore,
             cachedTracks = cache,
             handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
@@ -68,7 +63,7 @@ class SearchRepositoryTest: ObjectCreator() {
         paggingSource = SearchPagingSource(
             service = service,
             query = "",
-            mapper = SearchTracks.Base(),
+            mapper = Item.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = AuthorizationRepositoryTest.TestTokenStore(),
             handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
             cachedTracks = cache
@@ -81,7 +76,7 @@ class SearchRepositoryTest: ObjectCreator() {
 
         val message = "message"
         val error = RuntimeException(message, Throwable())
-        given(service.searchTrack(any(),any(),any(),any(),any(),any())).willThrow(error)
+        given(service.searchTrack(any(),any(),any(),any(),any())).willThrow(error)
         managerResource.valueString = message
         repository.searchTracksByName("")
 
@@ -99,9 +94,9 @@ class SearchRepositoryTest: ObjectCreator() {
 
     @Test
     fun `test refresh`() = runTest {
-        given(service.searchTrack(any(),any(),any(),any(),any(),any())).willReturn(getSearchDto())
+        given(service.searchTrack(any(),any(),any(),any(),any())).willReturn(getTracksCloud())
         val expectedResult = PagingSource.LoadResult.Page(
-            data = getSearchDto().tracks.map(SearchTracks.Base()),
+            data = getTracksCloud().handle().map{ it.map(Item.Mapper.CloudTrackToMediaItemMapper())},
             prevKey = null,
             nextKey = 1
         )

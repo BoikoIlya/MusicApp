@@ -1,33 +1,28 @@
 package com.example.musicapp.search.presentation
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.musicapp.app.core.BaseViewModel
-import com.example.musicapp.app.core.CollectTracksAndUiState
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.TracksRepository
-import com.example.musicapp.app.core.TracksResultEmptyMapper
+import com.example.musicapp.app.core.Interactor
+import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.TracksCommunication
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
+import com.example.musicapp.favorites.presentation.TracksResult
+import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
-import com.example.musicapp.main.presentation.PlayerCommunicationState
-import com.example.musicapp.search.data.SearchPagingSource
 import com.example.musicapp.search.data.SearchRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -40,15 +35,17 @@ class SearchViewModel @Inject constructor(
     playerCommunication: PlayerCommunication,
     private val dispatchersList: DispatchersList,
     temporaryTracksCache: TemporaryTracksCache,
-    private val tracksRepository: TracksRepository,
+    private val favoritesInteractor: Interactor<MediaItem, TracksResult>,
     private val mapper: TracksResultToUiEventCommunicationMapper,
+    trackChecker: TrackChecker
 ): BaseViewModel<Unit>(
     playerCommunication,
-    TracksCommunication.EmptyCommunication(),
+    UiCommunication.EmptyCommunication(),
     temporaryTracksCache,
     dispatchersList,
-    tracksRepository,
-    mapper
+    favoritesInteractor,
+    mapper,
+    trackChecker
 ){
 
     private var errorMessage = ""

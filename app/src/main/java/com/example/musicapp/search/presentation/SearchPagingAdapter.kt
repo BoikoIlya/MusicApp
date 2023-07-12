@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.databinding.TrackItemBinding
 import com.example.musicapp.trending.presentation.TrendingTracksViewHolder
 
@@ -26,17 +27,18 @@ class SearchPagingAdapter(
 ): PagingDataAdapter<MediaItem, TrendingTracksViewHolder>(
     object : DiffUtil.ItemCallback<MediaItem>(){
         override fun areItemsTheSame(oldItem: MediaItem, newItem: MediaItem): Boolean =
-            oldItem.mediaMetadata.description == newItem.mediaMetadata.description //description store id because
-                                                                                    // mediaId field must store url
+            newItem.mediaMetadata.extras?.getInt(track_id) ==oldItem.mediaMetadata.extras?.getInt(track_id)
+
 
 
         override fun areContentsTheSame(oldItem: MediaItem, newItem: MediaItem): Boolean =
-                    oldItem.mediaId==newItem.mediaId
-                    && oldItem.mediaMetadata.title==newItem.mediaMetadata.title
-                    && oldItem.mediaMetadata.artist==newItem.mediaMetadata.artist
-                    && oldItem.mediaMetadata.artworkUri==newItem.mediaMetadata.artworkUri
-                    && oldItem.mediaMetadata.albumTitle==newItem.mediaMetadata.albumTitle
-                    && oldItem.mediaMetadata.description==newItem.mediaMetadata.description
+                        newItem.mediaId==oldItem.mediaId
+                    && newItem.mediaMetadata.title==oldItem.mediaMetadata.title
+                    && newItem.mediaMetadata.artist==oldItem.mediaMetadata.artist
+                    && newItem.mediaMetadata.artworkUri==oldItem.mediaMetadata.artworkUri
+                    && newItem.mediaMetadata.albumTitle==oldItem.mediaMetadata.albumTitle
+                    && newItem.mediaMetadata.isPlayable==oldItem.mediaMetadata.isPlayable
+                    && newItem.mediaMetadata.extras?.getInt(track_id)==oldItem.mediaMetadata.extras?.getInt(track_id)
 
     }
 ) {
@@ -70,7 +72,7 @@ class SearchPagingAdapter(
      fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
-        val position = this.snapshot().items.indexOf(mediaItem)
+        val position = this.snapshot().items.indexOfFirst{ it.mediaMetadata.extras!!.getInt(track_id) == mediaItem.mediaMetadata.extras!!.getInt(track_id)}
         if (position!=-1 ){
             selectedTrackPosition = position
             notifyItemChanged(position)

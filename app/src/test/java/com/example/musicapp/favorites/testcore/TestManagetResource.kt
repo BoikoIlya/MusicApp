@@ -1,5 +1,6 @@
 package com.example.musicapp.favorites.testcore
 
+import android.graphics.Bitmap
 import com.example.musicapp.app.core.ManagerResource
 
 /**
@@ -11,5 +12,8 @@ class TestManagerResource: ManagerResource {
 
         override fun getString(id: Int): String = valueString
         override fun getColor(id: Int): Int = valueColor
+        override fun getBitmap(id: Int): Bitmap {
+        TODO("Not yet implemented")
+        }
 
-    }
+}

@@ -95,13 +95,16 @@ dependencies {
     // Media
     implementation "androidx.media3:media3-exoplayer:1.1.0-beta01"
     implementation "androidx.media3:media3-ui:1.1.0-beta01"
-    implementation "androidx.media3:media3-exoplayer-dash:1.1.0-beta01"
     implementation "androidx.media3:media3-session:1.1.0-beta01"
     implementation "androidx.media3:media3-common:1.1.0-beta01"
     implementation "androidx.media3:media3-exoplayer-hls:1.1.0-beta01"
 
     //SwipeDecorator
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'
+
+    //Lottie
+    implementation 'com.airbnb.android:lottie:4.2.0'
+
 
     //Palette
     implementation 'androidx.palette:palette:1.0.0'
@@ -116,4 +119,12 @@ dependencies {
 
     //Paging
     implementation "androidx.paging:paging-runtime:3.1.1"
+
+    //Pull to refresh
+    implementation 'com.github.SimformSolutionsPvtLtd:SSPullToRefresh:1.5.1'
+    //implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+ //   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+    //DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

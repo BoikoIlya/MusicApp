@@ -2,23 +2,24 @@ package com.example.musicapp.favorites.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.ConnectionChecker
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.TracksResultToTracksCommunicationMapper
+import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.favorites.testcore.TestDispatcherList
 import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.testcore.TestFavoriteRepository
+import com.example.musicapp.favorites.testcore.TestFavoritesTracksInteractor
+import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.main.presentation.TestPlayerCommunication
+import com.example.musicapp.player.presentation.PlayingTrackIdCommunication
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotSame
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -28,78 +29,89 @@ import org.junit.Test
  **/
 class FavoritesViewModelTest: ObjectCreator() {
 
-    lateinit var viewModel: FavoritesViewModel
-    lateinit var repository: TestFavoriteRepository
-    lateinit var playerCommunication: TestPlayerCommunication
-    lateinit var temporaryTracksCache: TestTemporaryTracksCache
-    lateinit var favoriteTracksCommunion: TestFavoritesTracksCommunication
-    lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    private lateinit var viewModel: FavoritesViewModel
+    private lateinit var repository: TestFavoriteRepository
+    private lateinit var playerCommunication: TestPlayerCommunication
+    private lateinit var temporaryTracksCache: TestTemporaryTracksCache
+    private lateinit var favoriteTracksCommunion: TestFavoritesTracksCommunication
+    private lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    private lateinit var interactor: TestFavoritesTracksInteractor
+    private lateinit var resetSwipeActionCommunication: TestRestSwipeActionCommuniction
+    private lateinit var managerResource: TestManagerResource
+    private lateinit var playingTrackIdCommuniaction: TestPlyingTrackIdCommuniacation
+    private lateinit var connectionChecker: TestConnectionChecker
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup(){
+        connectionChecker = TestConnectionChecker()
+        playingTrackIdCommuniaction = TestPlyingTrackIdCommuniacation()
+        managerResource = TestManagerResource()
         val dispatchersList = TestDispatcherList()
         playerCommunication = TestPlayerCommunication()
         repository = TestFavoriteRepository()
         temporaryTracksCache = TestTemporaryTracksCache()
         favoriteTracksCommunion = TestFavoritesTracksCommunication()
         singleUiStateCommunication = TestSingleUiStateCommunication()
+        interactor = TestFavoritesTracksInteractor()
+        resetSwipeActionCommunication = TestRestSwipeActionCommuniction()
         viewModel = FavoritesViewModel(
-           repository = repository,
            playerCommunication = playerCommunication,
            temporaryTracksCache = temporaryTracksCache,
             dispatchersList = dispatchersList,
-            favoriteTracksRepository = repository,
             tracksResultToTracksCommunicationMapper =  TracksResultToFavoriteTracksCommunicationMapper.Base(favoriteTracksCommunion),
-            tracksResultToUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication),
-            favoritesTracksCommunication = favoriteTracksCommunion
+            tracksResultToUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication,playingTrackIdCommuniaction),
+            favoritesTracksCommunication = favoriteTracksCommunion,
+            interactor = interactor,
+            singleUiEventCommunication = singleUiStateCommunication,
+            resetSwipeActionCommunication = resetSwipeActionCommunication,
+            handlerFavoritesUiUpdate = HandlerFavoritesTracksUiUpdate.Base(singleUiStateCommunication, favoriteTracksCommunion ,interactor),
+            trackChecker = TrackChecker.Base(singleUiStateCommunication,managerResource,connectionChecker),
         )
     }
 
 
     @Test
    fun `test fetch data`(){
-        assertEquals(repository.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByTime(""), repository.states[0])
+        assertEquals(interactor.list ,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByTime(""), interactor.states[0])
 
         viewModel.saveQuery("query")
 
         viewModel.fetchData(SortingState.ByTime())
 
-        assertEquals(repository.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByTime("query"), repository.states[1])
+        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByTime("query"), interactor.states[1])
 
         viewModel.fetchData(SortingState.ByName())
 
-        assertEquals(repository.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByName("query"), repository.states[2])
+        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByName("query"), interactor.states[2])
 
         viewModel.fetchData(SortingState.ByArtist())
 
-        assertEquals(repository.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByArtist("query"), repository.states[3])
+        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByArtist("query"), interactor.states[3])
+
    }
 
     @Test
-    fun `test remove item`() = runBlocking {
-        repository.list.add(getMediaItem())
+    fun `test init update`(){
 
-        viewModel.removeItem("1")
+        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.states[0])
+        assertEquals(FavoritesUiState.Success,favoriteTracksCommunion.states[1])
 
-        assertEquals(0,repository.list.size)
-        assertEquals(SingleUiEventState.ShowSnackBar.Success::class,singleUiStateCommunication.stateList[0]::class)
+        interactor.isDBEmpty = false
+        interactor.updateDataError = "s"
+        viewModel.update(false)
+        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[2])
+        assertEquals(SingleUiEventState.ShowSnackBar.Error::class,singleUiStateCommunication.stateList.last()::class)
+
+        viewModel.update(true)
+        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.states[4])
+        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[5])
     }
 
-    @Test //It is normal to pass not all times because it can not to shuffle list of 2 elements
-    fun `test shuffle`() = runBlocking {
-        val list = listOf(MediaItem.Builder().setMediaId("2").build(), getMediaItem())
-        temporaryTracksCache.tracks.addAll(list)
-
-        viewModel.shuffle()
-
-        assertNotSame(list, favoriteTracksCommunion.dataList)
-        assertEquals(list[0].mediaId, favoriteTracksCommunion.dataList[1].mediaId)
-    }
 
 
 
@@ -107,10 +119,10 @@ class FavoritesViewModelTest: ObjectCreator() {
 
     class TestFavoritesTracksCommunication: FavoritesCommunication{
 
-        val states = emptyList<FavoriteTracksUiState>().toMutableList()
+        val states = emptyList<FavoritesUiState>().toMutableList()
         val dataList = emptyList<MediaItem>().toMutableList()
 
-        override fun showUiState(state: FavoriteTracksUiState) {
+        override fun showUiState(state: FavoritesUiState) {
             states.add(state)
         }
 
@@ -121,7 +133,7 @@ class FavoritesViewModelTest: ObjectCreator() {
 
         override suspend fun collectState(
             owner: LifecycleOwner,
-            collector: FlowCollector<FavoriteTracksUiState>,
+            collector: FlowCollector<FavoritesUiState>,
         ) = Unit
 
         override suspend fun collectTracks(
@@ -131,5 +143,37 @@ class FavoritesViewModelTest: ObjectCreator() {
 
     }
 
+    class TestRestSwipeActionCommuniction: ResetSwipeActionCommunication{
+        var triggerdTimes = 0
 
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<Unit>,
+        ) = Unit
+
+        override suspend fun map(newValue: Unit) {
+            triggerdTimes++
+        }
+
+    }
+
+    class TestConnectionChecker: ConnectionChecker{
+        var isConnected = true
+
+        override suspend fun isDeviceHaveConnection(): Boolean = isConnected
+
+    }
+
+    class TestPlyingTrackIdCommuniacation: PlayingTrackIdCommunication {
+        var value = -1
+
+        override fun map(newValue: Int) {
+           value = newValue
+        }
+
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<Int>,
+        ) = Unit
+    }
 }

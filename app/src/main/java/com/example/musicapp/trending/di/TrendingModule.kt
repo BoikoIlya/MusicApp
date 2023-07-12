@@ -2,7 +2,6 @@ package com.example.musicapp.trending.di
 
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.SpotifyDto.Item
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.main.di.ViewModelKey
@@ -11,7 +10,6 @@ import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.domain.TrendingInteractor
 import com.example.musicapp.trending.presentation.*
-import com.example.testapp.spotifyDto.Track
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -24,21 +22,17 @@ import dagger.multibindings.IntoMap
 @Module
 interface TrendingModule{
 
+
+
     @Binds
     @TrendingScope
-    fun bindChangePlayingItemBgMapper(obj: TrackUi.ChangeSelectedItemBg): TrackUi.Mapper<TrackUi>
+    fun bindCloudTrackToTrackDomainMapper(obj: com.example.musicapp.app.vkdto.Item.Mapper.CloudTrackToTrackDomainMapper): com.example.musicapp.app.vkdto.Item.Mapper<TrackDomain>
 
     @Binds
     @TrendingScope
     fun bindRepository(obj: TrendingRepository.Base): TrendingRepository
 
-    @Binds
-    @TrendingScope
-    fun bindToPlaylistMapper(obj: Item.ToPlaylistsDomainMapper): Item.Mapper<PlaylistDomain>
 
-    @Binds
-    @TrendingScope
-    fun bindToTrackMapper(obj: Track.ToTrackDomainMapper): Track.Mapper<TrackDomain>
 
     @Binds
     @TrendingScope
@@ -71,10 +65,6 @@ interface TrendingModule{
     @Binds
     @TrendingScope
     fun bindToPlaylistUiMapper(obj: PlaylistDomain.ToPlaylistUiMapper): PlaylistDomain.Mapper<PlaylistUi>
-
-    @Binds
-    @TrendingScope
-    fun bindTrackUiMapper(obj: TrackDomain.ToTrackUiMapper): TrackDomain.Mapper<MediaItem>
 
     @Binds
     @[IntoMap ViewModelKey(TrendingViewModel::class)]

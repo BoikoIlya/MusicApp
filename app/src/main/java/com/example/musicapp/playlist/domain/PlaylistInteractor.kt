@@ -11,10 +11,11 @@ import javax.inject.Inject
 /**
  * Created by HP on 22.05.2023.
  **/
-interface PlaylistInteractor: Interactor<TracksResult> {
+interface PlaylistInteractor {
 
+    suspend fun fetchData(): TracksResult
     class Base @Inject constructor(
-        private val handleResponse: HandleResponse<TracksResult>,
+        private val handleResponse: HandleResponse,
         private val repository: PlaylistRepository,
         private val mapper: PlaylistDataDomain.Mapper<TracksResult>
     ): PlaylistInteractor{

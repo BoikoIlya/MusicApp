@@ -1,5 +1,6 @@
 package com.example.musicapp.trending.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,8 +11,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.musicapp.R
-import com.example.musicapp.app.core.*
+import com.example.musicapp.app.core.ClickListener
+import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.Mapper
+import com.example.musicapp.app.core.DeleteItemDialog
+import com.example.musicapp.app.core.Selector
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.databinding.TrackItemBinding
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
+
 
 /**
  * Created by HP on 30.01.2023.
@@ -25,15 +36,15 @@ interface Scroller{
 }
 
 interface RemoveItem{
-    fun removeFromAdapter(viewModel: Remover, position: Int)
+    fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int)
 }
  class TracksAdapter(
-    private val context: Context,
-    private val playClickListener: Selector<MediaItem>,
-    private val saveClickListener: ClickListener<MediaItem>,
-    private val imageLoader: ImageLoader,
-    private val addBtnVisibility: Int = View.VISIBLE
-): RecyclerView.Adapter<TrendingTracksViewHolder>(),
+     private val context: Context,
+     private val playClickListener: Selector<MediaItem>,
+     private val saveClickListener: ClickListener<MediaItem>,
+     private val imageLoader: ImageLoader,
+     private val addBtnVisibility: Int = View.VISIBLE,
+ ): RecyclerView.Adapter<TrendingTracksViewHolder>(),
     Mapper<List<MediaItem>, Unit>,Select, Scroller, RemoveItem {
 
     private val tracksCurrentList = mutableListOf<MediaItem>()
@@ -77,7 +88,7 @@ interface RemoveItem{
     override fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
-        val position = tracksCurrentList.indexOf(mediaItem)
+        val position = tracksCurrentList.indexOfFirst { it.mediaId == mediaItem.mediaId }
         if (position!=-1 ){
             selectedTrackPosition = position
             notifyItemChanged(position)
@@ -89,12 +100,12 @@ interface RemoveItem{
     }
 
     override fun scrollToSelectedTrack(rcv: RecyclerView) {
-        rcv.scrollToPosition(selectedTrackPosition)
+            rcv.scrollToPosition(selectedTrackPosition)
 
     }
 
-    override fun removeFromAdapter(viewModel: Remover, position: Int) {
-        viewModel.removeItem(tracksCurrentList[position].mediaId)
+    override fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int) {
+        viewModel.launchDeleteItemDialog(tracksCurrentList[position])
     }
 
 
@@ -112,20 +123,22 @@ class TrendingTracksViewHolder(
     private val addBtnVisibility: Int,
 ): ViewHolder(binding.root){
 
-    fun bind(item: MediaItem, position: Int, selectedPosition: Int) =  with(binding){
+
+    fun bind(item: MediaItem, position: Int, selectedPosition: Int) = with(binding){
         with(item.mediaMetadata) {
             imageLoader.loadImage(
-                "https://${artworkUri?.host}${artworkUri?.path}?${artworkUri?.query}",
+                extras?.getString(small_img_url)?:"",
                 trackImg)
             songNameTv.text = title
-            authorNameTv.text = artist
+            authorTv.text = context.getString(R.string.divider_dot) + artist
+            trackDurationTv.text =extras?.getString(track_duration_formatted)?:""
             addBtn.visibility = addBtnVisibility
+            songNameTv.setTextColor(context.getColor(if(!item.mediaMetadata.isPlayable!!) R.color.gray else R.color.black))
         }
         root.setBackgroundColor(context.getColor(
             if(selectedPosition==position) R.color.light_gray else R.color.white))
 
         binding.root.setOnClickListener {
-            root.setBackgroundColor(context.getColor(R.color.light_gray))
             playClickListener.onSelect(item, position)
 
         }
@@ -139,7 +152,7 @@ class TrendingTracksViewHolder(
 
 class TendingTracksDiffUtilCallback(
     private val newList: List<MediaItem>,
-    private val oldList: List<MediaItem>
+    private val oldList: List<MediaItem>,
 ): DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -147,7 +160,7 @@ class TendingTracksDiffUtilCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return newList[newItemPosition].mediaId == oldList[oldItemPosition].mediaId
+        return newList[newItemPosition].mediaMetadata.extras?.getInt(track_id) == oldList[oldItemPosition].mediaMetadata.extras?.getInt(track_id)
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -156,6 +169,8 @@ class TendingTracksDiffUtilCallback(
                 && newList[newItemPosition].mediaMetadata.artist==oldList[oldItemPosition].mediaMetadata.artist
                 && newList[newItemPosition].mediaMetadata.artworkUri==oldList[oldItemPosition].mediaMetadata.artworkUri
                 && newList[newItemPosition].mediaMetadata.albumTitle==oldList[oldItemPosition].mediaMetadata.albumTitle
+                && newList[newItemPosition].mediaMetadata.isPlayable==oldList[oldItemPosition].mediaMetadata.isPlayable
+                && newList[newItemPosition].mediaMetadata.extras?.getInt(track_id)==oldList[oldItemPosition].mediaMetadata.extras?.getInt(track_id)
     }
 
 }

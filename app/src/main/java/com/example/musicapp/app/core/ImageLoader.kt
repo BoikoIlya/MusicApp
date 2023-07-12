@@ -1,30 +1,22 @@
 package com.example.musicapp.app.core
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.ColorSpace.Rgb
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
-import androidx.core.graphics.alpha
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.musicapp.R
 import javax.inject.Inject
-import kotlin.math.log
+
 
 /**
  * Created by HP on 30.01.2023.
@@ -33,38 +25,56 @@ interface ImageLoader {
 
     fun loadImage(
         url:String,
-        target: ImageView,
+        targetView: ImageView,
     )
 
     fun loadImage(
         url:String,
-        target: ImageView,
+        targetView: ImageView,
         imgBg: CardView,
     )
 
 
 
-    class Base @Inject constructor(): ImageLoader {
+     class Base (
+         private val paintBackgroundShadow: PaintBackgroundShadow
+     ): ImageLoader {
 
-        override fun loadImage(url: String, target: ImageView) {
-            Glide.with(target)
+        override fun loadImage(url: String, targetView: ImageView) {
+
+            Glide.with(targetView)
                 .load(url)
-                .placeholder(R.drawable.tone)
-                .into(target)
+                .placeholder(R.drawable.tone_yellow)
+                .into(targetView)
         }
 
-        override fun loadImage(url: String, target: ImageView, imgBg: CardView) {
-            Glide.with(target)
+        override fun loadImage(
+            url: String,
+            targetView: ImageView,
+            imgBg: CardView,
+            ) {
+
+
+            Glide.with(targetView)
                 .asBitmap()
                 .load(url)
-                .placeholder(R.drawable.tone)
+                .transition(withCrossFade())
+//                .thumbnail(
+//                    Glide.with(targetView)
+//                        .asBitmap()
+//                        .load(url)
+//                        .transition(withCrossFade())
+//                        .override(68,68))
+                .placeholder(R.drawable.tone_yellow)
                 .listener(object :RequestListener<Bitmap>{
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
                         target: Target<Bitmap>?,
                         isFirstResource: Boolean,
-                    ): Boolean = false
+                    ): Boolean {
+                        return true
+                    }
 
                     override fun onResourceReady(
                         resource: Bitmap?,
@@ -73,17 +83,13 @@ interface ImageLoader {
                         dataSource: DataSource?,
                         isFirstResource: Boolean,
                     ): Boolean {
-                        Palette.from(resource!!).generate(){palette->
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                imgBg.outlineSpotShadowColor = palette?.vibrantSwatch?.rgb?: R.color.black
-                            }
-                        }
+                        paintBackgroundShadow.paint(imgBg,resource!!)
                         return false
                     }
 
 
                 })
-                .into(target)
+                .into(targetView)
         }
 
     }

@@ -1,13 +1,11 @@
 package com.example.musicapp.app.core
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.TracksCommunication
 import com.example.musicapp.favorites.presentation.TracksResult
+import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.CollectPlayerControls
 import com.example.musicapp.main.presentation.CollectSelectedTrack
@@ -17,50 +15,59 @@ import com.example.musicapp.main.presentation.PlayerControlsState
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.system.measureTimeMillis
 
 /**
  * Created by HP on 21.03.2023.
  **/
 abstract class BaseViewModel<T>(
     private val playerCommunication: PlayerCommunication,
-    private val tracksCommunication: TracksCommunication<T>,
+    private val tracksCommunication: UiCommunication<T>,
     private val temporaryTracksCache: TemporaryTracksCache,
     private val dispatchersList: DispatchersList,
-    private val tracksRepository: TracksRepository,
-    private val mapper: TracksResultToUiEventCommunicationMapper
+    private val interactor: Interactor<MediaItem,TracksResult>,
+    private val mapper: TracksResultToUiEventCommunicationMapper,
+    private val trackChecker: TrackChecker,
 ): ViewModel(), CollectSelectedTrack, CollectPlayerControls, CollectTracksAndUiState<T>{
 
-    fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
+   open fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
 
    open fun saveCurrentPageQueue(queue: List<MediaItem>) = viewModelScope.launch(dispatchersList.io()){
        temporaryTracksCache.saveCurrentPageTracks(queue)
     }
 
    open fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
-        val queue = temporaryTracksCache.map()
-        if(queue.isNotEmpty()){
-            val newQueue = mutableListOf<MediaItem>()
-            newQueue.addAll(queue)
-            withContext(dispatchersList.ui()) {
-                playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
+       trackChecker.checkIfPlayable(item, playable = {
+
+            val queue = temporaryTracksCache.map()
+            if(queue.isNotEmpty()){
+                val newQueue = mutableListOf<MediaItem>()
+                newQueue.addAll(queue)
+                withContext(dispatchersList.ui()) {
+                    playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
+                }
             }
-        }
-       val position = temporaryTracksCache.readCurrentPageTracks().indexOf(item)
-        withContext(dispatchersList.ui()) {
-            playerCommunication.map(PlayerCommunicationState.Play(item,position))
-        }
+            val position = temporaryTracksCache.readCurrentPageTracks().indexOf(item)
+
+            withContext(dispatchersList.ui()) {
+               playerCommunication.map(PlayerCommunicationState.Play(item,position))
+           }
+       })
+
     }
 
 
-    fun addTrackToFavorites(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
-        tracksRepository.checkInsertData(item).map(mapper)
+   open fun checkAndAddTrackToFavorites(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+        interactor.addToFavoritesIfNotDuplicated(item).map(mapper)
     }
+
 
 
     fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
-        val newShuffledList = temporaryTracksCache.readCurrentPageTracks()
-        tracksCommunication.showTracks(newShuffledList.shuffled())
+        val newList = emptyList<MediaItem>().toMutableList()
+        newList.addAll(temporaryTracksCache.readCurrentPageTracks())
+        val shuffled = newList.shuffled()
+        temporaryTracksCache.saveCurrentPageTracks(shuffled)
+        playMusic(shuffled.first())
     }
 
 
@@ -85,3 +92,15 @@ abstract class BaseViewModel<T>(
         collector: FlowCollector<T>,
     ) = tracksCommunication.collectState(owner, collector)
 }
+
+interface DeleteTrackFromFavorites<T>{
+    fun deleteFromFavorites(item: T)
+}
+
+
+interface AddToFavorites<T>{
+
+    fun addToFavorites(item: T)
+}
+
+interface ManageFavoriteTracks: AddToFavorites<MediaItem>, DeleteTrackFromFavorites<MediaItem>

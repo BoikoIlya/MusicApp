@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +18,6 @@ import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
 import com.example.musicapp.databinding.FragmentPlaylistBinding
-import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.main.di.App
 import com.example.musicapp.playlist.di.PlaylistComponent
 import com.example.musicapp.trending.presentation.TracksAdapter
@@ -78,7 +76,7 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {
-                    viewModel.addTrackToFavorites(data)
+                    viewModel.checkAndAddTrackToFavorites(data)
                 }
             }, imageLoader)
 

@@ -1,24 +1,15 @@
 package com.example.musicapp.trending.presentation
 
-import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.media3.common.MediaItem
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
-import com.example.musicapp.R
+import com.airbnb.lottie.LottieAnimationView
 import com.example.musicapp.databinding.ErrorLayoutBinding
 import com.example.musicapp.databinding.FragmentPlaylistBinding
-import com.example.musicapp.musicdialog.presentation.MusicDialogFragment
 
 sealed interface TracksUiState {
 
     fun apply(
         errorLayoutBinding: ErrorLayoutBinding,
-        progress: ProgressBar,
+        progress: LottieAnimationView,
     )
 
     fun apply(
@@ -29,7 +20,7 @@ sealed interface TracksUiState {
 
         override fun apply(
             errorLayoutBinding: ErrorLayoutBinding,
-            progress: ProgressBar,
+            progress: LottieAnimationView,
         ) {
             progress.visibility = View.GONE
             errorLayoutBinding.root.visibility = View.GONE
@@ -52,7 +43,7 @@ sealed interface TracksUiState {
 
         override fun apply(
             errorLayoutBinding: ErrorLayoutBinding,
-            progress: ProgressBar,
+            progress: LottieAnimationView,
         ) {
             progress.visibility = View.GONE
             errorLayoutBinding.errorTv.text = message
@@ -75,7 +66,7 @@ sealed interface TracksUiState {
 
         override fun apply(
             errorLayoutBinding: ErrorLayoutBinding,
-            progress: ProgressBar,
+            progress: LottieAnimationView,
         ) {
             errorLayoutBinding.root.visibility = View.GONE
             progress.visibility = View.VISIBLE

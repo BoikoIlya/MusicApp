@@ -1,0 +1,169 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "172a41c9386649c6ced3462ad6c2213a",
+    "entities": [
+      {
+        "tableName": "tracks_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `bigImgUrl` TEXT NOT NULL, `smallImgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `date` INTEGER NOT NULL, `durationFormatted` TEXT NOT NULL, `durationInMillis` REAL NOT NULL, `ownerId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artistName",
+            "columnName": "artistName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bigImgUrl",
+            "columnName": "bigImgUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallImgUrl",
+            "columnName": "smallImgUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "albumName",
+            "columnName": "albumName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationFormatted",
+            "columnName": "durationFormatted",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationInMillis",
+            "columnName": "durationInMillis",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerId",
+            "columnName": "ownerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "tracks_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_fts_tracks_table_BEFORE_UPDATE BEFORE UPDATE ON `tracks_table` BEGIN DELETE FROM `fts_tracks_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_fts_tracks_table_BEFORE_DELETE BEFORE DELETE ON `tracks_table` BEGIN DELETE FROM `fts_tracks_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_fts_tracks_table_AFTER_UPDATE AFTER UPDATE ON `tracks_table` BEGIN INSERT INTO `fts_tracks_table`(`docid`, `name`, `artistName`, `ownerId`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`artistName`, NEW.`ownerId`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_fts_tracks_table_AFTER_INSERT AFTER INSERT ON `tracks_table` BEGIN INSERT INTO `fts_tracks_table`(`docid`, `name`, `artistName`, `ownerId`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`artistName`, NEW.`ownerId`); END"
+        ],
+        "tableName": "fts_tracks_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `ownerId` INTEGER NOT NULL, content=`tracks_table`)",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "artistName",
+            "columnName": "artistName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerId",
+            "columnName": "ownerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "history_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))",
+        "fields": [
+          {
+            "fieldPath": "queryTerm",
+            "columnName": "queryTerm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "queryTerm"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '172a41c9386649c6ced3462ad6c2213a')"
+    ]
+  }
+}

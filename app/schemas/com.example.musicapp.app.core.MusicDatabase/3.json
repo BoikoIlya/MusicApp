@@ -2,15 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "8ccaf2d640a662f9214e96d0ffcb57bf",
+    "identityHash": "199c198f072169dd56d39916fea41319",
     "entities": [
       {
         "tableName": "tracks_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `imgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `bigImgUrl` TEXT NOT NULL, `smallImgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `date` INTEGER NOT NULL, `durationFormatted` TEXT NOT NULL, `durationInMillis` REAL NOT NULL, `ownerId` INTEGER NOT NULL, `playlistId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -27,8 +33,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "imgUrl",
-            "columnName": "imgUrl",
+            "fieldPath": "bigImgUrl",
+            "columnName": "bigImgUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallImgUrl",
+            "columnName": "smallImgUrl",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -39,8 +51,32 @@
             "notNull": true
           },
           {
-            "fieldPath": "time",
-            "columnName": "time",
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationFormatted",
+            "columnName": "durationFormatted",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationInMillis",
+            "columnName": "durationInMillis",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerId",
+            "columnName": "ownerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playlistId",
+            "columnName": "playlistId",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -56,12 +92,12 @@
       },
       {
         "tableName": "history_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `time` INTEGER NOT NULL, `queryTerm` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "queryTerm",
+            "columnName": "queryTerm",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -69,18 +105,12 @@
             "columnName": "time",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "queryTerm",
-            "columnName": "queryTerm",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "queryTerm"
           ]
         },
         "indices": [],
@@ -90,7 +120,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8ccaf2d640a662f9214e96d0ffcb57bf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '199c198f072169dd56d39916fea41319')"
     ]
   }
 }

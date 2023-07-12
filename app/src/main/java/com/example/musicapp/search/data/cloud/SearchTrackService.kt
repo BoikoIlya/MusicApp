@@ -1,10 +1,8 @@
 package com.example.musicapp.search.data.cloud
 
-import com.example.musicapp.app.SpotifyDto.SearchDto
-import com.example.musicapp.app.SpotifyDto.SearchTracks
-import com.example.testapp.spotifyDto.Recomendations
+import com.example.musicapp.app.vkdto.TracksCloud
+import com.example.musicapp.main.di.AppModule
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Query
 
 /**
@@ -12,18 +10,14 @@ import retrofit2.http.Query
  **/
 interface SearchTrackService {
 
-    companion object{
-        private const val content_market = "US"
-        private const val search_type = "track"
-    }
 
-    @GET("search")
+
+    @GET("/method/audio.search")
     suspend fun searchTrack(
-        @Header("Authorization") auth: String,
-        @Query("type") type: String = search_type,
+        @Query("access_token")  accessToken: String,
         @Query("q") query: String,
-        @Query("market") market: String = content_market,
-        @Query("limit") limit: Int,
+        @Query("count") count: Int,
         @Query("offset") offset: Int,
-    ): SearchDto
+        @Query("v")  apiVersion: String = AppModule.api_version,
+    ): TracksCloud
 }

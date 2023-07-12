@@ -90,12 +90,12 @@ class SearchHistoryRepositoryTest: ObjectCreator() {
     @Test
     fun `test save history`() = runBlocking{
         val query = "blabla"
-        repository.saveQuery(query)
+        repository.saveQueryInDB(query)
 
         assertEquals(4,cache.list.size)
         assertEquals(query,searchQueryTransfer.read())
 
-        repository.saveQuery("")
+        repository.saveQueryInDB("")
         assertEquals(4,cache.list.size)
     }
 

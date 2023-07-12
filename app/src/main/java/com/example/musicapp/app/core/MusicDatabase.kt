@@ -15,7 +15,7 @@ import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
  **/
 @Database(
     entities = [TrackCache::class, HistoryItemCache::class],
-    version = 2,
+    version = 3,
     exportSchema = true,
     )
 abstract class MusicDatabase: RoomDatabase() {

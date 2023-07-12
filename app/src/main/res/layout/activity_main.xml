@@ -46,6 +46,7 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           app:cardCornerRadius="12dp"
+          android:elevation="10dp"
           >
 
       <ImageView
@@ -53,7 +54,6 @@
           android:id="@+id/trackImg"
           android:layout_width="50dp"
           android:layout_height="50dp"
-          android:src="@color/white"
           />
       </androidx.cardview.widget.CardView>
 
@@ -83,7 +83,7 @@
           android:paddingHorizontal="15dp"
           android:text="Moderator"
           android:textColor="@color/gray"
-          android:textSize="@dimen/body2"
+          android:textSize="@dimen/body1"
           app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
           app:layout_constraintStart_toStartOf="@+id/song_name_tv"
           app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
@@ -97,7 +97,7 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
           app:layout_constraintEnd_toStartOf="@id/play_btn"
-          app:layout_constraintVertical_bias="0.65"
+          app:layout_constraintVertical_bias="0.7"
           android:layout_marginEnd="12dp"
           />
 
@@ -111,7 +111,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
         app:layout_constraintEnd_toStartOf="@id/next_btn"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65"
+        app:layout_constraintVertical_bias="0.7"
         android:layout_marginEnd="10dp"
         />
 
@@ -124,7 +124,7 @@
               app:layout_constraintTop_toTopOf="parent"
               app:layout_constraintBottom_toBottomOf="@+id/song_author_name"
               app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintVertical_bias="0.65"
+              app:layout_constraintVertical_bias="0.7"
               android:layout_marginEnd="12dp"
               />
 
@@ -142,40 +142,21 @@
       app:itemActiveIndicatorStyle="@color/black"
       app:menu="@menu/bottom_nav"
       />
+
+
 </FrameLayout>
 
 
-        <LinearLayout
-            android:visibility="visible"
-            android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-            android:background="@drawable/bottom_sheet_shape"
-            android:elevation="5dp"
-            android:orientation="vertical"
-            >
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/playerRoot"
-                android:layout_width="50dp"
-                android:layout_height="4dp"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="@color/gray"
-                app:cardCornerRadius="50dp"
-                android:layout_gravity="center_horizontal" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:layout_marginTop="25dp"
-                android:id="@+id/bottom_sheet_vp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                 />
-
-        </LinearLayout>
 
 
 
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/bottom_sheet_player"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 
 

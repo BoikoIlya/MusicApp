@@ -3,8 +3,8 @@ package com.example.musicapp.search.di
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.paging.PagingSource
-import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleResponse
+import com.example.musicapp.app.vkdto.Item
 import com.example.musicapp.main.di.ViewModelKey
 import com.example.musicapp.search.data.SearchRepository
 import com.example.musicapp.search.presentation.SearchViewModel
@@ -24,24 +24,14 @@ interface SearchModule {
     @SearchScope
     fun bindSearchRepository(obj: SearchRepository.Base): SearchRepository
 
-
     @Binds
     @SearchScope
-    fun bindHandleResponseLoadResult(obj: HandleResponse.Base<PagingSource.LoadResult<Int, MediaItem>>):  HandleResponse<PagingSource.LoadResult<Int, MediaItem>>
+    fun bindCloudTrackToMediaItemMapper(obj: Item.Mapper.CloudTrackToMediaItemMapper): Item.Mapper<MediaItem>
+
+
 
     @Binds
     @[IntoMap ViewModelKey(SearchViewModel::class)]
     fun bindSearchViewModel(searchViewModel: SearchViewModel): ViewModel
-
-}
-
-@Module
-class SearchProvidesModule{
-
-    @Provides
-    @SearchScope
-    fun bindSearchTracksToMediaItemsMapper(obj: SearchTracks.Base): SearchTracks.Mapper<List<MediaItem>>
-    = obj
-
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +8,7 @@
     android:paddingHorizontal="15dp"
     android:foreground="?attr/selectableItemBackground"
     >
+
 
 
     <androidx.cardview.widget.CardView
@@ -48,19 +50,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:id="@+id/authorNameTv"
+        android:id="@+id/authorTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Moderator"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Moderatordsffffffffffffffffffffffffffffffff"
         android:textColor="@color/gray"
         android:textSize="@dimen/body1"
         app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
-        app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+        app:layout_constraintStart_toEndOf="@id/trackDurationTv"
         app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
 
-    <ImageButton
+    <TextView
+        android:id="@+id/trackDurationTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="02:34 · "
+        android:textColor="@color/gray"
+        android:textSize="@dimen/body2"
+        app:layout_constraintBottom_toBottomOf="@+id/authorTv"
+        app:layout_constraintEnd_toStartOf="@+id/authorTv"
+        app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+        app:layout_constraintTop_toTopOf="@+id/authorTv" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

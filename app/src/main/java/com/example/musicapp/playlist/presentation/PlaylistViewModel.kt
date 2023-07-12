@@ -2,10 +2,13 @@ package com.example.musicapp.playlist.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.Interactor
+import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.playlist.domain.PlaylistInteractor
@@ -23,17 +26,19 @@ class PlaylistViewModel @Inject constructor(
     private val dataMapper: TracksResultToPlaylistTracksCommunicationMapper,
     private val additionalPlaylistInfo: AdditionalPlaylistInfoCommunication,
     private val playlistCommunication: PlaylistCommunication,
+    trackChecker: TrackChecker,
     playerCommunication: PlayerCommunication,
     temporaryTracksCache: TemporaryTracksCache,
-    tracksRepository: FavoriteTracksRepository,
+    favoritesInteractor: Interactor<MediaItem, TracksResult>,
     mapper: TracksResultToUiEventCommunicationMapper
 ): BaseViewModel<TracksUiState>(
     playerCommunication,
     playlistCommunication,
     temporaryTracksCache,
     dispatchersList,
-    tracksRepository,
-    mapper
+    favoritesInteractor,
+    mapper,
+    trackChecker
 ), CollectAdditionalPlaylistInfo {
 
     init {
@@ -42,7 +47,7 @@ class PlaylistViewModel @Inject constructor(
 
     fun loadData() = viewModelScope.launch(dispatchersList.io()) {
         playlistCommunication.showUiState(TracksUiState.Loading)
-        playlistInteractor.fetchData().map(dataMapper)
+       // playlistInteractor.fetchData().map(dataMapper)
     }
 
     override suspend fun collectAdditionalPlaylistInfo(

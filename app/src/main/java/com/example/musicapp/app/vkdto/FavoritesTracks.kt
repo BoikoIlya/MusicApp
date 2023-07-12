@@ -1,5 +1,0 @@
-package com.example.musicapp.app.vkdto
-
-data class FavoritesTracks(
-    val response: Response
-)

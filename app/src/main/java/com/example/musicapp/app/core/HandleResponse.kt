@@ -8,43 +8,30 @@ import javax.inject.Inject
 /**
  * Created by HP on 16.05.2023.
  **/
-interface HandleResponse<T> {
+interface HandleResponse {
 
-    suspend fun handle(
+    suspend fun <T> handle(
         block: suspend () -> T,
         error: suspend (String, Exception)-> T
     ): T
 
-    class Base<T> @Inject constructor(
+    class Base @Inject constructor(
         private val auth: AuthorizationRepository,
-        private val handleError: HandleError
-    ): HandleResponse<T>{
+        private val handleError: HandleError,
+    ): HandleResponse{
 
-        companion object{
-            private const val unauthorized_response = 401
-        }
 
-        override suspend fun handle(
+        override suspend fun <T> handle(
             block: suspend () -> T,
-            error: suspend (String, Exception)-> T
-            ): T =
-                try {
-                     block.invoke()
-                }catch (e: HttpException){
-                    if(e.code() == unauthorized_response)
-                    {
-                        try {
-                            auth.updateToken()
-                        }catch (e:Exception){
-                            Log.d("tag", "handle: second catch $e ")
-                            error.invoke(handleError.handle(e),e)
-                        }
-                        handle(block,error)
-                    }else error.invoke(handleError.handle(e),e)
-                }catch (e: Exception) {
-                    Log.d("tag", "handle: first catch $e ")
-                    error.invoke(handleError.handle(e),e)
-                }
+            error: suspend (String, Exception) -> T,
+        ): T =
+            try {
+                block.invoke()
+            }catch (e: Exception){
+                if(e is UnAuthorizedException)
+                    auth.clearData()
+                error.invoke(handleError.handle(e),e)
+            }
 
 
     }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
@@ -21,7 +22,6 @@ import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.player.presentation.PlayerViewModel
-import com.example.musicapp.queue.di.QueueComponent
 import com.example.musicapp.trending.presentation.TracksAdapter
 import com.example.musicapp.trending.presentation.TrendingViewModel
 import kotlinx.coroutines.launch
@@ -43,12 +43,13 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
     private lateinit var viewModel: QueueViewModel
 
 
-    private lateinit var playerComponent: QueueComponent
+    private lateinit var playerComponent: PlayerComponent
 
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        playerComponent = (context.applicationContext as App).appComponent.queueComponent().build()
+        playerComponent = (context.applicationContext as App).appComponent.playerComponent().build()
         playerComponent.inject(this)
         viewModel =  ViewModelProvider(this, factory)[QueueViewModel::class.java]
     }
@@ -56,13 +57,14 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.queueRcv.layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = LinearLayoutManager(requireContext())
+        binding.queueRcv.layoutManager = layoutManager
 
         val tracksAdapter = TracksAdapter(
             requireContext(),
             playClickListener = object : Selector<MediaItem> {
                 override fun onSelect(data: MediaItem, position: Int) {
-                    viewModel.playerAction(PlayerCommunicationState.Play(data, position))
+                    viewModel.play(data, position)
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {}
@@ -71,27 +73,27 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
 
         lifecycleScope.launch{
             viewModel.collectCurrentQueue(this@QueueFragment){
-                Log.d("tag", "CURRENT QUEUE: ${it.size} ")
+                val recyclerViewState = layoutManager.onSaveInstanceState()
                 tracksAdapter.map(it)
+                layoutManager.onRestoreInstanceState(recyclerViewState)
             }
         }
 
         lifecycleScope.launch{
             viewModel.collectSelectedTrack(this@QueueFragment){
-                Log.d("tag", "queue frag elected track: ${it} ")
                 tracksAdapter.newPosition(it)
             }
         }
 
         binding.queueRcv.adapter = tracksAdapter
+        (binding.queueRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+        binding.scrollUpButton.setupWithRecycler(binding.queueRcv)
 
         binding.trackPosition.setOnClickListener {
             tracksAdapter.scrollToSelectedTrack(binding.queueRcv)
         }
 
-        binding.moveUp.setOnClickListener {
-            binding.queueRcv.scrollToPosition(0)
-        }
+
 
         binding.backBtnQueue.setOnClickListener{
             viewModel.slidePage(0)

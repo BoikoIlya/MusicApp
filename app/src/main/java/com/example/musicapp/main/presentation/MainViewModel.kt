@@ -1,20 +1,22 @@
 package com.example.musicapp.main.presentation
 
 import android.Manifest
+import android.os.Build
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
+import com.example.musicapp.app.core.SDKChecker
+import com.example.musicapp.app.core.SDKCheckerState
 import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultEmptyMapper
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
-import com.example.musicapp.favorites.presentation.TracksCommunication
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
+import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.CheckAuthRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
-import com.example.musicapp.updatesystem.data.MainViewModelMapper
-import com.example.musicapp.updatesystem.data.UpdateSystemRepository
-import com.example.musicapp.vkauth.presentation.AuthFragment
+import com.example.musicapp.vkauth.presentation.AuthActivity
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,23 +28,23 @@ class MainViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
     private val temporaryTracksCache: TemporaryTracksCache,
     private val dispatchersList: DispatchersList,
-    private val singleUiEventCommunication: SingleUiEventCommunication,
+    private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val bottomSheetCommunication: BottomSheetCommunication,
-    private val slideViewPagerCommunication: SlideViewPagerCommunication,
-    private val updateSystemRepository: UpdateSystemRepository,
-    private val mapper: MainViewModelMapper,
     private val firebaseMessagingWrapper: FirebaseMessagingWrapper,
-    private val favoriteTracksRepository: FavoriteTracksRepository,
-    private val bottomNavCommunication: BottomNavCommunication,
+    favoritesInteractor: FavoritesTracksInteractor,
     private val authorizationRepository: CheckAuthRepository,
-    private val fragmentManagerCommunication: FragmentManagerCommunication
+    private val activityNavigationCommunication: ActivityNavigationCommunication,
+    private val slideViewPagerCommunication: SlideViewPagerCommunication,
+    private val permissionCheckCommunication: PermissionCheckCommunication,
+    private val sdkChecker: SDKChecker
 ): BaseViewModel<Unit>(
     playerCommunication,
-    TracksCommunication.EmptyCommunication(),
+    UiCommunication.EmptyCommunication(),
     temporaryTracksCache,
     dispatchersList,
-    favoriteTracksRepository,
-    TracksResultEmptyMapper()
+    favoritesInteractor,
+    TracksResultEmptyMapper(),
+    TrackChecker.Empty
     ),
     CollectPlayerControls{
 
@@ -55,35 +57,36 @@ class MainViewModel @Inject constructor(
     init {
         checkAuth()
         firebaseMessagingWrapper.subscribeToTopic()
-        checkForUpdate()
+        notificationPermissionCheck()
     }
 
-    fun checkForUpdate() = viewModelScope.launch(dispatchersList.io()) {
-        updateSystemRepository.checkForNewVersion().map(mapper)
-    }
     fun bottomSheetState(state: Int){
         bottomSheetCommunication.map(state)
     }
 
-    fun notificationPermissionCheck() = viewModelScope.launch(dispatchersList.io()) {
-        if (showPermission)
-            singleUiEventCommunication.map(
-                SingleUiEventState.CheckForPermission(
+    fun notificationPermissionCheck()  {
+        sdkChecker.check(SDKCheckerState.AboveApi32,{
+            permissionCheckCommunication.map(
+                PermissionCheckState.CheckForPermission(
                     Manifest.permission.POST_NOTIFICATIONS,
                     permissionRequestCode))
+        },{})
+
     }
 
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
-        authorizationRepository.isAuthorized {
-            fragmentManagerCommunication.map(FragmentManagerState.Replace.WithAnimation(AuthFragment()))
+        authorizationRepository.isNotAuthorized().collect{
+            if(it) activityNavigationCommunication.map(ActivityNavigationState.Navigate(AuthActivity::class.java))
         }
     }
 
-    fun dontShowPermission() { showPermission = false}
+    fun dontShowPermission() { permissionCheckCommunication.map(PermissionCheckState.Empty)}
+
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
         collector: FlowCollector<PlayerControlsState>,
     ) = playerCommunication.collectPlayerControls(owner,collector)
+
 
     suspend fun collectSingleUiUpdateCommunication(
         owner: LifecycleOwner,
@@ -95,18 +98,19 @@ class MainViewModel @Inject constructor(
         collector: FlowCollector<Int>
     ) = bottomSheetCommunication.collect(owner, collector)
 
-    suspend fun collectSlideViewPagerIndex(
+
+    suspend fun collectActivityNavigationCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<ActivityNavigationState>
+    ) = activityNavigationCommunication.collect(owner,collector)
+
+    suspend fun collectSlideViewPagerCommunication(
         owner: LifecycleOwner,
         collector: FlowCollector<Int>
     ) = slideViewPagerCommunication.collect(owner,collector)
 
-    suspend fun collectBottomNav(
+    suspend fun collectPermissionCheckCommunication(
         owner: LifecycleOwner,
-        collector: FlowCollector<Int>
-    ) = bottomNavCommunication.collect(owner,collector)
-
-    suspend fun collectFragmentManagerCommunication(
-        owner: LifecycleOwner,
-        collector: FlowCollector<FragmentManagerState>
-    ) = fragmentManagerCommunication.collect(owner,collector)
+        collector: FlowCollector<PermissionCheckState>
+    ) = permissionCheckCommunication.collect(owner,collector)
 }

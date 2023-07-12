@@ -6,7 +6,7 @@ import com.example.musicapp.R
 import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.ManagerResource
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
  **/
 class UpdateDialogViewModel @Inject constructor(
     private val dateTransfer: DataTransfer.UpdateDialogTransfer,
-    private val singleUiEventCommunication: SingleUiEventCommunication,
+    private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val dispatchersList: DispatchersList,
     private val managerResource: ManagerResource,
 ): ViewModel() {

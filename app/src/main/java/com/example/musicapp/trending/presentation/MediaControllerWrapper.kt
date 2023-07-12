@@ -11,6 +11,8 @@ import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.Size
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
+import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.main.presentation.ControllerListener
 import com.google.common.util.concurrent.ListenableFuture
 import javax.inject.Inject
 
@@ -97,7 +99,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun replaceMediaItem(index: Int, mediaItem: MediaItem) {
-             TODO("Not yet implemented")
+             controller?.replaceMediaItem(index,mediaItem)
          }
 
          override fun replaceMediaItems(
@@ -187,7 +189,6 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
-             Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
              controller?.seekToDefaultPosition(mediaItemIndex)
          }
 

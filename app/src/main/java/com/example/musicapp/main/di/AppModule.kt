@@ -1,9 +1,17 @@
 package com.example.musicapp.main.di
 
+
 import android.content.ComponentName
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
+import android.os.Build
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -11,13 +19,25 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.musicapp.app.core.*
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.favorites.data.cache.BaseFavoritesTracksCacheDataSource
+import com.example.musicapp.favorites.data.FavoritesTracksRepository
+import com.example.musicapp.favorites.data.cache.DomainToContainsMapper
+import com.example.musicapp.favorites.data.cache.DomainToDataIdsMapper
 import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.favorites.data.cache.TrackDomainToCacheMapper
 import com.example.musicapp.favorites.data.cache.TracksDao
+import com.example.musicapp.favorites.data.cloud.BaseFavoritesTracksCloudDataSource
 import com.example.musicapp.favorites.data.cloud.FavoritesService
+import com.example.musicapp.favorites.data.cloud.TracksCloudToCacheMapper
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
+import com.example.musicapp.favorites.domain.TrackUiToItemId
+import com.example.musicapp.favorites.presentation.ResetSwipeActionCommunication
+import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.CheckAuthRepository
@@ -27,9 +47,9 @@ import com.example.musicapp.main.data.cache.TokenStore
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.main.presentation.*
-import com.example.musicapp.musicdialog.presentation.MusicDialogViewModel
-import com.example.musicapp.player.presentation.IsSavedCommunication
+import com.example.musicapp.musicdialog.presentation.AddTrackDialogViewModel
 import com.example.musicapp.player.presentation.PlayerService
+import com.example.musicapp.player.presentation.PlayingTrackIdCommunication
 import com.example.musicapp.player.presentation.ShuffleModeEnabledCommunication
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
 import com.example.musicapp.playlist.data.cache.PlaylistIdTransfer
@@ -37,9 +57,8 @@ import com.example.musicapp.playlist.data.cloud.PlaylistService
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.HistoryDao
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
+import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
-import com.example.musicapp.trending.presentation.TrackUi
-import com.example.musicapp.trending.presentation.TrendingResult
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
 import com.example.musicapp.updatesystem.data.cloud.UpdateFirebaseService
@@ -52,6 +71,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -66,18 +87,16 @@ import javax.inject.Singleton
 class AppModule {
 
     companion object{
+
         private const val baseUrlAuthorization = "https://oauth.vk.com/"
         private const val baseUrlMusicData = "https://api.vk.com/"
-        private const val shared_pref_name = "settings"
+        private const val data_store_name = "settings"
         private const val token_key = "tken_key"
         private const val owner_id_key = "owner_id_key"
-        private const val version_key = "version_key"
-        private const val apk_url_key = "apk_url_key"
-        private const val update_description_key = "description_key"
         private const val db_name = "music_app_db"
         private const val topic_name = "update_topic"
         private const val test_topic_name = "test_topic_name"
-
+        const val api_version = "5.131"
     }
 
     @Provides
@@ -98,7 +117,8 @@ class AppModule {
             context,
             MusicDatabase::class.java,
             db_name
-        ).addMigrations(migration).build()
+        ).addMigrations(migration)
+            .build()
     }
 
     @Provides
@@ -145,6 +165,7 @@ class AppModule {
             .build()
             .create(AuthorizationService::class.java)
     }
+
 
     @Provides
     @Singleton
@@ -230,6 +251,9 @@ class AppModule {
             .buildAsync()
     }
 
+
+
+
     @Singleton
     @Provides
     fun provideAuthorizationRepo(service: AuthorizationService, cache: AccountDataStore, handleError: HandleError): AuthorizationRepository {
@@ -238,23 +262,37 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideSharedPref(context: Context): SharedPreferences{
-        return context.getSharedPreferences(shared_pref_name, MODE_PRIVATE)
+    fun provideSettingsDataStore(context: Context, dispatchersList: DispatchersList): DataStore<Preferences>{
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            migrations = listOf(SharedPreferencesMigration(context,data_store_name)),
+            scope = CoroutineScope(dispatchersList.io() + SupervisorJob()),
+            produceFile ={ context.preferencesDataStoreFile(data_store_name) }
+        )
     }
 
     @Singleton
     @Provides
-    fun provideTokenStore(sharedPreferences: SharedPreferences): TokenStore {
-        return TokenStore.Base(token_key, sharedPreferences)
+    fun provideTokenStore(dataStore: DataStore<Preferences>): TokenStore {
+        return TokenStore.Base(stringPreferencesKey(token_key), dataStore)
     }
 
     @Singleton
     @Provides
-    fun provideOwnerIdStore(sharedPreferences: SharedPreferences): OwnerIdStore {
-        return OwnerIdStore.Base(owner_id_key, sharedPreferences)
+    fun provideOwnerIdStore(dataStore: DataStore<Preferences>): OwnerIdStore {
+        return OwnerIdStore.Base(stringPreferencesKey(owner_id_key), dataStore)
     }
 
-
+    @Provides
+    @Singleton
+    fun  provideImageLoaderForPlaylists(): ImageLoader {
+        return ImageLoader.Base(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) PaintBackgroundShadow.ApiPAndAbove
+            else PaintBackgroundShadow.BelowApiP
+        )
+    }
 
     @Singleton
     @Provides
@@ -268,20 +306,113 @@ class AppModule {
         return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
     }
 
+    @Provides
+    @Singleton
+    fun provideAddToFavoritesCloudMapper(): TrackDomain.Mapper<Pair<Int, Int>>{
+        return TrackDomain.AddToFavoritesCloudMapper()
+    }
+    @Provides
+    @Singleton
+    fun provideMediaItemToTrackDomain(): MediaItemToTrackDomainMapper{
+        return MediaItemToTrackDomainMapper.Base()
+    }
+
+    @Provides
+    @Singleton
+    fun provideContainsTrackMapper(obj: TrackDomain.ContainsTrackMapper):  TrackDomain.Mapper<Pair<String,String>>{
+        return TrackDomain.ContainsTrackMapper()
+    }
+
 }
 
 @Module
 interface AppBindModule{
 
+
+    @Binds
+    @Singleton
+    fun bindTrackDomainToCacheMapper(obj: TrackDomainToCacheMapper.Base): TrackDomainToCacheMapper
+
+
+    @Binds
+    @Singleton
+    fun bindSDKChecker(obj: SDKChecker.Base): SDKChecker
+
+    @Binds
+    @Singleton
+    fun bindPermissionCheckCommunication(obj: PermissionCheckCommunication.Base): PermissionCheckCommunication
+
+    @Binds
+    @Singleton
+    fun bindTrackUiToItemId(obj: TrackUiToItemId.Base): TrackUiToItemId
+    @Binds
+    @Singleton
+    fun bindHandleDeleteTrackRequest(obj: HandleDeleteTrackRequest): HandleDeleteRequestData<TrackCache>
+    @Binds
+    @Singleton
+    fun bindTracksCloudToCacheMapper(obj: TracksCloudToCacheMapper.Base): TracksCloudToCacheMapper
+    @Binds
+    @Singleton
+    fun bindDomainToContainsMapper(obj: DomainToContainsMapper.Base): DomainToContainsMapper
+    @Binds
+    @Singleton
+    fun bindDomainToDataIdsMapper(obj: DomainToDataIdsMapper.Base): DomainToDataIdsMapper
+    @Binds
+    @Singleton
+    fun bindFavoritesTracksCloudDataSource(obj: BaseFavoritesTracksCloudDataSource): FavoritesCloudDataSource<Item>
+
+    @Binds
+    @Singleton
+    fun bindFavoritesTracksCacheDataSource(obj: BaseFavoritesTracksCacheDataSource): FavoritesCacheDataSource<TrackCache>
+
+    @Binds
+    @Singleton
+    fun bindTrackUiMapper(obj: TrackDomain.ToTrackUiMapper): TrackDomain.Mapper<MediaItem>
+
+    @Binds
+    @Singleton
+    fun bindPlayingTrackIdCommunication(obj: PlayingTrackIdCommunication.Base): PlayingTrackIdCommunication
+
+    @Singleton
+    @Binds
+    fun bindHandlePlayerError(obj: HandlePlayerError.Base): HandlePlayerError
+
+    @Singleton
+    @Binds
+    fun bindTrackDomainToTrackCacheMapper(obj: TrackDomain.ToTrackCacheMapper): TrackDomain.Mapper<TrackCache>
+
+    @Singleton
+    @Binds
+    fun bindDeleteTrackMapper(obj: TrackDomain.DeleteTrackMapper): TrackDomain.Mapper<Int>
+
+    @Singleton
+    @Binds
+    fun bindFormatTimeSecondsToMinutesAndSeconds(obj: FormatTimeSecondsToMinutesAndSeconds.Base):FormatTimeSecondsToMinutesAndSeconds
+
+
+    @Singleton
+    @Binds
+    fun bindConnectionChecker(obj: ConnectionChecker.Base): ConnectionChecker
+
+
     @Singleton
     @Binds
     fun bindCheckAuthRepository(obj: AuthorizationRepository.Base): CheckAuthRepository
+
+    @Singleton
+    @Binds
+    fun bindFavoritesTracksInteractor(obj: FavoritesTracksInteractor.Base): FavoritesTracksInteractor
+
+    @Singleton
+    @Binds
+    fun bindTrackChecker(obj: TrackChecker.Base): TrackChecker
+
     @Binds
     @Singleton
-    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TrendingResult>): HandleResponse<TrendingResult>
+    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base): HandleResponse
     @Binds
     @Singleton
-    fun bindMediaItemTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<MediaItem>
+    fun bindMusicDialogAndNewIdTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<TrackDomain>
     @Binds
     @Singleton
     fun bindUpdateDialogTransfer(obj: DataTransfer.UpdateDialogTransfer.Base): DataTransfer.UpdateDialogTransfer
@@ -297,24 +428,25 @@ interface AppBindModule{
     @Singleton
     fun bindMainViewModelMapper(obj: MainViewModelMapper.Base): MainViewModelMapper
 
+
+    @Singleton
+    @Binds
+    fun bindCloudTrackToTrackCacheMapper(obj: Item.Mapper.CloudTrackToTrackCacheMapper): Item.Mapper<TrackCache>
     @Binds
     @Singleton
-    fun bindToTrackCacheMapper(obj: ToTrackCacheMapper): Mapper<MediaItem, TrackCache>
-    @Binds
-    @Singleton
-    fun bindFavoritesRepo(obj: FavoriteTracksRepository.Base): FavoriteTracksRepository
+    fun bindFavoritesRepo(obj: FavoritesTracksRepository.Base): FavoritesTracksRepository
+
 
     @Binds
     @Singleton
-    fun bindTracksRepo(obj: FavoriteTracksRepository.Base): TracksRepository
+    fun bindInteractor(obj: FavoritesTracksInteractor.Base): Interactor<MediaItem,TracksResult>
+
 
     @Binds
     @Singleton
     fun bindMediaControllerWrapper(mediaControllerWrapper: MediaControllerWrapper.Base): MediaControllerWrapper
 
-    @Binds
-    @Singleton
-    fun bindImageLoaderForPlaylists(obj: ImageLoader.Base): ImageLoader
+
 
     @Binds
     @Singleton
@@ -329,22 +461,20 @@ interface AppBindModule{
 
     @Singleton
     @Binds
-    fun bindSingleUiEventCommunication(obj: SingleUiEventCommunication.Base):
-            SingleUiEventCommunication
+    fun bindDeleteDialogActionCommunication(obj: ResetSwipeActionCommunication.Base): ResetSwipeActionCommunication
+
+
+    @Singleton
+    @Binds
+    fun bindSingleUiEventCommunication(obj: GlobalSingleUiEventCommunication.Base):
+            GlobalSingleUiEventCommunication
 
     @Singleton
     @Binds
     fun bindSelectedTrackPositionCommunication(obj: SelectedTrackCommunication.Base):
             SelectedTrackCommunication
 
-    @Singleton
-    @Binds
-    fun bindToPlayStateService(obj: TrackUi.ToPlayStateService):
-            TrackUi.Mapper<Unit>
-    @Singleton
-    @Binds
-    fun bindToPlayStateBottomBar(obj: TrackUi.ToPlayStateBottomBar):
-            TrackUi.Mapper<PlayerControlsState.Play>
+
 
     @Singleton
     @Binds
@@ -358,8 +488,8 @@ interface AppBindModule{
 
     @Singleton
     @Binds
-    fun bindFragmentManagerCommunication(obj: FragmentManagerCommunication.Base):
-            FragmentManagerCommunication
+    fun bindFragmentManagerCommunication(obj: ActivityNavigationCommunication.Base):
+            ActivityNavigationCommunication
 
     @Singleton
     @Binds
@@ -375,18 +505,14 @@ interface AppBindModule{
     fun bindTrackDurationCommunication(obj: TrackDurationCommunication.Base):
             TrackDurationCommunication
 
-    @Singleton
-    @Binds
-    fun bindBottomNavCommunication(obj: BottomNavCommunication.Base):
-            BottomNavCommunication
 
     @Binds
     @[IntoMap ViewModelKey(MainViewModel::class)]
     fun bindMainActivityViewModel(trendingViewModel: MainViewModel): ViewModel
 
     @Binds
-    @[IntoMap ViewModelKey(MusicDialogViewModel::class)]
-    fun bindMusicDialogViewModel(musicDialogViewModel: MusicDialogViewModel): ViewModel
+    @[IntoMap ViewModelKey(AddTrackDialogViewModel::class)]
+    fun bindMusicDialogViewModel(musicDialogViewModel: AddTrackDialogViewModel): ViewModel
 
     @Binds
     @[IntoMap ViewModelKey(UpdateDialogViewModel::class)]
@@ -410,11 +536,6 @@ interface AppBindModule{
     @Binds
      fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
-
-
-    @Binds
-    @Singleton
-    fun bindIsSavedCommunication(communication: IsSavedCommunication.Base): IsSavedCommunication
 
     @Binds
     @Singleton

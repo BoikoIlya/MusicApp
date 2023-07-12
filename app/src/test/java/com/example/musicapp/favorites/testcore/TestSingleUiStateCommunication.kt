@@ -1,14 +1,14 @@
 package com.example.musicapp.favorites.testcore
 
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
 import kotlinx.coroutines.flow.FlowCollector
 
 /**
  * Created by HP on 29.04.2023.
  **/
-class TestSingleUiStateCommunication: SingleUiEventCommunication {
+class TestSingleUiStateCommunication: GlobalSingleUiEventCommunication {
     val stateList = emptyList<SingleUiEventState>().toMutableList()
 
     override suspend fun collect(

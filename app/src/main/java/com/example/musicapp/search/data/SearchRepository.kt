@@ -4,10 +4,9 @@ import androidx.media3.common.MediaItem
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
-import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.core.SearchQueryRepository
+import com.example.musicapp.app.vkdto.Item
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.search.data.cloud.SearchTrackService
@@ -24,10 +23,10 @@ interface SearchRepository: SearchQueryRepository {
 
     class Base @Inject constructor(
         private val service: SearchTrackService,
-        private val mapper: SearchTracks.Mapper<List<MediaItem>>,
+        private val mapper: Item.Mapper<MediaItem>,
         private val tokenStore: AccountDataStore,
         private val cachedTracks: TemporaryTracksCache,
-        private val handleResponse: HandleResponse<PagingSource.LoadResult<Int, MediaItem>>,
+        private val handleResponse: HandleResponse,
         transfer: SearchQueryTransfer
     ): SearchRepository, SearchQueryRepository.Abstract(transfer) {
 

@@ -8,7 +8,7 @@ import dagger.Subcomponent
  * Created by HP on 01.05.2023.
  **/
 @SearchScope
-@Subcomponent(modules = [SearchModule::class,SearchProvidesModule::class])
+@Subcomponent(modules = [SearchModule::class])
 interface SearchComponent {
 
     @Subcomponent.Builder

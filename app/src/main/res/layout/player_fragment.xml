@@ -3,14 +3,13 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/playerRoot"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bottom_sheet_shape"
+            android:layout_height="match_parent"
             android:paddingBottom="20dp"
             >
 
@@ -20,7 +19,7 @@
                 android:id="@+id/back_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/down_arrow"
+                android:src="@drawable/down"
                 android:tint="@color/gray"
                 android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,18 +37,17 @@
                 android:text="90`s Old School"
                 android:textColor="@color/black"
                 android:textSize="@dimen/body1"
-                app:layout_constraintEnd_toStartOf="@id/like_btn"
+                app:layout_constraintEnd_toStartOf="@id/player_menu_btn"
                 app:layout_constraintBottom_toBottomOf="@+id/back_btn"
                 app:layout_constraintStart_toEndOf="@id/back_btn"
                 app:layout_constraintTop_toTopOf="@+id/back_btn" />
 
-            <ToggleButton
-                android:id="@+id/like_btn"
+            <ImageButton
+                android:id="@+id/player_menu_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/heart_btn_selector"
-                android:textOff=""
-                android:textOn=""
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/menu"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="20dp"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -73,8 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/tone" />
+                    android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -115,8 +112,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="35dp"
-                android:valueFrom="-0.1"
+                android:layout_marginTop="25dp"
+                android:valueFrom="-1.0"
                 android:progressTint="@color/orange"
                 android:thumbTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -124,12 +121,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/songAuthor" />
 
 
+
             <TextView
                 android:id="@+id/currentPosition"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="00:00"
+                android:text="@string/start_time"
                 android:textColor="@color/gray"
                 app:layout_constraintStart_toStartOf="@id/slider"
                 app:layout_constraintTop_toBottomOf="@id/slider"
@@ -139,7 +137,7 @@
                 android:id="@+id/totalDuration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="00:00"
+                android:text="@string/start_time"
                 app:layout_constraintEnd_toEndOf="@id/slider"
                 app:layout_constraintTop_toBottomOf="@id/slider"
                 android:textColor="@color/gray"
@@ -223,8 +221,9 @@
                  />
 
     <androidx.cardview.widget.CardView
+        android:visibility="visible"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
         android:backgroundTint="@color/black"
         android:elevation="50dp"
@@ -236,6 +235,7 @@
         >
 
         <LinearLayout
+            android:padding="10dp"
             android:id="@+id/moveToQueue"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -254,13 +254,13 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="20dp"
-                android:background="@drawable/baseline_keyboard_arrow_right_24"
+                android:src="@drawable/right_chevron"
                 android:backgroundTint="@color/white"
-
+                android:tint="@color/white"
                 />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

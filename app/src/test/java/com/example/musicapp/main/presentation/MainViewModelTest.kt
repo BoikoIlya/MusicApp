@@ -1,17 +1,16 @@
 package com.example.musicapp.main.presentation
 
 import androidx.lifecycle.LifecycleOwner
-import com.example.musicapp.app.core.DataTransfer
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.SDKChecker
+import com.example.musicapp.app.core.SDKCheckerState
 import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.favorites.testcore.TestAuthRepository
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.favorites.testcore.TestDispatcherList
-import com.example.musicapp.favorites.testcore.TestFavoriteRepository
-import com.example.musicapp.favorites.testcore.TestManagerResource
+import com.example.musicapp.favorites.testcore.TestFavoritesTracksInteractor
 import com.example.musicapp.favorites.testcore.TestSingleUiStateCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.trending.data.ObjectCreator
-import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateResult
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -27,21 +26,29 @@ import org.junit.Test
 class MainViewModelTest: ObjectCreator() {
 
 
-    lateinit var viewModel: MainViewModel
-    lateinit var playerCommunication: PlayerCommunication
+   private lateinit var viewModel: MainViewModel
+    private lateinit var playerCommunication: PlayerCommunication
 
-    lateinit var playerControlsCommunication: TestPlayerControlsCommunication
-    lateinit var currentQueueCommunication: TestCurrentQueueCommunication
-    lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
-    lateinit var mediaController: TestMediaController
-    lateinit var bottomSheetCommunication: TestBottomSheetCommunication
-    lateinit var updateSystemRepo: TestUpdateSystemRepo
-    lateinit var firebaseMessagingWrapper: TestFirebaseMessagingWrapper
-    lateinit var temporaryTracksCache: TemporaryTracksCache
-    lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    private lateinit var playerControlsCommunication: TestPlayerControlsCommunication
+    private lateinit var currentQueueCommunication: TestCurrentQueueCommunication
+    private lateinit var selectedTrackCommunication: TestSelectedTrackCommunication
+    private lateinit var mediaController: TestMediaController
+    private lateinit var bottomSheetCommunication: TestBottomSheetCommunication
+    private lateinit var updateSystemRepo: TestUpdateSystemRepo
+    private lateinit var firebaseMessagingWrapper: TestFirebaseMessagingWrapper
+    private lateinit var temporaryTracksCache: TemporaryTracksCache
+    private lateinit var singleUiStateCommunication: TestSingleUiStateCommunication
+    private lateinit var authRepository: TestAuthRepository
+    private lateinit var favoritesInteractor: TestFavoritesTracksInteractor
+    private lateinit var actyvityNavigationCommuniacation: TestActyvityNavigationCommuniacation
+    private lateinit var permissionCheckCommunication: TestPermissionCheckCommunication
 
     @Before
     fun setup(){
+        permissionCheckCommunication = TestPermissionCheckCommunication()
+        favoritesInteractor = TestFavoritesTracksInteractor()
+        actyvityNavigationCommuniacation = TestActyvityNavigationCommuniacation()
+        authRepository = TestAuthRepository()
         singleUiStateCommunication = TestSingleUiStateCommunication()
         temporaryTracksCache = TestTemporaryTracksCache()
         playerControlsCommunication = TestPlayerControlsCommunication()
@@ -66,21 +73,20 @@ class MainViewModelTest: ObjectCreator() {
             singleUiEventCommunication = singleUiStateCommunication,
             bottomSheetCommunication = bottomSheetCommunication,
             slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
-            updateSystemRepository = updateSystemRepo,
-            mapper = MainViewModelMapper.Base(
-                DataTransfer.UpdateDialogTransfer.Base(),
-                TestManagerResource(),singleUiStateCommunication),
-            firebaseMessagingWrapper,
-            TestFavoriteRepository()
+            firebaseMessagingWrapper =firebaseMessagingWrapper,
+            favoritesInteractor =favoritesInteractor,
+            authorizationRepository =authRepository,
+            activityNavigationCommunication = actyvityNavigationCommuniacation,
+            permissionCheckCommunication = permissionCheckCommunication,
+            sdkChecker = TestSDKChecker()
         )
     }
 
     @Test
     fun `test init`(){
         assertEquals(1,firebaseMessagingWrapper.list.size)
-
-        updateSystemRepo.result = UpdateResult.NoUpdate
-        viewModel.checkForUpdate()
+        assertEquals(0,actyvityNavigationCommuniacation.states.size)
+        assertEquals(PermissionCheckState.CheckForPermission::class,permissionCheckCommunication.stateList.last()::class)
     }
 
     @Test
@@ -93,7 +99,6 @@ class MainViewModelTest: ObjectCreator() {
 
     @Test
     fun `test player action`(){
-
         viewModel.playerAction(PlayerCommunicationState.Next)
         assertEquals(1, mediaController.nextTrackClicked)
 
@@ -110,21 +115,16 @@ class MainViewModelTest: ObjectCreator() {
 
     @Test
     fun `test save current page queue`()= runBlocking{
-        viewModel.saveCurrentPageQueue(listOf(getMediaItem("2")))
+        viewModel.saveCurrentPageQueue(listOf(getMediaItem(),getMediaItem()))
 
-        assertEquals("2", temporaryTracksCache.readCurrentPageTracks().first().mediaId)
+        assertEquals(2, temporaryTracksCache.readCurrentPageTracks().size)
     }
 
-    @Test
-    fun `test notification permission`(){
-        viewModel.notificationPermissionCheck()
-        assertEquals(SingleUiEventState.CheckForPermission::class,singleUiStateCommunication.stateList.last()::class)
-    }
 
     @Test
     fun `test dont show permission`(){
         viewModel.dontShowPermission()
-        assertEquals(1,singleUiStateCommunication.stateList.size)
+        assertEquals(PermissionCheckState.Empty,permissionCheckCommunication.stateList.last())
     }
 
     class TestBottomSheetCommunication: BottomSheetCommunication{
@@ -155,6 +155,40 @@ class MainViewModelTest: ObjectCreator() {
         val list = emptyList<Int>().toMutableList()
         override fun subscribeToTopic() {
             list.add(1)
+        }
+
+    }
+
+    class TestActyvityNavigationCommuniacation: ActivityNavigationCommunication{
+        val states = emptyList<ActivityNavigationState>().toMutableList()
+
+        override fun map(newValue: ActivityNavigationState) {
+            states.add(newValue)
+        }
+
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<ActivityNavigationState>
+        ) = Unit
+    }
+
+    class TestPermissionCheckCommunication: PermissionCheckCommunication{
+        val stateList = emptyList<PermissionCheckState>().toMutableList()
+
+        override suspend fun collect(
+            lifecycleOwner: LifecycleOwner,
+            collector: FlowCollector<PermissionCheckState>,
+        ) = Unit
+
+        override fun map(newValue: PermissionCheckState) {
+            stateList.add(newValue)
+        }
+
+    }
+
+    class TestSDKChecker: SDKChecker{
+        override fun check(state: SDKCheckerState, positive: () -> Unit, negative: () -> Unit) {
+            return positive.invoke()
         }
 
     }

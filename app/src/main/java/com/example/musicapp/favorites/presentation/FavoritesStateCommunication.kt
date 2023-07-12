@@ -6,8 +6,8 @@ import javax.inject.Inject
 /**
  * Created by HP on 23.05.2023.
  **/
-interface FavoritesStateCommunication: Communication.Mutable<FavoriteTracksUiState>{
+interface FavoritesStateCommunication: Communication.Mutable<FavoritesUiState>{
     class Base @Inject constructor():
-        Communication.UiUpdate<FavoriteTracksUiState>(FavoriteTracksUiState.Loading),
+        Communication.UiUpdate<FavoritesUiState>(FavoritesUiState.Loading),
         FavoritesStateCommunication
 }

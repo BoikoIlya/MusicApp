@@ -1,8 +1,9 @@
 package com.example.musicapp.app.core
 
 import androidx.lifecycle.viewModelScope
-import com.example.musicapp.favorites.data.cache.TrackCache
-import com.example.musicapp.favorites.presentation.TracksCommunication
+import androidx.media3.common.MediaItem
+import com.example.musicapp.favorites.presentation.TracksResult
+import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.main.presentation.SlideViewPagerCommunication
@@ -14,19 +15,24 @@ import kotlinx.coroutines.launch
 abstract class BottomSheetPlayerViewModel (
     playerCommunication: PlayerCommunication,
     tracksCache: TemporaryTracksCache,
-    tracksRepository: TracksRepository,
+    tracksInteractor: Interactor<MediaItem, TracksResult>,
     private val dispatchersList: DispatchersList,
-    private val slideViewPagerCommunication: SlideViewPagerCommunication
+    private val slideViewPagerCommunication: SlideViewPagerCommunication,
+    mapper: TracksResultToUiEventCommunicationMapper,
+    trackChecker: TrackChecker
 ): BaseViewModel<Unit>(
     playerCommunication,
-    TracksCommunication.EmptyCommunication(),
+    UiCommunication.EmptyCommunication(),
     tracksCache,
     dispatchersList,
-    tracksRepository,
-    TracksResultEmptyMapper()
+    tracksInteractor,
+    mapper,
+    trackChecker
 ) {
 
     fun slidePage(pageIndex: Int) = viewModelScope.launch(dispatchersList.io()){
         slideViewPagerCommunication.map(pageIndex)
     }
+
+
 }

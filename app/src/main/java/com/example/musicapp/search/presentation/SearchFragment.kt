@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -14,6 +13,7 @@ import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -64,7 +64,7 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
                 viewModel.saveSearchTerm(text.toString())
             }
 
-            override fun afterTextChanged(p0: Editable?) = Unit
+            override fun afterTextChanged(p0: Editable?)= Unit
         }
     }
 
@@ -81,7 +81,7 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {
-                    viewModel.addTrackToFavorites(data)
+                    viewModel.checkAndAddTrackToFavorites(data)
                 }
             }, imageLoader)
 
@@ -96,6 +96,8 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
         val defaultLoadStateAdapter = DefaultLoadStateAdapter(onRetryCallBack,viewModel::readErrorMessage)
 
         binding.searchRcv.adapter = tracksAdapter.withLoadStateFooter(defaultLoadStateAdapter)
+        (binding.searchRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+        binding.scrollUpButton.setupWithRecycler(binding.searchRcv)
 
         val data = viewModel.readQuery()
         binding.searchEdt.setText(data)
@@ -126,7 +128,6 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
             }
         }
 
-
         lifecycleScope.launch{
             tracksAdapter.loadStateFlow.collect{
                 val errorState= when{
@@ -149,7 +150,9 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
            }else false
         }
 
-
+        binding.backBtnSearch.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun onStart() {

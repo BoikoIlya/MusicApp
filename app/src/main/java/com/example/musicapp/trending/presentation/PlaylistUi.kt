@@ -1,5 +1,6 @@
 package com.example.musicapp.trending.presentation
 
+import com.example.musicapp.R
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.databinding.PlaylistItemBinding
@@ -34,6 +35,7 @@ data class PlaylistUi(
             tracksUrl: String,
         ) {
             with(binding){
+
                 imageLoader.loadImage(imgUrl,playlistImg)
                 playlistName.text = name
                 root.setOnClickListener { clickListener.onClick(id) }

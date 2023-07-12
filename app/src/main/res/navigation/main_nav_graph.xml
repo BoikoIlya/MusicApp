@@ -39,7 +39,11 @@
         android:label="PlaylistFragment" />
     <fragment
         android:id="@+id/authFragment"
-        android:name="com.example.musicapp.vkauth.presentation.AuthFragment"
+        android:name="com.example.musicapp.vkauth.presentation.AuthActivity"
         android:label="fragment_auth"
-        tools:layout="@layout/fragment_auth" />
+        tools:layout="@layout/activity_auth" />
+    <dialog
+        android:id="@+id/playerBottomSheetDialog"
+        android:name="com.example.musicapp.main.presentation.PlayerBottomSheetDialog"
+        android:label="PlayerBottomSheetDialog" />
 </navigation>

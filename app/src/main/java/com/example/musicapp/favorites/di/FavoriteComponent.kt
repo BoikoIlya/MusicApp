@@ -1,5 +1,6 @@
 package com.example.musicapp.favorites.di
 
+import com.example.musicapp.favorites.presentation.DeleteDialogFragment
 import com.example.musicapp.favorites.presentation.FavoritesFragment
 import com.example.musicapp.trending.di.TrendingComponent
 import com.example.musicapp.trending.di.TrendingModule
@@ -20,5 +21,8 @@ interface FavoriteComponent {
     }
 
     fun inject(favoritesFragment: FavoritesFragment)
+    fun inject(deleteDialogFragment: DeleteDialogFragment)
+
+
 
 }

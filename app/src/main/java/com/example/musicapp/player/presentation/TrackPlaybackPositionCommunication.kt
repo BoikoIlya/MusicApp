@@ -6,9 +6,15 @@ import javax.inject.Inject
 /**
  * Created by HP on 20.03.2023.
  **/
-interface TrackPlaybackPositionCommunication: Communication.Mutable<Pair<Int,String>> {
+interface TrackPlaybackPositionCommunication: Communication.Mutable<Pair<Float,String>> {
 
-    class Base @Inject constructor(): TrackPlaybackPositionCommunication, Communication.UiUpdate<Pair<Int,String>>(
-        Pair(0,"")
-    )
+    fun clearPosition()
+
+    class Base @Inject constructor(): TrackPlaybackPositionCommunication, Communication.UiUpdate<Pair<Float,String>>(
+        Pair(0f,"")
+    ) {
+        override fun clearPosition() {
+            super.map(Pair(0f,"00:00"))
+        }
+    }
 }

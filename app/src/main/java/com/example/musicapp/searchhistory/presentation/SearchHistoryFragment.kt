@@ -66,11 +66,11 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
         val adapter = SearchHistoryAdapter(object : ClickListener<String>{
             override fun onClick(data: String) {
                 viewModel.removeHistoryItem(data)
+                binding.searchHistoryEdt.setText("")
             }
         },object: Selector<String>{
             override fun onSelect(data: String, position: Int) {
-                viewModel.saveQuery(data)
-                findNavController().navigate(R.id.action_searchHistoryFragment_to_searchFragment)
+                viewModel.checkQueryBeforeNavigation(data)
             }
         })
 
@@ -79,8 +79,8 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
 
         binding.searchHistoryEdt.setOnKeyListener { _, keyCode, keyEvent ->
             return@setOnKeyListener if(keyCode== KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP){
-                viewModel.saveQuery(binding.searchHistoryEdt.text.toString())
-                findNavController().navigate(R.id.action_searchHistoryFragment_to_searchFragment)
+                viewModel.checkQueryBeforeNavigation(binding.searchHistoryEdt.text.toString())
+
                 true
             }else false
         }
@@ -90,28 +90,57 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
 
         lifecycleScope.launch{
             viewModel.collectSearchHistory(this@SearchHistoryFragment){
-                 binding.searchHistoryMessage.isVisible = it.isEmpty()
-                    adapter.map(it)
+                binding.searchHistoryMessage.isVisible = it.isEmpty()
+                adapter.map(it)
+                binding.searchHistoryRcv.scrollToPosition(0)
             }
         }
 
+        lifecycleScope.launch{
+            viewModel.collectSearchQuery(this@SearchHistoryFragment){
+                binding.searchHistoryEdt.setText(it)
+            }
+        }
+
+       viewLifecycleOwner.lifecycleScope.launch{
+            viewModel.collectSearchHistorySingleStateCommunication(this@SearchHistoryFragment){
+                it.apply(findNavController(), viewModel, binding)
+            }
+        }
+
+        lifecycleScope.launch{
+            viewModel.collectSearchHistoryInputStateCommunication(this@SearchHistoryFragment){
+                it.apply(binding)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.collectPlayerControls(this@SearchHistoryFragment){
+                it.apply(binding.searchHistoryRcv)
+            }
+        }
 
         binding.clearHistoryBtn.setOnClickListener {
-            viewModel.clearHistory()
-            binding.searchHistoryEdt.setText("")
+            viewModel.launchClearHistoryDialog()
         }
 
     }
 
 
+
+
     override fun onStart() {
-        val data = viewModel.readQuery()
-        binding.searchHistoryEdt.setText(data)
         binding.searchHistoryEdt.requestFocus()
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.searchHistoryEdt, InputMethodManager.SHOW_IMPLICIT)
         binding.searchHistoryEdt.addTextChangedListener(textWatcher)
         super.onStart()
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveQueryToCommuniction(binding.searchHistoryEdt.text.toString())
     }
 
 

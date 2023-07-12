@@ -1,37 +1,49 @@
 package com.example.musicapp.app.core
 
 import android.net.Uri
-import android.support.v4.os.IResultReceiver2.Default
+import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.MimeTypes
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.big_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.date
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.content_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.owner_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_in_millis
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
 import com.example.musicapp.favorites.data.cache.TrackCache
-import java.util.Calendar
-import java.util.UUID
+import java.time.Instant
 import javax.inject.Inject
-import kotlin.random.Random
 
 /**
  * Created by HP on 21.03.2023.
  **/
-class ToTrackCacheMapper @Inject constructor(): Mapper<MediaItem, TrackCache> {
-
-    override  fun map(data: MediaItem): TrackCache {
-        return TrackCache(
-            id =  data.mediaId.toInt(),
-            name = data.mediaMetadata.title.toString(),
-            artistName =  data.mediaMetadata.artist.toString(),
-            albumName = data.mediaMetadata.albumTitle.toString(),
-            date = Calendar.getInstance().timeInMillis.toInt(),
-            url = "", bigImgUrl = "", smallImgUrl = "",
-
-        )
-    }
-}
 
 class ToMediaItemMapper @Inject constructor(): Mapper<TrackCache, MediaItem> {
 
+    companion object{
+        const val track_duration_in_millis = "duration"
+        const val track_duration_formatted = "duration_formatted"
+        const val big_img_url = "big_img_url"
+        const val small_img_url = "small_img_url"
+        const val track_id = "track_id"
+        const val date = "track_date"
+        const val content_id = "content_id"
+        const val owner_id = "owner_id"
+    }
     override  fun map(data: TrackCache): MediaItem {
+
+        val extraData = Bundle()
+        extraData.putString(track_duration_formatted,data.durationFormatted)
+        extraData.putString(big_img_url,data.bigImgUrl)
+        extraData.putString(small_img_url,data.smallImgUrl)
+        extraData.putInt(track_id,data.id)
+        extraData.putInt(date,data.date)
+        extraData.putInt(owner_id,data.ownerId)
+        extraData.putFloat(track_duration_in_millis, data.durationInMillis)
+
+
         return MediaItem.Builder()
             .setMediaId(if(data.url.isNotEmpty()) data.url else java.util.Random().nextInt().toString())
             .setMediaMetadata(
@@ -41,6 +53,8 @@ class ToMediaItemMapper @Inject constructor(): Mapper<TrackCache, MediaItem> {
                     .setAlbumTitle(data.albumName)
                     .setArtworkUri(Uri.parse(data.smallImgUrl))
                     .setDescription(data.bigImgUrl)
+                    .setExtras(extraData)
+                    .setIsPlayable(data.url.isNotEmpty())
                     .build()
             )
             .build()

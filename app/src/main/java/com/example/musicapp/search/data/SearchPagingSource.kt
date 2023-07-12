@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.musicapp.app.SpotifyDto.SearchTracks
 import com.example.musicapp.app.core.HandleResponse
+import com.example.musicapp.app.core.ToMediaItemMapper
+import com.example.musicapp.app.vkdto.Item
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.search.data.cloud.SearchTrackService
+import com.example.musicapp.trending.domain.TrackDomain
 import java.lang.Exception
 
 /**
@@ -17,9 +19,9 @@ import java.lang.Exception
 class SearchPagingSource(
     private val service: SearchTrackService,
     private val query: String,
-    private val mapper: SearchTracks.Mapper<List<MediaItem>>,
+    private val mapper: Item.Mapper<MediaItem>,
     private val tokenStore: AccountDataStore,
-    private val handleResponse: HandleResponse<LoadResult<Int, MediaItem>>,
+    private val handleResponse: HandleResponse,
     private val cachedTracks: TemporaryTracksCache
 ): PagingSource<Int, MediaItem>() {
 
@@ -30,22 +32,18 @@ class SearchPagingSource(
             val position = params.key ?: 1
 
                 val cloudData = service.searchTrack(
-                    auth = tokenStore.token(),
+                    accessToken = tokenStore.token(),
                     query = query,
-                    limit = params.loadSize,
-                    offset = position
+                    count = params.loadSize,
+                    offset = position * params.loadSize
                 )
-            Log.d("tag", "load: REQUEST $position")
-            if(cloudData.tracks.isEmpty()) throw NoSuchElementException()
 
-                val mediaItems = cloudData.tracks.map(mapper)
-                if(mediaItems.isEmpty()){
-                    Log.d("tag", "load: EMPTY")
-                   return@handle load(LoadParams.Append(params.key!!.plus(1),params.loadSize,false))
-                    }
+            val mediaItems= cloudData.handle().map { it.map(mapper)}
+
+            if(mediaItems.isEmpty() && position==1) throw NoSuchElementException()
+
 
             cachedTracks.addPagingData(mediaItems, position==1)
-            Log.d("tag", "load: PAGING LOAD")
 
 
             val nextKey = if (mediaItems.size < params.loadSize) null else position + 1

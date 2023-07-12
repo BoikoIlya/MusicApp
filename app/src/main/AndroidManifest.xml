@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+
     <application
         android:name=".main.di.App"
         android:allowBackup="true"
@@ -31,6 +32,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".vkauth.presentation.AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/Theme.MusicApp">
+        </activity>
+
         <service
             android:name=".player.presentation.PlayerService"
             android:exported="true"
@@ -48,6 +56,15 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
+<!--        <receiver-->
+<!--            android:name=".player.presentation.HeadPhonesReceiver"-->
+<!--            android:exported="false"-->
+<!--            >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.HEADSET_PLUG" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
     </application>
 

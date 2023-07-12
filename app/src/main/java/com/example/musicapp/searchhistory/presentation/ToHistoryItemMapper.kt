@@ -1,7 +1,9 @@
 package com.example.musicapp.searchhistory.presentation
 
+import android.util.Log
 import com.example.musicapp.app.core.Mapper
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
+import java.time.Instant
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -11,10 +13,9 @@ import javax.inject.Inject
 interface ToHistoryItemMapper: Mapper<String, HistoryItemCache> {
 
     class Base @Inject constructor(): ToHistoryItemMapper {
-        private val calendar = Calendar.getInstance()
 
         override fun map(data: String): HistoryItemCache {
-            return HistoryItemCache(time = calendar.timeInMillis, queryTerm =  data)
+            return HistoryItemCache(time = Instant.now().toEpochMilli(), queryTerm =  data)
         }
     }
 

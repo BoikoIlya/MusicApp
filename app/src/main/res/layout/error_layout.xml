@@ -8,13 +8,13 @@
 
     <ImageView
         android:id="@+id/errorImg"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:src="@drawable/no_internet"
+        android:src="@drawable/error_img"
         android:visibility="visible"
-        app:tint="@color/orange" />
+         />
 
     <TextView
         android:id="@+id/errorTv"

@@ -2,8 +2,7 @@ package com.example.musicapp.playlist.di
 
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.SpotifyDto.PlaylistDto
-import com.example.musicapp.app.SpotifyDto.TrackItemPlaylist
+
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.main.di.ViewModelKey
@@ -28,24 +27,12 @@ import dagger.multibindings.IntoMap
 @Module
 interface PlaylistModule {
 
-    @Binds
-    @PlaylistScope
-    fun bindHandleUnauthorizedResponseTrendingResult(obj: HandleResponse.Base<TracksResult>): HandleResponse<TracksResult>
 
     @PlaylistScope
     @Binds
     fun bindPlaylistRepository(obj: PlaylistRepository.Base):
             PlaylistRepository
 
-    @PlaylistScope
-    @Binds
-    fun bindToPlaylistDomainMapper(obj: PlaylistDto.ToPlaylistDomainMapper):
-            PlaylistDto.Mapper<PlaylistDataDomain>
-
-    @PlaylistScope
-    @Binds
-    fun bindToTrackDomainMapper(obj: TrackItemPlaylist.ToTrackDomainMapper):
-            TrackItemPlaylist.Mapper<TrackDomain>
 
     @PlaylistScope
     @Binds
@@ -57,10 +44,6 @@ interface PlaylistModule {
     fun bindToTrackResultMapper(obj: PlaylistDataDomain.ToTrackResultMapper):
             PlaylistDataDomain.Mapper<TracksResult>
 
-    @PlaylistScope
-    @Binds
-    fun bindToTrackUiMapper(obj: TrackDomain.ToTrackUiMapper):
-            TrackDomain.Mapper<MediaItem>
 
     @PlaylistScope
     @Binds

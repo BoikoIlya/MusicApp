@@ -11,30 +11,41 @@ interface TracksDao {
 
     companion object{
         const val table_name = "tracks_table"
+        const val fts_table_name = "fts_tracks_table"
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: TrackCache)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListOfTracks(track: List<TrackCache>)
 
-    @Query("SELECT * FROM tracks_table WHERE name LIKE '%' || :query || '%' ORDER BY date DESC")
-     fun getTracksByTime(query: String): Flow<List<TrackCache>>
 
-    @Query("SELECT * FROM tracks_table WHERE name LIKE '%' || :query || '%' ORDER BY name")
-     fun getTracksByName(query: String): Flow<List<TrackCache>>
+    @Query("SELECT * FROM tracks_table " +
+            "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId " +
+            "ORDER BY date DESC")
+     fun getAllTracksByTime(query: String, playlistId:Int):Flow<List<TrackCache>>
 
-    @Query("SELECT * FROM tracks_table WHERE name LIKE '%' || :query || '%' ORDER BY artistName")
-     fun getTracksByArtist(query: String):Flow<List<TrackCache>>
+    @Query("SELECT * FROM tracks_table " +
+            "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
+            "ORDER BY name")
+     fun getTracksByName(query: String,playlistId:Int): Flow<List<TrackCache>>
 
-    @Query("SELECT * FROM tracks_table WHERE url =:itemUrl")
-    suspend fun contains(itemUrl: String): TrackCache?
+    @Query("SELECT * FROM tracks_table " +
+            "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
+            "ORDER BY artistName")
+     fun getTracksByArtist(query: String,playlistId:Int):Flow<List<TrackCache>>
 
-    @Query("DELETE FROM tracks_table WHERE id = :itemId")
-    suspend fun removeTrack(itemId: String)
+    @Query("SELECT * FROM tracks_table WHERE name = :name AND artistName = :artistName")
+    suspend fun contains( name: String, artistName: String): TrackCache?
+
+    @Query("SELECT * FROM tracks_table WHERE id = :id")
+    suspend fun getById(id: Int): TrackCache?
+
+    @Query("DELETE FROM tracks_table WHERE id =:id")
+    suspend fun removeTrack(id: Int)
 
     @Query("DELETE FROM tracks_table WHERE id NOT IN (:items)")
-    fun deleteItemsNotInList(items: List<Int>)
+    suspend fun deleteItemsNotInList(items: List<Int>)
 
 }

@@ -1,6 +1,6 @@
 package com.example.musicapp.searchhistory.presentation
 
-import com.example.musicapp.app.core.SingleUiEventCommunication
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.searchhistory.data.HistoryDeleteResult
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
@@ -10,7 +10,7 @@ import javax.inject.Inject
  * Created by HP on 06.05.2023.
  **/
 class HistoryDeleteResultMapper @Inject constructor(
-    private val singleUiEventCommunication: SingleUiEventCommunication
+    private val singleUiEventCommunication: GlobalSingleUiEventCommunication
 ): HistoryDeleteResult.Mapper<Unit> {
 
     override suspend fun map(message: String, data: List<HistoryItemCache>) {

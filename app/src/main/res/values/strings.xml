@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">MusicApp</string>
     <string name="trending_header">Today\'s Music is</string>
-    <string name="search_track">Search track…</string>
+    <string name="search_track">Search…</string>
     <string name="no_connection_message">No internet connection</string>
     <string name="service_is_unavailable">Service is unavailable</string>
     <string name="no_element">"No tracks found"</string>
-    <string name="top_50_recommendations">Top 50 Recommendations</string>
+    <string name="top_200_recommendations">Top 200 Recommendations</string>
     <string name="bad_gatawey_message">Bad Gateway</string>
     <string name="server_error_message">Internal server error: Unknown error, try later</string>
     <string name="too_many_requests">Too Many Requests</string>
@@ -28,7 +28,10 @@
     <string name="update_btn_text">Update</string>
     <string name="no_btn_text">No</string>
     <string name="later_btn_text">Later</string>
-    <string name="dublicated_track_message">"You have added this track before. Do you want to replace?"</string>
+    <string name="dublicated_track_message">"You favorite tracks already contains this track. Still add it?"</string>
+    <string name="delete_track_confirm_message">"Are you sure that you want to delete this track?"</string>
+    <string name="delete_track_player_menu_confirm_message">"Are you sure that you want to delete this track? "</string>
+    <string name="clear_search_history_confirm_message">"Are you sure that you want to clear search history?"</string>
     <string name="current_queue">Current queue</string>
     <string name="update_notif_channel_name">Updates</string>
     <string name="new_version">New version:&#160;</string>
@@ -36,7 +39,7 @@
     <string name="download_error">Error with downloading</string>
     <string name="loading_update_error">Loading checking error</string>
     <string name="empty_url_error">Download url is empty</string>
-    <string name="oops_can_t_load_data">Oops, can`t load data</string>
+    <string name="oops_something_went_wrong_data">Oops, something went wrong</string>
     <string name="nothing_found_message">Nothing found</string>
     <string name="history">History</string>
     <string name="clear">Clear</string>
@@ -50,5 +53,17 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="fill_all_fields">Fill all fields</string>
-
+    <string name="unavailable_track">Track is unavailable</string>
+    <string name="divider_dot">&#160;·&#160;</string>
+    <string name="delete_option">Delete</string>
+    <string name="add_option">Add</string>
+    <string name="empty_input">You haven`t entered anything</string>
+    <string name="not_contain_this_track">You tracks not contains this track</string>
+    <string name="cant_re_add">Due to the features of the VK server, you will not be able to re-add track through this menu after it was or will be deleted.\n\nYou can find and add from search or using other ways. Sorry one more time, but we can`t do anything with that.</string>
+    <string name="cant_delete">Due to the features of the VK server, you will not be able to delete new track from that menu.\n\nYou can find and delete it from favorites tracks page by swipe. Sorry one more time, but we can`t do anything with that.</string>
+    <string name="warning_title">Warning!</string>
+    <string name="ok">OK</string>
+    <string name="player">Player</string>
+    <string name="login_with_vk">Login with VK</string>
+    <string name="start_time">00:00</string>
 </resources>

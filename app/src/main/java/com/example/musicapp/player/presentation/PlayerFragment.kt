@@ -1,10 +1,14 @@
 package com.example.musicapp.player.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.DragEvent
+import android.view.MotionEvent
 import android.view.View
-import android.widget.SeekBar
+import android.widget.PopupMenu
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -12,15 +16,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.big_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_in_millis
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.main.di.App
-import com.example.musicapp.main.presentation.MainViewModel
 import com.example.musicapp.main.presentation.PlayerCommunicationState
-import com.example.musicapp.player.di.PlayerComponent
-import com.example.musicapp.trending.presentation.TrendingViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.launch
@@ -43,12 +49,13 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
     private lateinit var currentTrack: MediaItem
 
-    private lateinit var playerComponent: PlayerComponent
+    private var currentTrackId = 0
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        playerComponent = (context.applicationContext as App).appComponent.playerComponent().build()
-        playerComponent.inject(this)
+         (context.applicationContext as App).appComponent.playerComponent().build()
+            .inject(this)
         viewModel = ViewModelProvider(this, factory)[PlayerViewModel::class.java]
     }
 
@@ -57,19 +64,16 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            viewModel.collectIsSaved(this@PlayerFragment) {
-                binding.likeBtn.isChecked = it
-            }
-        }
-
-        lifecycleScope.launch {
             viewModel.collectSelectedTrack(this@PlayerFragment) {
-                viewModel.isSaved(it.mediaId)
                 with(binding) {
+                    totalDuration.text = it.mediaMetadata.extras?.getString(track_duration_formatted)?:""
+                    val durationInMillis = it.mediaMetadata.extras?.getFloat(track_duration_in_millis)?:1f
+                    binding.slider.valueTo = durationInMillis
+                    viewModel.saveMaxDuration(durationInMillis)
                     with(it.mediaMetadata) {
                         albumName.text = albumTitle
                         imageLoader.loadImage(
-                            description.toString(),// description contain big img url
+                            extras?.getString(big_img_url)?:"",
                             songImg,
                             imgBg
                         )
@@ -93,21 +97,31 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
         lifecycleScope.launch {
             viewModel.collectTrackPosition(this@PlayerFragment) {
-                binding.slider.value = it.first.toFloat()
+                binding.slider.value = it.first
                 binding.currentPosition.text = it.second
             }
         }
 
+
         lifecycleScope.launch {
-            viewModel.collectTrackDurationCommunication(this@PlayerFragment) {
-                binding.totalDuration.text = viewModel.durationForTextView(it)
-                binding.slider.valueTo = it.toFloat()
+            viewModel.collectPlayingTrackIdCommunication(this@PlayerFragment) {
+               currentTrackId = it
             }
         }
 
         binding.slider.addOnChangeListener(Slider.OnChangeListener { _, value, user ->
-           if(user) viewModel.playerAction(PlayerCommunicationState.SeekToPosition(value.toLong()))
+           if(user)  binding.currentPosition.text = viewModel.durationForTextView(value.toLong())
         })
+
+        binding.slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener{
+            override fun onStartTrackingTouch(slider: Slider) = Unit
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                viewModel.playerAction(PlayerCommunicationState.SeekToPosition(slider.value.toLong()))
+            }
+
+        })
+
 
 
         binding.backBtn.setOnClickListener {
@@ -145,12 +159,22 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
         }
 
-        binding.likeBtn.setOnClickListener {
-            if ((it as ToggleButton).isChecked)
-                viewModel.saveTrack(currentTrack)
-            else
-                viewModel.removeTrack(currentTrack.mediaId)
+        binding.playerMenuBtn.setOnClickListener {
+            val popup = PopupMenu(requireContext(), it, 0, 0, R.style.popupOverflowMenu)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                popup.setForceShowIcon(true)
+
+            popup.menuInflater.inflate(R.menu.player_options, popup.menu)
+            popup.show()
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.delete_option -> viewModel.launchDeleteItemDialog(currentTrackId,currentTrack)
+                    R.id.add_option -> viewModel.checkAndAddTrackToFavorites(currentTrack)
+                }
+                return@setOnMenuItemClickListener true
+            }
         }
+
 
         binding.moveToQueue.setOnClickListener {
             viewModel.slidePage(1)

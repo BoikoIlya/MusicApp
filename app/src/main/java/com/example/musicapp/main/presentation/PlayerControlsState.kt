@@ -11,6 +11,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.ToMediaItemMapper
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.player.presentation.PlayerViewModel
@@ -32,7 +33,7 @@ interface PlayerControlsState {
         viewModel: PlayerViewModel
     )
 
-    fun apply(
+    fun apply(  //applyMarginRcvNotToOverlapContent
         rcv: RecyclerView
     )
 
@@ -49,10 +50,7 @@ interface PlayerControlsState {
             with(binding) {
 
                 imageLoader.loadImage(
-                    "https://" +
-                            track.mediaMetadata.artworkUri?.host +
-                            track.mediaMetadata.artworkUri?.path+
-                            "?"+track.mediaMetadata.artworkUri?.query,
+                    track.mediaMetadata.extras?.getString(ToMediaItemMapper.small_img_url) ?:"",
                     trackImg
                 )
                 songNameTv.text = track.mediaMetadata.title
@@ -144,7 +142,7 @@ interface PlayerControlsState {
             binding.playSongBtn.isChecked = true
         }
 
-        override fun apply(rcv: RecyclerView) {
+        override fun apply(rcv: RecyclerView,) {
             val context: Context = rcv.context
             val density = context.resources.displayMetrics.density
             val marginDp = 60 // The desired margin in dp
@@ -154,6 +152,8 @@ interface PlayerControlsState {
             layoutParams.setMargins(0, 0, 0, marginPx)
             rcv.layoutParams = layoutParams
         }
+
+
 
 
     }

@@ -4,13 +4,14 @@ import com.example.musicapp.main.data.cloud.AuthorizationService
 import javax.inject.Inject
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.main.data.cache.AccountDataStore
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by HP on 09.03.2023.
  **/
 interface AuthorizationRepository: CheckAuthRepository {
 
-   suspend fun updateToken()
+   suspend fun clearData()
 
    suspend fun token(login: String, password: String): String
 
@@ -21,14 +22,7 @@ interface AuthorizationRepository: CheckAuthRepository {
         private val accountData: AccountDataStore,
         private val handleError: HandleError
     ): AuthorizationRepository {
-
-
-
-
-
-        override suspend fun updateToken() {
-          //  authorizationService.getToken(auth, content, grand_type).map(cache)
-        }
+        override suspend fun clearData() = accountData.saveData("","")
 
         override suspend fun token(login: String, password: String): String {
             return try {
@@ -39,9 +33,7 @@ interface AuthorizationRepository: CheckAuthRepository {
             }
         }
 
-        override suspend fun isAuthorized(notAuthorized: () -> Unit) {
-            if(accountData.isDataEmpty()) notAuthorized.invoke()
-        }
+        override suspend fun isNotAuthorized(): Flow<Boolean> = accountData.isAccountDataEmpty()
 
     }
 }

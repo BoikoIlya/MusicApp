@@ -1,11 +1,13 @@
 package com.example.musicapp.app.core
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,7 +18,6 @@ import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.main.presentation.MainActivity
-import com.google.android.datatransport.runtime.Destination
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -32,9 +33,10 @@ sealed interface SingleUiEventState{
         binding: ActivityMainBinding,
     )
 
+
     abstract class ShowSnackBar(
         private val message: String,
-        private val bgColorId: Int
+        private val bgColorId: Int,
     ): SingleUiEventState {
 
         override fun apply(
@@ -42,6 +44,9 @@ sealed interface SingleUiEventState{
             context: Context,
             binding: ActivityMainBinding,
         ) = with(binding) {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken,0)
+
             val snackBar = Snackbar.make(fragmentContainer, message, Snackbar.LENGTH_SHORT)
             val snackBarView: View = snackBar.view
             snackBarView.background =
@@ -55,33 +60,19 @@ sealed interface SingleUiEventState{
         }
 
 
+
         data class Error(
-            private val message: String
+            private val message: String,
         ) : ShowSnackBar(message, R.color.red)
 
         data class Success(
-            private val message: String
+            private val message: String,
         ) : ShowSnackBar(message, R.color.green)
     }
 
-    data class CheckForPermission(
-        private val permission: String,
-        private val permissionRequestCode: Int
-    ): SingleUiEventState{
-        override fun apply(
-            fragmentManager: FragmentManager,
-            context: Context,
-            binding: ActivityMainBinding,
-        ) {
-            Log.d("tag", "apply: MANIFEST PERM")
-            if(ContextCompat.checkSelfPermission(context,permission) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(context as MainActivity, arrayOf(permission),permissionRequestCode)
-        }
-
-    }
 
     data class LoadUpdate(
-        private val apkUrl: String
+        private val apkUrl: String,
     ) : SingleUiEventState{
 
 
@@ -97,12 +88,13 @@ sealed interface SingleUiEventState{
             context.startActivity(intent)
         }
 
+
     }
 
 
     @UnstableApi
     data class ShowDialog(
-        private val dialog: DialogFragment
+        private val dialog: DialogFragment,
     ) : SingleUiEventState{
 
         override fun apply(
@@ -112,6 +104,7 @@ sealed interface SingleUiEventState{
         ) {
             dialog.show(fragmentManager, dialog.tag)
         }
+
     }
 
 }

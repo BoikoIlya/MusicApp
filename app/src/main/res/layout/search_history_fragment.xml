@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:fitsSystemWindows="false"
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -25,17 +27,19 @@
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout"
+                    android:id="@+id/textInputLayoutSearchHistory"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginVertical="25dp"
+                    android:layout_marginTop="25dp"
                     app:endIconDrawable="@drawable/close"
                     app:endIconMode="clear_text"
                     app:hintEnabled="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/Widget.Design.TextInputLayout"
+                    >
 
                     <EditText
                         android:id="@+id/search_history_edt"
@@ -45,22 +49,19 @@
                         android:drawableStart="@drawable/search"
                         android:drawablePadding="10dp"
                         android:drawableTint="@color/orange"
-                        android:foregroundTint="@color/orange"
                         android:hint="@string/search_track"
                         android:imeOptions="actionSearch"
                         android:inputType="text"
                         android:paddingStart="10dp"
                         android:textColor="@color/black"
-                        android:textColorHighlight="@color/orange"
                         android:textSize="@dimen/body1"
                         android:textColorHint="@color/gray"
-                        android:textColorLink="@color/orange"
                         android:textCursorDrawable="@drawable/cursor_drawable" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <TextView
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
                     android:id="@+id/hist"
                     android:layout_width="0dp"
@@ -69,14 +70,14 @@
                     android:text="@string/history"
                     android:textColor="@color/black"
                     android:textSize="@dimen/h3"
-                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-                    app:layout_constraintStart_toStartOf="@+id/textInputLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSearchHistory"
+                    app:layout_constraintStart_toStartOf="@+id/textInputLayoutSearchHistory"
                     />
 
                     <TextView
                         android:layout_marginTop="25dp"
-                        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-                        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSearchHistory"
+                        app:layout_constraintEnd_toEndOf="@+id/textInputLayoutSearchHistory"
                         android:background="?selectableItemBackgroundBorderless"
                         android:gravity="end"
                         android:layout_width="wrap_content"
@@ -91,9 +92,15 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
         <TextView
             android:id="@+id/search_history_message"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="35dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -105,11 +112,12 @@
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:id="@+id/search_history_rcv"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/history_item"
+            android:clipToPadding="false"
             />
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

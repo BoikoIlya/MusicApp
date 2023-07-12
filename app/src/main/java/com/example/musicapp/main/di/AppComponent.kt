@@ -4,14 +4,12 @@ import android.content.Context
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.favorites.di.FavoriteComponent
 import com.example.musicapp.main.presentation.MainActivity
-import com.example.musicapp.musicdialog.presentation.MusicDialogFragment
+import com.example.musicapp.musicdialog.presentation.AddTrackDialogFragment
 import com.example.musicapp.player.di.PlayerComponent
 import com.example.musicapp.playlist.di.PlaylistComponent
-import com.example.musicapp.queue.di.QueueComponent
 import com.example.musicapp.search.di.SearchComponent
 import com.example.musicapp.searchhistory.di.SearchHistoryComponent
 import com.example.musicapp.trending.di.TrendingComponent
-import com.example.musicapp.updatesystem.presentation.FCMUpdateService
 import com.example.musicapp.updatesystem.presentation.UpdateDialogFragment
 import com.example.musicapp.vkauth.di.AuthComponent
 import dagger.BindsInstance
@@ -35,8 +33,7 @@ interface AppComponent {
     }
 
     fun inject(mainActivity: MainActivity)
-
-    fun inject(dialogFragment: MusicDialogFragment)
+    fun inject(dialogFragment: AddTrackDialogFragment)
     fun inject(dialogFragment: UpdateDialogFragment)
 
     fun trendingComponent(): TrendingComponent.Builder
@@ -45,8 +42,6 @@ interface AppComponent {
 
     fun favoriteComponent(): FavoriteComponent.Builder
 
-    fun queueComponent(): QueueComponent.Builder
-
     fun searchComponent(): SearchComponent.Builder
 
     fun searchHistoryComponent(): SearchHistoryComponent.Builder
@@ -54,5 +49,6 @@ interface AppComponent {
     fun playlistComponent(): PlaylistComponent.Builder
 
     fun authComponent(): AuthComponent.Builder
+
 
 }

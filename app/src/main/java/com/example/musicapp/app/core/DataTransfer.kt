@@ -1,8 +1,8 @@
 package com.example.musicapp.app.core
 
 import androidx.media3.common.MediaItem
+import com.example.musicapp.trending.domain.TrackDomain
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by HP on 21.03.2023.
@@ -26,7 +26,8 @@ interface DataTransfer<T> {
     }
 
     class MusicDialogTransfer @Inject constructor():
-        DataTransfer<MediaItem>, DataTransfer.Abstract<MediaItem>()
+        DataTransfer<TrackDomain>, Abstract<TrackDomain>()
+
 
 
     interface UpdateDialogTransfer: DataTransfer<Pair<String,String>> {

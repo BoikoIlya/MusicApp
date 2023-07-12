@@ -3,16 +3,17 @@ package com.example.musicapp.trending.presentation
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.AddToFavorites
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.TracksRepository
+import com.example.musicapp.app.core.TrackChecker
+import com.example.musicapp.app.core.Interactor
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
-import com.example.musicapp.favorites.data.FavoriteTracksRepository
+import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.PlayerCommunication
 import com.example.musicapp.trending.domain.TrendingInteractor
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -26,14 +27,16 @@ class TrendingViewModel @Inject constructor(
     playerCommunication: PlayerCommunication,
     temporaryTracksCache: TemporaryTracksCache,
     mapper: TracksResultToUiEventCommunicationMapper,
-    tracksRepository: TracksRepository,
+    tracksInteractor: Interactor<MediaItem,TracksResult>,
+    trackChecker: TrackChecker
 ) : BaseViewModel<TracksUiState>(
     playerCommunication,
     trendingCommunication,
     temporaryTracksCache,
     dispatchersList,
-    tracksRepository,
-    mapper
+    tracksInteractor,
+    mapper,
+    trackChecker
 ), CollectTrendings {
 
 

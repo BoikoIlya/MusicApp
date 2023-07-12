@@ -1,7 +1,6 @@
 package com.example.musicapp.vkauth.di
 
-import com.example.musicapp.trending.presentation.TrendingFragment
-import com.example.musicapp.vkauth.presentation.AuthFragment
+import com.example.musicapp.vkauth.presentation.AuthActivity
 import dagger.Subcomponent
 
 /**
@@ -16,6 +15,6 @@ interface AuthComponent {
        fun build(): AuthComponent
     }
 
-    fun inject(authFragment: AuthFragment)
+    fun inject(authActivity: AuthActivity)
 
 }

@@ -1,12 +1,12 @@
 package com.example.musicapp.trending.data
 
-import com.example.musicapp.app.SpotifyDto.Item
+
+import com.example.musicapp.R
+import com.example.musicapp.app.vkdto.Item
 import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
-import com.example.testapp.spotifyDto.Track
-import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -21,26 +21,46 @@ interface TrendingRepository{
 
     class Base @Inject constructor(
         private val service: TrendingService,
-        private val toPlaylistDomainMapper:Item.Mapper<PlaylistDomain>,
-        private val toTrackDomain: Track.Mapper<TrackDomain>,
-        private val token: AccountDataStore
+        private val toTrackDomain: Item.Mapper<TrackDomain>,
+        private val accountData: AccountDataStore,
     ): TrendingRepository {
 
         companion object{
-            private const val market = "ES"
-            private const val seed_genres = "classical,country"
+            private const val tracks_count = 200
         }
 
-        override suspend fun fetchPlaylists(): List<PlaylistDomain> =
-            service.getFeaturedPlaylists(
-               auth =  token.token(),
-                timestamps = Calendar.getInstance().time.toString()
-            ).playlists.items.map { it.map(toPlaylistDomainMapper) }
+        override suspend fun fetchPlaylists(): List<PlaylistDomain> = listOf(
+            PlaylistDomain(
+                id = "1",
+                name = "Random album or playlist",
+                imgUrl = "android.resource://com.example.musicapp/" + R.drawable.dance_1,
+                tracksUrl = "1"
+            ),
+//            PlaylistDomain(
+//                id = "2",
+//                name = "Popular",
+//                imgUrl = "android.resource://com.example.musicapp/" + R.drawable.dance_1,
+//                tracksUrl = "1"
+//            ),
+            PlaylistDomain(
+                id = "3",
+                name = "Playlists",
+                imgUrl = "android.resource://com.example.musicapp/" + R.drawable.playlists,
+                tracksUrl = "1"
+            ),
+            PlaylistDomain(
+                id = "4",
+                name = "Albums",
+                imgUrl = "android.resource://com.example.musicapp/" + R.drawable.albums,
+                tracksUrl = "1"
+            )
+        )
+
 
 
         override suspend fun fetchTracks(): List<TrackDomain> =
-            service.getRecommendations(token.token(), market = market, seed_genres = seed_genres).tracks
-                .filter { it.map() }.map { it.map(toTrackDomain) }
+            service.getRecommendations(accountData.token(),accountData.ownerId(), tracks_count).handle() //todo !!
+                .map { it.map(toTrackDomain) }
 
 
     }

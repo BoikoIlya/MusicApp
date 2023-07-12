@@ -1,11 +1,9 @@
 package com.example.musicapp.main.data.cloud
 
-import TokenDto
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+
+import com.example.musicapp.app.vkdto.TokenDto
 import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+
 import retrofit2.http.Query
 
 /**
@@ -13,13 +11,6 @@ import retrofit2.http.Query
  **/
 interface AuthorizationService {
 
-//    @POST("api/token")
-//    @FormUrlEncoded
-//    suspend fun getToken(
-//        @Header("Authorization") auth: String,
-//        @Header("Content-Type") content: String,
-//        @Field(("grant_type")) grantType: String
-//    ): TokenDto //todo
 
     companion object{
         private const val GRAND_TYPE = "password"

@@ -1,7 +1,6 @@
 package com.example.musicapp.app.core
 
 import com.example.musicapp.R
-import com.example.musicapp.main.data.AuthorizationRepository
 import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -33,11 +32,11 @@ interface HandleError {
                     500 -> R.string.server_error_message
                     502 -> R.string.bad_gatawey_message
                     504 -> R.string.server_error_message
-                    else -> R.string.oops_can_t_load_data
+                    else -> R.string.oops_something_went_wrong_data
                 }
             }else if(e is UnknownHostException) id = R.string.no_connection_message
             else if(e is NoSuchElementException) id = R.string.nothing_found_message
-            else id =  R.string.oops_can_t_load_data
+            else id =  R.string.oops_something_went_wrong_data
 
        return managerResource.getString(id)
         }

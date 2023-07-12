@@ -9,7 +9,7 @@ interface SearchQueryRepository {
 
     fun readQuery(): String
 
-   suspend fun saveQuery(query: String)
+   suspend fun saveQueryInDB(query: String)
 
     abstract class Abstract(
         private val transfer: SearchQueryTransfer
@@ -17,7 +17,7 @@ interface SearchQueryRepository {
 
         override fun readQuery(): String = transfer.read()?: ""
 
-        override suspend fun saveQuery(query: String) = transfer.save(query)
+        override suspend fun saveQueryInDB(query: String) = transfer.save(query)
 
     }
 }
