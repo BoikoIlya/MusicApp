@@ -2,6 +2,7 @@ package com.example.musicapp.main.di
 
 
 import android.content.ComponentName
+import android.content.ContentValues
 import android.content.Context
 import android.os.Build
 import androidx.datastore.core.DataStore
@@ -15,19 +16,36 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.musicapp.addtoplaylist.domain.SelectedTrackDomain
+import com.example.musicapp.addtoplaylist.domain.SelectedTracksInteractor
+import com.example.musicapp.addtoplaylist.presentation.SelectedTrackUi
 import com.example.musicapp.app.core.*
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.PlaylistItem
+import com.example.musicapp.app.vkdto.TrackItem
+import com.example.musicapp.creteplaylist.data.PlaylistDataRepository
+import com.example.musicapp.creteplaylist.data.cache.PlaylistDataCacheDataSource
+import com.example.musicapp.creteplaylist.data.cloud.AudioIdsToContentIdsMapper
+import com.example.musicapp.creteplaylist.data.cloud.PlaylistDataCloudDataSource
+import com.example.musicapp.creteplaylist.data.cloud.PlaylistDataService
+import com.example.musicapp.creteplaylist.presentation.PlaylistDataUiStateCommunication
+import com.example.musicapp.creteplaylist.presentation.SelectedTracksStore
+import com.example.musicapp.editplaylist.data.PlaylistTracksRepository
+import com.example.musicapp.editplaylist.data.cache.PlaylistTracksCacheDataSource
+import com.example.musicapp.editplaylist.data.cloud.PlaylistTracksCloudDataSource
+import com.example.musicapp.editplaylist.data.cloud.PlaylistTracksService
+import com.example.musicapp.editplaylist.domain.PlaylistTracksInteractor
 import com.example.musicapp.favorites.data.cache.BaseFavoritesTracksCacheDataSource
 import com.example.musicapp.favorites.data.FavoritesTracksRepository
 import com.example.musicapp.favorites.data.cache.DomainToContainsMapper
 import com.example.musicapp.favorites.data.cache.DomainToDataIdsMapper
+import com.example.musicapp.favorites.data.cache.PlaylistsAndTracksDao
+import com.example.musicapp.favorites.data.cache.PlaylistsCacheToDomainMapper
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TrackDomainToCacheMapper
 import com.example.musicapp.favorites.data.cache.TracksDao
@@ -35,7 +53,6 @@ import com.example.musicapp.favorites.data.cloud.BaseFavoritesTracksCloudDataSou
 import com.example.musicapp.favorites.data.cloud.FavoritesService
 import com.example.musicapp.favorites.data.cloud.TracksCloudToCacheMapper
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
-import com.example.musicapp.favorites.domain.TrackUiToItemId
 import com.example.musicapp.favorites.presentation.ResetSwipeActionCommunication
 import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.main.data.TemporaryTracksCache
@@ -57,12 +74,29 @@ import com.example.musicapp.playlist.data.cloud.PlaylistService
 import com.example.musicapp.search.data.cloud.SearchTrackService
 import com.example.musicapp.searchhistory.data.cache.HistoryDao
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
+import com.example.musicapp.selectplaylist.data.AddTrackToPlaylistRepository
+import com.example.musicapp.selectplaylist.domain.AddTrackToPlaylistInteractor
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
 import com.example.musicapp.updatesystem.data.MainViewModelMapper
 import com.example.musicapp.updatesystem.data.UpdateSystemRepository
 import com.example.musicapp.updatesystem.data.cloud.UpdateFirebaseService
 import com.example.musicapp.updatesystem.presentation.UpdateDialogViewModel
+import com.example.musicapp.userplaylists.data.FavoritesPlaylistsRepository
+import com.example.musicapp.userplaylists.data.cache.BaseFavoritesPlaylistsCacheDataSource
+import com.example.musicapp.userplaylists.data.cache.PlaylistCache
+import com.example.musicapp.userplaylists.data.cache.PlaylistDao
+import com.example.musicapp.userplaylists.data.cloud.BaseFavoritesPlaylistsCloudDataSource
+import com.example.musicapp.userplaylists.data.cloud.PlaylistCloudToCacheMapper
+import com.example.musicapp.userplaylists.data.cloud.PlaylistsService
+import com.example.musicapp.userplaylists.domain.FavoritesPlaylistsInteractor
+import com.example.musicapp.userplaylists.domain.PlaylistDomain
+import com.example.musicapp.userplaylists.domain.PlaylistDomainToCacheMapper
+import com.example.musicapp.userplaylists.domain.PlaylistDomainToContainsMapper
+import com.example.musicapp.userplaylists.domain.PlaylistDomainToIdMapper
+import com.example.musicapp.userplaylists.domain.PlaylistUiToDomainMapper
+import com.example.musicapp.userplaylists.domain.PlaylistsResult
+import com.example.musicapp.userplaylists.presentation.PlaylistUi
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -77,10 +111,9 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@UnstableApi /**
+/**
  * Created by HP on 29.01.2023.
  **/
 @Module
@@ -97,27 +130,56 @@ class AppModule {
         private const val topic_name = "update_topic"
         private const val test_topic_name = "test_topic_name"
         const val api_version = "5.131"
+        const val mainPlaylistId = 0 //playlist of current account music
     }
 
     @Provides
     @Singleton
-    fun provideMigrationDBFrom1To2(): Migration {
-        return  object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `history_table` " +
-                        "(`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))")
-            }
-        }
+    fun provideMainPlaylist(): ContentValues{
+        val contentValues = ContentValues()
+        contentValues.put("playlistId", mainPlaylistId)
+        contentValues.put("title", "")
+        contentValues.put("is_following", true)
+        contentValues.put("count", 0)
+        contentValues.put("create_time", 0)
+        contentValues.put("description", "")
+        contentValues.put("owner_id", 0)
+        contentValues.put("thumbs","")
+        return contentValues
     }
+
+//    @Provides
+//    @Singleton
+//    fun provideMigrationDBFrom1To2(): Migration {
+//        return object : Migration(1, 2) {
+//            override fun migrate(database: SupportSQLiteDatabase) {
+//                database.execSQL("CREATE TABLE IF NOT EXISTS `history_table` " +
+//                        "(`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))")
+//            }
+//        }
+//    }
 
     @Provides
     @Singleton
-    fun provideMusicAppDB(context: Context, migration: Migration): MusicDatabase{
+    fun provideMusicAppDB(
+        context: Context,
+       // migration: Migration,
+        mainPlaylist: ContentValues
+        ): MusicDatabase{
         return Room.databaseBuilder(
             context,
             MusicDatabase::class.java,
             db_name
-        ).addMigrations(migration)
+        ).addCallback(object : RoomDatabase.Callback(){
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    db.insert(
+                        PlaylistDao.playlists_table,
+                        OnConflictStrategy.IGNORE,
+                        mainPlaylist
+                    )
+                }
+            })
             .build()
     }
 
@@ -125,6 +187,18 @@ class AppModule {
     @Singleton
     fun provideTracksDao(db: MusicDatabase): TracksDao{
         return db.getTracksDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistDao(db: MusicDatabase): PlaylistDao{
+        return db.getPlaylistDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistsAndTracksDao(db: MusicDatabase): PlaylistsAndTracksDao{
+        return db.getPlaylistsAndTracksDao()
     }
 
     @Provides
@@ -157,7 +231,7 @@ class AppModule {
     fun provideAuthorizationService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory): AuthorizationService {
+        converterFactory: ExtendedGsonConverterFactory): AuthorizationService {
         return builder
             .baseUrl(baseUrlAuthorization)
             .addConverterFactory(converterFactory)
@@ -172,7 +246,7 @@ class AppModule {
     fun provideMusicDataService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory): TrendingService {
+        converterFactory: ExtendedGsonConverterFactory): TrendingService {
         return builder
             .baseUrl(baseUrlMusicData)
             .addConverterFactory(converterFactory)
@@ -186,7 +260,7 @@ class AppModule {
     fun provideSearchTracksService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory): SearchTrackService {
+        converterFactory: ExtendedGsonConverterFactory): SearchTrackService {
         return builder
             .baseUrl(baseUrlMusicData)
             .addConverterFactory(converterFactory)
@@ -200,7 +274,7 @@ class AppModule {
     fun providePlaylistService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory
+        converterFactory: ExtendedGsonConverterFactory
     ): PlaylistService {
         return builder
             .baseUrl(baseUrlMusicData)
@@ -215,7 +289,7 @@ class AppModule {
     fun provideFavoritesService(
         client: OkHttpClient,
         builder: Retrofit.Builder,
-        converterFactory: GsonConverterFactory
+        converterFactory: ExtendedGsonConverterFactory
     ): FavoritesService {
         return builder
             .baseUrl(baseUrlMusicData)
@@ -227,8 +301,53 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideConverterFactory(): GsonConverterFactory{
-        return GsonConverterFactory.create()
+    fun providePlaylistsService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: ExtendedGsonConverterFactory
+    ): PlaylistsService {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(PlaylistsService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistDataService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: ExtendedGsonConverterFactory
+    ): PlaylistDataService  {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(PlaylistDataService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistTracksService(
+        client: OkHttpClient,
+        builder: Retrofit.Builder,
+        converterFactory: ExtendedGsonConverterFactory
+    ): PlaylistTracksService  {
+        return builder
+            .baseUrl(baseUrlMusicData)
+            .addConverterFactory(converterFactory)
+            .client(client)
+            .build()
+            .create(PlaylistTracksService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConverterFactory(): ExtendedGsonConverterFactory{
+        return ExtendedGsonConverterFactory.create()
     }
 
     @Provides
@@ -256,8 +375,13 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthorizationRepo(service: AuthorizationService, cache: AccountDataStore, handleError: HandleError): AuthorizationRepository {
-        return AuthorizationRepository.Base(service,cache,handleError)
+    fun provideAuthorizationRepo(
+        service: AuthorizationService,
+        cache: AccountDataStore,
+        handleError: HandleError,
+        db: MusicDatabase
+    ): AuthorizationRepository {
+        return AuthorizationRepository.Base(service,cache,handleError,db)
     }
 
     @Singleton
@@ -287,9 +411,9 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun  provideImageLoaderForPlaylists(): ImageLoader {
+    fun  provideImageLoaderForPlaylists(context: Context): ImageLoader {
         return ImageLoader.Base(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) PaintBackgroundShadow.ApiPAndAbove
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) PaintBackgroundShadow.ApiPAndAbove(context)
             else PaintBackgroundShadow.BelowApiP
         )
     }
@@ -323,10 +447,204 @@ class AppModule {
         return TrackDomain.ContainsTrackMapper()
     }
 
+    @Provides
+    @Singleton
+    fun providePlaylistDomainToContMapper(): PlaylistDomain.Mapper<Pair<String,String>>{
+        return PlaylistDomain.ToContainsMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlaylistDomainToIdsMapper(): PlaylistDomain.Mapper<Pair<Int,Int>>{
+        return PlaylistDomain.ToIdsMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBlurEffectAnimator(): BlurEffectAnimator{
+       return if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S) BlurEffectAnimator.Api31AndAbove()
+        else BlurEffectAnimator.BelowApi31()
+    }
 }
 
 @Module
 interface AppBindModule{
+
+//    @Binds
+//    @Singleton
+//    fun bindBaseHandleFavoritesPlaylistsFromCache(obj: BaseHandleFavoritesPlaylistsFromCache): HandleFavoritesListFromCache<PlaylistUi>
+
+//    @Binds
+//    @Singleton
+//    fun bindPlaylistUiToIdMapper(obj: PlaylistUi.ToIdMapper):PlaylistUi.Mapper<Int>
+
+//    @Binds
+//    @Singleton
+//    fun bindPlaylistsResultUpdateToUiEventMapper(obj: PlaylistsResultUpdateToUiEventMapper.Base): PlaylistsResultUpdateToUiEventMapper
+
+    @Binds
+    @Singleton
+    fun bindPlaylistTracksCloudDataSource(obj: PlaylistTracksCloudDataSource.Base): PlaylistTracksCloudDataSource
+
+    @Binds
+    @Singleton
+    fun bindSelectedTrackDomainToUi(obj: SelectedTrackDomain.ToIdMapper): SelectedTrackDomain.Mapper<Int>
+
+    @Binds
+    @Singleton
+    fun bindSelectedTrackUiToDomain(obj: SelectedTrackUi.ToDomain): SelectedTrackUi.Mapper<SelectedTrackDomain>
+
+    @Binds
+    @Singleton
+    fun bindTracksCacheToSelectedTracksDomainMapper(obj: TracksCacheToSelectedTracksDomainMapper.Base): TracksCacheToSelectedTracksDomainMapper
+
+    @Binds
+    @Singleton
+    fun bindSelectedTracksInteractor(obj: SelectedTracksInteractor.Base): SelectedTracksInteractor
+
+    @Binds
+    @Singleton
+    fun bindAddTrackToPlaylistRepository(obj: AddTrackToPlaylistRepository.Base): AddTrackToPlaylistRepository
+
+    @Binds
+    @Singleton
+    fun bindAddTrackToPlaylistInteractor(obj: AddTrackToPlaylistInteractor.Base): AddTrackToPlaylistInteractor
+
+    @Binds
+    @Singleton
+    fun bindPlaylistTracksCacheDataSource(obj: PlaylistTracksCacheDataSource.Base): PlaylistTracksCacheDataSource
+
+    @Binds
+    @Singleton
+    fun bindPlaylistTracksRepository(obj: PlaylistTracksRepository.Base): PlaylistTracksRepository
+
+    @Binds
+    @Singleton
+    fun bindPlaylistTracksInteractor(obj: PlaylistTracksInteractor.Base): PlaylistTracksInteractor
+
+    @Binds
+    @Singleton
+    fun bindPlaylistDataRepository(obj: PlaylistDataRepository.Base): PlaylistDataRepository
+
+    @Binds
+    @Singleton
+    fun bindAudioIdsToContentIdsMapper(obj: AudioIdsToContentIdsMapper.Base): AudioIdsToContentIdsMapper
+
+    @Binds
+    @Singleton
+    fun bindPlaylistDataCacheDataSource(obj: PlaylistDataCacheDataSource.Base): PlaylistDataCacheDataSource
+
+    @Binds
+    @Singleton
+    fun bindPlaylistDataCloudDataSource(obj: PlaylistDataCloudDataSource.Base): PlaylistDataCloudDataSource
+
+
+    @Binds
+    @Singleton
+    fun bindPlaylistDataUiStateCommunication(obj: PlaylistDataUiStateCommunication.Base): PlaylistDataUiStateCommunication
+
+    @Binds
+    @Singleton
+    fun bindSelectedTracksStore(obj: SelectedTracksStore.Base): SelectedTracksStore
+
+    @Binds
+    @Singleton
+    fun bindCachedTracksRepositoryBaseMediaItem(obj: CachedTracksRepository.BaseMediaItem): CachedTracksRepository<MediaItem>
+
+    @Binds
+    @Singleton
+    fun bindCachedTracksRepositoryBaseSelected(obj: CachedTracksRepository.BaseSelected): CachedTracksRepository<SelectedTrackDomain>
+
+
+
+
+
+
+
+
+
+
+    @Binds
+    @Singleton
+    fun bindHandleDeletePlaylistRequest(obj: HandleDeletePlaylistRequest): HandleDeleteRequestData<PlaylistCache>
+
+
+
+    @Binds
+    @Singleton
+    fun bindPlaylistUiPlaylistToDomainMapper(obj: PlaylistUi.ToDomainMapper): PlaylistUi.Mapper<PlaylistDomain>
+
+    @Binds
+    @Singleton
+    fun bindPlaylistsCacheToDomainMapper(obj: PlaylistsCacheToDomainMapper.Base):PlaylistsCacheToDomainMapper
+
+    @Binds
+    @Singleton
+    fun bindToPlaylistUiMapper(obj: PlaylistDomain.ToPlaylistUi): PlaylistDomain.Mapper<PlaylistUi>
+
+    @Binds
+    @Singleton
+    fun bindPlaylistUiToDomainMapper(obj: PlaylistUiToDomainMapper.Base): PlaylistUiToDomainMapper
+
+    @Binds
+    @Singleton
+    fun bindDataTransferPlaylistDomain(obj: DataTransfer.PlaylistTransfer): DataTransfer<PlaylistDomain>
+
+    @Binds
+    @Singleton
+    fun provideFavoritesCacheDataSourcePlaylists(obj: BaseFavoritesPlaylistsCacheDataSource): FavoritesCacheDataSource<PlaylistCache>
+
+    @Binds
+    @Singleton
+    fun provideFavoritesCloudDataSourcePlaylistItem(obj: BaseFavoritesPlaylistsCloudDataSource): FavoritesCloudDataSource<PlaylistItem>
+
+    @Binds
+    @Singleton
+    fun providePlaylistCloudToCacheMapper(obj: PlaylistCloudToCacheMapper.Base): PlaylistCloudToCacheMapper
+
+    @Binds
+    @Singleton
+    fun providePlaylistCloudPlaylistToCacheMapper(obj: PlaylistItem.ToPlaylistCache): PlaylistItem.Mapper<PlaylistCache>
+
+    @Binds
+    @Singleton
+    fun provideFavoritesPlaylistsRepository(obj: FavoritesPlaylistsRepository.Base): FavoritesPlaylistsRepository
+
+    @Binds
+    @Singleton
+    fun provideFavoritesPlaylistsInteractor(obj: FavoritesPlaylistsInteractor.Base): FavoritesPlaylistsInteractor
+
+    @Binds
+    @Singleton
+    fun provideDeleteInteractorPlaylistsResult(obj: FavoritesPlaylistsInteractor.Base): DeleteInteractor<PlaylistsResult>
+
+    @Binds
+    @Singleton
+    fun providePlaylistDomainToCacheMapper(obj: PlaylistDomainToCacheMapper.Base): PlaylistDomainToCacheMapper
+
+    @Binds
+    @Singleton
+    fun providePlaylistDomainToPlaylistCacheMapper(obj: PlaylistDomain.ToPlaylistCacheMapper): PlaylistDomain.Mapper<PlaylistCache>
+
+    @Binds
+    @Singleton
+    fun providePlaylistDomainToContainsMapper(obj: PlaylistDomainToContainsMapper.Base): PlaylistDomainToContainsMapper
+
+    @Binds
+    @Singleton
+    fun providePlaylistDomainToIdMapper(obj: PlaylistDomainToIdMapper.Base): PlaylistDomainToIdMapper
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Binds
@@ -342,9 +660,7 @@ interface AppBindModule{
     @Singleton
     fun bindPermissionCheckCommunication(obj: PermissionCheckCommunication.Base): PermissionCheckCommunication
 
-    @Binds
-    @Singleton
-    fun bindTrackUiToItemId(obj: TrackUiToItemId.Base): TrackUiToItemId
+
     @Binds
     @Singleton
     fun bindHandleDeleteTrackRequest(obj: HandleDeleteTrackRequest): HandleDeleteRequestData<TrackCache>
@@ -359,7 +675,7 @@ interface AppBindModule{
     fun bindDomainToDataIdsMapper(obj: DomainToDataIdsMapper.Base): DomainToDataIdsMapper
     @Binds
     @Singleton
-    fun bindFavoritesTracksCloudDataSource(obj: BaseFavoritesTracksCloudDataSource): FavoritesCloudDataSource<Item>
+    fun bindFavoritesTracksCloudDataSource(obj: BaseFavoritesTracksCloudDataSource): FavoritesCloudDataSource<TrackItem>
 
     @Binds
     @Singleton
@@ -431,7 +747,7 @@ interface AppBindModule{
 
     @Singleton
     @Binds
-    fun bindCloudTrackToTrackCacheMapper(obj: Item.Mapper.CloudTrackToTrackCacheMapper): Item.Mapper<TrackCache>
+    fun bindCloudTrackToTrackCacheMapper(obj: TrackItem.Mapper.CloudTrackToTrackCacheMapper): TrackItem.Mapper<TrackCache>
     @Binds
     @Singleton
     fun bindFavoritesRepo(obj: FavoritesTracksRepository.Base): FavoritesTracksRepository

@@ -46,7 +46,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
     fun loadData() = viewModelScope.launch(dispatchersList.io()) {
-        playlistCommunication.showUiState(TracksUiState.Loading)
+        //playlistCommunication.showUiState(TracksUiState.Loading)
        // playlistInteractor.fetchData().map(dataMapper)
     }
 

@@ -87,7 +87,7 @@ import javax.inject.Inject
 
         lifecycleScope.launch{
             viewModel.collectActivityNavigationCommunication(this@MainActivity){
-                it.apply(this@MainActivity)
+                it.apply(this@MainActivity,viewModel)
             }
         }
 

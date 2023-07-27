@@ -8,6 +8,6 @@ import javax.inject.Inject
  **/
 interface FavoritesStateCommunication: Communication.Mutable<FavoritesUiState>{
     class Base @Inject constructor():
-        Communication.UiUpdate<FavoritesUiState>(FavoritesUiState.Loading),
+        Communication.UiUpdate<FavoritesUiState>(FavoritesUiState.Empty),
         FavoritesStateCommunication
 }

@@ -5,7 +5,7 @@ package com.example.musicapp.app.core
  **/
 interface FavoritesCloudDataSource<T> {
 
-    suspend fun addToFavorites(ownerAndTrackIds: Pair<Int, Int>): Int
+    suspend fun addToFavorites(data: Pair<Int, Int>): Int
 
     suspend fun removeFromFavorites(id: Int)
 

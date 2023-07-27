@@ -3,9 +3,12 @@ package com.example.musicapp.favorites.presentation
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -48,6 +51,7 @@ class DeleteDialogFragment : DialogFragment() {
         dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_corners_shape)
         return dialog
     }
+
 
 
     override fun onCancel(dialog: DialogInterface) {

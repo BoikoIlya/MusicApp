@@ -1,14 +1,8 @@
 package com.example.musicapp.vkauth.presentation
 
-import android.content.Context
 import android.content.Intent
 import android.view.View
-import android.widget.Toast
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
-import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityAuthBinding
-import com.example.musicapp.favorites.presentation.FavoritesFragment
 import com.example.musicapp.main.presentation.MainActivity
 
 /**

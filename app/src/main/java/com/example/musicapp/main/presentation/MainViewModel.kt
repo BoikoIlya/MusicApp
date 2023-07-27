@@ -2,6 +2,7 @@ package com.example.musicapp.main.presentation
 
 import android.Manifest
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.app.core.BaseViewModel
@@ -24,6 +25,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 31.01.2023.
  **/
+
 class MainViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
     private val temporaryTracksCache: TemporaryTracksCache,
@@ -36,7 +38,8 @@ class MainViewModel @Inject constructor(
     private val activityNavigationCommunication: ActivityNavigationCommunication,
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val permissionCheckCommunication: PermissionCheckCommunication,
-    private val sdkChecker: SDKChecker
+    private val sdkChecker: SDKChecker,
+    private val controllerListener: ControllerListener
 ): BaseViewModel<Unit>(
     playerCommunication,
     UiCommunication.EmptyCommunication(),
@@ -48,7 +51,6 @@ class MainViewModel @Inject constructor(
     ),
     CollectPlayerControls{
 
-    private var showPermission = true
 
     companion object{
         const val permissionRequestCode = 0
@@ -64,6 +66,7 @@ class MainViewModel @Inject constructor(
         bottomSheetCommunication.map(state)
     }
 
+
     fun notificationPermissionCheck()  {
         sdkChecker.check(SDKCheckerState.AboveApi32,{
             permissionCheckCommunication.map(
@@ -76,11 +79,14 @@ class MainViewModel @Inject constructor(
 
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
         authorizationRepository.isNotAuthorized().collect{
+
             if(it) activityNavigationCommunication.map(ActivityNavigationState.Navigate(AuthActivity::class.java))
         }
     }
 
     fun dontShowPermission() { permissionCheckCommunication.map(PermissionCheckState.Empty)}
+
+    fun releasePlayer() = playerCommunication.map(PlayerCommunicationState.Disabled(controllerListener))
 
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
@@ -113,4 +119,6 @@ class MainViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<PermissionCheckState>
     ) = permissionCheckCommunication.collect(owner,collector)
+
+
 }

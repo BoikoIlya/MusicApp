@@ -25,9 +25,9 @@ sealed class FavoritesUiState {
             progress: SSPullToRefreshLayout,
             recyclerView: RecyclerView,
         ) {
-            progress.setRefreshing(false)
-            progress.isEnabled = false
-            progress.isEnabled = true
+//            progress.setRefreshing(false)
+//            progress.isEnabled = false
+//            progress.isEnabled = true
             textView.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }
@@ -46,8 +46,7 @@ sealed class FavoritesUiState {
 
     }
 
-    object Failure: FavoritesUiState(){
-
+    object DisableLoading: FavoritesUiState() {
         override fun apply(
             textView: TextView,
             progress: SSPullToRefreshLayout,
@@ -56,12 +55,32 @@ sealed class FavoritesUiState {
             progress.setRefreshing(false)
             progress.isEnabled = false
             progress.isEnabled = true
-            textView.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    object Failure: FavoritesUiState(){
+
+        override fun apply(
+            textView: TextView,
+            progress: SSPullToRefreshLayout,
+            recyclerView: RecyclerView,
+        ) {
+//            progress.setRefreshing(false)
+//            progress.isEnabled = false
+//            progress.isEnabled = true
+            textView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
         }
 
     }
 
+    object Empty: FavoritesUiState() {
+        override fun apply(
+            textView: TextView,
+            progress: SSPullToRefreshLayout,
+            recyclerView: RecyclerView,
+        ) = Unit
+    }
 
 
 

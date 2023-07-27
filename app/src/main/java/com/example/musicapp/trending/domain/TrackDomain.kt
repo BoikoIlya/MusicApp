@@ -117,7 +117,7 @@ data class TrackDomain(
             ownerId: Int,
         ): TrackCache {
             return TrackCache(
-                id = id,
+                trackId = id,
                 url = track_url,
                 name = name,
                 artistName = artistName,

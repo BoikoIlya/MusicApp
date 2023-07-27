@@ -4,6 +4,6 @@ data class Album(
     val access_key: String,
     val id: Int,
     val owner_id: Int,
-    val thumb: Thumb?=null,
+    val thumb: TrackThumb?=null,
     val title: String
 )

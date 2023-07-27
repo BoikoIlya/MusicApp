@@ -2,15 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d26fd113529707c5cdccd69ada008c16",
+    "identityHash": "4d47dc25c080ed5d22c43934188b940a",
     "entities": [
       {
         "tableName": "tracks_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `imgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trackId` INTEGER NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `bigImgUrl` TEXT NOT NULL, `smallImgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `date` INTEGER NOT NULL, `durationFormatted` TEXT NOT NULL, `durationInMillis` REAL NOT NULL, `ownerId` INTEGER NOT NULL, PRIMARY KEY(`trackId`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "trackId",
+            "columnName": "trackId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -27,8 +33,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "imgUrl",
-            "columnName": "imgUrl",
+            "fieldPath": "bigImgUrl",
+            "columnName": "bigImgUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallImgUrl",
+            "columnName": "smallImgUrl",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -39,8 +51,26 @@
             "notNull": true
           },
           {
-            "fieldPath": "time",
-            "columnName": "time",
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationFormatted",
+            "columnName": "durationFormatted",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationInMillis",
+            "columnName": "durationInMillis",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerId",
+            "columnName": "ownerId",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -48,7 +78,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "trackId"
           ]
         },
         "indices": [],
@@ -79,12 +109,101 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "playlists_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` INTEGER NOT NULL, `title` TEXT NOT NULL, `is_following` INTEGER NOT NULL, `count` INTEGER NOT NULL, `create_time` INTEGER NOT NULL, `description` TEXT NOT NULL, `owner_id` INTEGER NOT NULL, `thumbs` TEXT NOT NULL, PRIMARY KEY(`playlistId`))",
+        "fields": [
+          {
+            "fieldPath": "playlistId",
+            "columnName": "playlistId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_following",
+            "columnName": "is_following",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "create_time",
+            "columnName": "create_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "owner_id",
+            "columnName": "owner_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbs",
+            "columnName": "thumbs",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "playlistId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "playlists_and_tracks_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` INTEGER NOT NULL, `trackId` INTEGER NOT NULL, PRIMARY KEY(`playlistId`, `trackId`))",
+        "fields": [
+          {
+            "fieldPath": "playlistId",
+            "columnName": "playlistId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackId",
+            "columnName": "trackId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "playlistId",
+            "trackId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd26fd113529707c5cdccd69ada008c16')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d47dc25c080ed5d22c43934188b940a')"
     ]
   }
 }

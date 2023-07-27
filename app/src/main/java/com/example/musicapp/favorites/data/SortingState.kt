@@ -17,32 +17,13 @@ interface SortingState {
 
     fun fetch(
         cache: TracksDao,
-        toMediaItemMapper: Mapper<TrackCache, MediaItem>,
         playlistId: Int
-    ): Flow<TracksResult>
+    ): Flow<List<TrackCache>>
 
-     fun handle(
-        toMediaItemMapper: Mapper<TrackCache, MediaItem>,
-        block:  () ->Flow<List<TrackCache>>,
-    ):  Flow<TracksResult>
-
-    abstract class Abstract(): SortingState{
-
-        override  fun handle(
-            toMediaItemMapper: Mapper<TrackCache, MediaItem>,
-            block:  () ->Flow<List<TrackCache>>,
-        ): Flow<TracksResult> {
-
-            return block().map { result ->
-                if (result.isEmpty()) TracksResult.Empty
-                else TracksResult.Success(result.map { data -> toMediaItemMapper.map(data) })
-            }
-        }
-    }
 
     data class ByTime(
         private val query: String = ""
-    ) : Abstract(){
+    ) : SortingState{
 
 
         override fun copyObj(query: String): SortingState = ByTime(query)
@@ -50,37 +31,34 @@ interface SortingState {
 
         override  fun fetch(
             cache: TracksDao,
-            toMediaItemMapper: Mapper<TrackCache, MediaItem>,
             playlistId: Int
-        ): Flow<TracksResult> = super.handle(toMediaItemMapper){ cache.getAllTracksByTime(query,playlistId) }
+        ): Flow<List<TrackCache>> =  cache.getAllTracksByTime(query,playlistId)
     }
 
     data class ByName(
         private val query: String = ""
-    ): Abstract(){
+    ): SortingState{
 
         override fun copyObj(query: String): SortingState = ByName(query)
 
 
         override  fun fetch(
             cache: TracksDao,
-            toMediaItemMapper: Mapper<TrackCache, MediaItem>,
             playlistId: Int
-        ):  Flow<TracksResult> = super.handle(toMediaItemMapper){ cache.getTracksByName(query,playlistId) }
+        ):  Flow<List<TrackCache>> =  cache.getTracksByName(query,playlistId)
     }
 
     data class ByArtist(
         private val query: String = ""
-    ): Abstract(){
+    ): SortingState{
 
         override fun copyObj(query: String): SortingState = ByArtist(query)
 
 
         override  fun fetch(
             cache: TracksDao,
-            toMediaItemMapper: Mapper<TrackCache, MediaItem>,
             playlistId: Int
-        ):  Flow<TracksResult> = super.handle(toMediaItemMapper){ cache.getTracksByArtist(query,playlistId) }
+        ):  Flow<List<TrackCache>> = cache.getTracksByArtist(query,playlistId)
     }
 
 }

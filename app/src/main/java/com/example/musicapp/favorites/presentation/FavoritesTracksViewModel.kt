@@ -1,0 +1,117 @@
+package com.example.musicapp.favorites.presentation
+
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import com.example.musicapp.R
+import com.example.musicapp.app.core.BaseViewModel
+import com.example.musicapp.app.core.CachedTracksRepository
+import com.example.musicapp.app.core.DataTransfer
+import com.example.musicapp.app.core.DispatchersList
+import com.example.musicapp.app.core.DeleteItemDialog
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
+import com.example.musicapp.app.core.HandleFavoritesTracksSortedSearch
+import com.example.musicapp.app.core.HandleTracksSortedSearch
+import com.example.musicapp.app.core.ManagerResource
+import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.app.core.TrackChecker
+import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
+import com.example.musicapp.favorites.data.SortingState
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
+import com.example.musicapp.main.data.TemporaryTracksCache
+import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
+import com.example.musicapp.main.presentation.PlayerCommunication
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+/**
+ * Created by HP on 20.03.2023.
+ **/
+class FavoritesTracksViewModel @Inject constructor(
+    private val dispatchersList: DispatchersList,
+    private val interactor: FavoritesTracksInteractor,
+    private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
+    private val resetSwipeActionCommunication: ResetSwipeActionCommunication,
+    private val handlerFavoritesUiUpdate: HandlerFavoritesTracksUiUpdate,
+    trackChecker: TrackChecker,
+    playerCommunication: PlayerCommunication,
+    tracksResultToUiEventCommunicationMapper: TracksResultToUiEventCommunicationMapper,
+    private val favoritesTracksCommunication: FavoritesTracksCommunication,
+    private val searchTracksRepository: CachedTracksRepository<MediaItem>,
+    private val handleTracksSortedSearch: HandleFavoritesTracksSortedSearch,
+    private val managerResource: ManagerResource,
+    private val temporaryTracksCache: TemporaryTracksCache,
+): BaseViewModel<FavoritesUiState>(
+    playerCommunication,
+    favoritesTracksCommunication,
+    temporaryTracksCache,
+    dispatchersList,
+    interactor,
+    tracksResultToUiEventCommunicationMapper,
+    trackChecker
+    ), DeleteItemDialog {
+
+   private var query: String = ""
+
+    init {
+        update(false)
+        fetchData(SortingState.ByTime())
+    }
+
+
+
+    override fun update(loading:Boolean) {
+        viewModelScope.launch(dispatchersList.io()) {
+            handlerFavoritesUiUpdate.handle(loading) {
+                searchTracksRepository.isDbEmpty(mainPlaylistId)
+            }
+        }
+    }
+
+    fun saveQuery(query: String){
+        this.query = query
+    }
+
+    fun saveMediaItem(mediaItem: MediaItem){
+        interactor.saveItemToTransfer(mediaItem)
+    }
+
+    fun fetchData(sortingState: SortingState) =
+        handleTracksSortedSearch.handle(sortingState,viewModelScope,query,mainPlaylistId)
+    fun fetchData() = handleTracksSortedSearch.handle(viewModelScope,query,mainPlaylistId)
+
+    fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
+        val newList = emptyList<MediaItem>().toMutableList()
+        newList.addAll(temporaryTracksCache.readCurrentPageTracks())
+        if(newList.isEmpty()){
+            singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(
+                managerResource.getString(R.string.no_favorite_tracks)
+            ))
+            return@launch
+        }
+        val shuffled = newList.shuffled()
+        temporaryTracksCache.saveCurrentPageTracks(shuffled)
+        playMusic(shuffled.first())
+    }
+
+    override fun launchDeleteItemDialog(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+        interactor.saveItemToTransfer(item)
+        singleUiEventCommunication.map(SingleUiEventState.ShowDialog(DeleteDialogFragment()))
+    }
+
+    suspend fun collectDeleteDialogCommunication(
+        owner: LifecycleOwner,
+        flowCollector: FlowCollector<Unit>
+    ) = resetSwipeActionCommunication.collect(owner,flowCollector)
+
+
+    override suspend fun collectLoading(
+        owner: LifecycleOwner,
+        collector: FlowCollector<FavoritesUiState>
+    ) = favoritesTracksCommunication.collectLoading(owner, collector)
+}
+
+

@@ -4,7 +4,7 @@ import androidx.media3.common.MediaItem
 import androidx.paging.PagingSource
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.HandleResponse
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.favorites.testcore.TestAuthRepository
 import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
@@ -16,7 +16,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +24,6 @@ import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import java.lang.Exception
 import java.lang.RuntimeException
-import java.net.UnknownHostException
 
 /**
  * Created by HP on 29.04.2023.
@@ -54,7 +52,7 @@ class SearchRepositoryTest: ObjectCreator() {
         service = mock(SearchTrackService::class.java)
         repository = SearchRepository.Base(
             service =service,
-            mapper = Item.Mapper.CloudTrackToMediaItemMapper(),
+            mapper = TrackItem.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = tokenStore,
             cachedTracks = cache,
             handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
@@ -63,7 +61,7 @@ class SearchRepositoryTest: ObjectCreator() {
         paggingSource = SearchPagingSource(
             service = service,
             query = "",
-            mapper = Item.Mapper.CloudTrackToMediaItemMapper(),
+            mapper = TrackItem.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = AuthorizationRepositoryTest.TestTokenStore(),
             handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
             cachedTracks = cache
@@ -96,7 +94,7 @@ class SearchRepositoryTest: ObjectCreator() {
     fun `test refresh`() = runTest {
         given(service.searchTrack(any(),any(),any(),any(),any())).willReturn(getTracksCloud())
         val expectedResult = PagingSource.LoadResult.Page(
-            data = getTracksCloud().handle().map{ it.map(Item.Mapper.CloudTrackToMediaItemMapper())},
+            data = getTracksCloud().handle().map{ it.map(TrackItem.Mapper.CloudTrackToMediaItemMapper())},
             prevKey = null,
             nextKey = 1
         )

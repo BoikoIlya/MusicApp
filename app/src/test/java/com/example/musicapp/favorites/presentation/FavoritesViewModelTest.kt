@@ -17,10 +17,8 @@ import com.example.musicapp.main.presentation.TestPlayerCommunication
 import com.example.musicapp.player.presentation.PlayingTrackIdCommunication
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotSame
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
@@ -29,7 +27,7 @@ import org.junit.Test
  **/
 class FavoritesViewModelTest: ObjectCreator() {
 
-    private lateinit var viewModel: FavoritesViewModel
+    private lateinit var viewModel: FavoritesTracksViewModel
     private lateinit var repository: TestFavoriteRepository
     private lateinit var playerCommunication: TestPlayerCommunication
     private lateinit var temporaryTracksCache: TestTemporaryTracksCache
@@ -55,7 +53,7 @@ class FavoritesViewModelTest: ObjectCreator() {
         singleUiStateCommunication = TestSingleUiStateCommunication()
         interactor = TestFavoritesTracksInteractor()
         resetSwipeActionCommunication = TestRestSwipeActionCommuniction()
-        viewModel = FavoritesViewModel(
+        viewModel = FavoritesTracksViewModel(
            playerCommunication = playerCommunication,
            temporaryTracksCache = temporaryTracksCache,
             dispatchersList = dispatchersList,
@@ -117,7 +115,7 @@ class FavoritesViewModelTest: ObjectCreator() {
 
 
 
-    class TestFavoritesTracksCommunication: FavoritesCommunication{
+    class TestFavoritesTracksCommunication: FavoritesTracksCommunication{
 
         val states = emptyList<FavoritesUiState>().toMutableList()
         val dataList = emptyList<MediaItem>().toMutableList()
@@ -126,7 +124,7 @@ class FavoritesViewModelTest: ObjectCreator() {
             states.add(state)
         }
 
-        override fun showTracks(tracks: List<MediaItem>) {
+        override fun showData(tracks: List<MediaItem>) {
             dataList.clear()
             dataList.addAll(tracks)
         }

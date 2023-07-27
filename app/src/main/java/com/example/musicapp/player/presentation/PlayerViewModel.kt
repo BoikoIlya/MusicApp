@@ -1,6 +1,5 @@
 package com.example.musicapp.player.presentation
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -11,7 +10,6 @@ import com.example.musicapp.app.core.*
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.owner_id
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
-import com.example.musicapp.favorites.presentation.DeleteDialogFragment
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.*
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
@@ -107,7 +105,7 @@ class PlayerViewModel @Inject constructor(
                     item.mediaMetadata.artist.toString())
             )){
                item.mediaMetadata.extras?.putInt(track_id,newId)
-                favoritesInteractor.saveDeletingItem(item)
+                favoritesInteractor.saveItemToTransfer(item)
                 singleUiEventCommunication.map(
                     SingleUiEventState.ShowDialog(
                         DeleteTrackFromPlayerMenuDialog()

@@ -17,6 +17,8 @@ interface FavoritesService {
         @Query("access_token")  accessToken: String,
         @Query("count") count: Int,
         @Query("v")  apiVersion: String = AppModule.api_version,
+//        @Query("captcha_sid") captcha_sid:String="1",
+//        @Query("captcha_key") captcha_key:String="1"
     ): TracksCloud
 
     @GET("/method/audio.getCount")

@@ -9,17 +9,18 @@ import android.util.Log
  **/
 sealed interface ActivityNavigationState{
 
-    fun apply(currentActivity: MainActivity)
+    fun apply(currentActivity: MainActivity,viewModel:MainViewModel)
 
     object Empty: ActivityNavigationState {
-        override fun apply(currentActivity: MainActivity) = Unit
+        override fun apply(currentActivity: MainActivity,viewModel:MainViewModel) = Unit
     }
 
     data class Navigate<T>(
         private val activity: Class<T>
     ): ActivityNavigationState {
 
-        override fun apply(currentActivity: MainActivity) {
+        override fun apply(currentActivity: MainActivity,viewModel:MainViewModel) {
+            viewModel.releasePlayer()
             currentActivity.startActivity(Intent(currentActivity,activity))
             currentActivity.finish()
         }

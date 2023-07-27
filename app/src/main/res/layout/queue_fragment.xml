@@ -46,7 +46,7 @@
             />
 
 
-    <com.example.musicapp.app.core.ScrollUpButton
+    <com.example.musicapp.app.core.ScrollUpRecyclerButton
         android:id="@+id/scrollUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

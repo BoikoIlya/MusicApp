@@ -1,9 +1,12 @@
 package com.example.musicapp.app.core
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.favorites.presentation.FavoritesUiState
 import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
@@ -21,13 +24,13 @@ import kotlinx.coroutines.withContext
  **/
 abstract class BaseViewModel<T>(
     private val playerCommunication: PlayerCommunication,
-    private val tracksCommunication: UiCommunication<T>,
+    private val tracksCommunication: UiCommunication<T,MediaItem>,
     private val temporaryTracksCache: TemporaryTracksCache,
     private val dispatchersList: DispatchersList,
     private val interactor: Interactor<MediaItem,TracksResult>,
     private val mapper: TracksResultToUiEventCommunicationMapper,
     private val trackChecker: TrackChecker,
-): ViewModel(), CollectSelectedTrack, CollectPlayerControls, CollectTracksAndUiState<T>{
+): ViewModel(), CollectSelectedTrack, FavoritesViewModel<T,MediaItem>{
 
    open fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
 
@@ -39,6 +42,7 @@ abstract class BaseViewModel<T>(
        trackChecker.checkIfPlayable(item, playable = {
 
             val queue = temporaryTracksCache.map()
+           Log.d("tag", "playMusic: ${queue.size}")
             if(queue.isNotEmpty()){
                 val newQueue = mutableListOf<MediaItem>()
                 newQueue.addAll(queue)
@@ -46,8 +50,8 @@ abstract class BaseViewModel<T>(
                     playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
                 }
             }
-            val position = temporaryTracksCache.readCurrentPageTracks().indexOf(item)
-
+            val position = temporaryTracksCache.findTrackPosition(item.mediaId)
+           Log.d("tag", "playMusic: position: $position  ${item.mediaMetadata.title}")
             withContext(dispatchersList.ui()) {
                playerCommunication.map(PlayerCommunicationState.Play(item,position))
            }
@@ -62,13 +66,7 @@ abstract class BaseViewModel<T>(
 
 
 
-    fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
-        val newList = emptyList<MediaItem>().toMutableList()
-        newList.addAll(temporaryTracksCache.readCurrentPageTracks())
-        val shuffled = newList.shuffled()
-        temporaryTracksCache.saveCurrentPageTracks(shuffled)
-        playMusic(shuffled.first())
-    }
+
 
 
     override suspend fun collectSelectedTrack(
@@ -76,31 +74,24 @@ abstract class BaseViewModel<T>(
         collector: FlowCollector<MediaItem>,
     ) = playerCommunication.collectSelectedTrack(owner, collector)
 
-    override suspend fun collectPlayerControls(
-        owner: LifecycleOwner,
-        collector: FlowCollector<PlayerControlsState>,
-    ) = playerCommunication.collectPlayerControls(owner, collector)
 
 
-    override suspend fun collectTracks(
+    override suspend fun collectData(
         owner: LifecycleOwner,
         collector: FlowCollector<List<MediaItem>>,
-    ) = tracksCommunication.collectTracks(owner,collector)
+    ) = tracksCommunication.collectData(owner,collector)
 
     override suspend fun collectState(
         owner: LifecycleOwner,
-        collector: FlowCollector<T>,
+        collector: FlowCollector<T>
     ) = tracksCommunication.collectState(owner, collector)
+
+    override fun update(loading: Boolean) = Unit
+
+    override suspend fun collectLoading(
+        owner: LifecycleOwner,
+        collector: FlowCollector<FavoritesUiState>
+    ) = Unit
 }
 
-interface DeleteTrackFromFavorites<T>{
-    fun deleteFromFavorites(item: T)
-}
 
-
-interface AddToFavorites<T>{
-
-    fun addToFavorites(item: T)
-}
-
-interface ManageFavoriteTracks: AddToFavorites<MediaItem>, DeleteTrackFromFavorites<MediaItem>

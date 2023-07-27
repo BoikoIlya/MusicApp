@@ -9,7 +9,7 @@ import javax.inject.Inject
 interface TracksResultToFavoriteTracksCommunicationMapper:
     TracksResultToTracksCommunicationMapper<FavoritesUiState> {
 
-    class Base @Inject constructor(communication: FavoritesCommunication):
+    class Base @Inject constructor(communication: FavoritesTracksCommunication):
         TracksResultToFavoriteTracksCommunicationMapper,
         TracksResultToTracksCommunicationMapper.Abstract<FavoritesUiState>(communication) {
 

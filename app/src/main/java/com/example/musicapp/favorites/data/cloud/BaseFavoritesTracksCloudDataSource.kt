@@ -1,7 +1,7 @@
 package com.example.musicapp.favorites.data.cloud
 
 import com.example.musicapp.app.core.FavoritesCloudDataSource
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.main.data.cache.AccountDataStore
 import javax.inject.Inject
 
@@ -13,28 +13,28 @@ import javax.inject.Inject
 class BaseFavoritesTracksCloudDataSource @Inject constructor(
     private val accountDataStore: AccountDataStore,
     private val service: FavoritesService
-    ): FavoritesCloudDataSource<Item> {
+    ): FavoritesCloudDataSource<TrackItem> {
 
-        override suspend fun addToFavorites(ownerAndTrackIds: Pair<Int, Int>): Int
+        override suspend fun addToFavorites(data: Pair<Int, Int>): Int
            = service.addTrackToFavorites(
                 accountDataStore.token(),
-                ownerAndTrackIds.first,
-                ownerAndTrackIds.second,
-            ).handle()
+                data.first,
+                data.second,
+            ).response
 
         override suspend fun removeFromFavorites(id: Int) {
             service.deleteTrackFromFavorites(
                 accountDataStore.token(),
                 accountDataStore.ownerId(),
                 id,
-            ).handle()
+            ).response
         }
 
-        override suspend fun favorites(): List<Item> {
+        override suspend fun favorites(): List<TrackItem> {
             val tracksCount =
-                service.getTracksCount(accountDataStore.token(),accountDataStore.ownerId()).handle()
+                service.getTracksCount(accountDataStore.token(),accountDataStore.ownerId()).response
 
-         return service.getFavoritesTracks(accountDataStore.token(),tracksCount).handle()
+         return service.getFavoritesTracks(accountDataStore.token(),tracksCount).response.items
         }
 
     }

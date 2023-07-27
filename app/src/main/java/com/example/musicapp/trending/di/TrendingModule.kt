@@ -1,9 +1,6 @@
 package com.example.musicapp.trending.di
 
 import androidx.lifecycle.ViewModel
-import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.ImageLoader
-import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.main.di.ViewModelKey
 import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.domain.PlaylistDomain
@@ -26,7 +23,7 @@ interface TrendingModule{
 
     @Binds
     @TrendingScope
-    fun bindCloudTrackToTrackDomainMapper(obj: com.example.musicapp.app.vkdto.Item.Mapper.CloudTrackToTrackDomainMapper): com.example.musicapp.app.vkdto.Item.Mapper<TrackDomain>
+    fun bindCloudTrackToTrackDomainMapper(obj: com.example.musicapp.app.vkdto.TrackItem.Mapper.CloudTrackToTrackDomainMapper): com.example.musicapp.app.vkdto.TrackItem.Mapper<TrackDomain>
 
     @Binds
     @TrendingScope

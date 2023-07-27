@@ -33,6 +33,7 @@ sealed interface SingleUiEventState{
         binding: ActivityMainBinding,
     )
 
+    fun applyForBottomSheet(decorView: View,context: Context,)
 
     abstract class ShowSnackBar(
         private val message: String,
@@ -44,21 +45,35 @@ sealed interface SingleUiEventState{
             context: Context,
             binding: ActivityMainBinding,
         ) = with(binding) {
-            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.root.windowToken,0)
 
-            val snackBar = Snackbar.make(fragmentContainer, message, Snackbar.LENGTH_SHORT)
+                val imm =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+
+                val snackBar = Snackbar.make(fragmentContainer, message, Snackbar.LENGTH_SHORT)
+                val snackBarView: View = snackBar.view
+                snackBarView.background =
+                    AppCompatResources.getDrawable(context, R.drawable.rounded_corners_shape)
+                snackBar
+                    .setBackgroundTint(context.getColor(bgColorId))
+                    .setTextColor(context.getColor(R.color.white))
+                    .setAnchorView(if (bottomPlayerBar.isVisible) bottomPlayerBar else bottomNavView)
+                    .show()
+        }
+
+        override fun applyForBottomSheet(decorView: View,context: Context,) {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(decorView.windowToken,0)
+
+            val snackBar = Snackbar.make(decorView, message, Snackbar.LENGTH_SHORT)
             val snackBarView: View = snackBar.view
             snackBarView.background =
                 AppCompatResources.getDrawable(context, R.drawable.rounded_corners_shape)
             snackBar
                 .setBackgroundTint(context.getColor(bgColorId))
                 .setTextColor(context.getColor(R.color.white))
-                .setAnchorView(if(bottomPlayerBar.isVisible) bottomPlayerBar else bottomNavView)
                 .show()
-
         }
-
 
 
         data class Error(
@@ -88,6 +103,8 @@ sealed interface SingleUiEventState{
             context.startActivity(intent)
         }
 
+        override fun applyForBottomSheet(decorView: View,context: Context,) = Unit
+
 
     }
 
@@ -104,6 +121,8 @@ sealed interface SingleUiEventState{
         ) {
             dialog.show(fragmentManager, dialog.tag)
         }
+
+        override fun applyForBottomSheet(decorView: View,context: Context,) = Unit
 
     }
 

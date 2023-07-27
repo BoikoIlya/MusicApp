@@ -2,7 +2,7 @@ package com.example.musicapp.trending.data
 
 
 import com.example.musicapp.R
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.main.data.cache.AccountDataStore
 import com.example.musicapp.trending.data.cloud.TrendingService
 import com.example.musicapp.trending.domain.PlaylistDomain
@@ -21,7 +21,7 @@ interface TrendingRepository{
 
     class Base @Inject constructor(
         private val service: TrendingService,
-        private val toTrackDomain: Item.Mapper<TrackDomain>,
+        private val toTrackDomain: TrackItem.Mapper<TrackDomain>,
         private val accountData: AccountDataStore,
     ): TrendingRepository {
 
@@ -59,7 +59,7 @@ interface TrendingRepository{
 
 
         override suspend fun fetchTracks(): List<TrackDomain> =
-            service.getRecommendations(accountData.token(),accountData.ownerId(), tracks_count).handle() //todo !!
+            service.getRecommendations(accountData.token(),accountData.ownerId(), tracks_count).response.items //todo !!
                 .map { it.map(toTrackDomain) }
 
 

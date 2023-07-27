@@ -33,8 +33,7 @@ class SearchHistoryViewModel @Inject constructor(
     private val searchHistorySingleStateCommunication:SearchHistorySingleStateCommunication,
     private val managerResource: ManagerResource,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-    private val playerControls: PlayerControlsCommunication
-): ViewModel(), CollectPlayerControls {
+): ViewModel() {
 
     init {
         fetchHistory()
@@ -109,9 +108,6 @@ class SearchHistoryViewModel @Inject constructor(
         collector: FlowCollector<SearchHistorySingleState>
     ) = searchHistorySingleStateCommunication.collect(owner, collector)
 
-    override suspend fun collectPlayerControls(
-        owner: LifecycleOwner,
-        collector: FlowCollector<PlayerControlsState>,
-    ) = playerControls.collect(owner, collector)
+
 
 }

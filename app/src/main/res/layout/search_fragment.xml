@@ -26,7 +26,7 @@
                 android:paddingBottom="10dp"
                 >
 
-                <ImageButton
+                <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/back_btn_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.musicapp.app.core.ScrollUpButton
+    <com.example.musicapp.app.core.ScrollUpRecyclerButton
         android:id="@+id/scrollUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -116,8 +116,8 @@
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="140dp"
-
+            android:paddingBottom="140dp"
+            android:clipToPadding="false"
             />
 
     </LinearLayout>

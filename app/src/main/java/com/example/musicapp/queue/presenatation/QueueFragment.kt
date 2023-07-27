@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -68,8 +69,7 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {}
-            }, imageLoader, View.GONE
-        )
+            }, imageLoader, View.GONE     )
 
         lifecycleScope.launch{
             viewModel.collectCurrentQueue(this@QueueFragment){

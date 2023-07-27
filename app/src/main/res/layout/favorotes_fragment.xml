@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -25,19 +26,33 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:paddingBottom="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            >
+
+            <ImageButton
+                android:visibility="visible"
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/left_chevron"
+                app:layout_constraintBottom_toBottomOf="@+id/textInputLayout2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textInputLayout2"
+                android:tint="@color/gray" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="25dp"
                 app:endIconDrawable="@drawable/close"
                 app:endIconMode="clear_text"
                 app:hintEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/back_btn"
                 app:layout_constraintTop_toTopOf="parent"
                 style="@style/Widget.Design.TextInputLayout"
                 >
@@ -60,29 +75,29 @@
 
 
             <TextView
-                android:layout_marginTop="20dp"
+                android:id="@+id/title_favorites"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="@string/favorites_songs"
                 android:textColor="@color/black"
                 android:textSize="@dimen/h3"
                 app:layout_constraintEnd_toStartOf="@+id/shuffleFavorites"
-                app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
+                app:layout_constraintStart_toStartOf="@+id/back_btn"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
 
-
-        <ImageButton
-            android:layout_marginTop="20dp"
-            android:id="@+id/shuffleFavorites"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
-            android:src="@drawable/shuffle_black"
-            android:background="?selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toStartOf="@id/menu"
-            android:layout_marginEnd="20dp"
-            />
+            <ImageButton
+                android:id="@+id/shuffleFavorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/shuffle_black"
+                app:layout_constraintBottom_toBottomOf="@+id/title_favorites"
+                app:layout_constraintEnd_toStartOf="@id/menu"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
             <ImageButton
                 android:id="@+id/menu"
@@ -91,14 +106,14 @@
                 android:layout_marginTop="20dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/sort"
-                app:layout_constraintBottom_toBottomOf="@+id/shuffleFavorites"
+                app:layout_constraintBottom_toBottomOf="@+id/title_favorites"
                 app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.musicapp.app.core.ScrollUpButton
+    <com.example.musicapp.app.core.ScrollUpRecyclerButton
         android:id="@+id/scrollUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -115,7 +130,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         >
@@ -133,9 +148,9 @@
 
     <TextView
         android:layout_gravity="center_horizontal"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_marginTop="35dp"
-        android:id="@+id/noFavoriteTracks"
+        android:id="@+id/noData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/no_favorite_tracks"
@@ -147,14 +162,15 @@
         <com.simform.refresh.SSPullToRefreshLayout
             android:id="@+id/pull_to_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             >
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/favoritesRcv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:listitem="@layout/track_item"
+                android:paddingBottom="140dp"
                 android:clipToPadding="false"
             />
         </com.simform.refresh.SSPullToRefreshLayout>

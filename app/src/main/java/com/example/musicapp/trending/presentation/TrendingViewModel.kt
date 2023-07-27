@@ -3,7 +3,6 @@ package com.example.musicapp.trending.presentation
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.AddToFavorites
 import com.example.musicapp.app.core.BaseViewModel
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.TrackChecker

@@ -26,7 +26,7 @@ class TestFavoritesTracksInteractor: FavoritesTracksInteractor {
         return flow { emit(TracksResult.Success(list = list)) }
     }
 
-    override fun saveDeletingItem(item: MediaItem) {
+    override fun saveItemToTransfer(item: MediaItem) {
         savedItem = item
     }
 

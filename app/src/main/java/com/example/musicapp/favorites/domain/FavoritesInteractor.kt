@@ -6,7 +6,7 @@ import com.example.musicapp.app.core.FavoritesInteractor
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.MediaItemToTrackDomainMapper
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.data.FavoritesTracksRepository
 import com.example.musicapp.favorites.data.cache.TrackCache
@@ -21,18 +21,17 @@ import javax.inject.Inject
  **/
 
 
-interface FavoritesTracksInteractor: FavoritesInteractor<TrackDomain,TrackCache,Item,MediaItem,TracksResult>{
+interface FavoritesTracksInteractor: FavoritesInteractor<TrackDomain,TrackCache,TrackItem,MediaItem,TracksResult>{
 
-    fun fetchData(sortingState: SortingState): Flow<TracksResult>
+
     class Base @Inject constructor(
         private val repository: FavoritesTracksRepository,
         handleResponse: HandleResponse,
         managerResource: ManagerResource,
         uiToDomainMapper: MediaItemToTrackDomainMapper,
-        uiToItemId: TrackUiToItemId,
         transfer: DataTransfer<TrackDomain>
-    ): FavoritesInteractor.Abstract<TrackDomain,TrackCache,Item,MediaItem,TracksResult>(
-     repository, managerResource, uiToDomainMapper, handleResponse, uiToItemId, transfer
+    ): FavoritesInteractor.Abstract<TrackDomain,TrackCache,TrackItem,MediaItem,TracksResult>(
+     repository, managerResource, uiToDomainMapper, handleResponse, transfer
     ),FavoritesTracksInteractor{
         override fun success(message: String, newId: Int): TracksResult =
             TracksResult.Success(message = message,newId = newId)
@@ -40,11 +39,7 @@ interface FavoritesTracksInteractor: FavoritesInteractor<TrackDomain,TrackCache,
         override fun error(message: String): TracksResult = TracksResult.Failure(message)
 
         override fun duplicated(): TracksResult = TracksResult.Duplicate
-        override fun fetchData(sortingState: SortingState): Flow<TracksResult> =
-            repository.fetchData(sortingState)
 
-        override suspend fun isDBEmpty(): Boolean =
-            repository.fetchData(SortingState.ByTime()).first() is TracksResult.Empty
     }
 
 

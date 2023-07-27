@@ -19,26 +19,28 @@ interface HandleError {
 
 
         override suspend fun handle(e: Exception): String {
-            var id = 0
-            if(e is HttpException){
-               id = when(e.code()){
-                    202 -> R.string.accepted_message
-                    204 -> R.string.no_content
-                    400 -> R.string.bad_request
-                    401 -> R.string.incorrect_credentials
-                    403 -> R.string.forbidenn
-                    404 -> R.string.not_found
-                    429 -> R.string.too_many_requests
-                    500 -> R.string.server_error_message
-                    502 -> R.string.bad_gatawey_message
-                    504 -> R.string.server_error_message
-                    else -> R.string.oops_something_went_wrong_data
+          val id =  when(e) {
+                is VkException -> e.map()
+                is HttpException -> {
+                    when (e.code()) {
+                        202 -> R.string.accepted_message
+                        204 -> R.string.no_content
+                        400 -> R.string.bad_request
+                        401 -> R.string.authorization_failed
+                        403 -> R.string.forbidenn
+                        404 -> R.string.not_found
+                        429 -> R.string.too_many_requests
+                        500 -> R.string.server_error_message
+                        502 -> R.string.bad_gatawey_message
+                        504 -> R.string.server_error_message
+                        else -> R.string.oops_something_went_wrong_data
+                    }
                 }
-            }else if(e is UnknownHostException) id = R.string.no_connection_message
-            else if(e is NoSuchElementException) id = R.string.nothing_found_message
-            else id =  R.string.oops_something_went_wrong_data
-
-       return managerResource.getString(id)
+                is UnknownHostException-> R.string.no_connection_message
+                is NoSuchElementException->  R.string.nothing_found_message
+                else -> R.string.oops_something_went_wrong_data
+            }
+            return managerResource.getString(id)
         }
 
 

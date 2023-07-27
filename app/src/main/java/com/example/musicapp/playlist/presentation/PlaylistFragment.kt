@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
+ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
 
     private val binding by viewBinding(FragmentPlaylistBinding::bind)
 
@@ -92,7 +92,7 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
         }
 
         lifecycleScope.launch{
-            viewModel.collectTracks(this@PlaylistFragment){
+            viewModel.collectData(this@PlaylistFragment){
                 tracksAdapter.map(it)
                 viewModel.saveCurrentPageQueue(it)
                 binding.trackAmount.text = "${it.size} ${getString(R.string.tracks)}"
@@ -105,19 +105,19 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.collectPlayerControls(this@PlaylistFragment){
-                it.apply(binding.playlistRcv)
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.collectPlayerControls(this@PlaylistFragment){
+//                it.apply(binding.playlistRcv)
+//            }
+//        }
 
         binding.backBtnQueue.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.shuffleBtn.setOnClickListener {
-            viewModel.shuffle()
-        }
+//        binding.shuffleBtn.setOnClickListener {
+//            viewModel.shuffle()
+//        }
 
         binding.description.setOnClickListener {
            if (binding.description.layout.getEllipsisCount(binding.description.lineCount - 1) <= 0)

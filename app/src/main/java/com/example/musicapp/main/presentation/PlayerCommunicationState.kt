@@ -100,7 +100,9 @@ sealed interface PlayerCommunicationState{
     }
 
 
-    object Disabled: PlayerCommunicationState{
+    data class Disabled(
+        private val listener: ControllerListener
+    ): PlayerCommunicationState{
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
@@ -109,6 +111,9 @@ sealed interface PlayerCommunicationState{
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
             trackDurationCommunication: TrackDurationCommunication
         ) {
+            controller.stop()
+            controller.release()
+            controller.removeListener(listener)
             playerControls.map(PlayerControlsState.Disabled)
             selectedTrackCommunication.map(MediaItem.Builder().build())
         }

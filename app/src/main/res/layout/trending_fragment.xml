@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    android:id="@+id/trendingScrollView"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/trendingCoordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    >
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/trendingScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/trending_fragment_scene">
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,13 +31,14 @@
             android:textColor="@color/black"
             android:textSize="@dimen/h1"
             android:textStyle="bold"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvPlaylists"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:visibility="visible" />
+            android:id="@+id/rcvPlaylists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:visibility="visible" />
 
 
     <TextView
@@ -72,7 +80,26 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         tools:listitem="@layout/track_item"
+        android:paddingBottom="140dp"
         android:clipToPadding="false"/>
 
     </LinearLayout>
+
 </androidx.core.widget.NestedScrollView>
+
+    <com.example.musicapp.app.views.ScrollUpNestedScrollButton
+        android:id="@+id/scrollUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/up_chevron"
+        app:tint="@color/orange"
+        app:shapeAppearance="@style/ThemeOverlay.Material3.FloatingActionButton.Secondary"
+        android:layout_marginBottom="160dp"
+        android:layout_marginEnd="20dp"
+        app:layout_anchor="@id/trendingScrollView"
+        app:layout_anchorGravity="bottom|end"
+        android:visibility="gone"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

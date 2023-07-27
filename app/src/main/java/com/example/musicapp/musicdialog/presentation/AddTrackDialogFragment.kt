@@ -12,8 +12,7 @@ import com.example.musicapp.main.di.App
 import com.example.musicapp.main.di.AppComponent
 import javax.inject.Inject
 
-
-@UnstableApi class AddTrackDialogFragment : DialogFragment() {
+class AddTrackDialogFragment : DialogFragment() {
 
     private lateinit var viewModel: AddTrackDialogViewModel
 

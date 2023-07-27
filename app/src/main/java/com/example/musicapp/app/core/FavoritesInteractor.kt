@@ -8,7 +8,7 @@ import com.example.musicapp.R
  **/
 interface FavoritesInteractor<D,C,N,U,E>: Interactor<U,E> {
 
-    fun saveDeletingItem(item: U)
+    fun saveItemToTransfer(item: U)
 
     suspend fun equalsWithUserId(id: Int): Boolean
 
@@ -18,7 +18,6 @@ interface FavoritesInteractor<D,C,N,U,E>: Interactor<U,E> {
         private val managerResource: ManagerResource,
         private val uiToDomainMapper: Mapper<M,D>,
         private val handleResponse: HandleResponse,
-        private val uiToItemId: Mapper<M, Int>,
         private val transfer: DataTransfer<D>
     ): FavoritesInteractor<D,C,N,M,E>{
 
@@ -55,13 +54,12 @@ interface FavoritesInteractor<D,C,N,U,E>: Interactor<U,E> {
             repository.updateData()
             ""
             },{message,exception->
-            Log.d("tag", "updateData: $exception")
                 message
             })
 
         override suspend fun containsTrackInDb(item: Pair<String,String>) = repository.containsInDb(item)
 
-        override fun saveDeletingItem(item: M) = transfer.save(uiToDomainMapper.map(item))
+        override fun saveItemToTransfer(item: M) = transfer.save(uiToDomainMapper.map(item))
 
         override suspend fun equalsWithUserId(id: Int): Boolean = id == repository.userId()
 

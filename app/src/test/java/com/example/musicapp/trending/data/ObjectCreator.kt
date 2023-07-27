@@ -6,8 +6,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.core.ToMediaItemMapper
 import com.example.musicapp.app.vkdto.Ads
-import com.example.musicapp.app.vkdto.Item
-import com.example.musicapp.app.vkdto.Response
+import com.example.musicapp.app.vkdto.TrackItem
+import com.example.musicapp.app.vkdto.TracksResponse
 import com.example.musicapp.app.vkdto.TracksCloud
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
@@ -179,9 +179,9 @@ val testImgUrl = "https://www.google.by/images/branding/googlelogo/1x/googlelogo
     fun getHisstoryItem(query: String="", time: Long =0) = HistoryItemCache(query, time)
 //
     fun getTracksCloud() =  TracksCloud(
-    response = Response(
+    response = TracksResponse(
         count = 1,
-        items = listOf(Item(
+        items = listOf(TrackItem(
             access_key = "1",
             ads = Ads(
                 account_age_type = "1",

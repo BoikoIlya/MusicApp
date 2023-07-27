@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
+    >
+<LinearLayout
     android:orientation="vertical"
-    tools:context=".vkauth.presentation.AuthActivity"
-    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     >
 
     <ImageView
@@ -31,12 +34,12 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="40dp"
         style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:hint="@string/phone"
-        android:inputType="phone"
+        android:hint="@string/phone_or_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textEmailAddress"
             android:id="@+id/login_edt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -48,14 +51,13 @@
         android:layout_marginHorizontal="20dp"
         style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
         android:hint="@string/password"
-        app:endIconMode="password_toggle"
+        app:passwordToggleEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textPassword"
             android:id="@+id/password_edt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -90,5 +92,8 @@
         android:text="@string/login"
         android:textSize="@dimen/h3"
         android:paddingVertical="10dp"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/orange"
         />
 </LinearLayout>
+</ScrollView>

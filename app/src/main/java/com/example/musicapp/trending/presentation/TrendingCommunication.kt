@@ -2,6 +2,7 @@ package com.example.musicapp.trending.presentation
 
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.media3.common.MediaItem
 import com.example.musicapp.favorites.presentation.UiCommunication
 import kotlinx.coroutines.flow.FlowCollector
 import javax.inject.Inject
@@ -9,7 +10,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 26.01.2023.
  **/
-interface TrendingCommunication: CollectTrendings, UiCommunication<TracksUiState> {
+interface TrendingCommunication: CollectTrendings, UiCommunication<TracksUiState, MediaItem> {
 
     fun showPlayLists(playlists: List<PlaylistUi>)
 
@@ -18,7 +19,7 @@ interface TrendingCommunication: CollectTrendings, UiCommunication<TracksUiState
         trendingStateCommunication: TrendingStateCommunication,
         trendingTracksCommunication: TrendingTracksCommunication
     ): TrendingCommunication,
-        UiCommunication.Abstract<TracksUiState>(
+        UiCommunication.Abstract<TracksUiState,MediaItem>(
             trendingStateCommunication,trendingTracksCommunication){
 
         override fun showPlayLists(playlists: List<PlaylistUi>) = trendingPlaylistsCommunication.map(playlists)
@@ -45,7 +46,7 @@ interface CollectTrendings{
 }
 
 interface CollectUiState<T> {
-    suspend fun collectState(owner: LifecycleOwner, collector: FlowCollector<T>) //TracksUiState
+    suspend fun collectState(owner: LifecycleOwner, collector: FlowCollector<T>)
 }
 
 

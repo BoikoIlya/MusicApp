@@ -1,6 +1,7 @@
 package com.example.musicapp.app.core
 
 import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.userplaylists.data.cache.PlaylistCache
 import javax.inject.Inject
 
 /**
@@ -34,4 +35,8 @@ interface HandleDeleteRequestData<T> {
 class HandleDeleteTrackRequest @Inject constructor(
     dataSource: FavoritesCacheDataSource<TrackCache>
 ): HandleDeleteRequestData<TrackCache>,HandleDeleteRequestData.Abstract<TrackCache>(dataSource)
+
+class HandleDeletePlaylistRequest @Inject constructor(
+    dataSource: FavoritesCacheDataSource<PlaylistCache>
+): HandleDeleteRequestData<PlaylistCache>,HandleDeleteRequestData.Abstract<PlaylistCache>(dataSource)
 

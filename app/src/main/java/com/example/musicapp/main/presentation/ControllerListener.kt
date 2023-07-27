@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.Player.STATE_READY
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.PlayerControlsCommunication
@@ -30,19 +31,20 @@ class ControllerListener @Inject constructor(
         private val controller: MediaControllerWrapper,
         private val dispatchersList: DispatchersList,
         private val handlePlayerError: HandlePlayerError,
-        private val playingTrackIdCommunication: PlayingTrackIdCommunication
+        private val playingTrackIdCommunication: PlayingTrackIdCommunication,
     ): Player.Listener{
 
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            if (isPlaying) playerControls.map(PlayerControlsState.Play(controller.currentMediaItem!!))
-            else playerControls.map(PlayerControlsState.Pause(controller.currentMediaItem!!))
+            if (isPlaying) playerControls.map(PlayerControlsState.Play(controller.currentMediaItem?:MediaItem.EMPTY))
+            else playerControls.map(PlayerControlsState.Pause(controller.currentMediaItem?:MediaItem.EMPTY))
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
             super.onPlaybackStateChanged(playbackState)
             if (playbackState != Player.STATE_ENDED) return
+
             controller.seekToDefaultPosition(0)
             controller.prepare()
             controller.playWhenReady = true

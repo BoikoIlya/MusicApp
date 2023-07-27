@@ -8,22 +8,16 @@ import javax.inject.Inject
 /**
  * Created by HP on 09.07.2023.
  **/
-interface HandlerFavoritesTracksUiUpdate: HandlerFavoritesUiUpdate<FavoritesUiState> {
+interface HandlerFavoritesTracksUiUpdate: HandlerFavoritesUiUpdate {
 
 
     class Base @Inject constructor(
         globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-        favoritesTracksCommunication: FavoritesCommunication,
+        favoritesTracksCommunication: FavoritesTracksCommunication,
         interactor: FavoritesTracksInteractor
-    ): HandlerFavoritesTracksUiUpdate,HandlerFavoritesUiUpdate.Abstract<FavoritesUiState, MediaItem,TracksResult>(
+    ): HandlerFavoritesTracksUiUpdate,HandlerFavoritesUiUpdate.Abstract<MediaItem,TracksResult>(
         favoritesTracksCommunication,
         globalSingleUiEventCommunication,
         interactor
-    ) {
-        override fun successState(): FavoritesUiState = FavoritesUiState.Success
-
-        override fun errorState(): FavoritesUiState = FavoritesUiState.Failure
-
-        override fun loadingState(): FavoritesUiState  = FavoritesUiState.Loading
-    }
+    )
 }

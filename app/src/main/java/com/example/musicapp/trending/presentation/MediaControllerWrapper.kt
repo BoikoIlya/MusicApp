@@ -14,6 +14,7 @@ import androidx.media3.session.MediaController
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.main.presentation.ControllerListener
 import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 
@@ -42,7 +43,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun removeListener(listener: Player.Listener) {
-             TODO("Not yet implemented")
+             controller?.removeListener(listener)
          }
 
          override fun setMediaItems(mediaItems: MutableList<MediaItem>) {
@@ -189,7 +190,13 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
-             controller?.seekToDefaultPosition(mediaItemIndex)
+             Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
+          //  try {
+                 controller?.seekToDefaultPosition(mediaItemIndex)
+//             }catch (e: Exception){
+//                 Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
+//                 controller?.seekToDefaultPosition(0)
+//             }
          }
 
          override fun seekTo(positionMs: Long) {
@@ -289,11 +296,11 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun stop() {
-             TODO("Not yet implemented")
+             controller?.stop()
          }
 
          override fun release() {
-             TODO("Not yet implemented")
+             controller?.release()
          }
 
          override fun getCurrentTracks(): Tracks {
@@ -367,7 +374,7 @@ interface MediaControllerWrapper: Player {
 
          override fun getDuration(): Long = controller?.duration ?: 0
 
-         override fun getCurrentPosition(): Long = controller?.currentPosition ?: 0
+         override fun getCurrentPosition(): Long = controller?.currentPosition ?: 1
 
          override fun getBufferedPosition(): Long {
              TODO("Not yet implemented")

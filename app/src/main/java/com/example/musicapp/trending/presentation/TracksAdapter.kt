@@ -1,8 +1,6 @@
 package com.example.musicapp.trending.presentation
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +18,6 @@ import com.example.musicapp.app.core.ToMediaItemMapper.Companion.small_img_url
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.databinding.TrackItemBinding
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
-
 
 /**
  * Created by HP on 30.01.2023.
@@ -38,22 +33,35 @@ interface Scroller{
 interface RemoveItem{
     fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int)
 }
- class TracksAdapter(
+
+interface Navigator{
+
+    fun navigateToMenu(data: MediaItem,position: Int)
+
+    object Empty: Navigator {
+        override fun navigateToMenu(data: MediaItem,position: Int) = Unit
+    }
+}
+
+interface MediaItemsAdapter: Navigator,RemoveItem
+
+open class TracksAdapter(
      private val context: Context,
      private val playClickListener: Selector<MediaItem>,
      private val saveClickListener: ClickListener<MediaItem>,
      private val imageLoader: ImageLoader,
      private val addBtnVisibility: Int = View.VISIBLE,
- ): RecyclerView.Adapter<TrendingTracksViewHolder>(),
-    Mapper<List<MediaItem>, Unit>,Select, Scroller, RemoveItem {
+     private val navigator: Navigator = Navigator.Empty
+ ): RecyclerView.Adapter<TracksViewHolder>(),
+    Mapper<List<MediaItem>, Unit>,Select, Scroller, MediaItemsAdapter {
 
     private val tracksCurrentList = mutableListOf<MediaItem>()
     protected var selectedTrackPosition = -1
     protected var selectedTrack: MediaItem? = null //For case when selected track will collect faster than tracks
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrendingTracksViewHolder {
-        return TrendingTracksViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
+        return TracksViewHolder(
             context,
             TrackItemBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -65,13 +73,13 @@ interface RemoveItem{
 
     override fun getItemCount(): Int = tracksCurrentList.size
 
-    override fun onBindViewHolder(holder: TrendingTracksViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
             holder.bind(tracksCurrentList[position], position, selectedTrackPosition)
     }
 
     private lateinit var result: DiffUtil.DiffResult
-    override  fun map(data: List<MediaItem>) {
-        val diff = TendingTracksDiffUtilCallback(data, tracksCurrentList)
+    override fun map(data: List<MediaItem>) {
+        val diff = TracksDiffUtilCallback(data, tracksCurrentList)
         result = DiffUtil.calculateDiff(diff)
         tracksCurrentList.clear()
         tracksCurrentList.addAll(data)
@@ -104,6 +112,11 @@ interface RemoveItem{
 
     }
 
+
+    override fun navigateToMenu(data: MediaItem, position: Int) {
+        navigator.navigateToMenu(tracksCurrentList[position],position)
+    }
+
     override fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int) {
         viewModel.launchDeleteItemDialog(tracksCurrentList[position])
     }
@@ -114,7 +127,7 @@ interface RemoveItem{
 
 
 
-class TrendingTracksViewHolder(
+open class TracksViewHolder(
     private val context: Context,
     private val binding: TrackItemBinding,
     private val playClickListener: Selector<MediaItem>,
@@ -124,7 +137,7 @@ class TrendingTracksViewHolder(
 ): ViewHolder(binding.root){
 
 
-    fun bind(item: MediaItem, position: Int, selectedPosition: Int) = with(binding){
+   open fun bind(item: MediaItem, position: Int, selectedPosition: Int) = with(binding){
         with(item.mediaMetadata) {
             imageLoader.loadImage(
                 extras?.getString(small_img_url)?:"",
@@ -150,7 +163,7 @@ class TrendingTracksViewHolder(
 
 }
 
-class TendingTracksDiffUtilCallback(
+class TracksDiffUtilCallback(
     private val newList: List<MediaItem>,
     private val oldList: List<MediaItem>,
 ): DiffUtil.Callback() {
@@ -160,7 +173,7 @@ class TendingTracksDiffUtilCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return newList[newItemPosition].mediaMetadata.extras?.getInt(track_id) == oldList[oldItemPosition].mediaMetadata.extras?.getInt(track_id)
+        return newList[newItemPosition].mediaId == oldList[oldItemPosition].mediaId
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -171,6 +184,5 @@ class TendingTracksDiffUtilCallback(
                 && newList[newItemPosition].mediaMetadata.albumTitle==oldList[oldItemPosition].mediaMetadata.albumTitle
                 && newList[newItemPosition].mediaMetadata.isPlayable==oldList[oldItemPosition].mediaMetadata.isPlayable
                 && newList[newItemPosition].mediaMetadata.extras?.getInt(track_id)==oldList[oldItemPosition].mediaMetadata.extras?.getInt(track_id)
-    }
-
+           }
 }

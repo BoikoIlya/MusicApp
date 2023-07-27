@@ -1,12 +1,16 @@
 package com.example.musicapp.player.presentation
 
-import android.annotation.SuppressLint
+
+import android.R.attr.animationDuration
+import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.DragEvent
-import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.ToggleButton
@@ -16,14 +20,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
+import com.example.musicapp.app.core.BlurEffectAnimator
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.big_img_url
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_in_millis
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_in_millis
 import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.main.di.App
 import com.example.musicapp.main.presentation.PlayerCommunicationState
@@ -31,6 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @UnstableApi /**
  * Created by HP on 22.04.2023.
@@ -44,6 +48,9 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var blurEffectAnimator: BlurEffectAnimator
 
     private lateinit var viewModel: PlayerViewModel
 
@@ -62,6 +69,8 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         lifecycleScope.launch {
             viewModel.collectSelectedTrack(this@PlayerFragment) {
@@ -160,15 +169,18 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
         }
 
         binding.playerMenuBtn.setOnClickListener {
+            blurEffectAnimator.show(view.rootView as View)
             val popup = PopupMenu(requireContext(), it, 0, 0, R.style.popupOverflowMenu)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 popup.setForceShowIcon(true)
-
             popup.menuInflater.inflate(R.menu.player_options, popup.menu)
             popup.show()
+
+            popup.setOnDismissListener { blurEffectAnimator.hide(view.rootView as View) }
             popup.setOnMenuItemClickListener { menuItem ->
+
                 when (menuItem.itemId) {
-                    R.id.delete_option -> viewModel.launchDeleteItemDialog(currentTrackId,currentTrack)
+                    R.id.add_to_playlist_option -> viewModel.launchDeleteItemDialog(currentTrackId,currentTrack)
                     R.id.add_option -> viewModel.checkAndAddTrackToFavorites(currentTrack)
                 }
                 return@setOnMenuItemClickListener true
@@ -181,3 +193,12 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
         }
     }
 }
+
+fun getBitmapFromView(view: View): Bitmap {
+    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+    val c = Canvas(bitmap)
+    view.layout(view.left, view.top, view.right, view.bottom)
+    view.draw(c)
+   return bitmap
+}
+

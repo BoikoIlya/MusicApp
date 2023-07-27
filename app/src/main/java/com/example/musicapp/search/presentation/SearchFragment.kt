@@ -122,11 +122,7 @@ class SearchFragment: Fragment(R.layout.search_fragment) {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.collectPlayerControls(this@SearchFragment){
-                it.apply(binding.searchRcv)
-            }
-        }
+
 
         lifecycleScope.launch{
             tracksAdapter.loadStateFlow.collect{

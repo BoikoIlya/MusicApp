@@ -24,18 +24,14 @@ interface HandlePlayerError {
             if(e.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED && connectionChecker.isDeviceHaveConnection())
                 return PlayerErrorState.SeekToNext(managerResource.getString(R.string.unavailable_track))
 
-           val message = managerResource.getString(
+           val messageId =
                when(e.errorCode){
-                 PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED ->R.string.no_connection_message
-                   else -> {
-                       Log.d("tag", "handle player error: ${e.errorCode} ${e.errorCodeName}")
-                        0
-                   }
-            }
-           )
-
-           return if (message.isEmpty()) PlayerErrorState.SeekToNext(message)
-                    else PlayerErrorState.ShowError(message)
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED ->R.string.no_connection_message
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT->R.string.bad_internet_quality
+                    else -> null
+               }
+            val message = if(messageId!=null) managerResource.getString(messageId) else e.errorCodeName
+            return PlayerErrorState.ShowError(message)
         }
 
     }

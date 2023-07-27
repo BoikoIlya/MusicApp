@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/favoritesFragment"
+    app:startDestination="@id/playlistsFragment"
     >
 
     <fragment
@@ -15,11 +15,18 @@
             android:id="@+id/action_trendingFragment_to_playlistFragment"
             app:destination="@id/playlistFragment"
             />
+        <action
+            android:id="@+id/action_trendingFragment_to_playlistsFragment"
+            app:destination="@id/playlistsFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.musicapp.favorites.presentation.FavoritesFragment"
-        android:label="FavoritesFragment" />
+        android:name="com.example.musicapp.favorites.presentation.FavoritesTracksFragment"
+        android:label="FavoritesFragment" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_favoritesBottomSheetMenuFragment"
+            app:destination="@id/favoritesBottomSheetMenuFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchHistoryFragment"
         android:name="com.example.musicapp.searchhistory.presentation.SearchHistoryFragment"
@@ -38,12 +45,71 @@
         android:name="com.example.musicapp.playlist.presentation.PlaylistFragment"
         android:label="PlaylistFragment" />
     <fragment
-        android:id="@+id/authFragment"
-        android:name="com.example.musicapp.vkauth.presentation.AuthActivity"
-        android:label="fragment_auth"
-        tools:layout="@layout/activity_auth" />
+        android:id="@+id/playlistsFragment"
+        android:name="com.example.musicapp.userplaylists.presentation.FavoritesPlaylistsFragment"
+        android:label="PlaylistsFragment" >
+        <action
+            android:id="@+id/action_playlistsFragment_to_playlistsMenuDialogBottomSheetFragment"
+            app:destination="@id/playlistsMenuDialogBottomSheetFragment" />
+        <action
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            android:id="@+id/action_playlistsFragment_to_createPlaylistFragment"
+            app:destination="@id/createPlaylistFragment" />
+    </fragment>
     <dialog
-        android:id="@+id/playerBottomSheetDialog"
-        android:name="com.example.musicapp.main.presentation.PlayerBottomSheetDialog"
-        android:label="PlayerBottomSheetDialog" />
+        android:id="@+id/playlistsMenuDialogBottomSheetFragment"
+        android:name="com.example.musicapp.userplaylists.presentation.PlaylistsMenuDialogBottomSheetFragment"
+        android:label="PlaylistsMenuDialogBottomSheetFragment" >
+        <action
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            android:id="@+id/action_playlistsMenuDialogBottomSheetFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/createPlaylistFragment"
+        android:name="com.example.musicapp.creteplaylist.presentation.CreatePlaylistFragment"
+        android:label="CreatePlaylistFragment"
+        >
+        <action
+            android:id="@+id/action_createPlaylistFragment_to_addToPlaylistFragment"
+            app:destination="@id/addToPlaylistFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/addToPlaylistFragment"
+        android:name="com.example.musicapp.addtoplaylist.presentation.AddToPlaylistFragment"
+        android:label="AddToPlaylistFragment" />
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.musicapp.editplaylist.presentation.EditPlaylistFragment"
+        android:label="EditPlaylistFragment" >
+        <action
+            android:id="@+id/action_editPlaylistFragment_to_addToPlaylistFragment"
+            app:destination="@id/addToPlaylistFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/favoritesBottomSheetMenuFragment"
+        android:name="com.example.musicapp.favorites.presentation.FavoritesBottomSheetMenuFragment"
+        android:label="FavoritesBottomSheetMenuFragment" >
+        <action
+            android:id="@+id/action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment"
+            app:destination="@id/selectPlaylistFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/selectPlaylistFragment"
+        android:name="com.example.musicapp.selectplaylist.presentation.SelectPlaylistFragment"
+        android:label="SelectPlaylistFragment" >
+        <action
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            android:id="@+id/action_selectPlaylistFragment_to_createPlaylistFragment"
+            app:destination="@id/createPlaylistFragment" />
+    </dialog>
 </navigation>

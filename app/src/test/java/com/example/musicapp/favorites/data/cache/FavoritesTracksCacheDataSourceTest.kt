@@ -22,7 +22,7 @@ class FavoritesTracksCacheDataSourceTest: ObjectCreator() {
         dao = FavoritesReposotoryTest.TestTracksDao()
         dao.list.addAll(items)
         cache = BaseFavoritesTracksCacheDataSource(
-            dao = dao
+            tracksDao = dao
         )
     }
 

@@ -6,13 +6,11 @@ import com.example.musicapp.app.core.DuplicateException
 import com.example.musicapp.app.core.FavoritesCacheDataSource
 import com.example.musicapp.app.core.FavoritesCloudDataSource
 import com.example.musicapp.app.core.FormatTimeSecondsToMinutesAndSeconds
-import com.example.musicapp.app.core.HandleDeleteRequestData
 import com.example.musicapp.app.core.HandleDeleteTrackRequest
-import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.ToMediaItemMapper
 import com.example.musicapp.app.vkdto.Ads
-import com.example.musicapp.app.vkdto.Item
+import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.favorites.data.cache.DomainToContainsMapper
 import com.example.musicapp.favorites.data.cache.DomainToDataIdsMapper
 
@@ -34,7 +32,6 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 /**
  * Created by HP on 28.04.2023.
@@ -59,7 +56,7 @@ class FavoritesReposotoryTest: ObjectCreator() {
             toMediaItemMapper = ToMediaItemMapper(),
             dao =tracksDao,
             domainToContainsMapper = DomainToContainsMapper.Base(TrackDomain.ContainsTrackMapper()),
-            cloudToCacheMapper = TracksCloudToCacheMapper.Base(Item.Mapper.CloudTrackToTrackCacheMapper()),
+            cloudToCacheMapper = TracksCloudToCacheMapper.Base(TrackItem.Mapper.CloudTrackToTrackCacheMapper()),
             cloud = cloud,
             domainToCacheMapper = TrackDomainToCacheMapper.Base(TrackDomain.ToTrackCacheMapper(FormatTimeSecondsToMinutesAndSeconds.Base())),
             domainToDataIdsMapper = DomainToDataIdsMapper.Base(TrackDomain.AddToFavoritesCloudMapper()),
@@ -248,12 +245,12 @@ class FavoritesReposotoryTest: ObjectCreator() {
 
     }
 
-    class TestFvoritesTracksCloudDataSource: FavoritesCloudDataSource<Item>{
+    class TestFvoritesTracksCloudDataSource: FavoritesCloudDataSource<TrackItem>{
         val list = emptyList<Pair<Int,Int>>().toMutableList()
 
-        override suspend fun addToFavorites(ownerAndTrackIds: Pair<Int, Int>): Int {
+        override suspend fun addToFavorites(data: Pair<Int, Int>): Int {
             val newId = Random.nextInt()
-            list.add(ownerAndTrackIds.copy(first = newId))
+            list.add(data.copy(first = newId))
             return newId
         }
 
@@ -261,8 +258,8 @@ class FavoritesReposotoryTest: ObjectCreator() {
             list.removeIf { it.first == id }
         }
 
-        override suspend fun favorites(): List<Item> {
-            return list.map { Item(
+        override suspend fun favorites(): List<TrackItem> {
+            return list.map { TrackItem(
                 access_key = "1",
                 ads = Ads(
                     account_age_type = "1",

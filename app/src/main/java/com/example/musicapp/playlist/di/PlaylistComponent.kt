@@ -1,7 +1,6 @@
 package com.example.musicapp.playlist.di
 
 import com.example.musicapp.playlist.presentation.PlaylistFragment
-import com.example.musicapp.trending.presentation.TrendingFragment
 import dagger.Subcomponent
 
 /**
@@ -17,5 +16,6 @@ interface PlaylistComponent {
     }
 
     fun inject(playlistFragment: PlaylistFragment)
+
 
 }

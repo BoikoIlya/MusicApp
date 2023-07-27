@@ -3,7 +3,6 @@ package com.example.musicapp.trending.presentation
 
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.trending.domain.PlaylistDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +50,7 @@ class TrendingResultMapper @Inject constructor(
         if(data.first.isEmpty() || data.second.isEmpty()) TracksUiState.Error(message)
         else {
             communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
-            communication.showTracks(data.second.map { it.map(tracksMapper) })
+            communication.showData(data.second.map { it.map(tracksMapper) })
             TracksUiState.Success
         }
         )

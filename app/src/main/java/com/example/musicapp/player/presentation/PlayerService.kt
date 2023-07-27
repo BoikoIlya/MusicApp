@@ -1,6 +1,8 @@
 package com.example.musicapp.player.presentation
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
@@ -10,6 +12,7 @@ import android.os.Build
 import android.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.example.musicapp.main.di.App
@@ -17,7 +20,7 @@ import com.example.musicapp.main.presentation.PlayerCommunication
 import javax.inject.Inject
 
 
-@UnstableApi /**
+ /**
  * Created by HP on 30.01.2023.
  **/
 
@@ -35,7 +38,7 @@ class PlayerService: MediaSessionService(){
 
     private lateinit var receiver: HeadPhonesReceiver
 
-    private lateinit var audioManager: AudioManager
+    lateinit var audioManager: AudioManager
 
 
 
@@ -48,14 +51,15 @@ class PlayerService: MediaSessionService(){
             .build()
             .inject(this)
 
+
         receiver = HeadPhonesReceiver()
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(receiver, intentFilter)
 
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.requestAudioFocus(audioFocusRequest)
-
     }
+
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession = mediaSession
 
@@ -64,6 +68,7 @@ class PlayerService: MediaSessionService(){
              stopSelf()
         }
     }
+
 
 
     override fun onDestroy() {

@@ -2,6 +2,7 @@ package com.example.musicapp.app.core
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
@@ -13,7 +14,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
 import com.example.musicapp.R
 import javax.inject.Inject
 
@@ -34,11 +37,16 @@ interface ImageLoader {
         imgBg: CardView,
     )
 
+    fun loadImageForPlaylist(
+        url:String,
+        targetView: ImageView,
+    )
 
 
      class Base (
-         private val paintBackgroundShadow: PaintBackgroundShadow
+         private val paintBackgroundShadow: PaintBackgroundShadow,
      ): ImageLoader {
+
 
         override fun loadImage(url: String, targetView: ImageView) {
 
@@ -92,5 +100,13 @@ interface ImageLoader {
                 .into(targetView)
         }
 
-    }
+         override fun loadImageForPlaylist(url: String, targetView: ImageView) {
+             Glide.with(targetView)
+                 .load(url)
+                 .placeholder(R.drawable.tone_yellow)
+                 .override(300,300)
+                 .into(targetView)
+         }
+
+     }
 }

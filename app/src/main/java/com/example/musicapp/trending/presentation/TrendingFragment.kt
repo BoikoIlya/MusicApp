@@ -2,7 +2,6 @@ package com.example.musicapp.trending.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -55,6 +54,11 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.scrollUpButton.setupWithNestedScroll(binding.trendingScrollView)
+        binding.scrollUpButton.setOnClickListener {
+            binding.trendingScrollView.smoothScrollTo(0,0)
+        }
+
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.collectState(this@TrendingFragment){
 
@@ -68,11 +72,11 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
         binding.rcvPlaylists.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false )
 
-        val playlistsAdapter = PlaylistsAdapter(imageLoader,
+        val playlistsAdapter = PlaylistAdapter(imageLoader,
             object : ClickListener<String> {
                 override fun onClick(data: String) {
-                    viewModel.savePlaylistId(data)
-                    findNavController().navigate(R.id.action_trendingFragment_to_playlistFragment)
+                   // viewModel.savePlaylistId(data)
+                    findNavController().navigate(R.id.action_trendingFragment_to_playlistsFragment)
                 }
             }
         )
@@ -109,7 +113,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
         (binding.rcvTrendingTracks.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
         lifecycleScope.launch{
-            viewModel.collectTracks(this@TrendingFragment){
+            viewModel.collectData(this@TrendingFragment){
                 tracksAdapter.map(it)
                 viewModel.saveCurrentPageQueue(it)
             }
@@ -121,11 +125,6 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.collectPlayerControls(this@TrendingFragment){
-                it.apply(binding.rcvTrendingTracks)
-            }
-        }
 
 
     }

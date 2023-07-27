@@ -1,6 +1,7 @@
 package com.example.musicapp.playlist.presentation
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.media3.common.MediaItem
 import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.trending.presentation.TracksUiState
 import kotlinx.coroutines.flow.FlowCollector
@@ -9,7 +10,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 23.05.2023.
  **/
-interface PlaylistCommunication: UiCommunication<TracksUiState>, CollectAdditionalPlaylistInfo {
+interface PlaylistCommunication: UiCommunication<TracksUiState, MediaItem>, CollectAdditionalPlaylistInfo {
 
     fun showAdditionalPlaylistInfo(data: Triple<String,String,String>)
 
@@ -17,7 +18,7 @@ interface PlaylistCommunication: UiCommunication<TracksUiState>, CollectAddition
         playlistTracksCommunication: PlaylistTracksCommunication,
         playlistStateCommunication: PlaylistStateCommunication,
         private val additionalPlaylistInfo: AdditionalPlaylistInfoCommunication
-    ): PlaylistCommunication, UiCommunication.Abstract<TracksUiState>(
+    ): PlaylistCommunication, UiCommunication.Abstract<TracksUiState,MediaItem>(
         playlistStateCommunication,
         playlistTracksCommunication
     ) {

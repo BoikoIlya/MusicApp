@@ -1,7 +1,6 @@
 package com.example.musicapp.search.presentation
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.databinding.TrackItemBinding
-import com.example.musicapp.trending.presentation.TrendingTracksViewHolder
+import com.example.musicapp.trending.presentation.TracksViewHolder
 
 /**
  * Created by HP on 01.05.2023.
@@ -24,7 +23,7 @@ class SearchPagingAdapter(
     private val saveClickListener: ClickListener<MediaItem>,
     private val imageLoader: ImageLoader,
     private val addBtnVisibility: Int = View.VISIBLE
-): PagingDataAdapter<MediaItem, TrendingTracksViewHolder>(
+): PagingDataAdapter<MediaItem, TracksViewHolder>(
     object : DiffUtil.ItemCallback<MediaItem>(){
         override fun areItemsTheSame(oldItem: MediaItem, newItem: MediaItem): Boolean =
             newItem.mediaMetadata.extras?.getInt(track_id) ==oldItem.mediaMetadata.extras?.getInt(track_id)
@@ -52,14 +51,14 @@ class SearchPagingAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: TrendingTracksViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
         getItem(position)?.let{
             holder.bind(it, position, selectedTrackPosition)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrendingTracksViewHolder {
-        return TrendingTracksViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
+        return TracksViewHolder(
             context,
             TrackItemBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -72,7 +71,7 @@ class SearchPagingAdapter(
      fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
-        val position = this.snapshot().items.indexOfFirst{ it.mediaMetadata.extras!!.getInt(track_id) == mediaItem.mediaMetadata.extras!!.getInt(track_id)}
+        val position = this.snapshot().items.indexOfFirst{ it.mediaId == mediaItem.mediaId}
         if (position!=-1 ){
             selectedTrackPosition = position
             notifyItemChanged(position)

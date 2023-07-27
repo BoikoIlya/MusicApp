@@ -14,6 +14,8 @@ interface TemporaryTracksCache {
 
       fun readCurrentPageTracks(): List<MediaItem>
 
+      suspend fun findTrackPosition(id: String):Int
+
     suspend fun saveCurrentPageTracks(list: List<MediaItem>)
     suspend fun map(): List<MediaItem>
 
@@ -48,5 +50,8 @@ interface TemporaryTracksCache {
             currentPageTracks.addAll(list)
         }
 
+        override suspend fun findTrackPosition(id: String): Int   {
+              return   currentPageTracks.indexOfFirst { it.mediaId == id }
+        }
     }
 }

@@ -10,12 +10,12 @@ import com.example.musicapp.favorites.presentation.TracksResult
 interface TracksResultToTracksCommunicationMapper<T>: TracksResult.Mapper<Unit>{
 
     abstract class Abstract<T> (
-        private val communication: UiCommunication<T>
+        private val communication: UiCommunication<T,MediaItem>
     ) : TracksResultToTracksCommunicationMapper<T>{
 
         override suspend fun map(message: String, list: List<MediaItem>, error: Boolean, newId: Int) {
             if(list.isNotEmpty()) {
-                communication.showTracks(list)
+                communication.showData(list)
                 communication.showUiState(showSuccess())
             }else communication.showUiState(showError(message))
         }

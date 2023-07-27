@@ -5,7 +5,7 @@
     >
 
     <item
-        android:id="@+id/delete_option"
+        android:id="@+id/add_to_playlist_option"
         android:title="@string/delete_option"
         android:icon="@drawable/bin"
         android:iconTint="@color/red"
@@ -13,7 +13,7 @@
     <item
         android:id="@+id/add_option"
         android:title="@string/add_option"
-        android:icon="@drawable/baseline_add_24"
+        android:icon="@drawable/plus"
         android:iconTint="@color/green"
         />
 

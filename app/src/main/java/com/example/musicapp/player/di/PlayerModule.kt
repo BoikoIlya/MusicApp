@@ -62,7 +62,7 @@ class PlayerModule {
     @PlayerServiceScope
     fun providePendingIntent(context: Context): PendingIntent {
         return TaskStackBuilder.create(context).run {
-            addNextIntent(Intent(context, MainActivity::class.java).putExtra(PlayerModule.ACTION_SONG_ACT,true)) ////////
+            addNextIntent(Intent(context, MainActivity::class.java))
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
     }

@@ -5,6 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaSession
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.Future
 import javax.inject.Inject
 
 
@@ -21,6 +22,5 @@ class MediaSessionCallBack @Inject constructor() : MediaSession.Callback {
         val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
         return Futures.immediateFuture(updatedMediaItems)
     }
-
 
 }

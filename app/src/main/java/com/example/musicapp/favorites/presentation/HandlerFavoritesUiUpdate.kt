@@ -4,36 +4,35 @@ package com.example.musicapp.favorites.presentation
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.Interactor
 import com.example.musicapp.app.core.SingleUiEventState
-import javax.inject.Inject
+import com.example.musicapp.app.core.UpdateInteractor
 
 /**
  * Created by HP on 09.07.2023.
  **/
-interface HandlerFavoritesUiUpdate<T> {
+interface HandlerFavoritesUiUpdate {
 
     suspend fun handle(
         loading: Boolean,
+        isDbEmpty: suspend ()->Boolean
     )
 
-    abstract class Abstract<T,M,E> (
-        private val uiStateCommunication: UiCommunication<T>,
+    abstract class Abstract<M,E> (
+        private val uiStateCommunication:FavoritesUiCommunication<M>,
         private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-        private val interactor: Interactor<M,E>
-    ): HandlerFavoritesUiUpdate<T>{
+        private val interactor: UpdateInteractor
+    ): HandlerFavoritesUiUpdate{
 
         override suspend fun handle(
             loading: Boolean,
+            isDbEmpty: suspend ()->Boolean
         ) {
-            if(interactor.isDBEmpty() || loading) uiStateCommunication.showUiState(loadingState())
+            if(isDbEmpty.invoke() || loading) uiStateCommunication.showLoading(FavoritesUiState.Loading)
             val errorMessage = interactor.updateData()
-            if (errorMessage.isNotEmpty()) {
+            if (errorMessage.isNotEmpty())
                 globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(errorMessage))
-                uiStateCommunication.showUiState(errorState())
-            }else uiStateCommunication.showUiState(successState())
+
+            uiStateCommunication.showLoading(FavoritesUiState.DisableLoading)
         }
 
-        protected abstract fun successState(): T
-        protected abstract fun errorState(): T
-        protected abstract fun loadingState(): T
     }
 }

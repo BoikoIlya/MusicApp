@@ -114,11 +114,6 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.collectPlayerControls(this@SearchHistoryFragment){
-                it.apply(binding.searchHistoryRcv)
-            }
-        }
 
         binding.clearHistoryBtn.setOnClickListener {
             viewModel.launchClearHistoryDialog()
