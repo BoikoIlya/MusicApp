@@ -12,7 +12,6 @@ import javax.inject.Inject
  **/
 interface SelectedTracksCommunication: Communication.Mutable<List<SelectedTrackUi>> {
 
-    object Base  : SelectedTracksCommunication,Communication.UiUpdate<List<SelectedTrackUi>>(emptyList())
-
+    class Base @Inject constructor() : SelectedTracksCommunication,Communication.UiUpdate<List<SelectedTrackUi>>(emptyList())
 
 }

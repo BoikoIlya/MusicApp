@@ -18,7 +18,7 @@ interface FavoritesUiCommunication<T>: UiCommunication<FavoritesUiState,T>,Colle
     abstract class Abstract<T>(
         uiStateCommunication: Communication.Mutable<FavoritesUiState>,
         favoritesListCommunication: Communication.Mutable<List<T>>,
-        private val favoritesTracksLoadingCommunication: FavoritesTracksLoadingCommunication
+        private val favoritesTracksLoadingCommunication: Communication.Mutable<FavoritesUiState>
     ): FavoritesUiCommunication<T>, UiCommunication.Abstract<FavoritesUiState,T>(
         uiStateCommunication,favoritesListCommunication
     ){

@@ -11,6 +11,8 @@ import com.example.musicapp.app.core.MediaItemToTrackDomainMapper
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.big_img_url
 import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.app.core.UnAuthorizedException
+import com.example.musicapp.captcha.data.CaptchaRepository
+import com.example.musicapp.captcha.data.RepeatActionAfterCaptcha
 import com.example.musicapp.favorites.data.FavoritesTracksRepository
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.presentation.TracksResult
@@ -21,6 +23,7 @@ import com.example.musicapp.trending.data.ObjectCreator
 import com.example.musicapp.trending.domain.TrackDomain
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -38,19 +41,20 @@ class FavoritesTracksInteractorTest: ObjectCreator() {
     private lateinit var authRepository: TestAuthRepository
     private lateinit var managerResource: ManagerResource
     private lateinit var transfer: DataTransfer<TrackDomain>
+    private lateinit var captchaRepository: TestCaptchaRepository
 
     @Before
     fun setup(){
+        captchaRepository = TestCaptchaRepository()
         repository = TestFavoritesTracksRepository()
         authRepository = TestAuthRepository()
         managerResource = TestManagerResource()
         transfer = DataTransfer.MusicDialogTransfer()
         interactor = FavoritesTracksInteractor.Base(
             repository =repository,
-            handleResponse = HandleResponse.Base(authRepository,HandleError.Base(managerResource)),
+            handleResponse = HandleResponse.Base(authRepository,captchaRepository,HandleError.Base(managerResource)),
             managerResource = managerResource,
             uiToDomainMapper = MediaItemToTrackDomainMapper.Base(),
-            uiToItemId = TrackUiToItemId.Base(),
             transfer = transfer
         )
     }
@@ -121,9 +125,6 @@ class FavoritesTracksInteractorTest: ObjectCreator() {
             else if(unAuthorizedException) throw UnAuthorizedException()
         }
 
-        override fun fetchData(state: SortingState): Flow<TracksResult> {
-            return flow { emit(TracksResult.Success()) }
-        }
     }
 
     class ContainsMapper(
@@ -167,5 +168,34 @@ class FavoritesTracksInteractorTest: ObjectCreator() {
     }
 
 
+    class TestCaptchaRepository: CaptchaRepository {
+         var id = ""
+         var url = ""
+         var action: RepeatActionAfterCaptcha?=null
+         var enteredData = ""
+
+        override fun saveNewCaptchaData(
+            id: String,
+            url: String,
+            actionCausedCaptcha: RepeatActionAfterCaptcha,
+        ) {
+            this.id = id
+            this.url = url
+            this.action = actionCausedCaptcha
+        }
+
+        override fun saveEnteredDataFromCaptcha(data: String) {
+            enteredData = data
+        }
+
+        override fun clearCaptcha() {
+            id = ""
+            url = ""
+            action = null
+            enteredData = ""
+        }
+
+        override suspend fun collectCaptchaData(collector: FlowCollector<Pair<String, RepeatActionAfterCaptcha>>) = Unit
+    }
 
 }

@@ -1,9 +1,9 @@
 package com.example.musicapp.favorites.presentation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
@@ -11,23 +11,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.R
 import com.example.musicapp.app.core.BlurEffectAnimator
 import com.example.musicapp.app.core.ClickListener
+import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.FavoritesFragment
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
-import com.example.musicapp.databinding.FavorotesFragmentBinding
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.di.FavoriteComponent
+import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.di.App
-import com.example.musicapp.player.presentation.PlayerService
 import com.example.musicapp.trending.presentation.*
-import com.simform.refresh.SSPullToRefreshLayout
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +34,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 26.01.2023.
  **/
-class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_fragment) {
+class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_fragment) {
 
 
 
@@ -59,6 +58,9 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_f
     private lateinit var layoutManager: LinearLayoutManager
 
 
+    @Inject
+    lateinit var authRepository: AuthorizationRepository ///temp
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -73,6 +75,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_f
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.mainMenuBtn.visibility = View.VISIBLE
 
         layoutManager =  LinearLayoutManager(requireContext())
         binding.favoritesRcv.layoutManager = layoutManager
@@ -91,12 +94,14 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_f
                         viewModel.saveMediaItem(data)
                         findNavController().navigate(R.id.action_favoritesFragment_to_favoritesBottomSheetMenuFragment)
                  }
-             }
+             },
+             cacheStrategy = DiskCacheStrategy.AUTOMATIC,
+             binding.favoritesRcv.layoutManager as LayoutManager
         )
 
         super.adapter = tracksAdapter
 
-        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallBack(tracksAdapter, viewModel, requireContext()))
+        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallBackFavorites(tracksAdapter, viewModel, requireContext()))
         itemTouchHelper.attachToRecyclerView(binding.favoritesRcv)
         binding.favoritesRcv.adapter = tracksAdapter
 
@@ -117,7 +122,11 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_f
             }
         }
 
-
+        lifecycleScope.launch{
+            viewModel.collectHlsCachingCompleteCommunication(this@FavoritesTracksFragment){
+                it.apply(viewModel)
+            }
+        }
 
         binding.shuffleFavorites.setOnClickListener {
             viewModel.shuffle()
@@ -144,6 +153,16 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorotes_f
                 return@setOnMenuItemClickListener true
             }
         }
+
+        binding.mainMenuBtn.setOnClickListener {
+            lifecycleScope.launch(DispatchersList.Base().io()) {
+              //  authRepository.logout()
+                Log.d("tag", "onViewCreated: start clearing")
+                imageLoader.clearData()
+                Log.d("tag", "onViewCreated: end clearing")
+            }
+        }
+
         super.onViewCreated(view, savedInstanceState)
     }
 

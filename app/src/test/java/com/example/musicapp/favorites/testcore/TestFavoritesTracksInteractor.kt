@@ -21,10 +21,7 @@ class TestFavoritesTracksInteractor: FavoritesTracksInteractor {
     var isDBEmpty = true
     var state = TracksResult.Success()
 
-    override fun fetchData(sortingState: SortingState): Flow<TracksResult> {
-        states.add(sortingState)
-        return flow { emit(TracksResult.Success(list = list)) }
-    }
+
 
     override fun saveItemToTransfer(item: MediaItem) {
         savedItem = item
@@ -42,9 +39,6 @@ class TestFavoritesTracksInteractor: FavoritesTracksInteractor {
         return updateDataError
     }
 
-    override suspend fun isDBEmpty(): Boolean {
-        return isDBEmpty
-    }
 
     override suspend fun addToFavoritesIfNotDuplicated(item: MediaItem): TracksResult {
         return state

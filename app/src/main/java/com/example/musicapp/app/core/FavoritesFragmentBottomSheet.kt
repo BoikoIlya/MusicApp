@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.app.core.FavoritesFragment.Companion.loading_animation
-import com.example.musicapp.databinding.FavorotesFragmentBinding
+import com.example.musicapp.databinding.FavoritesFragmentBinding
 import com.example.musicapp.favorites.presentation.FavoritesUiState
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.simform.refresh.SSPullToRefreshLayout
@@ -28,7 +28,7 @@ abstract class FavoritesFragmentBottomSheet<T>(layout: Int): BottomSheetDialogFr
 
     protected lateinit var adapter: Mapper<List<T>,Unit>
 
-    protected val binding by viewBinding(FavorotesFragmentBinding::bind)
+    protected val binding by viewBinding(FavoritesFragmentBinding::bind)
 
     private lateinit var textWatcher: TextWatcher
 
@@ -63,7 +63,7 @@ abstract class FavoritesFragmentBottomSheet<T>(layout: Int): BottomSheetDialogFr
         lifecycleScope.launch{
             favoritesViewModel.collectLoading(this@FavoritesFragmentBottomSheet){
                 it.apply(
-                    binding.noData,
+                    binding.errorMessage,
                     binding.pullToRefresh,
                     binding.favoritesRcv,
                 )
@@ -73,7 +73,7 @@ abstract class FavoritesFragmentBottomSheet<T>(layout: Int): BottomSheetDialogFr
         lifecycleScope.launch {
             favoritesViewModel.collectState(this@FavoritesFragmentBottomSheet) {
                 it.apply(
-                    binding.noData,
+                    binding.errorMessage,
                     binding.pullToRefresh,
                     binding.favoritesRcv,
                 )

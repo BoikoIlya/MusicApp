@@ -13,7 +13,7 @@ interface TracksCacheToSelectedTracksDomainMapper: Mapper<List<TrackCache>,List<
         override fun map(data: List<TrackCache>): List<SelectedTrackDomain> {
             return data.map {
                 SelectedTrackDomain(
-                    id = it.trackId,
+                    id = it.trackId.toInt(),
                     title = it.name,
                     author = it.artistName,
                     durationFormatted = it.durationFormatted,

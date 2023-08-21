@@ -22,9 +22,7 @@ sealed interface PaintBackgroundShadow {
 
     fun paint(view: CardView, resource: Bitmap)
 
-    data class ApiPAndAbove(
-        private val context: Context
-    ) : PaintBackgroundShadow {
+    object ApiPAndAbove : PaintBackgroundShadow {
 
         @RequiresApi(Build.VERSION_CODES.P)
         override fun paint(view: CardView, resource: Bitmap) {
@@ -33,7 +31,6 @@ sealed interface PaintBackgroundShadow {
                 view.outlineSpotShadowColor = palette?.vibrantSwatch?.rgb?: R.color.black
 
                 view.outlineAmbientShadowColor = palette?.vibrantSwatch?.rgb?: R.color.black
-                //context.
             }
         }
     }

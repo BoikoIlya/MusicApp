@@ -1,6 +1,8 @@
 package com.example.musicapp.userplaylists.data
 
 import com.example.musicapp.app.core.DataTransfer
+import com.example.musicapp.app.core.FavoritesCacheDataSource
+import com.example.musicapp.app.core.FavoritesCloudDataSource
 import com.example.musicapp.app.core.FavoritesRepository
 import com.example.musicapp.app.core.HandleDeleteRequestData
 import com.example.musicapp.app.vkdto.PlaylistItem
@@ -16,6 +18,7 @@ import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import com.example.musicapp.userplaylists.domain.PlaylistDomainToCacheMapper
 import com.example.musicapp.userplaylists.domain.PlaylistDomainToContainsMapper
 import com.example.musicapp.userplaylists.domain.PlaylistDomainToIdMapper
+import com.example.musicapp.userplaylists.domain.PlaylistDomainToIdMapperInt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,14 +31,14 @@ interface FavoritesPlaylistsRepository: FavoritesRepository<PlaylistDomain,Playl
 
     class Base @Inject constructor(
         playlistDomainToCacheMapper: PlaylistDomainToCacheMapper,
-        playlistDomainToIdMapper: PlaylistDomainToIdMapper,
+        playlistDomainToIdMapper: PlaylistDomainToIdMapperInt,
         playlistDomainToContainsMapper: PlaylistDomainToContainsMapper,
         playlistCloudToCacheMapper: PlaylistCloudToCacheMapper,
         transfer: DataTransfer<PlaylistDomain>,
         accountDataStore: AccountDataStore,
         handleResponseData: HandleDeleteRequestData<PlaylistCache>,
-        favoritesPlaylistsCloudDataSource: BaseFavoritesPlaylistsCloudDataSource,
-        favoritesPlaylistsCacheDataSource: BaseFavoritesPlaylistsCacheDataSource,
+        favoritesPlaylistsCloudDataSource: FavoritesCloudDataSource<PlaylistItem>,
+        favoritesPlaylistsCacheDataSource: FavoritesCacheDataSource<PlaylistCache>,
     ): FavoritesPlaylistsRepository,
         FavoritesRepository.Abstract<PlaylistDomain,PlaylistCache,PlaylistItem>(
             playlistDomainToCacheMapper,

@@ -32,26 +32,24 @@ abstract class BaseViewModel<T>(
     private val trackChecker: TrackChecker,
 ): ViewModel(), CollectSelectedTrack, FavoritesViewModel<T,MediaItem>{
 
-   open fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
+    fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
 
-   open fun saveCurrentPageQueue(queue: List<MediaItem>) = viewModelScope.launch(dispatchersList.io()){
+    fun saveCurrentPageQueue(queue: List<MediaItem>) = viewModelScope.launch(dispatchersList.io()){
        temporaryTracksCache.saveCurrentPageTracks(queue)
     }
 
-   open fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+    fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
        trackChecker.checkIfPlayable(item, playable = {
 
             val queue = temporaryTracksCache.map()
-           Log.d("tag", "playMusic: ${queue.size}")
+
             if(queue.isNotEmpty()){
-                val newQueue = mutableListOf<MediaItem>()
-                newQueue.addAll(queue)
                 withContext(dispatchersList.ui()) {
-                    playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,dispatchersList))
+                    playerCommunication.map(PlayerCommunicationState.SetQueue(queue))
                 }
             }
             val position = temporaryTracksCache.findTrackPosition(item.mediaId)
-           Log.d("tag", "playMusic: position: $position  ${item.mediaMetadata.title}")
+
             withContext(dispatchersList.ui()) {
                playerCommunication.map(PlayerCommunicationState.Play(item,position))
            }

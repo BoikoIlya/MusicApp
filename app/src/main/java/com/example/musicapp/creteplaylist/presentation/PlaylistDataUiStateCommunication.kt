@@ -9,6 +9,8 @@ import javax.inject.Inject
 
 interface PlaylistDataUiStateCommunication: Communication.Mutable<PlaylistDataUiState> {
 
+
+
     class Base @Inject constructor(): PlaylistDataUiStateCommunication,
         Communication.UiUpdate<PlaylistDataUiState>(PlaylistDataUiState.Success)
 }

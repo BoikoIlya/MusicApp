@@ -70,7 +70,6 @@ class PlayerViewModelTest: ObjectCreator() {
             mapper = TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication,playingTrackIdCommunication),
             bottomSheetCommunication = MainViewModelTest.TestBottomSheetCommunication(),
             slideViewPagerCommunication = SlideViewPagerCommunication.Base(),
-            temporaryTracksCache = TestTemporaryTracksCache(),
             favoritesInteractor = favoritesInteractor,
             singleUiEventCommunication = singleUiStateCommunication,
             managerResource = managerResource,

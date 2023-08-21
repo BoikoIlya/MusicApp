@@ -15,6 +15,8 @@ interface TrendingService{
         @Query("access_token")  accessToken: String,
         @Query("owner_id")  owner_id: String,
         @Query("count") count: Int,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = api_version,
     ): TracksCloud
 

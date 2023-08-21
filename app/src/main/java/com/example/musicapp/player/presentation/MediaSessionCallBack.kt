@@ -14,13 +14,18 @@ import javax.inject.Inject
  **/
 class MediaSessionCallBack @Inject constructor() : MediaSession.Callback {
 
-    override fun onAddMediaItems(
-        mediaSession: MediaSession,
-        controller: MediaSession.ControllerInfo,
-        mediaItems: MutableList<MediaItem>
-    ): ListenableFuture<MutableList<MediaItem>> {
-        val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
-        return Futures.immediateFuture(updatedMediaItems)
-    }
+
+//
+//    override fun onAddMediaItems(
+//        mediaSession: MediaSession,
+//        controller: MediaSession.ControllerInfo,
+//        mediaItems: MutableList<MediaItem>
+//    ): ListenableFuture<MutableList<MediaItem>> {
+//        val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
+//        return Futures.immediateFuture(updatedMediaItems)
+//    }
+
+
+
 
 }

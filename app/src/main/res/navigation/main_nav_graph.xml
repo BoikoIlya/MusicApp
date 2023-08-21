@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/playlistsFragment"
+    app:startDestination="@id/friendsFragment"
     >
 
     <fragment
@@ -12,10 +12,10 @@
         android:label="TrendingFragment"
         >
         <action
-            android:id="@+id/action_trendingFragment_to_playlistFragment"
-            app:destination="@id/playlistFragment"
-            />
-        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             android:id="@+id/action_trendingFragment_to_playlistsFragment"
             app:destination="@id/playlistsFragment" />
     </fragment>
@@ -33,17 +33,8 @@
         android:label="SearchHistoryFragment" >
         <action
             android:id="@+id/action_searchHistoryFragment_to_searchFragment"
-            app:destination="@id/searchFragment"
-            />
+            app:destination="@id/searchFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="com.example.musicapp.search.presentation.SearchFragment"
-        android:label="SearchFragment" />
-    <fragment
-        android:id="@+id/playlistFragment"
-        android:name="com.example.musicapp.playlist.presentation.PlaylistFragment"
-        android:label="PlaylistFragment" />
     <fragment
         android:id="@+id/playlistsFragment"
         android:name="com.example.musicapp.userplaylists.presentation.FavoritesPlaylistsFragment"
@@ -52,22 +43,29 @@
             android:id="@+id/action_playlistsFragment_to_playlistsMenuDialogBottomSheetFragment"
             app:destination="@id/playlistsMenuDialogBottomSheetFragment" />
         <action
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             android:id="@+id/action_playlistsFragment_to_createPlaylistFragment"
             app:destination="@id/createPlaylistFragment" />
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_playlistsFragment_to_favoritesPlaylistDetailsFragment"
+            app:destination="@id/favoritesPlaylistDetailsFragment" />
     </fragment>
     <dialog
         android:id="@+id/playlistsMenuDialogBottomSheetFragment"
         android:name="com.example.musicapp.userplaylists.presentation.PlaylistsMenuDialogBottomSheetFragment"
         android:label="PlaylistsMenuDialogBottomSheetFragment" >
         <action
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             android:id="@+id/action_playlistsMenuDialogBottomSheetFragment_to_editPlaylistFragment"
             app:destination="@id/editPlaylistFragment" />
     </dialog>
@@ -105,11 +103,55 @@
         android:name="com.example.musicapp.selectplaylist.presentation.SelectPlaylistFragment"
         android:label="SelectPlaylistFragment" >
         <action
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             android:id="@+id/action_selectPlaylistFragment_to_createPlaylistFragment"
             app:destination="@id/createPlaylistFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.musicapp.search.presentation.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_searchFragment_to_searchPlaylistDetailsFragment"
+            app:destination="@id/searchPlaylistDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoritesPlaylistDetailsFragment"
+        android:name="com.example.musicapp.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsFragment"
+        android:label="FavoritesPlaylistDetailsFragment" />
+    <fragment
+        android:id="@+id/searchPlaylistDetailsFragment"
+        android:name="com.example.musicapp.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
+        android:label="SearchPlaylistDetailsFragment" />
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.example.musicapp.friends.presentation.FriendsFragment"
+        android:label="FriendsFragment" >
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_friendsFragment_to_friendDetailsFragment"
+            app:destination="@id/friendDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendDetailsFragment"
+        android:name="com.example.musicapp.frienddetails.presentation.FriendDetailsFragment"
+        android:label="FriendDetailsFragment" >
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_friendDetailsFragment_to_searchPlaylistDetailsFragment"
+            app:destination="@id/searchPlaylistDetailsFragment" />
+    </fragment>
 </navigation>

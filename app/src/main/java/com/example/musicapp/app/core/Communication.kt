@@ -24,7 +24,12 @@ interface Communication {
         suspend fun collect(lifecycleOwner: LifecycleOwner, collector: FlowCollector<T>)
     }
 
-    interface Mutable<T>: Collector<T>, Update<T>
+    interface CollectorIgnoreLifecycle<T>{
+
+        suspend fun collectIgnoreLifecycle(collector: FlowCollector<T>)
+    }
+
+    interface Mutable<T>: Collector<T>, Update<T>,CollectorIgnoreLifecycle<T>
     interface MutableSingle<T>: Collector<T>, SuspendUpdate<T>
 
     abstract class UiUpdate<T>(private val defaultValue: T): Mutable<T> {
@@ -41,6 +46,9 @@ interface Communication {
             stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect(collector)
         }
+
+        override suspend fun collectIgnoreLifecycle(collector: FlowCollector<T>) = stateFlow.collect(collector)
+
     }
 
     abstract class SingleUiUpdate<T>: MutableSingle<T> {

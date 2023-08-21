@@ -8,14 +8,14 @@ import javax.inject.Inject
 /**
  * Created by HP on 09.07.2023.
  **/
-interface HandlerFavoritesTracksUiUpdate: HandlerFavoritesUiUpdate {
+interface HandlerFavoritesTracksUiUpdate: HandleUpdate {
 
 
     class Base @Inject constructor(
         globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
         favoritesTracksCommunication: FavoritesTracksCommunication,
         interactor: FavoritesTracksInteractor
-    ): HandlerFavoritesTracksUiUpdate,HandlerFavoritesUiUpdate.Abstract<MediaItem,TracksResult>(
+    ): HandlerFavoritesTracksUiUpdate,HandleUpdate.Abstract<MediaItem>(
         favoritesTracksCommunication,
         globalSingleUiEventCommunication,
         interactor

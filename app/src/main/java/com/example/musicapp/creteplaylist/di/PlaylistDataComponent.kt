@@ -3,6 +3,7 @@ package com.example.musicapp.creteplaylist.di
 import com.example.musicapp.addtoplaylist.di.AddToPlaylistComponent
 import com.example.musicapp.creteplaylist.presentation.CreatePlaylistFragment
 import com.example.musicapp.editplaylist.presentation.EditPlaylistFragment
+import com.example.musicapp.searchplaylistdetails.di.SearchPlaylistDetailsComponent
 import dagger.Subcomponent
 
 /**
@@ -22,4 +23,6 @@ interface PlaylistDataComponent {
     fun inject(editPlaylistFragment: EditPlaylistFragment)
 
     fun addToPlaylistComponent(): AddToPlaylistComponent.Builder
+
+    fun searchPlaylistDetailsComponent(): SearchPlaylistDetailsComponent.Builder
 }

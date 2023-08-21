@@ -5,11 +5,13 @@ import androidx.paging.PagingSource
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.HandleResponse
 import com.example.musicapp.app.vkdto.TrackItem
+import com.example.musicapp.captcha.data.cache.CaptchaDataStore
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractorTest
 import com.example.musicapp.favorites.testcore.TestAuthRepository
 import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.main.data.AuthorizationRepositoryTest
-import com.example.musicapp.search.data.cloud.SearchTrackService
+import com.example.musicapp.search.data.cloud.SearchTracksService
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
 import com.example.musicapp.trending.data.ObjectCreator
 import com.nhaarman.mockitokotlin2.any
@@ -31,40 +33,47 @@ import java.lang.RuntimeException
 
 class SearchRepositoryTest: ObjectCreator() {
 
-    lateinit var repository: SearchRepository
+    private lateinit var repository: SearchRepository
     @Mock
-    lateinit var service: SearchTrackService
-    lateinit var tokenStore: AuthorizationRepositoryTest.TestTokenStore
-    lateinit var cache: TestTemporaryTracksCache
-    lateinit var authorizationRepositoryTest: TestAuthRepository
-    lateinit var managerResource: TestManagerResource
-    lateinit var paggingSource: SearchPagingSource
+    private lateinit var service: SearchTracksService
+    private lateinit var tokenStore: AuthorizationRepositoryTest.TestTokenStore
+    private lateinit var cache: TestTemporaryTracksCache
+    private lateinit var authorizationRepositoryTest: TestAuthRepository
+    private lateinit var managerResource: TestManagerResource
+    private lateinit var paggingSource: SearchPagingSource
+    private lateinit var captchaDataStore: CaptchaDataStore
+    private lateinit var captchaRepository: FavoritesTracksInteractorTest.TestCaptchaRepository
 
     @Before
     fun setup() = runBlocking{
+        captchaRepository = FavoritesTracksInteractorTest.TestCaptchaRepository()
         MockitoAnnotations.openMocks(this)
-
+        captchaDataStore = CaptchaDataStore.Base()
         managerResource = TestManagerResource()
         authorizationRepositoryTest = TestAuthRepository()
         cache = TestTemporaryTracksCache()
         tokenStore = AuthorizationRepositoryTest.TestTokenStore()
 
-        service = mock(SearchTrackService::class.java)
+        service = mock(SearchTracksService::class.java)
         repository = SearchRepository.Base(
             service =service,
             mapper = TrackItem.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = tokenStore,
             cachedTracks = cache,
-            handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
-            transfer = SearchQueryTransfer.Base()
+            handleResponse = HandleResponse.Base(authorizationRepositoryTest,captchaRepository,HandleError.Base(managerResource)),
+            transfer = SearchQueryTransfer.Base(),
+            captchaDataStore =captchaDataStore,
+
         )
         paggingSource = SearchPagingSource(
             service = service,
             query = "",
             mapper = TrackItem.Mapper.CloudTrackToMediaItemMapper(),
             tokenStore = AuthorizationRepositoryTest.TestTokenStore(),
-            handleResponse = HandleResponse.Base(authorizationRepositoryTest,HandleError.Base(managerResource)),
-            cachedTracks = cache
+            handleResponse = HandleResponse.Base(authorizationRepositoryTest,captchaRepository,HandleError.Base(managerResource)),
+            cachedTracks = cache,
+            captchaDataStore =captchaDataStore,
+
         )
     }
 
@@ -74,9 +83,9 @@ class SearchRepositoryTest: ObjectCreator() {
 
         val message = "message"
         val error = RuntimeException(message, Throwable())
-        given(service.searchTrack(any(),any(),any(),any(),any())).willThrow(error)
+        given(service.search(any(),any(),any(),any(),any(),any(),any())).willThrow(error)
         managerResource.valueString = message
-        repository.searchTracksByName("")
+        repository.search("")
 
         val expectedResult = PagingSource.LoadResult.Error<Int, MediaItem>(Exception(message))
         assertEquals(
@@ -92,9 +101,9 @@ class SearchRepositoryTest: ObjectCreator() {
 
     @Test
     fun `test refresh`() = runTest {
-        given(service.searchTrack(any(),any(),any(),any(),any())).willReturn(getTracksCloud())
+        given(service.search(any(),any(),any(),any(),any(),any(), any())).willReturn(getTracksCloud())
         val expectedResult = PagingSource.LoadResult.Page(
-            data = getTracksCloud().handle().map{ it.map(TrackItem.Mapper.CloudTrackToMediaItemMapper())},
+            data = getTracksCloud().response.items.map{ it.map(TrackItem.Mapper.CloudTrackToMediaItemMapper())},
             prevKey = null,
             nextKey = 1
         )

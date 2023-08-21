@@ -7,15 +7,10 @@ import com.example.musicapp.R
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
-import com.example.musicapp.app.core.PlayerControlsCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.main.presentation.CollectPlayerControls
-import com.example.musicapp.main.presentation.PlayerControlsState
-import com.example.musicapp.searchhistory.data.HistoryDeleteResult
 import com.example.musicapp.searchhistory.data.SearchHistoryRepository
-import kotlinx.coroutines.Job
+import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,41 +20,39 @@ import javax.inject.Inject
  **/
 class SearchHistoryViewModel @Inject constructor(
     private val historyRepository: SearchHistoryRepository,
-    private val communication: SearchHistoryCommunication,
     private val dispatchersList: DispatchersList,
-    private val mapper: HistoryDeleteResult.Mapper<Unit>,
-    private val searchQueryCommunication: SearchQueryCommunication,
     private val searchHistoryInputStateCommunication: SearchHistoryInputStateCommunication,
     private val searchHistorySingleStateCommunication:SearchHistorySingleStateCommunication,
     private val managerResource: ManagerResource,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
+    private val searchQueryCommunication: SearchQueryCommunication,
 ): ViewModel() {
 
-    init {
-        fetchHistory()
+
+    private var currentHistoryType = HistoryItemCache.TYPE_TRACK
+    private var currentQuery: String? =null
+
+    companion object{
+        private const val emptyPageIndex = -1
     }
 
-    private var historyListJob: Job? = null
-
-    fun fetchHistory(query: String ="") {
+    fun findInHistory(query: String) {
         if (query.isNotEmpty()) searchHistoryInputStateCommunication.map(SearchHistoryTextInputState.ResetError)
+        if(currentQuery==query && currentQuery!=null) return
+        currentQuery = query
+        searchQueryCommunication.map(query)
+    }
 
-         historyListJob?.cancel()
-
-        historyListJob = viewModelScope.launch(dispatchersList.io()) {
-            historyRepository.getHistoryItems(query).collectLatest {
-                communication.map(it)
-            }
-        }
+    fun changeHistoryType(type: Int) {
+        currentHistoryType = type
     }
 
     fun checkQueryBeforeNavigation(query: String) =viewModelScope.launch(dispatchersList.io()) {
         val trimmedQuery = query.trim()
         if(trimmedQuery.isNotEmpty()){
             searchHistoryInputStateCommunication.map(SearchHistoryTextInputState.ResetError)
-            historyRepository.saveQueryInDB(trimmedQuery)
-            searchQueryCommunication.map(trimmedQuery)
-            searchHistorySingleStateCommunication.map(SearchHistorySingleState.NavigateToSearchFragment)
+            historyRepository.saveQueryInDB(trimmedQuery,currentHistoryType)
+            searchHistorySingleStateCommunication.map(SearchHistorySingleState.NavigateToSearch)
         }else {
             searchHistoryInputStateCommunication.map(SearchHistoryTextInputState.ShowError(
                 managerResource.getString(R.string.empty_input)
@@ -68,35 +61,26 @@ class SearchHistoryViewModel @Inject constructor(
     }
 
     fun launchClearHistoryDialog() = viewModelScope.launch(dispatchersList.io()) {
-        if(historyRepository.getHistoryItems("").first().isEmpty()) {
+        if(historyRepository.getHistoryItems("",currentHistoryType).first().isEmpty()) {
             globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(
                 managerResource.getString(R.string.the_history_is_empty)
             ))
-        }else globalSingleUiEventCommunication.map(SingleUiEventState.ShowDialog(ClearSearchHistoryDialogFragment()))
+        }else {
+            historyRepository.saveQueryInDB("",currentHistoryType)
+            globalSingleUiEventCommunication.map(SingleUiEventState.ShowDialog(ClearSearchHistoryDialogFragment()))
+        }
     }
 
-    fun saveQueryToCommuniction(query: String) = searchQueryCommunication.map(query)
-
-    fun removeHistoryItem(item: String) = viewModelScope.launch(dispatchersList.io()) {
-        val result = historyRepository.removeHistoryItem(item)
-        result.map(mapper)
+    fun readPageIndexState(): PageIndexState {
+        val index = historyRepository.readQueryAndHistoryType().second
+        val state = if(index== emptyPageIndex) PageIndexState.Empty
+        else PageIndexState.SetIndex(index)
+        return state.apply {
+           viewModelScope.launch(dispatchersList.io()) {
+               historyRepository.saveQueryInDB("",emptyPageIndex)
+           }
+       }
     }
-
-    fun clearHistory() = viewModelScope.launch(dispatchersList.io()) {
-        val result  = historyRepository.clearHistory()
-        result.map(mapper)
-    }
-
-
-    suspend fun collectSearchHistory(
-        owner: LifecycleOwner,
-        collector: FlowCollector<List<String>>
-    ) = communication.collect(owner, collector)
-
-    suspend fun collectSearchQuery(
-        owner: LifecycleOwner,
-        collector: FlowCollector<String>
-    ) = searchQueryCommunication.collect(owner, collector)
 
     suspend fun collectSearchHistoryInputStateCommunication(
         owner: LifecycleOwner,
@@ -107,7 +91,6 @@ class SearchHistoryViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<SearchHistorySingleState>
     ) = searchHistorySingleStateCommunication.collect(owner, collector)
-
 
 
 }

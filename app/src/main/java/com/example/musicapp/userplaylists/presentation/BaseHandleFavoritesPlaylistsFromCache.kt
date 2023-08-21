@@ -1,6 +1,6 @@
 package com.example.musicapp.userplaylists.presentation
 
-import com.example.musicapp.favorites.presentation.HandleFavoritesListFromCache
+import com.example.musicapp.favorites.presentation.HandleListFromCache
 import javax.inject.Inject
 
 /**
@@ -8,6 +8,6 @@ import javax.inject.Inject
  **/
 class BaseHandleFavoritesPlaylistsFromCache @Inject constructor(
     playlistsUiCommunication: FavoritesPlaylistsUiCommunication
-): HandleFavoritesListFromCache.Abstract<PlaylistUi>(playlistsUiCommunication),
-HandleFavoritesListFromCache<PlaylistUi>  {
+): HandleListFromCache.Abstract<PlaylistUi>(playlistsUiCommunication),
+HandleListFromCache<PlaylistUi>  {
 }

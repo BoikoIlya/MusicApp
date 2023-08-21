@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <androidx.cardview.widget.CardView
+        android:visibility="visible"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:id="@+id/playlist_img_card"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="20dp"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        <ImageView
+            android:id="@+id/left_img_upper"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/left_img_lower"
+            app:layout_constraintEnd_toStartOf="@id/right_img_upper"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/tone_yellow"
+            />
+
+        <ImageView
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/right_img_lower"
+            android:id="@+id/right_img_upper"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/left_img_upper"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/login_pic"
+            android:scaleType="centerCrop"
+            />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/right_img_lower"
+            app:layout_constraintTop_toBottomOf="@id/right_img_upper"
+            app:layout_constraintStart_toEndOf="@id/left_img_upper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/im"
+            android:scaleType="centerCrop"
+            />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/left_img_lower"
+            app:layout_constraintTop_toBottomOf="@id/left_img_upper"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/right_img_lower"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/albums"
+            android:scaleType="centerCrop"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:text="59 tracks"
+        android:textAlignment="textEnd"
+        android:scrollbars="vertical"
+        android:id="@+id/track_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/playlist_img_card"
+        app:layout_constraintTop_toTopOf="@+id/playlist_img_card" />
+
+    <TextView
+        android:id="@+id/description_tv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:maxLines="5"
+        android:text="Våra bästa lokala stjärnor hela vägen från Kalix till Höör. Cover: Lisa Ekdahl"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/body1"
+        app:layout_constraintBottom_toBottomOf="@+id/playlist_img_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toEndOf="@+id/playlist_img_card"
+        app:layout_constraintTop_toBottomOf="@+id/track_amount"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="Hello world! dsl;kfs"
+        android:textColor="@color/black"
+        android:textSize="@dimen/h3"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlist_img_card" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,8 +2,6 @@ package com.example.musicapp.favorites.data.cloud
 
 import com.example.musicapp.app.vkdto.TracksCloud
 import com.example.musicapp.main.di.AppModule
-import org.json.JSONObject
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,18 +11,22 @@ import retrofit2.http.Query
 interface FavoritesService {
 
     @GET("/method/audio.get")
-    suspend fun getFavoritesTracks(
+    suspend fun getTracks(
         @Query("access_token")  accessToken: String,
+        @Query("owner_id") owner_id: String,
         @Query("count") count: Int,
+        @Query("offset") offset: Int =0,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version,
-//        @Query("captcha_sid") captcha_sid:String="1",
-//        @Query("captcha_key") captcha_key:String="1"
     ): TracksCloud
 
     @GET("/method/audio.getCount")
     suspend fun getTracksCount(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): CountResponse
 
@@ -33,6 +35,8 @@ interface FavoritesService {
         @Query("access_token")  accessToken: String,
         @Query("owner_id") track_owner_id: Int,
         @Query("audio_id") audio_id: Int,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): TrackIdResponse
 
@@ -41,6 +45,8 @@ interface FavoritesService {
         @Query("access_token")  accessToken: String,
         @Query("owner_id") account_owner_id: String,
         @Query("audio_id") audio_id: Int,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): TrackIdResponse
 

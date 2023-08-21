@@ -121,7 +121,7 @@
             android:layout_gravity="center_horizontal"
             android:visibility="visible"
             android:layout_marginTop="35dp"
-            android:id="@+id/noData"
+            android:id="@+id/errorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/no_favorite_playlists"

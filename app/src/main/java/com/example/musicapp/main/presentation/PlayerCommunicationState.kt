@@ -30,7 +30,6 @@ sealed interface PlayerCommunicationState{
 
     data class SetQueue(
         private val tracks: List<MediaItem>,
-        private val dispatchersList: DispatchersList
     ): PlayerCommunicationState{
 
 
@@ -47,6 +46,8 @@ sealed interface PlayerCommunicationState{
         }
 
     }
+
+
 
     data class Play(
         private val track: MediaItem,
@@ -100,9 +101,7 @@ sealed interface PlayerCommunicationState{
     }
 
 
-    data class Disabled(
-        private val listener: ControllerListener
-    ): PlayerCommunicationState{
+    object Disabled: PlayerCommunicationState{
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
@@ -112,13 +111,14 @@ sealed interface PlayerCommunicationState{
             trackDurationCommunication: TrackDurationCommunication
         ) {
             controller.stop()
-            controller.release()
-            controller.removeListener(listener)
+            controller.clearMediaItems()
+            currentQueueCommunication.map(emptyList())
             playerControls.map(PlayerControlsState.Disabled)
-            selectedTrackCommunication.map(MediaItem.Builder().build())
         }
 
     }
+
+
 
     object Next: PlayerCommunicationState{
         override fun apply(

@@ -61,7 +61,13 @@ class EditPlaylistFragment: PlaylistDataFragment(R.layout.playlist_data_fragment
         binding.title.setText(R.string.edit_playlist)
 
        val mapper = PlaylistUi.ToEditPlaylistData(binding)
-        viewModel.fetchPlaylistData().map(mapper)
+
+        lifecycleScope.launch{
+            viewModel.collectPlaylistDataCommunication(this@EditPlaylistFragment){
+                viewModel.setupInitialData(it)
+                it.map(mapper)
+            }
+        }
 
         lifecycleScope.launch{
             viewModel.collectTitleStateCommunication(this@EditPlaylistFragment){

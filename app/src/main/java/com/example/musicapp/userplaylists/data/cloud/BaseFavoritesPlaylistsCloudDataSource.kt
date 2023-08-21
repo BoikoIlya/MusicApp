@@ -13,9 +13,7 @@ class BaseFavoritesPlaylistsCloudDataSource @Inject constructor(
     private val accountDataStore: AccountDataStore
 ) : FavoritesCloudDataSource<PlaylistItem> {
 
-    override suspend fun addToFavorites(data: Pair<Int, Int>): Int {
-       return service.followPlaylist(accountDataStore.token(),data.first,data.second).response.playlist_id
-    }
+    override suspend fun addToFavorites(data: Pair<Int, Int>): Int = 0
 
     override suspend fun removeFromFavorites(id: Int) {
         service.deletePlaylist(accountDataStore.token(),accountDataStore.ownerId(),id)

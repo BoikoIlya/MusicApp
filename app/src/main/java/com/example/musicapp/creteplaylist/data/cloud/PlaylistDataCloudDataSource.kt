@@ -1,12 +1,12 @@
 package com.example.musicapp.creteplaylist.data.cloud
 
+import com.example.musicapp.app.vkdto.FollowPlaylistResponse
 import com.example.musicapp.app.vkdto.PlaylistItem
-import com.example.musicapp.favorites.data.cloud.TrackIdResponse
+import com.example.musicapp.app.vkdto.Response
+import com.example.musicapp.captcha.data.cache.CaptchaDataStore
 import com.example.musicapp.main.data.cache.AccountDataStore
-import com.example.musicapp.main.di.AppModule
-import com.example.musicapp.userplaylists.data.cloud.PlaylistDataResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.example.musicapp.userplaylists.data.cache.PlaylistCache
+import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import javax.inject.Inject
 
 /**
@@ -16,18 +16,20 @@ interface PlaylistDataCloudDataSource {
 
     suspend fun createPlaylist(title: String, description: String): PlaylistItem
 
-    suspend fun followPlaylist(playlist_id: Int, ownerId: Int): PlaylistItem
+    suspend fun followPlaylist(playlistId: String, ownerId: Int ): Response
 
-    suspend fun editPlaylist(playlist_id: Int,title: String, description: String)
+    suspend fun editPlaylist(playlistId: String, title: String, description: String)
 
-    suspend fun addToPlaylist(playlist_id: Int, audioIds: List<Int> )
+    suspend fun addToPlaylist(playlistId: String, audioIds: List<Int> )
 
-    suspend fun removeFromPlaylist(playlist_id: Int, audioIds: List<Int>)
+    suspend fun removeFromPlaylist(playlistId: String, audioIds: List<Int>)
 
     class Base @Inject constructor(
         private val service: PlaylistDataService,
         private val accountDataStore: AccountDataStore,
-        private val mapper: AudioIdsToContentIdsMapper
+        private val mapper: AudioIdsToContentIdsMapper,
+        private val captchaDataStore: CaptchaDataStore,
+
     ): PlaylistDataCloudDataSource {
 
         override suspend fun createPlaylist(title: String, description: String): PlaylistItem =
@@ -35,46 +37,56 @@ interface PlaylistDataCloudDataSource {
                 accountDataStore.token(),
                 accountDataStore.ownerId(),
                 title,
-                description
+                description,
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
             ).response
 
 
-        override suspend fun followPlaylist(playlist_id: Int, ownerId: Int): PlaylistItem =
+        override suspend fun followPlaylist(playlistId: String, ownerId: Int): Response =
             service.followPlaylist(
                 accountDataStore.token(),
                 ownerId,
-                playlist_id
+                playlistId,
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
             ).response
 
-        override suspend fun editPlaylist(playlist_id: Int, title: String, description: String) {
+        override suspend fun editPlaylist(playlistId: String, title: String, description: String) {
             service.editPlaylist(
                 accountDataStore.token(),
                 accountDataStore.ownerId(),
-                playlist_id,
+                playlistId,
                 title,
-                description
+                description,
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
             )
         }
 
 
 
-        override suspend fun addToPlaylist(playlist_id: Int, audioIds: List<Int>) {
+        override suspend fun addToPlaylist(playlistId: String, audioIds: List<Int>) {
             if(audioIds.isEmpty()) return
             service.addToPlaylist(
                 accountDataStore.token(),
                 accountDataStore.ownerId(),
-                playlist_id,
-                mapper.map(audioIds)
+                playlistId,
+                mapper.map(audioIds),
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
             )
         }
 
-        override suspend fun removeFromPlaylist(playlist_id: Int, audioIds: List<Int>) {
+        override suspend fun removeFromPlaylist(playlistId: String, audioIds: List<Int>) {
             if(audioIds.isEmpty()) return
             service.removeFromPlaylist(
                 accountDataStore.token(),
                 accountDataStore.ownerId(),
-                playlist_id,
-                mapper.map(audioIds)
+                playlistId,
+                mapper.map(audioIds),
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
             )
         }
     }

@@ -2,6 +2,7 @@ package com.example.musicapp.addtoplaylist.presentation
 
 import android.content.Context
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.R
 import com.example.musicapp.addtoplaylist.domain.SelectedTrackDomain
 import com.example.musicapp.app.core.ImageLoader
@@ -58,7 +59,7 @@ data class SelectedTrackUi(
             backgroundColor: Int,
         ) {
             with(binding) {
-                imageLoader.loadImage(smallImageUrl, trackImg)
+                imageLoader.loadImage(smallImageUrl, trackImg,cacheStrategy = DiskCacheStrategy.AUTOMATIC)
                 songNameTv.text = title
                 authorTv.text = context.getString(R.string.divider_dot) + author
                 trackDurationTv.text = durationFormatted

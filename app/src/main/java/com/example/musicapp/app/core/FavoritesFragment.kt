@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
-import com.example.musicapp.databinding.FavorotesFragmentBinding
+import com.example.musicapp.databinding.FavoritesFragmentBinding
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.presentation.FavoritesUiState
 import com.simform.refresh.SSPullToRefreshLayout
@@ -30,7 +30,7 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
 
     protected lateinit var adapter: Mapper<List<T>,Unit>
 
-    protected val binding by viewBinding(FavorotesFragmentBinding::bind)
+    protected val binding by viewBinding(FavoritesFragmentBinding::bind)
 
     private lateinit var textWatcher: TextWatcher
 
@@ -68,7 +68,7 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
         lifecycleScope.launch{
             favoritesViewModel.collectLoading(this@FavoritesFragment){
                 it.apply(
-                    binding.noData,
+                    binding.errorMessage,
                     binding.pullToRefresh,
                     binding.favoritesRcv,
                 )
@@ -78,7 +78,7 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
         lifecycleScope.launch {
             favoritesViewModel.collectState(this@FavoritesFragment) {
                 it.apply(
-                    binding.noData,
+                    binding.errorMessage,
                     binding.pullToRefresh,
                     binding.favoritesRcv,
                 )
@@ -87,9 +87,9 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
 
         lifecycleScope.launch {
             favoritesViewModel.collectData(this@FavoritesFragment) {
-                val recyclerViewState = binding.favoritesRcv.layoutManager?.onSaveInstanceState()
+                val state = binding.favoritesRcv.layoutManager?.onSaveInstanceState()
                 adapter.map(it)
-                binding.favoritesRcv.layoutManager?.onRestoreInstanceState(recyclerViewState)
+                binding.favoritesRcv.layoutManager?.onRestoreInstanceState(state)
                 additionalActionsOnRecyclerUpdate(it)
             }
         }

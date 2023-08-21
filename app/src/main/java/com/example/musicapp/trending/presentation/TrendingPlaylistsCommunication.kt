@@ -6,8 +6,8 @@ import javax.inject.Inject
 /**
  * Created by HP on 23.05.2023.
  **/
-interface TrendingPlaylistsCommunication: Communication.Mutable<List<PlaylistUi>>{
+interface TrendingPlaylistsCommunication: Communication.Mutable<List<TrendingTopBarItemUi>>{
     class Base @Inject constructor():
-        Communication.UiUpdate<List<PlaylistUi>>(emptyList()),
+        Communication.UiUpdate<List<TrendingTopBarItemUi>>(emptyList()),
         TrendingPlaylistsCommunication
 }

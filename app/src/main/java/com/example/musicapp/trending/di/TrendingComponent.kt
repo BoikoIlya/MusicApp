@@ -7,7 +7,7 @@ import dagger.Subcomponent
  * Created by HP on 28.01.2023.
  **/
 @TrendingScope
-@Subcomponent(modules = [TrendingModule::class])
+@Subcomponent(modules = [TrendingModule::class,TrendingModuleProvides::class])
 interface TrendingComponent {
 
     @Subcomponent.Builder

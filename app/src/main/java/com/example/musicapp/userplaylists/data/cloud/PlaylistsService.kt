@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface PlaylistsService {
 
     companion object {
-        private const val playlists_count = 200
+         const val playlists_count = 200
     }
 
     @GET("/method/audio.getPlaylists")

@@ -4,6 +4,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.musicapp.app.core.SDKChecker
 import com.example.musicapp.app.core.SDKCheckerState
 import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.captcha.data.CaptchaRepository
+import com.example.musicapp.favorites.domain.FavoritesTracksInteractorTest
 import com.example.musicapp.favorites.testcore.TestAuthRepository
 import com.example.musicapp.favorites.testcore.TestTemporaryTracksCache
 import com.example.musicapp.favorites.testcore.TestDispatcherList
@@ -42,9 +44,11 @@ class MainViewModelTest: ObjectCreator() {
     private lateinit var favoritesInteractor: TestFavoritesTracksInteractor
     private lateinit var actyvityNavigationCommuniacation: TestActyvityNavigationCommuniacation
     private lateinit var permissionCheckCommunication: TestPermissionCheckCommunication
+    private lateinit var captchaRepository: FavoritesTracksInteractorTest.TestCaptchaRepository
 
     @Before
     fun setup(){
+        captchaRepository = FavoritesTracksInteractorTest.TestCaptchaRepository()
         permissionCheckCommunication = TestPermissionCheckCommunication()
         favoritesInteractor = TestFavoritesTracksInteractor()
         actyvityNavigationCommuniacation = TestActyvityNavigationCommuniacation()
@@ -68,7 +72,6 @@ class MainViewModelTest: ObjectCreator() {
         )
         viewModel = MainViewModel(
             playerCommunication = playerCommunication,
-            temporaryTracksCache = temporaryTracksCache,
             dispatchersList = TestDispatcherList(),
             singleUiEventCommunication = singleUiStateCommunication,
             bottomSheetCommunication = bottomSheetCommunication,
@@ -78,7 +81,9 @@ class MainViewModelTest: ObjectCreator() {
             authorizationRepository =authRepository,
             activityNavigationCommunication = actyvityNavigationCommuniacation,
             permissionCheckCommunication = permissionCheckCommunication,
-            sdkChecker = TestSDKChecker()
+            sdkChecker = TestSDKChecker(),
+            controllerListener = TestControllerListener(),
+            captchaRepository =captchaRepository,
         )
     }
 
@@ -113,12 +118,6 @@ class MainViewModelTest: ObjectCreator() {
         assertEquals(true, mediaController.isPlayingg)
     }
 
-    @Test
-    fun `test save current page queue`()= runBlocking{
-        viewModel.saveCurrentPageQueue(listOf(getMediaItem(),getMediaItem()))
-
-        assertEquals(2, temporaryTracksCache.readCurrentPageTracks().size)
-    }
 
 
     @Test
@@ -139,6 +138,8 @@ class MainViewModelTest: ObjectCreator() {
         override fun map(newValue: Int) {
            list.add(newValue)
         }
+
+        override suspend fun collectIgnoreLifecycle(collector: FlowCollector<Int>) = Unit
 
     }
 
@@ -166,6 +167,8 @@ class MainViewModelTest: ObjectCreator() {
             states.add(newValue)
         }
 
+        override suspend fun collectIgnoreLifecycle(collector: FlowCollector<ActivityNavigationState>) = Unit
+
         override suspend fun collect(
             lifecycleOwner: LifecycleOwner,
             collector: FlowCollector<ActivityNavigationState>
@@ -184,6 +187,8 @@ class MainViewModelTest: ObjectCreator() {
             stateList.add(newValue)
         }
 
+        override suspend fun collectIgnoreLifecycle(collector: FlowCollector<PermissionCheckState>) = Unit
+
     }
 
     class TestSDKChecker: SDKChecker{
@@ -192,4 +197,6 @@ class MainViewModelTest: ObjectCreator() {
         }
 
     }
+
+    class TestControllerListener: ControllerListener
 }

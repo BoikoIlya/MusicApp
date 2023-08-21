@@ -58,5 +58,6 @@ class PlaylistDataSelectedTracksViewHolder(
                 deleteClickListener.onClick(item)
             }
         }
+        binding.root.setOnClickListener(null)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.musicapp.editplaylist.presentation
 
+import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.R
@@ -16,13 +17,15 @@ import com.example.musicapp.creteplaylist.presentation.PlaylistDataUiState
 import com.example.musicapp.creteplaylist.presentation.PlaylistDataUiStateCommunication
 import com.example.musicapp.creteplaylist.presentation.PlaylistSaveBtnUiStateCommunication
 import com.example.musicapp.creteplaylist.presentation.SelectedTracksCommunication
-import com.example.musicapp.creteplaylist.presentation.SelectedTracksStore
-import com.example.musicapp.editplaylist.domain.PlaylistTracksInteractor
+import com.example.musicapp.editplaylist.domain.PlaylistDetailsInteractor
 import com.example.musicapp.favorites.data.SortingState
+import com.example.musicapp.favoritesplaylistdetails.presentation.HandlePlaylistDataCache
+import com.example.musicapp.favoritesplaylistdetails.presentation.PlaylistDataCommunication
 import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import com.example.musicapp.userplaylists.presentation.PlaylistUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,20 +34,21 @@ import javax.inject.Inject
  **/
 class EditPlaylistViewModel @Inject constructor(
     private val selectedTracksCommunication: SelectedTracksCommunication,
-    private val selectedTracksStore: SelectedTracksStore,
     private val dispatchersList: DispatchersList,
     private val playlistSaveBtnUiStateCommunication: PlaylistSaveBtnUiStateCommunication,
     private val playlistUiStateCommunication: PlaylistDataUiStateCommunication,
     transfer: DataTransfer<PlaylistDomain>,
     toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val titleStateCommunication: TitleStateCommunication,
-    private val mapper: PlaylistUi.Mapper<Int>,
-    private val playlistTracksInteractor: PlaylistTracksInteractor,
+    private val toIdMapper: PlaylistUi.Mapper<String>,
+    private val playlistTracksInteractor: PlaylistDetailsInteractor,
     private val interactor: EditPlaylistInteractor,
-    private val playlistResultEditPlaylistUpdateMapper: PlaylistResultEditPlaylistUpdateMapper,
+    private val editPlaylistUpdateMapper: EditPlaylistUpdateMapper,
     private val selectedTracksInteractor: SelectedTracksInteractor,
     private val playlistDataResultMapper: PlaylistDataResultMapper,
-    private val managerResource: ManagerResource
+    private val managerResource: ManagerResource,
+    private val handlePlaylistDataCache: HandlePlaylistDataCache,
+    private val playlistDataCommunication: PlaylistDataCommunication,
 ): BasePlaylistDataViewModel(
     selectedTracksCommunication,
     playlistSaveBtnUiStateCommunication,
@@ -56,44 +60,49 @@ class EditPlaylistViewModel @Inject constructor(
     private val initialTrackList = emptyList<SelectedTrackUi>().toMutableList()
 
     init {
+        handlePlaylistDataCache.init(currentPlaylist)
         playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Hide)
         updateData()
+        fetchPlaylistData()
+        fetchTracks()
     }
 
     fun updateData() = viewModelScope.launch(dispatchersList.io()) {
         playlistUiStateCommunication.map(PlaylistDataUiState.Loading)
-        playlistTracksInteractor.fetch(currentPlaylist.map(mapper))
-            .map(playlistResultEditPlaylistUpdateMapper)
+        editPlaylistUpdateMapper.map(playlistTracksInteractor.updateData())
         fetchTracks()
     }
 
-    fun fetchPlaylistData() = currentPlaylist
-
     fun fetchTracks() = viewModelScope.launch(dispatchersList.io()) {
-       val tracks = selectedTracksInteractor.map(
+         selectedTracksInteractor.map(
            SortingState.ByTime(""),
-           currentPlaylist.map(mapper)
-       )
-        initialTrackList.apply {
-            clear()
-            addAll(tracks)
-        }
+           currentPlaylist.map(toIdMapper)
+       ).collect {
+        val tracks =  it.map {track->
+            track.copy(selectedIconVisibility = View.GONE, backgroundColor = managerResource.getColor(R.color.white))
+           }
+            initialTrackList.apply {
+                clear()
+                addAll(tracks)
+            }
         selectedTracksCommunication.map(tracks)
         selectedTracksInteractor.saveList(tracks)
+       }
+
     }
 
     fun verify(title: String,description: String) = viewModelScope.launch(dispatchersList.io()) {
+
         if(title.isBlank()){
             titleStateCommunication.map(TitleUiState.Error(managerResource.getString(R.string.dont_live_empty)))
             playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Hide)
             return@launch
-        }else titleStateCommunication.map(TitleUiState.Success)
-
-//        val result2 =initialTrackList.size == selectedTracksStore.read().size &&
-//                initialTrackList.zip(selectedTracksStore.read()).all { first,second-> first. }
+        }else {
+            titleStateCommunication.map(TitleUiState.Success)
+        }
 
         if(currentPlaylist.map(PlaylistUi.IsPlaylistDataChanged(title,description)) ||
-            initialTrackList.toSet()!= selectedTracksInteractor.selectedTracks().toSet()           //compare without taking order into account
+            selectedTracksInteractor.selectedTracks().toSet() !=initialTrackList.toSet() //compare without taking order into account
         ){
             playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Show)
         }else{
@@ -105,15 +114,26 @@ class EditPlaylistViewModel @Inject constructor(
     override fun save(title: String, description: String): Job = viewModelScope.launch(dispatchersList.io()){
         playlistUiStateCommunication.map(PlaylistDataUiState.Loading)
         interactor.editPlaylist(
-            currentPlaylist.map(mapper),
+            currentPlaylist.map(toIdMapper).toInt(),
             title,
             description,
             initialTrackList
         ).map(playlistDataResultMapper)
     }
 
+    fun setupInitialData(item: PlaylistUi){
+        currentPlaylist  = item
+    }
+
+    fun fetchPlaylistData() = handlePlaylistDataCache.handle(viewModelScope,currentPlaylist.map(toIdMapper))
+
     suspend fun collectTitleStateCommunication(
         owner: LifecycleOwner,
         collector: FlowCollector<TitleUiState>
     ) = titleStateCommunication.collect(owner,collector)
+
+    suspend fun collectPlaylistDataCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<PlaylistUi>
+    ) = playlistDataCommunication.collect(owner, collector)
 }

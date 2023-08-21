@@ -12,6 +12,7 @@ data class PlaylistItem(
    private val exclusive: Boolean,
    private val followers: Int,
    private val genres: List<Any>,
+   private val photo: Photo?=null,
    private val id: Int,
    private val is_following: Boolean,
    private val owner_id: Int,
@@ -34,6 +35,7 @@ data class PlaylistItem(
         exclusive,
         followers,
         genres,
+        photo,
         id,
         is_following,
         owner_id,
@@ -58,6 +60,7 @@ data class PlaylistItem(
             exclusive: Boolean,
             followers: Int,
             genres: List<Any>,
+            photo: Photo?,
             id: Int,
             is_following: Boolean,
             owner_id: Int,
@@ -84,6 +87,7 @@ data class PlaylistItem(
             exclusive: Boolean,
             followers: Int,
             genres: List<Any>,
+            photo: Photo?,
             id: Int,
             is_following: Boolean,
             owner_id: Int,
@@ -96,18 +100,27 @@ data class PlaylistItem(
             type: Int,
             update_time: Int,
         ): PlaylistCache {
+
+            val thumbsList = emptyList<String>().toMutableList()
+            if(thumbs!=null){
+                thumbs.forEach {
+                    thumbsList.add(it.photo_300)
+                }
+            }else if(photo!=null) thumbsList.add(photo.photo_300)
+
            return PlaylistCache(
-                playlistId = id,
+                playlistId = id.toString(),
                 title =title,
                 is_following = is_following,
                 count = count,
-                create_time = create_time,
+                update_time = update_time,
                 description = description,
                 owner_id = owner_id,
-                thumbs = thumbs?.map { it.photo_300 }?: emptyList()
+                thumbs = thumbsList
             )
         }
     }
+
 
 
 }

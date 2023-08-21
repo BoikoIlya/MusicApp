@@ -7,17 +7,17 @@ import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
  **/
 interface SearchQueryRepository {
 
-    fun readQuery(): String
+    fun readQueryAndHistoryType():  Pair<String,Int>
 
-   suspend fun saveQueryInDB(query: String)
+    suspend fun saveQueryInDB(query: String,historyType: Int)
 
     abstract class Abstract(
         private val transfer: SearchQueryTransfer
     ): SearchQueryRepository{
 
-        override fun readQuery(): String = transfer.read()?: ""
+        override fun readQueryAndHistoryType(): Pair<String,Int> = transfer.read()?: Pair("",0)
 
-        override suspend fun saveQueryInDB(query: String) = transfer.save(query)
+        override suspend fun saveQueryInDB(query: String,historyType: Int) = transfer.save(Pair(query,historyType))
 
     }
 }

@@ -9,16 +9,16 @@ import javax.inject.Inject
  **/
 interface AddTrackToPlaylistRepository {
 
-    suspend fun addToPlaylist(playlist_id: Int, audioId: Int )
+    suspend fun addToPlaylist(playlistId: Int, audioId: Int )
 
     class Base @Inject constructor(
         private val cloud: PlaylistDataCloudDataSource,
         private val cache: PlaylistDataCacheDataSource,
     ): AddTrackToPlaylistRepository {
 
-        override suspend fun addToPlaylist(playlist_id: Int, audioId: Int) {
-            cloud.addToPlaylist(playlist_id, listOf(audioId))
-            cache.addTracksToPlaylist(playlist_id,listOf(audioId))
+        override suspend fun addToPlaylist(playlistId: Int, audioId: Int) {
+            cloud.addToPlaylist(playlistId.toString(), listOf(audioId))
+            cache.addTracksToPlaylist(playlistId.toString(),listOf(audioId))
         }
     }
 }

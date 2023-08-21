@@ -53,8 +53,6 @@ class FavoritesReposotoryTest: ObjectCreator() {
         repository = FavoritesTracksRepository.Base(
             cache = cache,
             transfer = DataTransfer.MusicDialogTransfer(),
-            toMediaItemMapper = ToMediaItemMapper(),
-            dao =tracksDao,
             domainToContainsMapper = DomainToContainsMapper.Base(TrackDomain.ContainsTrackMapper()),
             cloudToCacheMapper = TracksCloudToCacheMapper.Base(TrackItem.Mapper.CloudTrackToTrackCacheMapper()),
             cloud = cloud,
@@ -62,35 +60,12 @@ class FavoritesReposotoryTest: ObjectCreator() {
             domainToDataIdsMapper = DomainToDataIdsMapper.Base(TrackDomain.AddToFavoritesCloudMapper()),
             accountDataStore = AccountDataStoreTest(),
             handleResponseData = HandleDeleteTrackRequest(cache)
-
         )
     }
 
 
 
-    @Test
-    fun `test fetch data`() = runBlocking{
-        val list = listOf(getMediaItem("1","a"), getMediaItem("2","a")).toMutableList()
-        tracksDao.list.addAll(listOf(getTrackCache(2,"a","b"), getTrackCache( name = "b")))
 
-        assertEquals(true,
-            repository.fetchData(SortingState.ByName()).first().map(TestTracksResultMapper(list.sortedBy { it.mediaMetadata.title.toString() }))
-            )
-
-        tracksDao.list.clear()
-        tracksDao.list.addAll(listOf(getTrackCache(2, artist =  "b"), getTrackCache(1, artist =  "a")))
-
-        assertEquals(true,
-            repository.fetchData(SortingState.ByArtist()).first().map(TestTracksResultMapper(list.sortedBy { it.mediaMetadata.artist.toString() }))
-        )
-
-        tracksDao.list.clear()
-        tracksDao.list.addAll(listOf(getTrackCache(), getTrackCache(2)))
-
-        assertEquals(true,
-            repository.fetchData(SortingState.ByTime()).first().map(TestTracksResultMapper(list))
-        )
-    }
 
     @Test
     fun `test add To Favorites If Not Duplicated sucess`() = runBlocking {
@@ -184,33 +159,38 @@ class FavoritesReposotoryTest: ObjectCreator() {
             list.addAll(track)
         }
 
-        override fun searchTracksOrderByTime(query: String): Flow<List<TrackCache>> = flow {
-            emit(list.sortedBy { it.date })
+        override fun getAllTracksByTime(query: String, playlistId: Int): Flow<List<TrackCache>> = flow {
+            emit(list.reversed())
         }
 
-        override fun getTracksByName(query: String): Flow<List<TrackCache>> = flow {
+        override fun getTracksByName(query: String, playlistId: Int): Flow<List<TrackCache>> = flow {
             emit(list.sortedBy { it.name })
         }
 
-        override fun getTracksByArtist(query: String): Flow<List<TrackCache>> = flow {
+        override fun getTracksByArtist(query: String, playlistId: Int): Flow<List<TrackCache>> = flow {
             emit(list.sortedBy { it.artistName })
         }
+
 
         override suspend fun contains(name: String, artistName: String): TrackCache? {
            return list.find { it.name ==name || it.artistName == artistName }
         }
 
         override suspend fun getById(id: Int): TrackCache? {
-            return list.find { it.id == id }
+            return list.find { it.trackId == id }
         }
 
         override suspend fun removeTrack(id: Int) {
-            list.removeIf { it.id == id }
+            list.removeIf { it.trackId == id }
         }
 
-        override suspend fun deleteItemsNotInList(items: List<Int>) {
-            list.removeAll { it.id  !in items }
+        override suspend fun deleteTracksNotInListWithSinglePlaylist(
+            items: List<Int>,
+            playlistId: Int,
+        ) {
+            list.removeAll { it.trackId  !in items }
         }
+
 
 
     }
@@ -223,11 +203,11 @@ class FavoritesReposotoryTest: ObjectCreator() {
         }
 
         override suspend fun removeFromDB(id: Int) {
-            list.removeIf { it.id==id }
+            list.removeIf { it.trackId==id }
         }
 
         override suspend fun getById(id: Int): TrackCache {
-            return list.find { it.id == id }?: throw NoSuchElementException()
+            return list.find { it.trackId == id }?: throw NoSuchElementException()
         }
 
         override suspend fun update(list: List<TrackCache>) {
@@ -240,7 +220,7 @@ class FavoritesReposotoryTest: ObjectCreator() {
         }
 
         override suspend fun insertWithNewId(id: Int, data: TrackCache) {
-           list.add(data.copy(id = id))
+           list.add(data.copy(trackId = id))
         }
 
     }

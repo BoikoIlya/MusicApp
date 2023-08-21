@@ -3,19 +3,13 @@ package com.example.musicapp.addtoplaylist.presentation
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.MediaItem
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
 import com.example.musicapp.addtoplaylist.di.AddToPlaylistComponent
 import com.example.musicapp.app.core.BlurEffectAnimator
@@ -23,21 +17,17 @@ import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.FavoritesFragment.Companion.loading_animation
 import com.example.musicapp.app.core.FavoritesFragmentBottomSheet
 import com.example.musicapp.app.core.ImageLoader
-import com.example.musicapp.app.core.Selector
-import com.example.musicapp.databinding.FavorotesFragmentBinding
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.main.di.App
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.simform.refresh.SSPullToRefreshLayout
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Created by HP on 16.07.2023.
  **/
-class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.layout.favorotes_fragment) {
+class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.layout.favorites_fragment) {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -69,7 +59,7 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
             state = BottomSheetBehavior.STATE_EXPANDED
         }
         binding.backBtn.setImageResource(R.drawable.check)
-        binding.backBtn.imageTintList = ContextCompat.getColorStateList(requireContext(),R.color.black)
+        binding.backBtn. imageTintList = ContextCompat.getColorStateList(requireContext(),R.color.black)
         binding.backBtn.visibility = View.VISIBLE
         binding.titleFavorites.setText(R.string.select_tracks)
         binding.shuffleFavorites.visibility = View.GONE

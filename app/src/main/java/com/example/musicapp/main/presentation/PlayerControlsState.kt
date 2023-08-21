@@ -2,6 +2,7 @@ package com.example.musicapp.main.presentation
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -9,6 +10,7 @@ import android.view.animation.AnimationUtils
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.ToMediaItemMapper
@@ -48,7 +50,7 @@ interface PlayerControlsState {
 
                 imageLoader.loadImage(
                     track.mediaMetadata.extras?.getString(ToMediaItemMapper.small_img_url) ?: "",
-                    trackImg
+                    trackImg, cacheStrategy = DiskCacheStrategy.NONE,
                 )
                 songNameTv.text = track.mediaMetadata.title
                 songAuthorName.text = track.mediaMetadata.artist

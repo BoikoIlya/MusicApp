@@ -17,20 +17,37 @@ interface FetchPlaylistsRepository {
 
     fun fetchUserCreated(query: String): Flow<List<PlaylistDomain>>
 
+    fun getPlaylistById(id: String): Flow<PlaylistDomain>
+
     class Base @Inject constructor(
         private val dao: PlaylistDao,
         private val playlistsCacheToDomainMapper: PlaylistsCacheToDomainMapper
     ): FetchPlaylistsRepository {
 
         override fun fetchAll(query: String): Flow<List<PlaylistDomain>> =
-            dao.getPlaylistsOrderByCreateTime(query, AppModule.mainPlaylistId).map { playlistsCacheToDomainMapper.map(it)  }
+            dao.getPlaylistsOrderByUpdateTime(query, AppModule.mainPlaylistId.toString()).map { playlistsCacheToDomainMapper.map(it)  }
 
 
         override fun fetchUserCreated(query: String): Flow<List<PlaylistDomain>> =
-            dao.getPlaylistsFollowedOrNotOrderByCreateTime(
+            dao.getPlaylistsFollowedOrNotOrderByUpdateTime(
                 query,
-                AppModule.mainPlaylistId,
+                AppModule.mainPlaylistId.toString(),
                 false
                 ).map { playlistsCacheToDomainMapper.map(it)  }
+
+        override fun getPlaylistById(id: String): Flow<PlaylistDomain> =
+            dao.getPlaylistById(id.toString()).map {
+                if(it!=null)
+                playlistsCacheToDomainMapper.map(listOf(it)).first()
+                else PlaylistDomain(
+                    playlistId = "0",
+                    title = "",
+                    isFollowing = false,
+                    count = 0,
+                    description = "",
+                    ownerId = 0,
+                    thumbs = listOf()
+                )
+            }
     }
 }

@@ -1,13 +1,13 @@
 package com.example.musicapp.creteplaylist.data
 
-import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.HandleDeleteRequestData
+import android.util.Log
 import com.example.musicapp.app.vkdto.PlaylistItem
 import com.example.musicapp.creteplaylist.data.cache.PlaylistDataCacheDataSource
 import com.example.musicapp.creteplaylist.data.cloud.PlaylistDataCloudDataSource
-import com.example.musicapp.userplaylists.data.cache.BaseFavoritesPlaylistsCacheDataSource
 import com.example.musicapp.userplaylists.data.cache.PlaylistCache
-import com.example.musicapp.userplaylists.data.cache.PlaylistsAndTracksRelation
+import com.example.musicapp.userplaylists.domain.PlaylistDomain
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,10 +19,10 @@ interface PlaylistDataRepository {
 
     suspend fun createPlaylist(title: String, description: String,audioIds: List<Int>)
 
-    suspend fun followPlaylist(playlist_id: Int,playlistOwnerId: Int)
+    suspend fun followPlaylist(playlist: PlaylistDomain)
 
     suspend fun editPlaylist(
-        playlist_id: Int,
+        playlistId: Int,
         title: String,
         description: String,
         tracksIdsToAdd: List<Int>,
@@ -30,12 +30,13 @@ interface PlaylistDataRepository {
     )
 
 
-    suspend fun removeFromPlaylist(playlist_id: Int, audioIds: List<Int>)
+    suspend fun removeFromPlaylist(playlistId: Int, audioIds: List<Int>)
 
     class Base @Inject constructor(
         private val cloud: PlaylistDataCloudDataSource,
         private val cache: PlaylistDataCacheDataSource,
         private val mapper: PlaylistItem.Mapper<PlaylistCache>,
+        private val playlistDomainToCacheMapper: PlaylistDomain.Mapper<PlaylistCache>
     ): PlaylistDataRepository {
 
         override suspend fun createPlaylist(title: String, description: String,audioIds: List<Int>) {
@@ -46,13 +47,14 @@ interface PlaylistDataRepository {
             cache.addTracksToPlaylist(cacheData.playlistId,audioIds)
         }
 
-        override suspend fun followPlaylist(playlist_id: Int,playlistOwnerId: Int) {
-            val cloudResult = cloud.followPlaylist(playlist_id,playlistOwnerId)
-            cache.insertPlaylist(cloudResult.map(mapper))
+        override suspend fun followPlaylist(playlist: PlaylistDomain) {
+            val playlistCache = playlist.map(playlistDomainToCacheMapper)
+            val cloudResult = cloud.followPlaylist(playlistCache.playlistId,playlistCache.owner_id)
+            cache.insertPlaylist(cloudResult.map(playlistCache).copy(is_following = true ))
         }
 
         override suspend fun editPlaylist(
-            playlist_id: Int,
+            playlistId: Int,
             title: String,
             description: String,
             tracksIdsToAdd: List<Int>,
@@ -60,27 +62,28 @@ interface PlaylistDataRepository {
         ) {
             coroutineScope {
                 launch {
-                    cloud.editPlaylist(playlist_id, title, description)
-                    cache.updatePlaylist(playlist_id, title, description)
+                    if(!cache.checkIfTitleOrDescriptionDifferent(title, description, playlistId.toString())) return@launch
+                    cloud.editPlaylist(playlistId.toString(), title, description)
+                    cache.updatePlaylist(playlistId.toString(), title, description)
                 }
                 launch {
-                    cloud.addToPlaylist(playlist_id,tracksIdsToAdd)
-                    cache.addTracksToPlaylist(playlist_id,tracksIdsToAdd)
+                    cloud.addToPlaylist(playlistId.toString(),tracksIdsToAdd)
+                    cache.addTracksToPlaylist(playlistId.toString(),tracksIdsToAdd)
                 }
                 launch {
-                    cloud.removeFromPlaylist(playlist_id,tracksIdsToDelete)
-                    cache.removeTracksFromPlaylist(playlist_id,tracksIdsToDelete)
+                    cloud.removeFromPlaylist(playlistId.toString(),tracksIdsToDelete)
+                    cache.removeTracksFromPlaylist(playlistId.toString(),tracksIdsToDelete)
                 }
             }
         }
 
 
-        override suspend fun removeFromPlaylist(playlist_id: Int, audioIds: List<Int>) {
+        override suspend fun removeFromPlaylist(playlistId: Int, audioIds: List<Int>) {
             try {
-                cache.removeTracksFromPlaylist(playlist_id,audioIds)
-                cloud.removeFromPlaylist(playlist_id,audioIds)
+                cache.removeTracksFromPlaylist(playlistId.toString(),audioIds)
+                cloud.removeFromPlaylist(playlistId.toString(),audioIds)
             }catch (e: Exception){
-                cache.addTracksToPlaylist(playlist_id,audioIds)
+                cache.addTracksToPlaylist(playlistId.toString(),audioIds)
                 throw e
             }
 

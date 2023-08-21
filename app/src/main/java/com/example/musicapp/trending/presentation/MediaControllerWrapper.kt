@@ -34,6 +34,7 @@ interface MediaControllerWrapper: Player {
              get() = if (controllerFuture.isDone) controllerFuture.get() else null
 
 
+
          override fun getApplicationLooper(): Looper {
              TODO("Not yet implemented")
          }
@@ -120,7 +121,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun clearMediaItems() {
-             TODO("Not yet implemented")
+             controller?.clearMediaItems()
          }
 
          override fun isCommandAvailable(command: Int): Boolean {
@@ -190,13 +191,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
-             Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
-          //  try {
-                 controller?.seekToDefaultPosition(mediaItemIndex)
-//             }catch (e: Exception){
-//                 Log.d("tag", "seekToDefaultPosition: $mediaItemIndex")
-//                 controller?.seekToDefaultPosition(0)
-//             }
+             controller?.seekToDefaultPosition(mediaItemIndex)
          }
 
          override fun seekTo(positionMs: Long) {

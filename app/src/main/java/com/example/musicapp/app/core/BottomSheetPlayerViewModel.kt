@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
  **/
 abstract class BottomSheetPlayerViewModel (
     playerCommunication: PlayerCommunication,
-    tracksCache: TemporaryTracksCache,
     tracksInteractor: Interactor<MediaItem, TracksResult>,
     private val dispatchersList: DispatchersList,
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
@@ -23,7 +22,7 @@ abstract class BottomSheetPlayerViewModel (
 ): BaseViewModel<Unit>(
     playerCommunication,
     UiCommunication.EmptyCommunication(),
-    tracksCache,
+    TemporaryTracksCache.Empty,
     dispatchersList,
     tracksInteractor,
     mapper,

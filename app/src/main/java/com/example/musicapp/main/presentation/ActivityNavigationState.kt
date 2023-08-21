@@ -1,8 +1,6 @@
 package com.example.musicapp.main.presentation
 
-import android.content.Context
 import android.content.Intent
-import android.util.Log
 
 /**
  * Created by HP on 05.07.2023.
@@ -20,7 +18,7 @@ sealed interface ActivityNavigationState{
     ): ActivityNavigationState {
 
         override fun apply(currentActivity: MainActivity,viewModel:MainViewModel) {
-            viewModel.releasePlayer()
+            viewModel.clearDisablePlayer()
             currentActivity.startActivity(Intent(currentActivity,activity))
             currentActivity.finish()
         }

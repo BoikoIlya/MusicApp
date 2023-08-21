@@ -9,7 +9,7 @@ import dagger.Subcomponent
  * Created by HP on 01.05.2023.
  **/
 @SelectPlaylistScope
-@Subcomponent(modules = [SelectPlaylistModule::class])
+@Subcomponent(modules = [SelectPlaylistModule::class,SelectPlaylistModuleProvides::class])
 interface SelectPlaylistComponent {
 
     @Subcomponent.Builder

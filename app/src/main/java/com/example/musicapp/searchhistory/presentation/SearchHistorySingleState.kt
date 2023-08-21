@@ -8,7 +8,7 @@ import com.example.musicapp.databinding.SearchHistoryFragmentBinding
 /**
  * Created by HP on 30.06.2023.
  **/
-sealed interface SearchHistorySingleState{
+sealed interface SearchHistorySingleState {
 
     fun apply(
         navController: NavController,
@@ -16,7 +16,7 @@ sealed interface SearchHistorySingleState{
         binding: SearchHistoryFragmentBinding
     )
 
-    object NavigateToSearchFragment: SearchHistorySingleState{
+    object NavigateToSearch: SearchHistorySingleState {
         override fun apply(
             navController: NavController,
             viewModel: SearchHistoryViewModel,
@@ -27,4 +27,34 @@ sealed interface SearchHistorySingleState{
     }
 
 
+
+    data class CheckQueryBeforeNavigation(
+        private val query: String
+    ) : SearchHistorySingleState {
+
+        override fun apply(
+            navController: NavController,
+            viewModel: SearchHistoryViewModel,
+            binding: SearchHistoryFragmentBinding,
+        ) {
+            binding.searchHistoryEdt.setText(query)
+            viewModel.checkQueryBeforeNavigation(query)
+        }
+
+    }
+
+    data class ClearEditTextIfTextsMatches(
+        private val text: String
+    ) : SearchHistorySingleState {
+
+
+        override fun apply(
+            navController: NavController,
+            viewModel: SearchHistoryViewModel,
+            binding: SearchHistoryFragmentBinding,
+        ) {
+            if (binding.searchHistoryEdt.text.toString() == text)
+                binding.searchHistoryEdt.setText("")
+        }
+    }
 }

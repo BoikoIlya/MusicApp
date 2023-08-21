@@ -5,11 +5,15 @@
         android:icon="@drawable/tone"
         />
     <item
+        android:id="@+id/friendsFragment"
+        android:icon="@drawable/friends"
+        />
+    <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/heart"
         />
-<item
-    android:id="@+id/searchHistoryFragment"
-    android:icon="@drawable/search_png"
-    />
+    <item
+        android:id="@+id/searchHistoryFragment"
+        android:icon="@drawable/search"
+        />
 </menu>

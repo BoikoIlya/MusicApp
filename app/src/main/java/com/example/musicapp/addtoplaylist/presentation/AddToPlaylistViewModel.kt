@@ -1,5 +1,6 @@
 package com.example.musicapp.addtoplaylist.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,10 +8,12 @@ import com.example.musicapp.addtoplaylist.domain.SelectedTracksInteractor
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.FavoritesViewModel
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
+import com.example.musicapp.app.core.HandleTracksSortedSearch
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.creteplaylist.presentation.SelectedTracksCommunication
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.presentation.FavoritesUiState
+import com.example.musicapp.favorites.presentation.HandleFavoritesTracksFromCache
 import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
@@ -25,7 +28,8 @@ class AddToPlaylistViewModel @Inject constructor(
     private val communication: AddToPlaylistCommunication,
     private val selectedTracksCommunication: SelectedTracksCommunication,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-    private val interactor: SelectedTracksInteractor
+    private val interactor: SelectedTracksInteractor,
+    private val handleCachedTracksSelected: HandleCachedTracksSelected
 ): ViewModel(), FavoritesViewModel<FavoritesUiState,SelectedTrackUi> {
 
     private var query: String = ""
@@ -43,11 +47,12 @@ class AddToPlaylistViewModel @Inject constructor(
 
 
 
-    fun fetchData(
-        sortingState: SortingState = SortingState.ByTime(query)
-    ) = viewModelScope.launch(dispatchersList.io()){
+    fun fetchData(sortingState: SortingState = SortingState.ByTime(query))
+    = viewModelScope.launch(dispatchersList.io()){
         this@AddToPlaylistViewModel.sortingState = sortingState
-        communication.showData(interactor.map(sortingState.copyObj(query),mainPlaylistId))
+        interactor.map(sortingState.copyObj(query),mainPlaylistId.toString()).collect{
+            handleCachedTracksSelected.handle(it)
+        }
     }
 
 

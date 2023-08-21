@@ -129,7 +129,7 @@ data class TrackItem(
 
 
                 return TrackCache(
-                    trackId = id,
+                    trackId = id.toString(),
                     url = url,
                     name = title,
                     artistName = artist,
@@ -139,7 +139,7 @@ data class TrackItem(
                     date = date,
                     durationFormatted = durationString,
                     ownerId = owner_id,
-                    durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat()
+                    durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
                 )
             }
 
@@ -184,7 +184,8 @@ data class TrackItem(
                     smallImgUrl = album?.thumb?.photo_135 ?: "",
                     bigImgUrl = album?.thumb?.photo_1200 ?: "",
                     track_url = url,
-                    ownerId = owner_id
+                    ownerId = owner_id,
+                    isCached = false
                 )
             }
 
@@ -237,9 +238,8 @@ data class TrackItem(
                 extraData.putInt(ToMediaItemMapper.owner_id,owner_id)
 
                 return MediaItem.Builder()
-                    .setMediaId(
-                        if (url.isNotEmpty()) url else java.util.Random().nextInt().toString()
-                    )
+                    .setMediaId(id.toString())
+                    .setUri(if (url.isNotEmpty()) url else "")
                     .setMediaMetadata(
                         MediaMetadata.Builder()
                             .setTitle(title)
@@ -254,5 +254,56 @@ data class TrackItem(
             }
 
         }
+    }
+
+    class ModifiedIdToTrackCacheMapper(
+        private val friendId: String
+    ) : Mapper<TrackCache> {
+        override fun map(
+            access_key: String,
+            ads: Ads,
+            album: Album?,
+            artist: String,
+            content_restricted: Int,
+            date: Int,
+            duration: Int,
+            featured_artists: List<FeaturedArtist>?,
+            genre_id: Int,
+            id: Int,
+            is_explicit: Boolean,
+            is_focus_track: Boolean,
+            is_licensed: Boolean,
+            lyrics_id: Int,
+            main_artists: List<MainArtist>?,
+            no_search: Int,
+            owner_id: Int,
+            short_videos_allowed: Boolean,
+            stories_allowed: Boolean,
+            stories_cover_allowed: Boolean,
+            subtitle: String?,
+            title: String,
+            track_code: String,
+            url: String,
+        ): TrackCache {
+            val minutes: Long = TimeUnit.SECONDS.toMinutes(duration.toLong())
+            val seconds: Long = duration - TimeUnit.MINUTES.toSeconds(minutes)
+            val durationString = String.format("%02d:%02d", minutes, seconds)
+
+
+            return TrackCache(
+                trackId = id.toString()+friendId,
+                url = url,
+                name = title,
+                artistName = artist,
+                bigImgUrl = album?.thumb?.photo_1200 ?: "",
+                smallImgUrl = album?.thumb?.photo_135 ?: "",
+                albumName = album?.title ?: "",
+                date = date,
+                durationFormatted = durationString,
+                ownerId = owner_id,
+                durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
+            )
+        }
+
     }
 }

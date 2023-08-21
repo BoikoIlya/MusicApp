@@ -8,20 +8,17 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
-import com.example.musicapp.app.core.ClickListener
-import com.example.musicapp.app.core.Selector
 import com.example.musicapp.databinding.SearchHistoryFragmentBinding
 import com.example.musicapp.main.di.App
 import com.example.musicapp.searchhistory.di.SearchHistoryComponent
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,6 +40,10 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
 
     private lateinit var textWatcher: TextWatcher
 
+    private lateinit var tabTitlesList: List<String>
+    private lateinit var fragments: List<Fragment>
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         searchHistoryComponent = (context.applicationContext as App).appComponent.searchHistoryComponent().build()
@@ -53,54 +54,55 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
             override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.fetchHistory(text.toString())
+                viewModel.findInHistory(text.toString())
             }
 
             override fun afterTextChanged(p0: Editable?) = Unit
         }
+        tabTitlesList = listOf(
+            requireContext().getString(R.string.tab_tracks_title),
+            requireContext().getString(R.string.tab_playlists_title)
+        )
+        fragments = listOf(
+            SearchHistoryListFragment.BaseSearchHistoryTracksListFragment(),
+            SearchHistoryListFragment.BaseSearchHistoryPlaylistsListFragment()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = SearchHistoryAdapter(object : ClickListener<String>{
-            override fun onClick(data: String) {
-                viewModel.removeHistoryItem(data)
-                binding.searchHistoryEdt.setText("")
-            }
-        },object: Selector<String>{
-            override fun onSelect(data: String, position: Int) {
-                viewModel.checkQueryBeforeNavigation(data)
+
+
+        val adapter = ViewPagerFragmentsAdapter(childFragmentManager,lifecycle,fragments)
+        binding.searchHistoryViewPager.adapter = adapter
+
+        TabLayoutMediator(binding.tabLayout,binding.searchHistoryViewPager){tab,position->
+            tab.text = tabTitlesList[position]
+        }.attach()
+
+
+
+
+       //
+
+
+//        lifecycleScope.launch {
+//            viewModel.collectViewPagerPageIndexCommunication(this@SearchHistoryFragment){
+//                binding.searchHistoryViewPager.setCurrentItem(it,true)
+//
+//            }
+//        }
+
+
+        binding.searchHistoryViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.changeHistoryType(position)
             }
         })
 
-        binding.searchHistoryRcv.layoutManager = LinearLayoutManager(requireContext())
-        (binding.searchHistoryRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-
-        binding.searchHistoryEdt.setOnKeyListener { _, keyCode, keyEvent ->
-            return@setOnKeyListener if(keyCode== KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP){
-                viewModel.checkQueryBeforeNavigation(binding.searchHistoryEdt.text.toString())
-
-                true
-            }else false
-        }
-
-
-        binding.searchHistoryRcv.adapter = adapter
-
-        lifecycleScope.launch{
-            viewModel.collectSearchHistory(this@SearchHistoryFragment){
-                binding.searchHistoryMessage.isVisible = it.isEmpty()
-                adapter.map(it)
-                binding.searchHistoryRcv.scrollToPosition(0)
-            }
-        }
-
-        lifecycleScope.launch{
-            viewModel.collectSearchQuery(this@SearchHistoryFragment){
-                binding.searchHistoryEdt.setText(it)
-            }
-        }
 
        viewLifecycleOwner.lifecycleScope.launch{
             viewModel.collectSearchHistorySingleStateCommunication(this@SearchHistoryFragment){
@@ -115,9 +117,18 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
         }
 
 
+
+        binding.searchHistoryEdt.setOnKeyListener { _, keyCode, keyEvent ->
+            return@setOnKeyListener if(keyCode== KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP){
+                viewModel.checkQueryBeforeNavigation(binding.searchHistoryEdt.text.toString())
+                true
+            }else false
+        }
+
         binding.clearHistoryBtn.setOnClickListener {
             viewModel.launchClearHistoryDialog()
         }
+
 
     }
 
@@ -125,18 +136,14 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
 
 
     override fun onStart() {
+        super.onStart()
+        viewModel.readPageIndexState().apply(binding.searchHistoryViewPager)
         binding.searchHistoryEdt.requestFocus()
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.searchHistoryEdt, InputMethodManager.SHOW_IMPLICIT)
         binding.searchHistoryEdt.addTextChangedListener(textWatcher)
-        super.onStart()
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.saveQueryToCommuniction(binding.searchHistoryEdt.text.toString())
-    }
 
 
 

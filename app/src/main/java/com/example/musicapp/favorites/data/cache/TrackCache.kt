@@ -11,7 +11,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = TracksDao.table_name )
 data class TrackCache(
     @PrimaryKey(autoGenerate = false)
-    val trackId: Int,
+    @ColumnInfo("trackId")
+    val trackId: String,
     val url: String,
     val name: String,
     val artistName: String,
@@ -22,9 +23,5 @@ data class TrackCache(
     val durationFormatted: String,
     val durationInMillis: Float,
     val ownerId: Int,
-){
-
-
-   suspend fun containsInDb(dao: TracksDao) = dao.contains(name,artistName)
-
-}
+   // val isCached: Boolean = false
+)

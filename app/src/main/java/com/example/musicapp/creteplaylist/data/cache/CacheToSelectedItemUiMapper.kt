@@ -14,7 +14,7 @@ interface CacheToSelectedItemUiMapper: Mapper<TrackCache, SelectedTrackUi> {
 
         override fun map(data: TrackCache): SelectedTrackUi {
             return SelectedTrackUi(
-                id = data.trackId,
+                id = data.trackId.toInt(),
                 title = data.name,
                 author = data.artistName,
                 durationFormatted = data.durationFormatted,

@@ -5,25 +5,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.musicapp.R
 import com.example.musicapp.app.core.BaseViewModel
-import com.example.musicapp.app.core.CachedTracksRepository
-import com.example.musicapp.app.core.DataTransfer
+import com.example.musicapp.app.core.CacheRepository
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.DeleteItemDialog
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.HandleFavoritesTracksSortedSearch
-import com.example.musicapp.app.core.HandleTracksSortedSearch
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
+import com.example.musicapp.hlscachesystem.presentation.HLSCachingResult
+import com.example.musicapp.hlscachesystem.presentation.HLSCachingResultCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
 import com.example.musicapp.main.presentation.PlayerCommunication
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,10 +38,11 @@ class FavoritesTracksViewModel @Inject constructor(
     playerCommunication: PlayerCommunication,
     tracksResultToUiEventCommunicationMapper: TracksResultToUiEventCommunicationMapper,
     private val favoritesTracksCommunication: FavoritesTracksCommunication,
-    private val searchTracksRepository: CachedTracksRepository<MediaItem>,
+    private val cachedTracksRepository: CacheRepository<MediaItem>,
     private val handleTracksSortedSearch: HandleFavoritesTracksSortedSearch,
     private val managerResource: ManagerResource,
     private val temporaryTracksCache: TemporaryTracksCache,
+    private val hlsCachingCompleteCommunication: HLSCachingResultCommunication
 ): BaseViewModel<FavoritesUiState>(
     playerCommunication,
     favoritesTracksCommunication,
@@ -66,7 +65,7 @@ class FavoritesTracksViewModel @Inject constructor(
     override fun update(loading:Boolean) {
         viewModelScope.launch(dispatchersList.io()) {
             handlerFavoritesUiUpdate.handle(loading) {
-                searchTracksRepository.isDbEmpty(mainPlaylistId)
+                cachedTracksRepository.isDbEmpty(mainPlaylistId.toString())
             }
         }
     }
@@ -80,26 +79,27 @@ class FavoritesTracksViewModel @Inject constructor(
     }
 
     fun fetchData(sortingState: SortingState) =
-        handleTracksSortedSearch.handle(sortingState,viewModelScope,query,mainPlaylistId)
-    fun fetchData() = handleTracksSortedSearch.handle(viewModelScope,query,mainPlaylistId)
+        handleTracksSortedSearch.handle(sortingState,viewModelScope,query,mainPlaylistId.toString())
+    fun fetchData() = handleTracksSortedSearch.handle(viewModelScope,query,mainPlaylistId.toString())
 
     fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
-        val newList = emptyList<MediaItem>().toMutableList()
-        newList.addAll(temporaryTracksCache.readCurrentPageTracks())
-        if(newList.isEmpty()){
+        val list = temporaryTracksCache.readCurrentPageTracks()
+        if(list.isEmpty()){
             singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(
                 managerResource.getString(R.string.no_favorite_tracks)
             ))
             return@launch
         }
-        val shuffled = newList.shuffled()
+        val shuffled = list.shuffled()
         temporaryTracksCache.saveCurrentPageTracks(shuffled)
         playMusic(shuffled.first())
     }
 
+    fun clearHlsCachingState() = hlsCachingCompleteCommunication.map(HLSCachingResult.Empty)
+
     override fun launchDeleteItemDialog(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
         interactor.saveItemToTransfer(item)
-        singleUiEventCommunication.map(SingleUiEventState.ShowDialog(DeleteDialogFragment()))
+        singleUiEventCommunication.map(SingleUiEventState.ShowDialog(DeleteTrackDialogFragment()))
     }
 
     suspend fun collectDeleteDialogCommunication(
@@ -112,6 +112,11 @@ class FavoritesTracksViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<FavoritesUiState>
     ) = favoritesTracksCommunication.collectLoading(owner, collector)
+
+    suspend fun collectHlsCachingCompleteCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<HLSCachingResult>
+    ) = hlsCachingCompleteCommunication.collect(owner, collector)
 }
 
 

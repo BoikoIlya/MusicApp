@@ -28,7 +28,7 @@ class TrendingViewModel @Inject constructor(
     mapper: TracksResultToUiEventCommunicationMapper,
     tracksInteractor: Interactor<MediaItem,TracksResult>,
     trackChecker: TrackChecker
-) : BaseViewModel<TracksUiState>(
+) : BaseViewModel<TrendingUiState>(
     playerCommunication,
     trendingCommunication,
     temporaryTracksCache,
@@ -51,7 +51,7 @@ class TrendingViewModel @Inject constructor(
 
     override suspend fun collectPlaylists(
         owner: LifecycleOwner,
-        collector: FlowCollector<List<PlaylistUi>>,
+        collector: FlowCollector<List<TrendingTopBarItemUi>>,
     ) = trendingCommunication.collectPlaylists(owner, collector)
 
 

@@ -1,6 +1,6 @@
 package com.example.musicapp.favorites.di
 
-import com.example.musicapp.favorites.presentation.DeleteDialogFragment
+import com.example.musicapp.favorites.presentation.DeleteTrackDialogFragment
 import com.example.musicapp.favorites.presentation.FavoritesBottomSheetMenuFragment
 import com.example.musicapp.favorites.presentation.FavoritesTracksFragment
 import dagger.Subcomponent
@@ -18,7 +18,7 @@ interface FavoriteComponent {
     }
 
     fun inject(favoritesFragment: FavoritesTracksFragment)
-    fun inject(deleteDialogFragment: DeleteDialogFragment)
+    fun inject(deleteDialogFragment: DeleteTrackDialogFragment)
     fun inject(favoritesBottomSheetMenuFragment: FavoritesBottomSheetMenuFragment)
 
 }

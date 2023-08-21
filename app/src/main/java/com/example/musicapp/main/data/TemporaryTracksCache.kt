@@ -16,16 +16,21 @@ interface TemporaryTracksCache {
 
       suspend fun findTrackPosition(id: String):Int
 
-    suspend fun saveCurrentPageTracks(list: List<MediaItem>)
-    suspend fun map(): List<MediaItem>
+      suspend fun saveCurrentPageTracks(list: List<MediaItem>)
+
+      suspend fun map(): List<MediaItem>
 
     suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean)
 
-    class Base @Inject constructor(): TemporaryTracksCache {
+    class Base @Inject constructor(): TemporaryTracksCache{
         private val currentPageTracks = mutableListOf<MediaItem>()
         private var queueId = 0
 
-        override  fun readCurrentPageTracks(): List<MediaItem> = currentPageTracks
+        override  fun readCurrentPageTracks(): List<MediaItem> =synchronized(currentPageTracks) {
+            val newList = emptyList<MediaItem>().toMutableList()
+            newList.addAll(currentPageTracks)
+            newList
+        }
 
         override suspend fun saveCurrentPageTracks(list: List<MediaItem>) {
             synchronized(currentPageTracks) {
@@ -37,21 +42,35 @@ interface TemporaryTracksCache {
         }
 
 
-        override suspend fun map(): List<MediaItem> {
+        override suspend fun map(): List<MediaItem> = synchronized(currentPageTracks)  {
             val newQueueId = currentPageTracks.hashCode()
             return if(queueId!=newQueueId){
                 queueId = newQueueId
-                currentPageTracks
+                val newList = emptyList<MediaItem>().toMutableList()
+                newList.addAll(currentPageTracks)
+                newList
             }else emptyList()
         }
 
         override suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean) {
-            if(isNewFirstPage) currentPageTracks.clear()
-            currentPageTracks.addAll(list)
+            synchronized(currentPageTracks) {
+                if (isNewFirstPage) currentPageTracks.clear()
+                currentPageTracks.addAll(list)
+            }
         }
 
         override suspend fun findTrackPosition(id: String): Int   {
-              return   currentPageTracks.indexOfFirst { it.mediaId == id }
+              return synchronized(currentPageTracks) {   currentPageTracks.indexOfFirst { it.mediaId == id }}
         }
+    }
+
+
+    object Empty: TemporaryTracksCache{
+        override fun readCurrentPageTracks(): List<MediaItem> = emptyList()
+        override suspend fun findTrackPosition(id: String): Int = -1
+        override suspend fun map(): List<MediaItem>  = emptyList()
+        override suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean) = Unit
+        override suspend fun saveCurrentPageTracks(list: List<MediaItem>)  = Unit
+
     }
 }

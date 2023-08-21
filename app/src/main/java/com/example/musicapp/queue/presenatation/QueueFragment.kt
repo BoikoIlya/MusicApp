@@ -2,29 +2,23 @@ package com.example.musicapp.queue.presenatation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
-import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.databinding.QueueFragmentBinding
 import com.example.musicapp.main.di.App
-import com.example.musicapp.main.presentation.MainActivity
-import com.example.musicapp.main.presentation.PlayerCommunicationState
 import com.example.musicapp.player.di.PlayerComponent
-import com.example.musicapp.player.presentation.PlayerViewModel
 import com.example.musicapp.trending.presentation.TracksAdapter
-import com.example.musicapp.trending.presentation.TrendingViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -69,7 +63,8 @@ class QueueFragment: Fragment(R.layout.queue_fragment) {
                 }
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {}
-            }, imageLoader, View.GONE     )
+            }, imageLoader, View.GONE,
+            layoutManager =  binding.queueRcv.layoutManager as RecyclerView.LayoutManager     )
 
         lifecycleScope.launch{
             viewModel.collectCurrentQueue(this@QueueFragment){

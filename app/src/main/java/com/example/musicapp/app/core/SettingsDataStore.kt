@@ -23,7 +23,6 @@ interface SettingsDataStore<T> {
         private val defaultValue: T
     ) : SettingsDataStore<T> {
 
-        // private val preferencesKey = stringPreferencesKey(key)
         override suspend fun read(): Flow<T> = store.data.map { it[key] ?: defaultValue }
 
         override suspend fun save(data: T) {

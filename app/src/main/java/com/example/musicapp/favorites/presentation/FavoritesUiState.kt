@@ -1,5 +1,6 @@
 package com.example.musicapp.favorites.presentation
 
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -25,9 +26,6 @@ sealed class FavoritesUiState {
             progress: SSPullToRefreshLayout,
             recyclerView: RecyclerView,
         ) {
-//            progress.setRefreshing(false)
-//            progress.isEnabled = false
-//            progress.isEnabled = true
             textView.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }
@@ -65,9 +63,6 @@ sealed class FavoritesUiState {
             progress: SSPullToRefreshLayout,
             recyclerView: RecyclerView,
         ) {
-//            progress.setRefreshing(false)
-//            progress.isEnabled = false
-//            progress.isEnabled = true
             textView.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
         }

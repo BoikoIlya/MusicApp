@@ -4,14 +4,19 @@ package com.example.musicapp.trending.data
 import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.example.musicapp.addtoplaylist.domain.SelectedTrackDomain
+import com.example.musicapp.addtoplaylist.presentation.SelectedTrackUi
 import com.example.musicapp.app.core.ToMediaItemMapper
 import com.example.musicapp.app.vkdto.Ads
+import com.example.musicapp.app.vkdto.Permissions
+import com.example.musicapp.app.vkdto.PlaylistItem
 import com.example.musicapp.app.vkdto.TrackItem
 import com.example.musicapp.app.vkdto.TracksResponse
 import com.example.musicapp.app.vkdto.TracksCloud
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 import com.example.musicapp.trending.domain.TrackDomain
+import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import org.mockito.Mockito.mock
 import java.time.Instant
 
@@ -162,7 +167,7 @@ val testImgUrl = "https://www.google.by/images/branding/googlelogo/1x/googlelogo
 
     fun getTrackCache(id: Int=1, name: String="", artist: String=""): TrackCache =
         TrackCache(
-            id = id,
+            trackId = id,
             name = name,
             artistName = artist,
             albumName = "",
@@ -172,8 +177,7 @@ val testImgUrl = "https://www.google.by/images/branding/googlelogo/1x/googlelogo
             smallImgUrl = "1",
             durationFormatted = "1",
             durationInMillis = 1.0f,
-            ownerId = 1,
-
+            ownerId = 1
         )
 //
     fun getHisstoryItem(query: String="", time: Long =0) = HistoryItemCache(query, time)
@@ -213,6 +217,62 @@ val testImgUrl = "https://www.google.by/images/branding/googlelogo/1x/googlelogo
             url = "1"
         ))
     ))
+
+    fun getSelectedTrackDomain(id: Int=0) = SelectedTrackDomain(
+        id = id,
+        title = "a",
+        author = "s",
+        durationFormatted = "d",
+        smallImageUrl = "d"
+    )
+
+    fun getSelectedTrackUi(id: Int=0) = SelectedTrackUi(
+        id = id,
+        title = "a",
+        author = "s",
+        durationFormatted = "d",
+        smallImageUrl = "d", selectedIconVisibility = 0, backgroundColor = 0,
+        
+    )
+
+    fun getPlaylistItem(id: Int= 0) = PlaylistItem(
+        access_key = "",
+        album_type = "",
+        count = 0,
+        create_time = 0,
+        description = "",
+        exclusive = false,
+        followers = 0,
+        genres = listOf(),
+        id = id,
+        is_following = false,
+        owner_id = 0,
+        permissions = Permissions(
+            boom_download = false,
+            delete = false,
+            edit = false,
+            follow = false,
+            play = false,
+            share = false
+        ),
+        play_button = false,
+        plays = 0,
+        subtitle_badge = false,
+        thumbs = listOf(),
+        title = "",
+        type = 0,
+        update_time = 0
+    )
+
+    fun getPlaylistDomain(id: Int =0,title:String ="") = PlaylistDomain(
+        playlistId = id,
+        title = title,
+        isFollowing = false,
+        count = 0,
+        description = "",
+        ownerId = 0,
+        thumbs = listOf()
+    )
 //
 //    fun getPlaylistDto() = PlaylistDto(
 //        collaborative = false,

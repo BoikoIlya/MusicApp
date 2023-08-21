@@ -1,11 +1,10 @@
 package com.example.musicapp.main.presentation
 
 import android.Manifest
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.app.core.BaseViewModel
+import com.example.musicapp.captcha.data.CaptchaRepository
 import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SDKChecker
@@ -13,6 +12,7 @@ import com.example.musicapp.app.core.SDKCheckerState
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultEmptyMapper
+import com.example.musicapp.captcha.presentation.CaptchaFragmentDialog
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
 import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.CheckAuthRepository
@@ -28,7 +28,6 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
-    private val temporaryTracksCache: TemporaryTracksCache,
     private val dispatchersList: DispatchersList,
     private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val bottomSheetCommunication: BottomSheetCommunication,
@@ -39,11 +38,11 @@ class MainViewModel @Inject constructor(
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val permissionCheckCommunication: PermissionCheckCommunication,
     private val sdkChecker: SDKChecker,
-    private val controllerListener: ControllerListener
+    private val captchaRepository: CaptchaRepository
 ): BaseViewModel<Unit>(
     playerCommunication,
     UiCommunication.EmptyCommunication(),
-    temporaryTracksCache,
+    TemporaryTracksCache.Empty,
     dispatchersList,
     favoritesInteractor,
     TracksResultEmptyMapper(),
@@ -60,6 +59,7 @@ class MainViewModel @Inject constructor(
         checkAuth()
         firebaseMessagingWrapper.subscribeToTopic()
         notificationPermissionCheck()
+        handleCaptcha()
     }
 
     fun bottomSheetState(state: Int){
@@ -86,7 +86,15 @@ class MainViewModel @Inject constructor(
 
     fun dontShowPermission() { permissionCheckCommunication.map(PermissionCheckState.Empty)}
 
-    fun releasePlayer() = playerCommunication.map(PlayerCommunicationState.Disabled(controllerListener))
+    fun clearDisablePlayer() = playerCommunication.map(PlayerCommunicationState.Disabled)
+
+
+    fun handleCaptcha() = viewModelScope.launch(dispatchersList.io()) {
+        captchaRepository.collectCaptchaData{
+            if(it.first.isNotEmpty())
+                singleUiEventCommunication.map(SingleUiEventState.ShowDialog(CaptchaFragmentDialog()))
+        }
+    }
 
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
@@ -119,6 +127,5 @@ class MainViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<PermissionCheckState>
     ) = permissionCheckCommunication.collect(owner,collector)
-
 
 }

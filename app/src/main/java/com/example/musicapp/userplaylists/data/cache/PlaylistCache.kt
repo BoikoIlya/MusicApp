@@ -1,5 +1,6 @@
 package com.example.musicapp.userplaylists.data.cache
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -11,11 +12,12 @@ import com.example.musicapp.userplaylists.data.cache.PlaylistDao.Companion.playl
 @Entity(tableName = playlists_table)
 data class PlaylistCache(
     @PrimaryKey(autoGenerate = false)
-    val playlistId: Int,
+    @ColumnInfo("playlistId")
+    val playlistId: String,
     val title: String,
     val is_following: Boolean,
     val count: Int,
-    val create_time: Int,
+    val update_time: Int,
     val description: String,
     val owner_id: Int,
     @TypeConverters(PlaylistThumbsConverters::class)

@@ -30,6 +30,8 @@ class TestPlayerControlsCommunication: PlayerControlsCommunication{
         data = newValue
     }
 
+    override suspend fun collectIgnoreLifecycle(collector: FlowCollector<PlayerControlsState>) = Unit
+
 }
 
 class TestTrackPlaybackPositionCommunication: TrackPlaybackPositionCommunication{
@@ -50,6 +52,8 @@ class TestTrackPlaybackPositionCommunication: TrackPlaybackPositionCommunication
         data = newValue
     }
 
+    override suspend fun collectIgnoreLifecycle(collector: FlowCollector<Pair<Float, String>>) = Unit
+
 }
 class TestCurrentQueueCommunication: CurrentQueueCommunication{
     var data = emptyList<MediaItem>().toMutableList()
@@ -65,6 +69,8 @@ class TestCurrentQueueCommunication: CurrentQueueCommunication{
         data.addAll(newValue)
     }
 
+    override suspend fun collectIgnoreLifecycle(collector: FlowCollector<List<MediaItem>>) = Unit
+
 }
 
 class TestSelectedTrackCommunication: SelectedTrackCommunication{
@@ -76,6 +82,8 @@ class TestSelectedTrackCommunication: SelectedTrackCommunication{
     override fun map(newValue: MediaItem) {
        data = newValue
     }
+
+    override suspend fun collectIgnoreLifecycle(collector: FlowCollector<MediaItem>) = Unit
 
 
 }

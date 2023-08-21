@@ -2,7 +2,6 @@ package com.example.musicapp.selectplaylist.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -10,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ClickListener
-import com.example.musicapp.app.core.FavoritesFragment
 import com.example.musicapp.app.core.FavoritesFragmentBottomSheet
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
@@ -19,15 +17,13 @@ import com.example.musicapp.selectplaylist.di.SelectPlaylistComponent
 import com.example.musicapp.userplaylists.presentation.PlaylistUi
 import com.example.musicapp.userplaylists.presentation.PlaylistsAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Created by HP on 19.07.2023.
  **/
-class SelectPlaylistFragment: FavoritesFragmentBottomSheet<PlaylistUi>(R.layout.favorotes_fragment) {
+class SelectPlaylistFragment: FavoritesFragmentBottomSheet<PlaylistUi>(R.layout.favorites_fragment) {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -51,7 +47,10 @@ class SelectPlaylistFragment: FavoritesFragmentBottomSheet<PlaylistUi>(R.layout.
         super.favoritesViewModel = viewModel
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.update(true)
+        viewModel.fetch("")
         BottomSheetBehavior.from(view.parent as View).apply {
             state = BottomSheetBehavior.STATE_EXPANDED
         }
@@ -59,7 +58,7 @@ class SelectPlaylistFragment: FavoritesFragmentBottomSheet<PlaylistUi>(R.layout.
         binding.shuffleFavorites.visibility = View.INVISIBLE
         binding.menu.setImageResource(R.drawable.plus)
         binding.titleFavorites.setText(R.string.select_playlist)
-        binding.noData.setText(R.string.no_favorite_playlists)
+        binding.errorMessage.setText(R.string.no_favorite_playlists)
 
         val paddingInDpHorizontal = 10
         val paddingInDpBottom = 140
@@ -101,7 +100,6 @@ class SelectPlaylistFragment: FavoritesFragmentBottomSheet<PlaylistUi>(R.layout.
         super.onStart()
         viewLifecycleOwner.lifecycleScope.launch{
             viewModel.collectGlobalSingleUiEventCommunication(this@SelectPlaylistFragment){
-                Log.d("tag", "apply: BOTTOM")
                 it.applyForBottomSheet(dialog!!.window!!.decorView,requireContext())
             }
         }

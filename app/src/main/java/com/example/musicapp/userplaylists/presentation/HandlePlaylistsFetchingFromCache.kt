@@ -1,7 +1,6 @@
 package com.example.musicapp.userplaylists.presentation
 
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.favorites.presentation.HandleFavoritesListFromCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

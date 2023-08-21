@@ -5,17 +5,14 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.musicapp.R
-import com.example.musicapp.app.core.BlurEffectAnimator
 import com.example.musicapp.databinding.FavoritesMenuDialogBottomSheetBinding
 import com.example.musicapp.main.di.App
-import com.example.musicapp.userplaylists.presentation.PlaylistsMenuDialogBottomSheetViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import javax.inject.Inject
 
@@ -50,10 +47,14 @@ class FavoritesBottomSheetMenuFragment : BottomSheetDialogFragment(R.layout.favo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("tag", "onViewCreated: ")
+        val mapper = MediaItemToFavoritesBottomSheetMenuMapper.Base(
+            binding,
+            requireContext(),
+            viewModel
+        ) { dismiss() }
+        mapper.map(viewModel.readMediaItem())
 
-        binding.downloadOption.setOnClickListener {
-           // findNavController().popBackStack()
-        }
 
         binding.addToPlaylistOption.setOnClickListener {
             findNavController().navigate(R.id.action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment)

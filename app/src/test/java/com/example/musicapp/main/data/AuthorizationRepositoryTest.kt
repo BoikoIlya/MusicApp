@@ -3,6 +3,7 @@ package com.example.musicapp.main.data
 
 import com.example.musicapp.app.core.HandleError
 import com.example.musicapp.app.core.ManagerResource
+import com.example.musicapp.app.core.MusicDBManager
 import com.example.musicapp.app.vkdto.TokenDto
 import com.example.musicapp.favorites.testcore.TestManagerResource
 import com.example.musicapp.main.data.cache.AccountDataStore
@@ -25,16 +26,19 @@ class AuthorizationRepositoryTest {
     private lateinit var service: TestAuthService
     private lateinit var tokenStore: TestTokenStore
     private lateinit var managerResource: ManagerResource
+    private lateinit var manageDBManager: TestMusicDBManager
 
     @Before
     fun setup(){
+        manageDBManager = TestMusicDBManager()
         service = TestAuthService()
         tokenStore = TestTokenStore()
         managerResource = TestManagerResource()
         authorizationRepository = AuthorizationRepository.Base(
             authorizationService = service,
             accountData = tokenStore,
-            handleError = HandleError.Base(managerResource)
+            handleError = HandleError.Base(managerResource),
+            db = manageDBManager
         )
     }
 
@@ -57,9 +61,19 @@ class AuthorizationRepositoryTest {
 
         assertEquals(actual1,false)
 
-        authorizationRepository.clearData()
+        authorizationRepository.logout()
         val actual2 = authorizationRepository.isNotAuthorized().first()
         assertEquals(actual2,true)
+    }
+
+    @Test
+    fun `test logout`() = runBlocking{
+
+        authorizationRepository.logout()
+        assertEquals(true,manageDBManager.isClear)
+        assertEquals("",tokenStore.token())
+        assertEquals("",tokenStore.ownerId())
+
     }
 
     class TestTokenStore: AccountDataStore{
@@ -101,5 +115,13 @@ class AuthorizationRepositoryTest {
            return token
         }
 
+    }
+
+    class TestMusicDBManager: MusicDBManager {
+        var isClear = false
+
+        override suspend fun clearAllTables() {
+            isClear = true
+        }
     }
 }

@@ -38,6 +38,9 @@ interface DataTransfer<T> {
             UpdateDialogTransfer, DataTransfer.Abstract<Pair<String,String>>()
     }
 
+    class MediaIdTransfer@Inject constructor():
+        DataTransfer<String>, Abstract<String>()
+
 
 }
 

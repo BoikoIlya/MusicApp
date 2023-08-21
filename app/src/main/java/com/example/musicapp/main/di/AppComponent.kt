@@ -1,12 +1,15 @@
 package com.example.musicapp.main.di
 
 import android.content.Context
+import com.example.musicapp.captcha.presentation.CaptchaFragmentDialog
 import com.example.musicapp.creteplaylist.di.PlaylistDataComponent
 import com.example.musicapp.favorites.di.FavoriteComponent
+import com.example.musicapp.frienddetails.di.FriendDetailsComponent
+import com.example.musicapp.friends.di.FriendsComponent
+import com.example.musicapp.hlscachesystem.presentation.HLSCacheService
 import com.example.musicapp.main.presentation.MainActivity
 import com.example.musicapp.musicdialog.presentation.AddTrackDialogFragment
 import com.example.musicapp.player.di.PlayerComponent
-import com.example.musicapp.playlist.di.PlaylistComponent
 import com.example.musicapp.search.di.SearchComponent
 import com.example.musicapp.searchhistory.di.SearchHistoryComponent
 import com.example.musicapp.selectplaylist.di.SelectPlaylistComponent
@@ -37,6 +40,8 @@ interface AppComponent {
     fun inject(mainActivity: MainActivity)
     fun inject(dialogFragment: AddTrackDialogFragment)
     fun inject(dialogFragment: UpdateDialogFragment)
+    fun inject(captchaFragmentDialog: CaptchaFragmentDialog)
+    fun inject(hlsCacheService: HLSCacheService)
 
     fun trendingComponent(): TrendingComponent.Builder
 
@@ -48,8 +53,6 @@ interface AppComponent {
 
     fun searchHistoryComponent(): SearchHistoryComponent.Builder
 
-    fun playlistComponent(): PlaylistComponent.Builder
-
     fun authComponent(): AuthComponent.Builder
 
     fun playlistsComponent(): PlaylistsComponent.Builder
@@ -57,5 +60,10 @@ interface AppComponent {
     fun playlistDataComponent(): PlaylistDataComponent.Builder
 
     fun selectPlaylistComponent(): SelectPlaylistComponent.Builder
+
+    fun friendsComponent(): FriendsComponent.Builder
+
+    fun friendDetailsComponent(): FriendDetailsComponent.Builder
+
 
 }

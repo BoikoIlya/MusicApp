@@ -1,29 +1,21 @@
 package com.example.musicapp.selectplaylist.presentation
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.app.core.DataTransfer
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.FavoritesViewModel
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.favorites.presentation.FavoritesUiState
-import com.example.musicapp.favorites.presentation.HandleFavoritesListFromCache
 import com.example.musicapp.selectplaylist.domain.AddTrackToPlaylistInteractor
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.userplaylists.data.FetchPlaylistsRepository
-import com.example.musicapp.userplaylists.domain.FavoritesPlaylistsInteractor
 import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import com.example.musicapp.userplaylists.presentation.BasePlaylistsViewModel
-import com.example.musicapp.userplaylists.presentation.FavoritesPlaylistsUiCommunication
 import com.example.musicapp.userplaylists.presentation.HandleFavoritesPlaylistsUiUpdate
 import com.example.musicapp.userplaylists.presentation.HandlePlaylistsFetchingFromCache
 import com.example.musicapp.userplaylists.presentation.PlaylistUi
 import com.example.musicapp.userplaylists.presentation.PlaylistsResultUpdateToUiEventMapper
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,7 +28,7 @@ class SelectPlaylistViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val transfer: DataTransfer<TrackDomain>,
     private val toTrackIdMapper: TrackDomain.Mapper<Int>,
-    private val toPlaylistIdMapper: PlaylistUi.Mapper<Int>,
+    private val toPlaylistIdMapper: PlaylistUi.Mapper<String>,
     private val toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val communication: SelectPlaylistCommunication,
     handlerFavoritesUiUpdate: HandleFavoritesPlaylistsUiUpdate,
@@ -52,10 +44,6 @@ class SelectPlaylistViewModel @Inject constructor(
 
 ) {
 
-    init {
-        update(true)
-        fetch("")
-    }
 
     fun fetch(query: String){
         handlePlaylistsFetchingFromCache.fetch(viewModelScope){
@@ -66,7 +54,7 @@ class SelectPlaylistViewModel @Inject constructor(
     }
 
     fun addToPlaylist(playlistUi: PlaylistUi) = viewModelScope.launch(dispatchersList.io()) {
-        interactor.addTrackToPlaylist(playlistUi.map(toPlaylistIdMapper),transfer.read()!!.map(toTrackIdMapper))
+        interactor.addTrackToPlaylist(playlistUi.map(toPlaylistIdMapper).toInt(),transfer.read()!!.map(toTrackIdMapper))
             .map(mapper)
     }
 

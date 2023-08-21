@@ -32,4 +32,8 @@
         <item name="android:background">@drawable/bottom_sheet_shape</item>
     </style>
 
+    <style name="HistoryTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/body2</item> <!-- Adjust text size as needed -->
+    </style>
+
 </resources>

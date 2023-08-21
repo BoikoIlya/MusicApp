@@ -1,6 +1,7 @@
 package com.example.musicapp.userplaylists.domain
 
 import com.example.musicapp.R
+import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.userplaylists.data.cache.PlaylistCache
 import com.example.musicapp.userplaylists.presentation.PlaylistThumbsState
 import com.example.musicapp.userplaylists.presentation.PlaylistUi
@@ -11,21 +12,21 @@ import javax.inject.Inject
  * Created by HP on 12.07.2023.
  **/
 data class PlaylistDomain(
-   private val playlistId: Int,
-   private val title: String,
-   private val is_following: Boolean,
-   private val count: Int,
-   private val description: String,
-   private val owner_id: Int,
-   private val thumbs: List<String>
+    private val playlistId: String,
+    private val title: String,
+    private val isFollowing: Boolean,
+    private val count: Int,
+    private val description: String,
+    private val ownerId: Int,
+    private val thumbs: List<String>
 ){
 
-    fun <T>map(mapper: Mapper<T>): T = mapper.map(playlistId, title, is_following, count, description, owner_id, thumbs)
+    fun <T>map(mapper: Mapper<T>): T = mapper.map(playlistId, title, isFollowing, count, description, ownerId, thumbs)
 
     interface Mapper<T>{
 
         fun map(
-            playlistId: Int,
+            playlistId: String,
             title: String,
             is_following: Boolean,
             count: Int,
@@ -39,7 +40,7 @@ data class PlaylistDomain(
     class ToPlaylistCacheMapper @Inject constructor(): Mapper<PlaylistCache>{
 
         override fun map(
-            playlistId: Int,
+            playlistId: String,
             title: String,
             is_following: Boolean,
             count: Int,
@@ -52,7 +53,7 @@ data class PlaylistDomain(
                 title = title,
                 is_following = is_following,
                 count = count,
-                create_time = Instant.now().toEpochMilli().toInt(),
+                update_time = Instant.now().toEpochMilli().toInt(),
                 description = description,
                 owner_id = owner_id,
                 thumbs = thumbs
@@ -61,10 +62,26 @@ data class PlaylistDomain(
 
     }
 
-    class ToIdsMapper @Inject constructor(): Mapper<Pair<Int,Int>>{
+    class ToIdsMapper: Mapper<Pair<Int,String>>{
 
         override fun map(
-            playlistId: Int,
+            playlistId: String,
+            title: String,
+            is_following: Boolean,
+            count: Int,
+            description: String,
+            owner_id: Int,
+            thumbs: List<String>,
+        ): Pair<Int,String> {
+            return Pair(owner_id,playlistId)
+        }
+
+    }
+
+    class ToIdsMapperInt @Inject constructor(): Mapper<Pair<Int,Int>>{
+
+        override fun map(
+            playlistId: String,
             title: String,
             is_following: Boolean,
             count: Int,
@@ -72,15 +89,15 @@ data class PlaylistDomain(
             owner_id: Int,
             thumbs: List<String>,
         ): Pair<Int,Int> {
-            return Pair(owner_id,playlistId)
+            return Pair(owner_id,playlistId.toInt())
         }
 
     }
 
-    class ToContainsMapper @Inject constructor(): Mapper<Pair<String,String>>{
+    class ToContainsMapper: Mapper<Pair<String,String>>{
 
         override fun map(
-            playlistId: Int,
+            playlistId: String,
             title: String,
             is_following: Boolean,
             count: Int,
@@ -90,14 +107,18 @@ data class PlaylistDomain(
         ): Pair<String, String> = Pair(title,"")
     }
 
-    class ToPlaylistUi @Inject constructor(): Mapper<PlaylistUi>{
+
+
+    class ToPlaylistUi @Inject constructor(
+        private val managerResource: ManagerResource
+    ): Mapper<PlaylistUi>{
 
         companion object{
             private const val amount_of_images = 4
         }
 
         override fun map(
-            playlistId: Int,
+            playlistId: String,
             title: String,
             is_following: Boolean,
             count: Int,
@@ -105,7 +126,6 @@ data class PlaylistDomain(
             owner_id: Int,
             thumbs: List<String>
         ): PlaylistUi {
-
                 val listOfStates = emptyList<PlaylistThumbsState>().toMutableList()
                 var i = 0
                 while (i < amount_of_images) {
@@ -120,12 +140,60 @@ data class PlaylistDomain(
             return PlaylistUi(
                 playlistId = playlistId,
                 title = title,
-                is_following = is_following,
+                isFollowing = is_following,
                 count = count,
-                description = description,
-                owner_id = owner_id,
+                description = if(description.isEmpty()) managerResource.getString(R.string.no_description) else description,
+                ownerId = owner_id,
                 thumbStates = listOfStates
             )
+        }
+    }
+
+    class ToIdMapper @Inject constructor(): Mapper<String>{
+        override fun map(
+            playlistId: String,
+            title: String,
+            is_following: Boolean,
+            count: Int,
+            description: String,
+            owner_id: Int,
+            thumbs: List<String>,
+        ): String {
+            return playlistId
+        }
+
+    }
+
+    class TitleIsEmpty @Inject constructor(): Mapper<Boolean> {
+        override fun map(
+            playlistId: String,
+            title: String,
+            is_following: Boolean,
+            count: Int,
+            description: String,
+            owner_id: Int,
+            thumbs: List<String>,
+        ): Boolean {
+            return title.isEmpty()
+        }
+    }
+
+    interface ToTitleMapper:Mapper<String> {
+
+        class Base @Inject constructor() : ToTitleMapper  {
+            override fun map(
+                playlistId: String,
+                title: String,
+                is_following: Boolean,
+                count: Int,
+                description: String,
+                owner_id: Int,
+                thumbs: List<String>,
+            ): String {
+                return title
+            }
+
+
         }
     }
 

@@ -1,9 +1,12 @@
 package com.example.musicapp.userplaylists.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Mapper
@@ -27,7 +30,7 @@ class PlaylistsAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), clickListener,selector, imageLoader
+            ), clickListener,selector, imageLoader, DiskCacheStrategy.AUTOMATIC
         )
     }
 
@@ -52,10 +55,11 @@ class PlaylistsViewHolder(
     private val binding: PlaylistBinding,
     private val clickListener: ClickListener<PlaylistUi>,
     private val selector: Selector<PlaylistUi>,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader,
+    cacheStrategy: DiskCacheStrategy
 ): RecyclerView.ViewHolder(binding.root){
 
-    private val mapper = PlaylistUi.ShowToUiMapper(binding,imageLoader)
+    private val mapper = PlaylistUi.ShowToUiMapper(binding,imageLoader,cacheStrategy)
 
     fun bind(item: PlaylistUi){
         item.map(mapper)

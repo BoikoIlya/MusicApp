@@ -7,11 +7,7 @@ import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.FavoritesViewModel
 import com.example.musicapp.favorites.presentation.FavoritesUiCommunication
 import com.example.musicapp.favorites.presentation.FavoritesUiState
-import com.example.musicapp.favorites.presentation.HandleFavoritesListFromCache
-import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.userplaylists.data.FetchPlaylistsRepository
-import com.example.musicapp.userplaylists.domain.FavoritesPlaylistsInteractor
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

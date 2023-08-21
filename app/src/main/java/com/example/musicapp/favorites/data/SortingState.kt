@@ -1,12 +1,8 @@
 package com.example.musicapp.favorites.data
 
-import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.Mapper
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TracksDao
-import com.example.musicapp.favorites.presentation.TracksResult
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 /**
  * Created by HP on 22.03.2023.
@@ -17,7 +13,7 @@ interface SortingState {
 
     fun fetch(
         cache: TracksDao,
-        playlistId: Int
+        playlistId: String
     ): Flow<List<TrackCache>>
 
 
@@ -31,7 +27,7 @@ interface SortingState {
 
         override  fun fetch(
             cache: TracksDao,
-            playlistId: Int
+            playlistId: String
         ): Flow<List<TrackCache>> =  cache.getAllTracksByTime(query,playlistId)
     }
 
@@ -44,7 +40,7 @@ interface SortingState {
 
         override  fun fetch(
             cache: TracksDao,
-            playlistId: Int
+            playlistId: String
         ):  Flow<List<TrackCache>> =  cache.getTracksByName(query,playlistId)
     }
 
@@ -57,7 +53,7 @@ interface SortingState {
 
         override  fun fetch(
             cache: TracksDao,
-            playlistId: Int
+            playlistId: String
         ):  Flow<List<TrackCache>> = cache.getTracksByArtist(query,playlistId)
     }
 

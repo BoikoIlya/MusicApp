@@ -8,7 +8,7 @@ import com.example.musicapp.app.core.SearchQueryRepository
 abstract class TestSearchQueryRepository: SearchQueryRepository {
     var query = ""
 
-    override fun readQuery(): String = query
+    override fun readQueryAndHistoryType(): String = query
 
     override suspend fun saveQueryInDB(query: String) {
        this.query = query

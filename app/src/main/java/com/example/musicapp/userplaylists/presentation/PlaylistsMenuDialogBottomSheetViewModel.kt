@@ -26,7 +26,7 @@ class PlaylistsMenuDialogBottomSheetViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val mapper: PlaylistsResultUpdateToUiEventMapper,
     private val toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
-    private val toPlaylistIdMapper: PlaylistUi.Mapper<Int>,
+    private val toPlaylistIdMapper: PlaylistUi.Mapper<String>,
     private val canEditMapper: PlaylistUi.Mapper<Boolean>,
     private val canEditPlaylistStateCommunication: CanEditPlaylistStateCommunication,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
@@ -38,7 +38,7 @@ class PlaylistsMenuDialogBottomSheetViewModel @Inject constructor(
     }
 
     fun deletePlaylist() = viewModelScope.launch(dispatchersList.io()) {
-        interactor.deleteData(super.fetchData()!!.map(toPlaylistUiMapper).map(toPlaylistIdMapper)).map(mapper)
+        interactor.deleteData(super.fetchData()!!.map(toPlaylistUiMapper).map(toPlaylistIdMapper).toInt()).map(mapper)
     }
 
     fun checkIfCanEdit(){

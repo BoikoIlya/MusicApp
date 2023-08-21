@@ -76,11 +76,11 @@
             android:background="@drawable/playlist_item_gradient"
             >
             <TextView
-                android:layout_marginBottom="3dp"
+                android:layout_marginBottom="10dp"
                 android:id="@+id/playlistName"
                 android:gravity="start|center_vertical"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Hello someone"

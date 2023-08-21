@@ -1,5 +1,6 @@
 package com.example.musicapp.player.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@UnstableApi /**d
+ /**d
  * Created by HP on 18.03.2023.
  **/
 class PlayerViewModel @Inject constructor(
@@ -36,10 +37,8 @@ class PlayerViewModel @Inject constructor(
     private val managerResource: ManagerResource,
     private val playingTrackIdCommunication: PlayingTrackIdCommunication,
     trackChecker: TrackChecker,
-    temporaryTracksCache: TemporaryTracksCache
 ):  BottomSheetPlayerViewModel(
     playerCommunication,
-    temporaryTracksCache,
     favoritesInteractor,
     dispatchersList,
     slideViewPagerCommunication,
@@ -66,7 +65,11 @@ class PlayerViewModel @Inject constructor(
             communication.map(
 
                 Pair(
-                    if(durationInMillis>maxDurationInMillis) maxDurationInMillis else durationInMillis,
+                    if(durationInMillis>maxDurationInMillis) {
+                        Log.d("tag", "currentPosition: max $maxDurationInMillis")
+                        maxDurationInMillis
+                    }else if(durationInMillis<0f) 0f
+                    else durationInMillis,
                     durationForTextView(controller.currentPosition)
                 )
             )
@@ -113,14 +116,17 @@ class PlayerViewModel @Inject constructor(
                 )
         }
         else
-            singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(
-                managerResource.getString(R.string.not_contain_this_track)))
+            showSnackBar(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(R.string.not_contain_this_track)))
 
     }
     
     fun bottomSheetState(newState: Int){
         bottomSheetCommunication.map(newState)
     }
+
+     fun showSnackBar(snackBar: SingleUiEventState.ShowSnackBar) = viewModelScope.launch(dispatchersList.io()) {
+         singleUiEventCommunication.map(snackBar)
+     }
 
     suspend fun collectTrackPosition(
         owner: LifecycleOwner,

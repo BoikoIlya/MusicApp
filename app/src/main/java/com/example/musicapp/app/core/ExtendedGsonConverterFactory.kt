@@ -56,7 +56,11 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
         companion object{
             private const val error_field = "error"
             private const val error_code_field = "error_code"
+            private const val captcha_img_field = "captcha_img"
+            private const val captcha_sid_field = "captcha_sid"
             private const val un_authorized_code = 5
+            private const val captcha_code = 14
+            private const val access_denied =15
         }
 
         @Throws(IOException::class)
@@ -68,9 +72,15 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
                 {
                     val error = json.getAsJsonObject(error_field)
                     val errorCode = error.get(error_code_field).toString().toInt()
-                    if(errorCode == un_authorized_code)
-                        throw UnAuthorizedException()
-                    else throw VkException.Base(errorCode)
+                    throw when(errorCode){
+                        un_authorized_code ->UnAuthorizedException()
+                        captcha_code -> CaptchaNeededException(
+                            error.get(captcha_sid_field).asString,
+                            error.get(captcha_img_field).asString
+                        )
+                       // access_denied-> AccessDeniedException()
+                        else -> VkException.Base(errorCode)
+                    }
                 }
                 else return gson.fromJson(jsonString, type)
         }

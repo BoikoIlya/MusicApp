@@ -10,6 +10,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.musicapp.favorites.data.cache.PlaylistsAndTracksDao
 import com.example.musicapp.favorites.data.cache.TracksDao
 import com.example.musicapp.favorites.data.cache.TrackCache
+import com.example.musicapp.frienddetails.data.cache.FriendAndPlaylistRelation
+import com.example.musicapp.frienddetails.data.cache.FriendAndTracksRelation
+import com.example.musicapp.frienddetails.data.cache.FriendsAndPlaylistsRelationDao
+import com.example.musicapp.frienddetails.data.cache.FriendsAndTracksRelationsDao
+import com.example.musicapp.friends.data.cache.FriendCache
+import com.example.musicapp.friends.data.cache.FriendsDao
 import com.example.musicapp.searchhistory.data.cache.HistoryDao
 import com.example.musicapp.searchhistory.data.cache.HistoryItemCache
 import com.example.musicapp.userplaylists.data.cache.PlaylistCache
@@ -25,7 +31,11 @@ import com.example.musicapp.userplaylists.data.cache.PlaylistsAndTracksRelation
         TrackCache::class,
         HistoryItemCache::class,
         PlaylistCache::class,
-        PlaylistsAndTracksRelation::class],
+        PlaylistsAndTracksRelation::class,
+        FriendCache::class,
+        FriendAndTracksRelation::class,
+        FriendAndPlaylistRelation::class
+               ],
     version = 1,
     exportSchema = true,
     )
@@ -36,6 +46,7 @@ abstract class MusicDatabase: RoomDatabase() {
     abstract fun getHistoryDao(): HistoryDao
     abstract fun getPlaylistsAndTracksDao(): PlaylistsAndTracksDao
     abstract fun getPlaylistDao(): PlaylistDao
-
-
+    abstract fun getFriendsDao(): FriendsDao
+    abstract fun getFriendsAndTracksRelationDao(): FriendsAndTracksRelationsDao
+    abstract fun getFriendsAndPlaylistsRelationDao(): FriendsAndPlaylistsRelationDao
 }

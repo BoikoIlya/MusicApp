@@ -17,10 +17,10 @@ interface PlaylistsCacheToDomainMapper: Mapper<List<PlaylistCache>,List<Playlist
                 PlaylistDomain(
                 playlistId = it.playlistId,
                 title = it.title,
-                is_following = it.is_following,
+                isFollowing = it.is_following,
                 count = it.count,
                 description = it.description,
-                owner_id = it.owner_id,
+                ownerId = it.owner_id,
                 thumbs = it.thumbs
             ) }
         }

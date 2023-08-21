@@ -40,9 +40,7 @@ abstract class PlaylistDataFragment(layout: Int): Fragment(layout) {
         textWatcher = object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
-            override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
+            override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
             override fun afterTextChanged(editable: Editable){
                 titleTextChanged(editable.toString())

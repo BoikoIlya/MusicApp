@@ -11,7 +11,6 @@ import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.presentation.ActivityNavigationCommunication
 import com.example.musicapp.main.presentation.ActivityNavigationState
-import com.example.musicapp.main.presentation.FragmentManagerState
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import javax.inject.Inject

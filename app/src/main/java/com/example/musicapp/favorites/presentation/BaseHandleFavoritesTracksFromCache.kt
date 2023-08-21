@@ -7,11 +7,11 @@ import javax.inject.Inject
  * Created by HP on 15.07.2023.
  **/
 
-interface HandleFavoritesTracksFromCache: HandleFavoritesListFromCache<MediaItem> {
+interface HandleFavoritesTracksFromCache: HandleListFromCache<MediaItem> {
 
     class Base @Inject constructor(
         favoritesTracksCommunication: FavoritesTracksCommunication
-    ) : HandleFavoritesListFromCache.Abstract<MediaItem>(favoritesTracksCommunication),
+    ) : HandleListFromCache.Abstract<MediaItem>(favoritesTracksCommunication),
         HandleFavoritesTracksFromCache
 
 }

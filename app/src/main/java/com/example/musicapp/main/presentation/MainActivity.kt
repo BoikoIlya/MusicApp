@@ -25,6 +25,9 @@ import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.main.di.App
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.player.di.PlayerModule
+import com.example.musicapp.player.presentation.PlayerFragment
+import com.example.musicapp.queue.presenatation.QueueFragment
+import com.example.musicapp.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.example.musicapp.vkauth.presentation.AuthActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
@@ -49,11 +52,13 @@ import javax.inject.Inject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-       binding.bottomSheet.bottomSheetVp.adapter = ScreenSlidePagerAdapter(this)
+        val fragments = listOf(PlayerFragment(), QueueFragment())
+
+        binding.bottomSheet.bottomSheetVp.adapter =
+            ViewPagerFragmentsAdapter(supportFragmentManager,lifecycle, fragments)
 
 
         bottomSheet = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
@@ -65,8 +70,6 @@ import javax.inject.Inject
             this,
             factory
         )[MainViewModel::class.java]
-
-        setContentView(binding.root)
 
         val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHost.navController
@@ -99,7 +102,6 @@ import javax.inject.Inject
 
         lifecycleScope.launch {
             viewModel.collectPlayerControls(this@MainActivity) {
-
                 it.apply(
                     binding,
                     imageLoader,
@@ -117,7 +119,7 @@ import javax.inject.Inject
 
         lifecycleScope.launch {
             viewModel.collectSlideViewPagerCommunication(this@MainActivity){
-                binding.bottomSheet.bottomSheetVp.currentItem = it
+                binding.bottomSheet.bottomSheetVp.setCurrentItem(it,true)
             }
         }
 
@@ -126,6 +128,7 @@ import javax.inject.Inject
                 it.apply(this@MainActivity)
             }
         }
+
 
         binding.playBtn.setOnClickListener {
             if ((it as ToggleButton).isChecked)

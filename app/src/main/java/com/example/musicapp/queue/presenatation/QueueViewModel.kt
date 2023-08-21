@@ -24,14 +24,12 @@ import javax.inject.Inject
  **/
 class QueueViewModel @Inject constructor(
     private val playerCommunication: PlayerCommunication,
-    tracksCache: TemporaryTracksCache,
     tracksInteractor: Interactor<MediaItem,TracksResult>,
     private val dispatchersList: DispatchersList,
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val trackChecker: TrackChecker
 ): BottomSheetPlayerViewModel(
     playerCommunication,
-    tracksCache,
     tracksInteractor,
     dispatchersList,
     slideViewPagerCommunication,

@@ -8,7 +8,7 @@ import javax.inject.Inject
  **/
 interface FavoritesTracksLoadingCommunication: Communication.Mutable<FavoritesUiState> {
 
-    class Base @Inject constructor(): FavoritesTracksLoadingCommunication, Communication.UiUpdate<FavoritesUiState>(
+   open class Base @Inject constructor(): FavoritesTracksLoadingCommunication, Communication.UiUpdate<FavoritesUiState>(
         FavoritesUiState.Empty
     )
 }

@@ -24,7 +24,7 @@ interface PlayerCommunication: CollectPlayerControls, CollectCurrentQueue, Colle
         private val selectedTrackCommunication: SelectedTrackCommunication,
         private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
         private val trackDurationCommunication: TrackDurationCommunication,
-        private val controller: MediaControllerWrapper
+        private val controller: MediaControllerWrapper,
     ): PlayerCommunication{
 
 

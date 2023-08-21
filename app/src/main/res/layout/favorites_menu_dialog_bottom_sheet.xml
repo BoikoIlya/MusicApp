@@ -19,18 +19,35 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:background="?attr/selectableItemBackground"
-        android:id="@+id/download_option"
+        android:id="@+id/cache_option"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:drawableStart="@drawable/download"
-        android:text="@string/download"
+        android:text="@string/save_to_cache"
         android:drawablePadding="20dp"
+        android:drawableTint="@color/green"
         android:textSize="@dimen/body1"
         android:textColor="@color/black"
         android:layout_marginTop="10dp"
         android:paddingHorizontal="20dp"
         android:paddingVertical="15dp"
         />
+
+<!--    <com.google.android.material.textview.MaterialTextView-->
+<!--        android:background="?attr/selectableItemBackground"-->
+<!--        android:id="@+id/remove_from_cache_option"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:drawableStart="@drawable/bin"-->
+<!--        android:text="@string/remove_from_cache"-->
+<!--        android:drawablePadding="20dp"-->
+<!--        android:textSize="@dimen/body1"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:drawableTint="@color/red"-->
+<!--        android:paddingHorizontal="20dp"-->
+<!--        android:paddingVertical="15dp"-->
+<!--        />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:background="?attr/selectableItemBackground"

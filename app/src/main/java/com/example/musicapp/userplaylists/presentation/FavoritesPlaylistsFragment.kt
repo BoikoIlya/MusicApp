@@ -18,7 +18,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 13.07.2023.
  **/
-open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.favorotes_fragment) {
+open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.favorites_fragment) {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -42,9 +42,9 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.backBtn.visibility = View.VISIBLE
-        binding.shuffleFavorites.visibility = View.INVISIBLE
+        binding.shuffleFavorites.visibility = View.GONE
         binding.titleFavorites.setText(R.string.favorites_playlists)
-        binding.noData.setText(R.string.no_favorite_playlists)
+        binding.errorMessage.setText(R.string.no_favorite_playlists)
         binding.menu.setImageResource(R.drawable.plus)
 
         val paddingInDpHorizontal = 10
@@ -61,7 +61,8 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
         val playlistsAdapter = PlaylistsAdapter(imageLoader,
             clickListener = object : ClickListener<PlaylistUi>{
                 override fun onClick(data: PlaylistUi) {
-
+                    viewModel.savePlaylist(data)
+                    findNavController().navigate(R.id.action_playlistsFragment_to_favoritesPlaylistDetailsFragment)
                 }
             },
             selector = object : Selector<PlaylistUi>{

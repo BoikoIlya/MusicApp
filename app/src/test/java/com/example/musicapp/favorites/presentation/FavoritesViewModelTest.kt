@@ -2,7 +2,9 @@ package com.example.musicapp.favorites.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.CacheRepository
 import com.example.musicapp.app.core.ConnectionChecker
+import com.example.musicapp.app.core.HandleFavoritesTracksSortedSearch
 import com.example.musicapp.app.core.SingleUiEventState
 import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
@@ -18,7 +20,9 @@ import com.example.musicapp.player.presentation.PlayingTrackIdCommunication
 import com.example.musicapp.trending.data.ObjectCreator
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.flow
 import org.junit.Before
 import org.junit.Test
 
@@ -38,10 +42,12 @@ class FavoritesViewModelTest: ObjectCreator() {
     private lateinit var managerResource: TestManagerResource
     private lateinit var playingTrackIdCommuniaction: TestPlyingTrackIdCommuniacation
     private lateinit var connectionChecker: TestConnectionChecker
+    private lateinit var cachedTracksRepository:TestCacheRepository
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup(){
+        cachedTracksRepository = TestCacheRepository()
         connectionChecker = TestConnectionChecker()
         playingTrackIdCommuniaction = TestPlyingTrackIdCommuniacation()
         managerResource = TestManagerResource()
@@ -57,7 +63,6 @@ class FavoritesViewModelTest: ObjectCreator() {
            playerCommunication = playerCommunication,
            temporaryTracksCache = temporaryTracksCache,
             dispatchersList = dispatchersList,
-            tracksResultToTracksCommunicationMapper =  TracksResultToFavoriteTracksCommunicationMapper.Base(favoriteTracksCommunion),
             tracksResultToUiEventCommunicationMapper =  TracksResultToUiEventCommunicationMapper.Base(singleUiStateCommunication,playingTrackIdCommuniaction),
             favoritesTracksCommunication = favoriteTracksCommunion,
             interactor = interactor,
@@ -65,49 +70,62 @@ class FavoritesViewModelTest: ObjectCreator() {
             resetSwipeActionCommunication = resetSwipeActionCommunication,
             handlerFavoritesUiUpdate = HandlerFavoritesTracksUiUpdate.Base(singleUiStateCommunication, favoriteTracksCommunion ,interactor),
             trackChecker = TrackChecker.Base(singleUiStateCommunication,managerResource,connectionChecker),
+            cachedTracksRepository = cachedTracksRepository,
+            handleTracksSortedSearch = HandleFavoritesTracksSortedSearch.Base(
+                dispatchersList = dispatchersList,
+                repository =cachedTracksRepository,
+                handlerFavoritesListFromCache = HandleFavoritesTracksFromCache.Base(favoriteTracksCommunion)
+            ),
+            managerResource = managerResource,
+
         )
     }
 
 
     @Test
    fun `test fetch data`(){
-        assertEquals(interactor.list ,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByTime(""), interactor.states[0])
+        assertEquals(cachedTracksRepository.list ,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByTime(""), cachedTracksRepository.states[0])
 
         viewModel.saveQuery("query")
 
         viewModel.fetchData(SortingState.ByTime())
 
-        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByTime("query"), interactor.states[1])
+        assertEquals(cachedTracksRepository.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByTime("query"), cachedTracksRepository.states[1])
 
         viewModel.fetchData(SortingState.ByName())
 
-        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByName("query"), interactor.states[2])
+        assertEquals(cachedTracksRepository.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByName("query"), cachedTracksRepository.states[2])
 
         viewModel.fetchData(SortingState.ByArtist())
 
-        assertEquals(interactor.list,favoriteTracksCommunion.dataList)
-        assertEquals(SortingState.ByArtist("query"), interactor.states[3])
+        assertEquals(cachedTracksRepository.list,favoriteTracksCommunion.dataList)
+        assertEquals(SortingState.ByArtist("query"), cachedTracksRepository.states[3])
 
    }
 
     @Test
     fun `test init update`(){
+        assertEquals(FavoritesUiState.DisableLoading,favoriteTracksCommunion.loading[0])
+        assertEquals(FavoritesUiState.Success,favoriteTracksCommunion.states[0])
 
-        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.states[0])
-        assertEquals(FavoritesUiState.Success,favoriteTracksCommunion.states[1])
 
-        interactor.isDBEmpty = false
+        cachedTracksRepository.list.clear()
         interactor.updateDataError = "s"
         viewModel.update(false)
-        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[2])
+        viewModel.fetchData()
+        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.loading[1])
+        assertEquals(FavoritesUiState.DisableLoading,favoriteTracksCommunion.loading[2])
+        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[1])
         assertEquals(SingleUiEventState.ShowSnackBar.Error::class,singleUiStateCommunication.stateList.last()::class)
 
         viewModel.update(true)
-        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.states[4])
-        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[5])
+        viewModel.fetchData()
+        assertEquals(FavoritesUiState.Loading,favoriteTracksCommunion.loading[3])
+        assertEquals(FavoritesUiState.DisableLoading,favoriteTracksCommunion.loading[4])
+        assertEquals(FavoritesUiState.Failure,favoriteTracksCommunion.states[2])
     }
 
 
@@ -119,6 +137,10 @@ class FavoritesViewModelTest: ObjectCreator() {
 
         val states = emptyList<FavoritesUiState>().toMutableList()
         val dataList = emptyList<MediaItem>().toMutableList()
+        val loading = emptyList<FavoritesUiState>().toMutableList()
+        override fun showLoading(state: FavoritesUiState) {
+            loading.add(state)
+        }
 
         override fun showUiState(state: FavoritesUiState) {
             states.add(state)
@@ -134,10 +156,16 @@ class FavoritesViewModelTest: ObjectCreator() {
             collector: FlowCollector<FavoritesUiState>,
         ) = Unit
 
-        override suspend fun collectTracks(
+        override suspend fun collectData(
             owner: LifecycleOwner,
             collector: FlowCollector<List<MediaItem>>,
         ) = Unit
+
+        override suspend fun collectLoading(
+            owner: LifecycleOwner,
+            collector: FlowCollector<FavoritesUiState>,
+        ) = Unit
+
 
     }
 
@@ -169,9 +197,28 @@ class FavoritesViewModelTest: ObjectCreator() {
            value = newValue
         }
 
+        override suspend fun collectIgnoreLifecycle(collector: FlowCollector<Int>) = Unit
+
         override suspend fun collect(
             lifecycleOwner: LifecycleOwner,
             collector: FlowCollector<Int>,
         ) = Unit
     }
+
+    class TestCacheRepository: CacheRepository<MediaItem>,ObjectCreator() {
+        val list = emptyList<MediaItem>().toMutableList()
+        val states = emptyList<SortingState>().toMutableList()
+        init {
+            list.add(getMediaItem())
+        }
+
+        override fun fetch(sortingState: SortingState, playlistId: Int): Flow<List<MediaItem>> {
+            states.add(sortingState)
+            return flow { emit(list) }
+        }
+
+        override suspend fun isDbEmpty(playlistId: Int): Boolean = list.isEmpty()
+    }
+
+
 }

@@ -17,6 +17,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1222998774">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="asus ZB602KL" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-333670248">
           <value>
             <AndroidTestResultsTableState>
@@ -40,6 +53,7 @@
                   <entry key="Duration" value="90" />
                   <entry key="R58M44GZKDL" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="asus ZB602KL" value="120" />
                   <entry key="samsung&#10; SM-A705FN" value="120" />
                 </map>
               </option>
@@ -68,6 +82,19 @@
                   <entry key="6.7_Horizontal_Fold-in_API_31" value="120" />
                   <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="57199763">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="asus ZB602KL" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

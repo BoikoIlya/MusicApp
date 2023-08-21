@@ -1,17 +1,16 @@
 package com.example.musicapp.userplaylists.presentation
 
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
-import com.example.musicapp.favorites.presentation.HandlerFavoritesUiUpdate
+import com.example.musicapp.favorites.presentation.HandleUpdate
 import com.example.musicapp.selectplaylist.presentation.SelectPlaylistCommunication
 import com.example.musicapp.userplaylists.domain.FavoritesPlaylistsInteractor
-import com.example.musicapp.userplaylists.domain.PlaylistsResult
 import javax.inject.Inject
 
 /**
  * Created by HP on 13.07.2023.
  **/
 
-interface HandleFavoritesPlaylistsUiUpdate: HandlerFavoritesUiUpdate {
+interface HandleFavoritesPlaylistsUiUpdate: HandleUpdate {
 
 
     class BaseForSelectPlaylist @Inject constructor(
@@ -19,7 +18,7 @@ interface HandleFavoritesPlaylistsUiUpdate: HandlerFavoritesUiUpdate {
         selectPlaylistCommunication: SelectPlaylistCommunication,
         interactor: FavoritesPlaylistsInteractor
     ): HandleFavoritesPlaylistsUiUpdate,
-        HandlerFavoritesUiUpdate.Abstract<PlaylistUi, PlaylistsResult>(
+        HandleUpdate.Abstract<PlaylistUi>(
             selectPlaylistCommunication,
             globalSingleUiEventCommunication,
             interactor
@@ -30,7 +29,7 @@ interface HandleFavoritesPlaylistsUiUpdate: HandlerFavoritesUiUpdate {
         favoritesTracksCommunication: FavoritesPlaylistsUiCommunication,
         interactor: FavoritesPlaylistsInteractor
     ): HandleFavoritesPlaylistsUiUpdate,
-        HandlerFavoritesUiUpdate.Abstract<PlaylistUi, PlaylistsResult>(
+        HandleUpdate.Abstract<PlaylistUi>(
         favoritesTracksCommunication,
         globalSingleUiEventCommunication,
         interactor

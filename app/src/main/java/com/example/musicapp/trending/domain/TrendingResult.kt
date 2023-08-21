@@ -1,6 +1,6 @@
 package com.example.musicapp.trending.presentation
 
-import com.example.musicapp.trending.domain.PlaylistDomain
+import com.example.musicapp.trending.domain.TopBarItemDomain
 import com.example.musicapp.trending.domain.TrackDomain
 
 /**
@@ -8,18 +8,21 @@ import com.example.musicapp.trending.domain.TrackDomain
  **/
 sealed interface TrendingResult {
 
-    fun <T>map(mapper: Mapper<T>):T
+   suspend fun <T>map(mapper: Mapper<T>):T
 
     interface Mapper<T>{
-        fun map(data: Pair<List<PlaylistDomain>, List<TrackDomain>>, message: String): T
+        suspend fun map(data: Pair<List<TopBarItemDomain>, List<TrackDomain>>, message: String): T
     }
 
-    data class Success(private val data: Pair<List<PlaylistDomain>, List<TrackDomain>>): TrendingResult {
-        override fun <T> map(mapper: Mapper<T>): T = mapper.map(data, "")
+    data class Success(private val data: Pair<List<TopBarItemDomain>, List<TrackDomain>>): TrendingResult {
+        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(data, "")
     }
 
-    data class Error(private val message: String): TrendingResult {
-        override fun <T> map(mapper: Mapper<T>): T = mapper.map(Pair(emptyList(), emptyList()), message)
+    data class Error(
+        private val message: String,
+        private val topBarItems: List<TopBarItemDomain>
+    ): TrendingResult {
+        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(Pair(topBarItems, emptyList()), message)
     }
 
 }

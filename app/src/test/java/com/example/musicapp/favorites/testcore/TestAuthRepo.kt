@@ -11,7 +11,7 @@ class TestAuthRepository: AuthorizationRepository{
     private var data = Pair("1","1")
     var tokenUpdate = false
 
-    override suspend fun clearData() {
+    override suspend fun logout() {
         data = Pair("","")
     }
 

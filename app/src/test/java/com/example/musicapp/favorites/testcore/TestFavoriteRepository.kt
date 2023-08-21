@@ -20,22 +20,22 @@ class TestFavoriteRepository: FavoritesTracksRepository {
 
 
 
-    override fun fetchData(state: SortingState): Flow<TracksResult> {
-        return flow {
-            states.add(state)
-            when (state) {
-                is SortingState.ByArtist -> {
-                    list.clear()
-                    list.addAll(list.sortedBy {  it.mediaMetadata.artist.toString()  })
-                }
-                is SortingState.ByName -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
-                is SortingState.ByTime -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
-                else -> list
-            }
-            emit(TracksResult.Success(list))
-        }
-
-    }
+//    override fun fetchData(state: SortingState): Flow<TracksResult> {
+//        return flow {
+//            states.add(state)
+//            when (state) {
+//                is SortingState.ByArtist -> {
+//                    list.clear()
+//                    list.addAll(list.sortedBy {  it.mediaMetadata.artist.toString()  })
+//                }
+//                is SortingState.ByName -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
+//                is SortingState.ByTime -> list.sortedBy {  it.mediaMetadata.artist.toString()  }
+//                else -> list
+//            }
+//            emit(TracksResult.Success(list))
+//        }
+//
+//    }
 
     override suspend fun updateData() {
         TODO("Not yet implemented")

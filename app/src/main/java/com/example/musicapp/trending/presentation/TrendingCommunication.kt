@@ -10,23 +10,23 @@ import javax.inject.Inject
 /**
  * Created by HP on 26.01.2023.
  **/
-interface TrendingCommunication: CollectTrendings, UiCommunication<TracksUiState, MediaItem> {
+interface TrendingCommunication: CollectTrendings, UiCommunication<TrendingUiState, MediaItem> {
 
-    fun showPlayLists(playlists: List<PlaylistUi>)
+    fun showPlayLists(playlists: List<TrendingTopBarItemUi>)
 
     class Base @Inject constructor(
         private val trendingPlaylistsCommunication: TrendingPlaylistsCommunication,
         trendingStateCommunication: TrendingStateCommunication,
         trendingTracksCommunication: TrendingTracksCommunication
     ): TrendingCommunication,
-        UiCommunication.Abstract<TracksUiState,MediaItem>(
+        UiCommunication.Abstract<TrendingUiState,MediaItem>(
             trendingStateCommunication,trendingTracksCommunication){
 
-        override fun showPlayLists(playlists: List<PlaylistUi>) = trendingPlaylistsCommunication.map(playlists)
+        override fun showPlayLists(playlists: List<TrendingTopBarItemUi>) = trendingPlaylistsCommunication.map(playlists)
 
         override suspend fun collectPlaylists(
             owner: LifecycleOwner,
-            collector: FlowCollector<List<PlaylistUi>>,
+            collector: FlowCollector<List<TrendingTopBarItemUi>>,
         ) = trendingPlaylistsCommunication.collect(owner,collector)
 
 
@@ -41,7 +41,7 @@ interface CollectTrendings{
 
 
 
-    suspend fun collectPlaylists(owner: LifecycleOwner, collector: FlowCollector<List<PlaylistUi>>)
+    suspend fun collectPlaylists(owner: LifecycleOwner, collector: FlowCollector<List<TrendingTopBarItemUi>>)
 
 }
 

@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="10dp"
-    android:paddingHorizontal="15dp"
+    android:paddingEnd="5dp"
     android:foreground="?attr/selectableItemBackground"
     >
 
@@ -19,7 +18,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardElevation="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginVertical="10dp"
         >
 
         <ImageView
@@ -33,22 +34,23 @@
 
 
     <TextView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="10dp"
         android:id="@+id/song_name_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="Space Vandals"
         android:textColor="@color/black"
         android:textSize="@dimen/body1"
         android:textStyle="bold"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:flow_horizontalBias="0.5"
+        app:layout_constraintBottom_toTopOf="@id/authorTv"
+        app:layout_constraintEnd_toStartOf="@+id/downloaded_icon"
         app:layout_constraintStart_toEndOf="@+id/cardView"
 
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/cardView" />
 
     <TextView
         android:id="@+id/authorTv"
@@ -59,6 +61,7 @@
         android:text="Moderatordsffffffffffffffffffffffffffffffff"
         android:textColor="@color/gray"
         android:textSize="@dimen/body1"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
         app:layout_constraintStart_toEndOf="@id/trackDurationTv"
         app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
@@ -76,16 +79,34 @@
         app:layout_constraintTop_toTopOf="@+id/authorTv" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_marginEnd="10dp"
+        android:visibility="gone"
+        android:id="@+id/downloaded_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/download"
+        android:tint="@color/green"
+        android:clickable="false"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/add_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/song_name_tv"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:visibility="gone"
+        android:layout_marginEnd="10dp"
         android:id="@+id/add_btn"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="10dp"
         android:src="@drawable/plus"
         android:tint="@color/gray"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/downloaded_icon"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.example.musicapp.app.core
 
 import androidx.media3.common.MediaItem
 import com.example.musicapp.R
+import com.example.musicapp.app.core.ToMediaItemMapper.Companion.is_cached
 import javax.inject.Inject
 
 /**
@@ -19,12 +20,14 @@ interface TrackChecker {
 
         override suspend fun checkIfPlayable(item: MediaItem, playable: suspend()->Unit) {
             if(item.mediaMetadata.isPlayable!!){
-                if(connectionChecker.isDeviceHaveConnection()) playable.invoke()
+                if(connectionChecker.isDeviceHaveConnection() || item.mediaMetadata.extras!!.getBoolean(is_cached))
+                    playable.invoke()
                 else singleUiEventCommunication.map(
                     SingleUiEventState.ShowSnackBar.Error(
                         managerResource.getString(R.string.no_connection_message)
                     )
                 )
+               // playable.invoke()
             }
             else {
                 singleUiEventCommunication.map(

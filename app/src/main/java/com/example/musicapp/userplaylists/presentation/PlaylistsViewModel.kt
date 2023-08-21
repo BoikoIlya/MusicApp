@@ -1,20 +1,12 @@
 package com.example.musicapp.userplaylists.presentation
 
-import android.util.Log
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.FavoritesViewModel
-import com.example.musicapp.favorites.presentation.FavoritesUiState
-import com.example.musicapp.favorites.presentation.HandleFavoritesListFromCache
+import com.example.musicapp.favorites.presentation.HandleListFromCache
 import com.example.musicapp.userplaylists.data.FetchPlaylistsRepository
 import com.example.musicapp.userplaylists.domain.FavoritesPlaylistsInteractor
 import com.example.musicapp.userplaylists.domain.PlaylistDomain
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 /**
@@ -28,7 +20,7 @@ class PlaylistsViewModel @Inject constructor(
     private val toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val handlePlaylistsFetchingFromCache: HandlePlaylistsFetchingFromCache,
     private val repository: FetchPlaylistsRepository,
-    private val handleFavoritesListFromCachePlaylistUi: HandleFavoritesListFromCache<PlaylistUi>
+    private val handleFavoritesListFromCachePlaylistUi: HandleListFromCache<PlaylistUi>
 ): BasePlaylistsViewModel(
     handlerFavoritesUiUpdate,
     dispatchersList,
@@ -43,7 +35,7 @@ class PlaylistsViewModel @Inject constructor(
 
     fun fetch(query: String){
         handlePlaylistsFetchingFromCache.fetch(viewModelScope){
-            repository.fetchAll(query).collect{list->
+            repository.fetchAll(query).collectLatest{list->
                 handleFavoritesListFromCachePlaylistUi.handle(list.map { it.map(toPlaylistUiMapper)})
             }
         }

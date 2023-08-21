@@ -25,8 +25,8 @@ data class TrackDomain(
     private val albumName: String,
     private val date: Int,
     private val durationInSeconds: Int,
-    private val ownerId: Int
-
+    private val ownerId: Int,
+    private val isCached: Boolean
 ){
     interface Mapper<T>{
         fun map(
@@ -39,7 +39,8 @@ data class TrackDomain(
             albumName: String,
             date: Int,
             duration: Int,
-            ownerId: Int
+            ownerId: Int,
+            isCached: Boolean
         ): T
     }
 
@@ -53,7 +54,8 @@ data class TrackDomain(
         albumName,
         date,
         durationInSeconds,
-        ownerId
+        ownerId,
+        isCached
     )
 
     class ToTrackUiMapper @Inject constructor(
@@ -70,7 +72,8 @@ data class TrackDomain(
             albumName: String,
             date: Int,
             duration: Int,
-            ownerId: Int
+            ownerId: Int,
+            isCached: Boolean
         ): MediaItem {
 
            val durationString = formatTimeSecondsToMinutesAndSeconds.format(duration)
@@ -82,9 +85,11 @@ data class TrackDomain(
             extraData.putInt(ToMediaItemMapper.track_id,id)
             extraData.putInt(ToMediaItemMapper.owner_id,ownerId)
             extraData.putFloat(ToMediaItemMapper.track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
+            extraData.putBoolean(ToMediaItemMapper.is_cached,isCached)
 
             return MediaItem.Builder()
-                .setMediaId(if(track_url.isNotEmpty()) track_url else java.util.Random().nextInt().toString())
+                .setMediaId(id.toString())
+                .setUri(track_url)
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(name)
@@ -115,9 +120,10 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
+            isCached: Boolean
         ): TrackCache {
             return TrackCache(
-                trackId = id,
+                trackId = id.toString(),
                 url = track_url,
                 name = name,
                 artistName = artistName,
@@ -145,6 +151,7 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
+            isCached: Boolean
         ): Pair<Int, Int>  = Pair(ownerId,id)
 
 
@@ -163,6 +170,7 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
+            isCached: Boolean
         ): Int = id
 
 
@@ -179,7 +187,8 @@ data class TrackDomain(
             albumName: String,
             date: Int,
             duration: Int,
-            ownerId: Int
+            ownerId: Int,
+            isCached: Boolean
         ): Pair<String,String> {
             return Pair(name,artistName)
         }

@@ -1,10 +1,11 @@
 package com.example.musicapp.favorites.data.cache
 
+import android.util.Log
+import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.FavoritesCacheDataSource
+import com.example.musicapp.editplaylist.data.cache.PlaylistDetailsCacheDataSource
 import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
 import com.example.musicapp.userplaylists.data.cache.PlaylistsAndTracksRelation
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -14,37 +15,35 @@ import javax.inject.Inject
 
 class BaseFavoritesTracksCacheDataSource @Inject constructor(
     private val tracksDao: TracksDao,
-    private val playlistsAndTracksRelationsDao: PlaylistsAndTracksDao
-    ): FavoritesCacheDataSource<TrackCache> {
+    private val playlistsAndTracksRelationsDao: PlaylistsAndTracksDao,
+    dispatchersList: DispatchersList
+    ): FavoritesCacheDataSource<TrackCache>,
+    PlaylistDetailsCacheDataSource.Abstract(tracksDao,playlistsAndTracksRelationsDao,dispatchersList) {
+
+
 
         override suspend fun contains(data: Pair<String, String>): Boolean
-        = tracksDao.contains(data.first, data.second) != null
+        = tracksDao.contains(data.first, data.second, mainPlaylistId) != null
 
-        override suspend fun insertWithNewId(newId: Int, data: TrackCache) {
-            tracksDao.insertTrack(data.copy(trackId = newId))
-            playlistsAndTracksRelationsDao.insertRelationDao(PlaylistsAndTracksRelation(mainPlaylistId,newId))
+//        override suspend fun containsInFavorites(): Boolean = tracksDao.containsI(data.first, data.second) != null
+
+    override suspend fun insertWithNewId(newId: Int, data: TrackCache) {
+            tracksDao.insertTrack(data.copy(trackId = newId.toString()))
+            playlistsAndTracksRelationsDao.insertRelationDao(PlaylistsAndTracksRelation(mainPlaylistId.toString(),newId.toString()))
         }
 
         override suspend fun insert(data: TrackCache) {
             tracksDao.insertTrack(data)
-            playlistsAndTracksRelationsDao.insertRelationDao(PlaylistsAndTracksRelation(mainPlaylistId,data.trackId))
+            playlistsAndTracksRelationsDao.insertRelationDao(PlaylistsAndTracksRelation(mainPlaylistId.toString(),data.trackId))
         }
 
         override suspend fun removeFromDB(id: Int) {
-            playlistsAndTracksRelationsDao.deleteOneRelation(id, mainPlaylistId)
+            playlistsAndTracksRelationsDao.deleteOneRelation(id, mainPlaylistId.toString())
             tracksDao.removeTrack(id)
         }
 
         override suspend fun getById(id: Int): TrackCache = tracksDao.getById(id)?: throw NoSuchElementException()
 
-        override suspend fun update(list: List<TrackCache>) {
-            val trackIds = list.map { it.trackId}
-            coroutineScope {
-                launch { tracksDao.insertListOfTracks(list) }
-                launch{ tracksDao.deleteTracksNotInListWithSinglePlaylist(trackIds,mainPlaylistId)}
-                launch { playlistsAndTracksRelationsDao.insertRelationsList(trackIds.map { PlaylistsAndTracksRelation(mainPlaylistId,it) }) }
-                launch { playlistsAndTracksRelationsDao.deleteRelationsOfTrackIdsNotInList(trackIds, mainPlaylistId) }
-            }
-        }
+        override suspend fun update(list: List<TrackCache>) = savePlaylistTracks(mainPlaylistId.toString(),list)
 
     }

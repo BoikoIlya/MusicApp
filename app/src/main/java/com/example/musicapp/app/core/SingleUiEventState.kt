@@ -1,6 +1,7 @@
 package com.example.musicapp.app.core
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
+import com.example.musicapp.hlscachesystem.presentation.HLSCacheService
 import com.example.musicapp.main.presentation.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
@@ -109,7 +111,7 @@ sealed interface SingleUiEventState{
     }
 
 
-    @UnstableApi
+
     data class ShowDialog(
         private val dialog: DialogFragment,
     ) : SingleUiEventState{
@@ -126,5 +128,19 @@ sealed interface SingleUiEventState{
 
     }
 
+    object LaunchHLSCacheService: SingleUiEventState {
+        override fun apply(
+            fragmentManager: FragmentManager,
+            context: Context,
+            binding: ActivityMainBinding,
+        ) {
+           if(!context.isServiceRunning<HLSCacheService>())
+               context.startForegroundService(Intent(context, HLSCacheService::class.java))
+        }
+
+        override fun applyForBottomSheet(decorView: View, context: Context) = Unit
+    }
+
 }
+
 

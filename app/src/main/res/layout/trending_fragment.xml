@@ -1,93 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:id="@+id/trendingCoordinator"
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     >
-<androidx.core.widget.NestedScrollView
-    android:id="@+id/trendingScrollView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/trending_fragment_scene">
 
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           android:paddingHorizontal="25dp"
-            android:layout_marginTop="25dp"
-            android:text="@string/trending_header"
-            android:textColor="@color/black"
-            android:textSize="@dimen/h1"
-            android:textStyle="bold"
-            tools:visibility="visible"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcvPlaylists"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:visibility="visible" />
-
-
-    <TextView
-        app:flow_firstVerticalBias="1"
-        android:background="@color/white"
-        android:id="@+id/textView4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/top_200_recommendations"
-        android:textColor="@color/black"
-        android:textSize="@dimen/h3"
-        tools:visibility="visible"
-        android:paddingHorizontal="25dp"
-        android:paddingBottom="15dp"/>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/trendingProgress"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_marginTop="20dp"
-        app:lottie_fileName="loading.json"
-        app:lottie_loop="true"
-        app:lottie_autoPlay="true"
-        android:visibility="gone"
-        android:layout_gravity="center"
-        />
-
-
-
-        <include
-            layout="@layout/error_layout"
-            android:id="@+id/errorLayout"
-            android:visibility="gone"
-            />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvTrendingTracks"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:listitem="@layout/track_item"
-        android:paddingBottom="140dp"
-        android:clipToPadding="false"/>
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
-
-    <com.example.musicapp.app.views.ScrollUpNestedScrollButton
+    <com.example.musicapp.app.core.ScrollUpRecyclerButton
         android:id="@+id/scrollUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -96,10 +16,28 @@
         android:src="@drawable/up_chevron"
         app:tint="@color/orange"
         app:shapeAppearance="@style/ThemeOverlay.Material3.FloatingActionButton.Secondary"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="160dp"
         android:layout_marginEnd="20dp"
-        app:layout_anchor="@id/trendingScrollView"
-        app:layout_anchorGravity="bottom|end"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <com.simform.refresh.SSPullToRefreshLayout
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trendingRcv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="140dp"
+            android:clipToPadding="false"
+            />
+
+
+    </com.simform.refresh.SSPullToRefreshLayout>
+</FrameLayout>
+

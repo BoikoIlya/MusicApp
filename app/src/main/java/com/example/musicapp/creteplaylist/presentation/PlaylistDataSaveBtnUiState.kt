@@ -37,6 +37,7 @@ sealed interface PlaylistDataSaveBtnUiState{
             binding: PlaylistDataFragmentBinding,
             context: Context
         ) = with(binding){
+            if(saveBtn.isVisible) return@with
             val animation = AnimationUtils.loadAnimation(context, com.airbnb.lottie.R.anim.abc_fade_in)
             animation.duration = 200
             saveBtn.startAnimation(animation)

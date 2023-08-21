@@ -1,9 +1,13 @@
 package com.example.musicapp.trending.presentation
 
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.trending.domain.PlaylistDomain
+import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
+import com.example.musicapp.app.core.SingleUiEventState
+import com.example.musicapp.main.data.TemporaryTracksCache
+import com.example.musicapp.trending.domain.TopBarItemDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -29,7 +33,7 @@ interface HandleTrendingResult {
             coroutineScope: CoroutineScope,
             fetchData: suspend () -> TrendingResult,
         ) {
-            communication.showUiState(TracksUiState.Loading)
+            communication.showUiState(TrendingUiState.Loading)
             coroutineScope.launch(dispatchersList.io()) {
                 val result = fetchData.invoke()
                  result.map(mapper)
@@ -41,19 +45,21 @@ interface HandleTrendingResult {
 
 class TrendingResultMapper @Inject constructor(
     private val communication: TrendingCommunication,
-    private val playlistsMapper: PlaylistDomain.Mapper<PlaylistUi>,
-    private val tracksMapper: TrackDomain.Mapper<MediaItem>
+    private val playlistsMapper: TopBarItemDomain.Mapper<TrendingTopBarItemUi>,
+    private val tracksMapper: TrackDomain.Mapper<MediaItem>,
+    private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
+    private val temporaryTracksCache: TemporaryTracksCache
 ): TrendingResult.Mapper<Unit>{
 
-    override fun map(data: Pair<List<PlaylistDomain>, List<TrackDomain>>, message: String) {
-        communication.showUiState(
-        if(data.first.isEmpty() || data.second.isEmpty()) TracksUiState.Error(message)
-        else {
-            communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
+    override suspend fun map(data: Pair<List<TopBarItemDomain>, List<TrackDomain>>, message: String) {
+        communication.showUiState(TrendingUiState.DisableLoading)
+        if(data.second.isEmpty()) {
+            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(message))
+        } else {
             communication.showData(data.second.map { it.map(tracksMapper) })
-            TracksUiState.Success
         }
-        )
+        Log.d("tag", "map: ${data.first.size} ${data.second.size} ")
+        communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
     }
 
 }

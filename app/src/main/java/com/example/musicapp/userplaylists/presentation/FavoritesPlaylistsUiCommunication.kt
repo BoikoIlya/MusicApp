@@ -4,6 +4,7 @@ import com.example.musicapp.favorites.presentation.FavoritesTracksLoadingCommuni
 import com.example.musicapp.favorites.presentation.FavoritesUiCommunication
 import com.example.musicapp.favorites.presentation.FavoritesUiState
 import com.example.musicapp.favorites.presentation.UiCommunication
+import com.example.musicapp.favoritesplaylistdetails.presentation.PlaylistLoadingCommunication
 import javax.inject.Inject
 
 /**
@@ -15,11 +16,11 @@ interface FavoritesPlaylistsUiCommunication: FavoritesUiCommunication<PlaylistUi
     class Base @Inject constructor(
         uiStateCommunication: PlaylistsUiStateCommunication,
         favoritesPlaylistCommunication: FavoritesPlaylistCommunication,
-        favoritesTracksLoadingCommunication: FavoritesTracksLoadingCommunication
+        playlistLoadingCommunication: FavoritesTracksLoadingCommunication
     ) : FavoritesUiCommunication.Abstract<PlaylistUi>(
         uiStateCommunication,
         favoritesPlaylistCommunication,
-        favoritesTracksLoadingCommunication
+        playlistLoadingCommunication
     ), FavoritesPlaylistsUiCommunication
 
 }

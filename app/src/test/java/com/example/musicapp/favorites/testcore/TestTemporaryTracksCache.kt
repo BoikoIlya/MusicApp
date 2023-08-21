@@ -13,13 +13,17 @@ class TestTemporaryTracksCache: TemporaryTracksCache, ObjectCreator() {
 
     override  fun readCurrentPageTracks(): List<MediaItem> = tracks
 
+    override suspend fun findTrackPosition(id: String): Int {
+        return tracks.indexOfFirst { it.mediaId==id }
+    }
+
     override suspend fun saveCurrentPageTracks(list: List<MediaItem>) {
         tracks.addAll(list)
     }
 
     override suspend fun map(): List<MediaItem> {
         return if(isNewQuery) tracks
-        else emptyList<MediaItem>()
+        else emptyList()
     }
 
     override suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean) {

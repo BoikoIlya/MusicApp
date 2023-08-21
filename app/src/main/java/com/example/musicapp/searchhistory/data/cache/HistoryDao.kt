@@ -21,15 +21,19 @@ interface HistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHistoryItem(item: HistoryItemCache)
 
-    @Query("SELECT * FROM history_table WHERE queryTerm LIKE '%' || :query || '%' ORDER BY time DESC")
-    fun searchHistory(query: String): Flow<List<HistoryItemCache>>
+    @Query("SELECT * FROM history_table " +
+            "WHERE queryTerm LIKE '%' || :query || '%' AND historyType=:historyType " +
+            "ORDER BY time DESC")
+    fun searchHistory(query: String, historyType: Int): Flow<List<HistoryItemCache>>
 
-    @Query("SELECT * FROM history_table  ORDER BY time DESC")
-    fun getAllHistoryByTime(): Flow<List<HistoryItemCache>>
+    @Query("SELECT * FROM history_table " +
+            "WHERE historyType=:historyType " +
+            "ORDER BY time DESC")
+    fun getAllHistoryByTime(historyType: Int): Flow<List<HistoryItemCache>>
 
-    @Query("DELETE FROM history_table")
-    suspend fun clearHistory()
+    @Query("DELETE FROM history_table WHERE historyType=:historyType")
+    suspend fun clearHistory(historyType: Int)
 
-    @Query("DELETE FROM history_table WHERE queryTerm LIKE :id")
-    suspend fun removeItem(id: String)
+    @Query("DELETE FROM history_table WHERE queryTerm LIKE :id AND historyType=:historyType")
+    suspend fun removeItem(id: String,historyType: Int)
 }

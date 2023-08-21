@@ -4,6 +4,7 @@ import com.example.musicapp.app.core.FavoritesCacheDataSource
 import com.example.musicapp.favorites.data.cache.PlaylistsAndTracksDao
 import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ import javax.inject.Inject
  **/
 class BaseFavoritesPlaylistsCacheDataSource @Inject constructor(
     private val playlistDao: PlaylistDao,
-    private val playlistsAndTracksDao: PlaylistsAndTracksDao
+    private val playlistsAndTracksDao: PlaylistsAndTracksDao,
 ): FavoritesCacheDataSource<PlaylistCache> {
 
     override suspend fun contains(data: Pair<String, String>): Boolean {
@@ -20,17 +21,19 @@ class BaseFavoritesPlaylistsCacheDataSource @Inject constructor(
     }
 
     override suspend fun removeFromDB(id: Int) {
-        playlistsAndTracksDao.clearRelationsOfOnePlaylist(id)
-        playlistDao.deletePlaylist(id)
+        playlistDao.deleteTracksWhichAssociatedOnlyWithCurrentPlaylist(id.toString())
+        playlistsAndTracksDao.clearRelationsOfOnePlaylist(id.toString())
+        playlistDao.deletePlaylist(id.toString())
     }
 
-    override suspend fun getById(id: Int): PlaylistCache = playlistDao.getPlaylistById(id)?:throw NoSuchElementException()
+    override suspend fun getById(id: Int): PlaylistCache = playlistDao.getPlaylistById(id.toString()).first()?:throw NoSuchElementException()
 
     override suspend fun update(list: List<PlaylistCache>) {
         val playlistsIds = list.map { it.playlistId }
         coroutineScope{
             launch{ playlistDao.insertListOfPlaylists(list) }
-            launch { playlistDao.deletePlaylistsNotInList(playlistsIds) }
+            launch { playlistsAndTracksDao.insertRelationsList(playlistsIds.map { PlaylistsAndTracksRelation(it, mainPlaylistId.toString()) }) }
+            launch { playlistDao.deletePlaylistsNotInList(playlistsIds, mainPlaylistId.toString()) }
             launch { playlistsAndTracksDao.deleteRelationsNotContainsInListOfPlaylistsIds(playlistsIds, mainPlaylistId) }
         }
     }
@@ -40,6 +43,6 @@ class BaseFavoritesPlaylistsCacheDataSource @Inject constructor(
     }
 
     override suspend fun insertWithNewId(newId: Int, data: PlaylistCache) {
-        playlistDao.insertPlaylist(data.copy(playlistId = newId))
+        playlistDao.insertPlaylist(data.copy(playlistId = newId.toString()))
     }
 }

@@ -27,9 +27,11 @@ interface HandlePlayerError {
            val messageId =
                when(e.errorCode){
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED ->R.string.no_connection_message
-                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT->R.string.bad_internet_quality
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT->R.string.bad_connection_quality
                     else -> null
                }
+            Log.d("tag", "handle: ${e.errorCodeName}")
+            e.printStackTrace()
             val message = if(messageId!=null) managerResource.getString(messageId) else e.errorCodeName
             return PlayerErrorState.ShowError(message)
         }

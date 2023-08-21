@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4d47dc25c080ed5d22c43934188b940a",
+    "identityHash": "0d209027bbac3f0ab9db1b8a69440b35",
     "entities": [
       {
         "tableName": "tracks_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trackId` INTEGER NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `bigImgUrl` TEXT NOT NULL, `smallImgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `date` INTEGER NOT NULL, `durationFormatted` TEXT NOT NULL, `durationInMillis` REAL NOT NULL, `ownerId` INTEGER NOT NULL, PRIMARY KEY(`trackId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trackId` TEXT NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `bigImgUrl` TEXT NOT NULL, `smallImgUrl` TEXT NOT NULL, `albumName` TEXT NOT NULL, `date` INTEGER NOT NULL, `durationFormatted` TEXT NOT NULL, `durationInMillis` REAL NOT NULL, `ownerId` INTEGER NOT NULL, PRIMARY KEY(`trackId`))",
         "fields": [
           {
             "fieldPath": "trackId",
             "columnName": "trackId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -86,7 +86,7 @@
       },
       {
         "tableName": "history_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`queryTerm` TEXT NOT NULL, `time` INTEGER NOT NULL, `historyType` INTEGER NOT NULL, PRIMARY KEY(`queryTerm`))",
         "fields": [
           {
             "fieldPath": "queryTerm",
@@ -97,6 +97,12 @@
           {
             "fieldPath": "time",
             "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "historyType",
+            "columnName": "historyType",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -112,12 +118,12 @@
       },
       {
         "tableName": "playlists_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` INTEGER NOT NULL, `title` TEXT NOT NULL, `is_following` INTEGER NOT NULL, `count` INTEGER NOT NULL, `create_time` INTEGER NOT NULL, `description` TEXT NOT NULL, `owner_id` INTEGER NOT NULL, `thumbs` TEXT NOT NULL, PRIMARY KEY(`playlistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `title` TEXT NOT NULL, `is_following` INTEGER NOT NULL, `count` INTEGER NOT NULL, `update_time` INTEGER NOT NULL, `description` TEXT NOT NULL, `owner_id` INTEGER NOT NULL, `thumbs` TEXT NOT NULL, PRIMARY KEY(`playlistId`))",
         "fields": [
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -139,8 +145,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "create_time",
-            "columnName": "create_time",
+            "fieldPath": "update_time",
+            "columnName": "update_time",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -174,18 +180,18 @@
       },
       {
         "tableName": "playlists_and_tracks_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` INTEGER NOT NULL, `trackId` INTEGER NOT NULL, PRIMARY KEY(`playlistId`, `trackId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `trackId` TEXT NOT NULL, PRIMARY KEY(`playlistId`, `trackId`))",
         "fields": [
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "trackId",
             "columnName": "trackId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -198,12 +204,104 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "friends_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`friendId` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `secondName` TEXT NOT NULL, `photoUrl` TEXT NOT NULL, PRIMARY KEY(`friendId`))",
+        "fields": [
+          {
+            "fieldPath": "friendId",
+            "columnName": "friendId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "firstName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "secondName",
+            "columnName": "secondName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "photoUrl",
+            "columnName": "photoUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "friendId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "friend_and_tracks_relations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trackId` TEXT NOT NULL, `friendId` INTEGER NOT NULL, PRIMARY KEY(`trackId`, `friendId`))",
+        "fields": [
+          {
+            "fieldPath": "trackId",
+            "columnName": "trackId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "friendId",
+            "columnName": "friendId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "trackId",
+            "friendId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "friends_and_playlists_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `friendId` INTEGER NOT NULL, PRIMARY KEY(`playlistId`, `friendId`))",
+        "fields": [
+          {
+            "fieldPath": "playlistId",
+            "columnName": "playlistId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "friendId",
+            "columnName": "friendId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "playlistId",
+            "friendId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d47dc25c080ed5d22c43934188b940a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d209027bbac3f0ab9db1b8a69440b35')"
     ]
   }
 }

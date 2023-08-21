@@ -3,7 +3,8 @@ package com.example.musicapp.main.data
 import com.example.musicapp.main.data.cloud.AuthorizationService
 import javax.inject.Inject
 import com.example.musicapp.app.core.HandleError
-import com.example.musicapp.app.core.MusicDatabase
+import com.example.musicapp.app.core.ImageLoader
+import com.example.musicapp.app.core.MusicDBManager
 import com.example.musicapp.main.data.cache.AccountDataStore
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
  **/
 interface AuthorizationRepository: CheckAuthRepository {
 
-   suspend fun clearData()
+   suspend fun logout()
 
    suspend fun token(login: String, password: String): String
 
@@ -22,11 +23,14 @@ interface AuthorizationRepository: CheckAuthRepository {
         private val authorizationService: AuthorizationService,
         private val accountData: AccountDataStore,
         private val handleError: HandleError,
-        private val db: MusicDatabase
+        private val db: MusicDBManager,
+        private val imageLoader: ImageLoader
     ): AuthorizationRepository {
-        override suspend fun clearData(){
+
+        override suspend fun logout(){
             accountData.saveData("","")
             db.clearAllTables()
+            imageLoader.clearData()
         }
 
         override suspend fun token(login: String, password: String): String {

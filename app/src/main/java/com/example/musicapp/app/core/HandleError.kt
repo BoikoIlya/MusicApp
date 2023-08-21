@@ -38,6 +38,7 @@ interface HandleError {
                 }
                 is UnknownHostException-> R.string.no_connection_message
                 is NoSuchElementException->  R.string.nothing_found_message
+                is CaptchaNeededException->R.string.you_need_to_enter_captcha
                 else -> R.string.oops_something_went_wrong_data
             }
             return managerResource.getString(id)

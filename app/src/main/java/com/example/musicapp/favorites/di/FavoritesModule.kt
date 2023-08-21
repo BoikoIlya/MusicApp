@@ -2,24 +2,24 @@ package com.example.musicapp.favorites.di
 
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
+import com.example.musicapp.app.core.CacheRepository
 import com.example.musicapp.app.core.HandleFavoritesTracksSortedSearch
 import com.example.musicapp.favorites.presentation.*
 import com.example.musicapp.main.di.ViewModelKey
-import com.example.musicapp.userplaylists.di.PlaylistsScope
-import com.example.musicapp.userplaylists.presentation.BaseHandleFavoritesPlaylistsFromCache
-import com.example.musicapp.userplaylists.presentation.PlaylistUi
-import com.example.musicapp.userplaylists.presentation.PlaylistsUiStateCommunication
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import javax.inject.Singleton
 
 /**
  * Created by HP on 21.03.2023.
  **/
 @Module
 interface FavoritesModule {
+
+    @Binds
+    @FavoritesScope
+    fun bindCachedTracksRepositoryBaseMediaItem(obj: CacheRepository.BaseMediaItem): CacheRepository<MediaItem>
 
     @FavoritesScope
     @Binds
@@ -33,9 +33,6 @@ interface FavoritesModule {
     @FavoritesScope
     fun bindHandleFavoritesTracksSortedSearch(obj: HandleFavoritesTracksSortedSearch.Base):HandleFavoritesTracksSortedSearch
 
-//    @FavoritesScope
-//    @Binds
-//    fun bindFavoritesCommunication(obj: FavoritesTracksCommunication.Base): FavoritesTracksCommunication
 
     @FavoritesScope
     @Binds

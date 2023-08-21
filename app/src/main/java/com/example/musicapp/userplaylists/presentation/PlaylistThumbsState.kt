@@ -2,6 +2,7 @@ package com.example.musicapp.userplaylists.presentation
 
 import android.view.View
 import android.widget.ImageView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.app.core.ImageLoader
 
 /**
@@ -11,14 +12,15 @@ sealed interface PlaylistThumbsState{
 
     fun apply(
         imageView: ImageView,
-        imageLoader: ImageLoader
+        imageLoader: ImageLoader,
+        cacheStrategy: DiskCacheStrategy
     )
 
     fun map(): String
 
     object Empty: PlaylistThumbsState {
 
-        override fun apply(imageView: ImageView, imageLoader: ImageLoader) {
+        override fun apply(imageView: ImageView, imageLoader: ImageLoader,cacheStrategy: DiskCacheStrategy) {
             imageView.visibility = View.GONE
         }
 
@@ -29,8 +31,8 @@ sealed interface PlaylistThumbsState{
         private val url: String
     ): PlaylistThumbsState {
 
-        override fun apply(imageView: ImageView, imageLoader: ImageLoader) {
-            imageLoader.loadImageForPlaylist(url,imageView)
+        override fun apply(imageView: ImageView, imageLoader: ImageLoader,cacheStrategy: DiskCacheStrategy) {
+            imageLoader.loadImageForPlaylist(url,imageView,cacheStrategy)
             imageView.visibility = View.VISIBLE
         }
 

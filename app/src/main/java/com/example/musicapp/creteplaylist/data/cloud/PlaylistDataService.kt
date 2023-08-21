@@ -18,6 +18,8 @@ interface PlaylistDataService {
         @Query("owner_id") owner_id: String,
         @Query("title") title: String,
         @Query("description") description: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): PlaylistDataResponse
 
@@ -26,9 +28,11 @@ interface PlaylistDataService {
     suspend fun editPlaylist(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
-        @Query("playlist_id") playlist_id: Int,
+        @Query("playlist_id") playlist_id: String,
         @Query("title") title: String,
         @Query("description") description: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): TrackIdResponse
 
@@ -36,16 +40,20 @@ interface PlaylistDataService {
     suspend fun followPlaylist(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: Int,
-        @Query("playlist_id") playlist_id: Int,
+        @Query("playlist_id") playlist_id: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
-    ): PlaylistDataResponse
+    ): FollowPlaylistResponse
 
     @GET("/method/audio.addToPlaylist")
     suspend fun addToPlaylist(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
-        @Query("playlist_id") playlist_id: Int,
+        @Query("playlist_id") playlist_id: String,
         @Query("audio_ids") audio_ids: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): AddToPlaylistResponse
 
@@ -53,8 +61,10 @@ interface PlaylistDataService {
     suspend fun removeFromPlaylist(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
-        @Query("playlist_id") playlist_id: Int,
+        @Query("playlist_id") playlist_id: String,
         @Query("audio_ids") audio_ids: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): TrackIdResponse
 }

@@ -10,12 +10,16 @@ import javax.inject.Inject
 /**
  * Created by HP on 02.05.2023.
  **/
-interface ToHistoryItemMapper: Mapper<String, HistoryItemCache> {
+interface ToHistoryItemMapper: Mapper<Pair<String,Int>, HistoryItemCache> {
 
     class Base @Inject constructor(): ToHistoryItemMapper {
 
-        override fun map(data: String): HistoryItemCache {
-            return HistoryItemCache(time = Instant.now().toEpochMilli(), queryTerm =  data)
+        override fun map(data: Pair<String,Int>): HistoryItemCache {
+            return HistoryItemCache(
+                time = Instant.now().toEpochMilli(),
+                queryTerm = data.first,
+                historyType = data.second
+            )
         }
     }
 

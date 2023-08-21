@@ -1,5 +1,6 @@
 package com.example.musicapp.creteplaylist.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,18 +37,16 @@ class CreatePlaylistViewModel @Inject constructor(
 ) {
 
 
-
    override fun save(title: String,description: String) = viewModelScope.launch(dispatchersList.io()) {
         playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Hide)
         playlistUiStateCommunication.map(PlaylistDataUiState.Loading)
 
         interactor.createPlaylist(title.trim(),description.trim()).map(mapper)
 
-        playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Show)
     }
 
 
-    fun verifyData(title: String) = viewModelScope.launch(dispatchersList.io()) {
+    fun verifyData(title: String)  {
         if(title.isNotBlank()){
             playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Show)
             playlistUiStateCommunication.map(PlaylistDataUiState.Success)

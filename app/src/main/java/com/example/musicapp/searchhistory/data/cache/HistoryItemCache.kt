@@ -12,4 +12,10 @@ data class HistoryItemCache(
     @PrimaryKey(autoGenerate = false)
     val queryTerm: String,
     val time: Long,
-)
+    val historyType: Int
+){
+    companion object{
+        const val TYPE_TRACK = 0
+        const val TYPE_PLAYLIST = 1
+    }
+}
