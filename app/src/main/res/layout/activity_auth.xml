@@ -10,6 +10,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     >
 
     <ImageView
@@ -64,15 +65,38 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-   <ProgressBar
-       android:visibility="gone"
-       android:id="@+id/authProgress"
-       android:layout_marginTop="20dp"
-       android:indeterminateTint="@color/orange"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        >
+
+        <TextView
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_account"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/body2"
+            android:id="@+id/create_account"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            />
+
+        <TextView
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/body2"
+            android:id="@+id/forgot_password"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            />
+    </FrameLayout>
 
     <TextView
+        android:visibility="gone"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,6 +105,21 @@
         android:id="@+id/errorTvAuth"
         android:textStyle="bold"
         android:textAlignment="center"
+        />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/authProgress"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_marginTop="20dp"
+        app:lottie_fileName="loading.json"
+        app:layout_constraintTop_toBottomOf="@id/back_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        android:visibility="gone"
+        android:layout_gravity="center"
         />
 
     <com.google.android.material.button.MaterialButton

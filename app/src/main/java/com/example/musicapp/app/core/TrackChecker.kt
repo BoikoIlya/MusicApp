@@ -2,7 +2,7 @@ package com.example.musicapp.app.core
 
 import androidx.media3.common.MediaItem
 import com.example.musicapp.R
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.is_cached
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.is_cached
 import javax.inject.Inject
 
 /**
@@ -27,7 +27,6 @@ interface TrackChecker {
                         managerResource.getString(R.string.no_connection_message)
                     )
                 )
-               // playable.invoke()
             }
             else {
                 singleUiEventCommunication.map(

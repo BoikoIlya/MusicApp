@@ -74,11 +74,11 @@ class FriendTracksViewModel @Inject constructor(
 
         viewModelScope.launch(dispatchersList.io()){
            val result = cacheRepository.searchTracks(query)
-               //.collectLatest {
-                    handleFavoritesTracksFromCache.handle(result)
-            //}
+            handleFavoritesTracksFromCache.handle(result)
         }
     }
+
+
 
     override fun checkAndAddTrackToFavorites(item: MediaItem): Job {
         //because first 9 digits is tracks id and other is playlist id, that was add

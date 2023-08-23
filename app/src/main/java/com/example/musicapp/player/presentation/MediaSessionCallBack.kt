@@ -12,20 +12,4 @@ import javax.inject.Inject
 /**
  * Created by HP on 07.03.2023.
  **/
-class MediaSessionCallBack @Inject constructor() : MediaSession.Callback {
-
-
-//
-//    override fun onAddMediaItems(
-//        mediaSession: MediaSession,
-//        controller: MediaSession.ControllerInfo,
-//        mediaItems: MutableList<MediaItem>
-//    ): ListenableFuture<MutableList<MediaItem>> {
-//        val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
-//        return Futures.immediateFuture(updatedMediaItems)
-//    }
-
-
-
-
-}
+class MediaSessionCallBack @Inject constructor() : MediaSession.Callback

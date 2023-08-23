@@ -39,13 +39,6 @@ interface FavoritesPlaylistDetailsModule {
 
 
 
-
-
-//    @PlaylistScope
-//    @Binds
-//    fun bindPlaylistInteractor(obj: PlaylistInteractor.Base):
-//            PlaylistInteractor
-
     @FavoritesPlaylistDetailsScope
     @Binds
     fun bindTracksCacheToFollowedPlaylistTracksCacheMapper(obj: TracksCacheToFollowedPlaylistTracksCacheMapper.Base):
@@ -123,10 +116,6 @@ interface FavoritesPlaylistDetailsModule {
     fun bindPlaylistDetailsHandleUiUpdate(obj: PlaylistDetailsHandleUiUpdate.Base):
             PlaylistDetailsHandleUiUpdate
 
-//    @PlaylistScope
-//    @Binds
-//    fun bindTracksResultToPlaylistTracksCommunicationMapper(obj: TracksResultToPlaylistTracksCommunicationMapper.Base):
-//            TracksResultToPlaylistTracksCommunicationMapper
 
     @Binds
     @[IntoMap ViewModelKey(FavoritesPlaylistDetailsViewModel::class)]
@@ -136,11 +125,6 @@ interface FavoritesPlaylistDetailsModule {
 @Module
 class FavoritesPlaylistDetailsProvidesModule{
 
-//    @Provides
-//    @PlaylistsScope
-//    fun providePlaylistDomainToIdsMapper(): PlaylistDomain.Mapper<Pair<Int,Int>>{
-//        return  PlaylistDomain.ToIdsMapper()
-//    }
 
     @Provides
     @FavoritesPlaylistDetailsScope

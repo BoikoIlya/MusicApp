@@ -90,9 +90,5 @@ class ProvidesSearchHistoryModule{
         return SearchHistorySingleStateCommunication.Base
     }
 
-//    @Reusable
-//    @SearchHistoryScope
-//    fun providesSearchQueryCommunication(): SearchQueryCommunication{
-//        return SearchQueryCommunication.Base()
-//    }
+
 }

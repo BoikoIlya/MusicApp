@@ -30,12 +30,5 @@ interface TracksResultToUiEventCommunicationMapper: TracksResult.Mapper<Unit>{
                 singleUiEventCommunication.map(SingleUiEventState.ShowDialog(AddTrackDialogFragment()))
         }
 
-        override suspend fun map(
-            message: String,
-            list: List<MediaItem>,
-            albumDescription: String,
-            albumName: String,
-            albumImgUrl: String,
-        ) = Unit
     }
 }

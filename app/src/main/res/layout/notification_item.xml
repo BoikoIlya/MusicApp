@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="5dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="5dp"
+    app:strokeWidth="3dp"
+    app:strokeColor="@color/red"
+    android:id="@+id/cardBg"
+    >
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="10dp"
+    >
+
+    <ImageView
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="10dp"
+        android:id="@+id/notificationImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/notification"
+        android:tint="@color/orange"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Update v 1.0.3"
+        android:textColor="@color/black"
+        android:textSize="@dimen/body1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/notificationImg"
+        app:layout_constraintStart_toEndOf="@id/notificationImg"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/dateTv"
+        app:layout_constraintTop_toBottomOf="@id/titleTv"
+        app:layout_constraintStart_toStartOf="@id/titleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="29.04.2023"
+        android:textSize="@dimen/body2"
+        android:textColor="@color/gray"
+        />
+
+    <TextView
+        android:id="@+id/mainTextTv"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/dateTv"
+        app:layout_constraintStart_toStartOf="@id/dateTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Main features:\n - New disign\n - Dark mode\n - New playlists"
+        android:textSize="@dimen/body1"
+        android:textColor="@color/black"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/notificationBtn"
+        app:layout_constraintTop_toBottomOf="@id/mainTextTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/red"
+        android:text="Move"
+        android:textSize="@dimen/body1"
+        android:textColor="@color/white"
+        android:textStyle=""
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

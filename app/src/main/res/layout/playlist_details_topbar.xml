@@ -59,7 +59,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/im"
             android:scaleType="centerCrop"
             />
 
@@ -72,7 +71,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/albums"
             android:scaleType="centerCrop"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>

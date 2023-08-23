@@ -1,14 +1,17 @@
 package com.example.musicapp.searchplaylistdetails.data
 
+import android.media.session.MediaController
 import android.util.Log
 import com.example.musicapp.app.vkdto.SearchPlaylistItem
 import com.example.musicapp.editplaylist.data.cloud.PlaylistDetailsCloudDataSource
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cloud.TracksCloudToCacheMapper
+import com.example.musicapp.main.di.AppModule
 import com.example.musicapp.searchplaylistdetails.data.cache.SearchPlaylistTracksCacheDataSource
 import com.example.musicapp.userplaylists.data.cache.PlaylistDao
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 /**
@@ -55,10 +58,7 @@ interface SearchPlaylistDetailsRepository {
         }
 
         override suspend fun contains(title: String): Boolean {
-            Log.d("tag", "contains: $title")//...
-            val result = playlistDao.contains(title)
-            Log.d("tag", "contains: result $result")
-           return result!=null
+           return playlistDao.getPlaylistsOrderByUpdateTime(title, AppModule.mainPlaylistId.toString()).first().isNotEmpty()
         }
     }
 }

@@ -8,8 +8,7 @@ import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.app.core.*
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.owner_id
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.owner_id
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.presentation.*
@@ -36,6 +35,7 @@ class PlayerViewModel @Inject constructor(
     private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val managerResource: ManagerResource,
     private val playingTrackIdCommunication: PlayingTrackIdCommunication,
+    private val sleepTimer: SleepTimer,
     trackChecker: TrackChecker,
 ):  BottomSheetPlayerViewModel(
     playerCommunication,
@@ -66,7 +66,6 @@ class PlayerViewModel @Inject constructor(
 
                 Pair(
                     if(durationInMillis>maxDurationInMillis) {
-                        Log.d("tag", "currentPosition: max $maxDurationInMillis")
                         maxDurationInMillis
                     }else if(durationInMillis<0f) 0f
                     else durationInMillis,
@@ -96,7 +95,7 @@ class PlayerViewModel @Inject constructor(
     override fun checkAndAddTrackToFavorites(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
             if(favoritesInteractor.equalsWithUserId(item.mediaMetadata.extras!!.getInt(owner_id)))
                 singleUiEventCommunication.map(SingleUiEventState.ShowDialog(CantAddTrackFromPlayerMenuDialog()))
-            else super.checkAndAddTrackToFavorites(item)
+            else super.checkAndAddTrackToFavorites(item.buildUpon().setMediaId(item.mediaId.take(9)).build())
     }
 
 
@@ -107,8 +106,8 @@ class PlayerViewModel @Inject constructor(
                 Pair(item.mediaMetadata.title.toString(),
                     item.mediaMetadata.artist.toString())
             )){
-               item.mediaMetadata.extras?.putInt(track_id,newId)
-                favoritesInteractor.saveItemToTransfer(item)
+                favoritesInteractor.saveItemToTransfer(
+                    item.buildUpon().setMediaId(newId.toString().take(9)).build())
                 singleUiEventCommunication.map(
                     SingleUiEventState.ShowDialog(
                         DeleteTrackFromPlayerMenuDialog()
@@ -127,6 +126,21 @@ class PlayerViewModel @Inject constructor(
      fun showSnackBar(snackBar: SingleUiEventState.ShowSnackBar) = viewModelScope.launch(dispatchersList.io()) {
          singleUiEventCommunication.map(snackBar)
      }
+
+     private var timerJob: Job?=null
+     fun setupSleepTime(timeMinutes:Long ) {
+         timerJob?.cancel()
+         timerJob = viewModelScope.launch(dispatchersList.io()) {
+             singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Success(managerResource.getString(R.string.timer_was_set)))
+             sleepTimer.setupTimer(timeMinutes)
+         }
+     }
+
+     fun disableSleepTimer() = viewModelScope.launch(dispatchersList.io()) {
+         timerJob?.cancel()
+         singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Success(managerResource.getString(R.string.timer_was_disabled)))
+     }
+
 
     suspend fun collectTrackPosition(
         owner: LifecycleOwner,

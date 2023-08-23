@@ -1,5 +1,6 @@
 package com.example.musicapp.app.core
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.userplaylists.domain.PlaylistDomain
@@ -28,6 +29,7 @@ interface DataTransfer<T> {
 
     class MusicDialogTransfer @Inject constructor():
         DataTransfer<TrackDomain>, Abstract<TrackDomain>()
+
 
     class PlaylistTransfer @Inject constructor():
             DataTransfer<PlaylistDomain>, Abstract<PlaylistDomain>()

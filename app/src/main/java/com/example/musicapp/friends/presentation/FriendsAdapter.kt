@@ -24,7 +24,6 @@ class FriendsAdapter(
     private val layoutManager: LayoutManager
 ): RecyclerView.Adapter<FriendsViewHolder>(), Mapper<List<FriendUi>, Unit> {
 
-   // private val friends = emptyList<FriendUi>().toMutableList()
     private val diff =AsyncListDiffer<FriendUi>(this,FriendUiItemDiffUtilCallback())
     private var recyclerViewState: Parcelable? = null
 
@@ -47,16 +46,10 @@ class FriendsAdapter(
     override fun getItemCount(): Int = diff.currentList.size //friends.size
 
     override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
-      // holder.bind(friends[position])
        holder.bind(diff.currentList[position])
     }
 
     override fun map(data: List<FriendUi>) {
-//        val diff = FriendUiDiffUtilCallback(data,friends)
-//        val result = DiffUtil.calculateDiff(diff)
-//        friends.clear()
-//        friends.addAll(data)
-//        result.dispatchUpdatesTo(this)
 
         recyclerViewState = layoutManager.onSaveInstanceState()
         diff.submitList(data)

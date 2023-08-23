@@ -6,6 +6,13 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.core.FormatTimeSecondsToMinutesAndSeconds
 import com.example.musicapp.app.core.ToMediaItemMapper
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.big_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.is_cached
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.owner_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_in_millis
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_id
 import com.example.musicapp.favorites.data.cache.TrackCache
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -79,13 +86,13 @@ data class TrackDomain(
            val durationString = formatTimeSecondsToMinutesAndSeconds.format(duration)
 
             val extraData = Bundle()
-            extraData.putString(ToMediaItemMapper.track_duration_formatted,durationString)
-            extraData.putString(ToMediaItemMapper.big_img_url,bigImgUrl)
-            extraData.putString(ToMediaItemMapper.small_img_url,smallImgUrl)
-            extraData.putInt(ToMediaItemMapper.track_id,id)
-            extraData.putInt(ToMediaItemMapper.owner_id,ownerId)
-            extraData.putFloat(ToMediaItemMapper.track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
-            extraData.putBoolean(ToMediaItemMapper.is_cached,isCached)
+            extraData.putString(track_duration_formatted,durationString)
+            extraData.putString(big_img_url,bigImgUrl)
+            extraData.putString(small_img_url,smallImgUrl)
+            extraData.putInt(track_id,id)
+            extraData.putInt(owner_id,ownerId)
+            extraData.putFloat(track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
+            extraData.putBoolean(is_cached,isCached)
 
             return MediaItem.Builder()
                 .setMediaId(id.toString())

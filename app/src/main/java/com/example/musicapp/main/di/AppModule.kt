@@ -1,6 +1,7 @@
 package com.example.musicapp.main.di
 
 
+import android.app.DownloadManager
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
@@ -12,6 +13,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +40,11 @@ import com.example.musicapp.captcha.presentation.CaptchaErrorCommunication
 import com.example.musicapp.captcha.presentation.DismissDialogCommunication
 import com.example.musicapp.creteplaylist.presentation.SelectedTracksCommunication
 import com.example.musicapp.creteplaylist.presentation.SelectedTracksStore
+import com.example.musicapp.downloader.data.DownloadTracksRepository
+import com.example.musicapp.downloader.data.cache.DownloadFolderPathStore
+import com.example.musicapp.downloader.data.cache.DownloadTracksCacheDataSource
+import com.example.musicapp.downloader.data.cloud.DownloadCloudDataSource
+import com.example.musicapp.downloader.domain.DownloadInteractor
 import com.example.musicapp.favorites.data.FavoritesTracksRepository
 import com.example.musicapp.favorites.data.cache.BaseFavoritesTracksCacheDataSource
 import com.example.musicapp.favorites.data.cache.DomainToContainsMapper
@@ -52,10 +59,7 @@ import com.example.musicapp.favorites.data.cloud.TracksCloudToCacheMapper
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
 import com.example.musicapp.favorites.presentation.ResetSwipeActionCommunication
 import com.example.musicapp.favorites.presentation.TracksResult
-import com.example.musicapp.hlscachesystem.data.HlsCacheQueueStore
-import com.example.musicapp.hlscachesystem.data.HlsDownloaderCacheRepository
-import com.example.musicapp.hlscachesystem.data.cache.BaseCacheKeyFactory
-import com.example.musicapp.hlscachesystem.presentation.HLSCachingResultCommunication
+import com.example.musicapp.downloader.presentation.DownloadCompleteCommunication
 import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.data.CheckAuthRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
@@ -71,19 +75,30 @@ import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunicati
 import com.example.musicapp.favoritesplaylistdetails.data.cache.PlaylistIdTransfer
 import com.example.musicapp.frienddetails.domain.FriendIdAndNameTransfer
 import com.example.musicapp.frienddetails.presentation.SearchQueryFriendCommunication
+import com.example.musicapp.notifications.data.NotificationIdsRepository
+import com.example.musicapp.notifications.data.NotificationsRepository
+import com.example.musicapp.notifications.data.cache.NotificationsIdsDataStore
+import com.example.musicapp.notifications.data.cloud.NotificationsFirebaseService
+import com.example.musicapp.notifications.domain.CheckForPermissions
+import com.example.musicapp.notifications.domain.NotificationsInteractor
+import com.example.musicapp.notifications.presentation.NotificationIconBadgeCommunication
+import com.example.musicapp.notifications.presentation.NotificationListCommunication
+import com.example.musicapp.notifications.presentation.NotificationsResultToUiBadgeMapper
+import com.example.musicapp.notifications.presentation.NotificationsResultToUiMapper
+import com.example.musicapp.notifications.presentation.NotificationsUiStateCommunication
+import com.example.musicapp.notifications.presentation.NotificationsUpdateOnAppStart
+import com.example.musicapp.notifications.presentation.NotificationsViewModel
 import com.example.musicapp.searchhistory.data.cache.SearchQueryTransfer
 import com.example.musicapp.searchhistory.presentation.SearchQueryCommunication
+import com.example.musicapp.settings.presentation.DownloadedTracksSizeCommunication
+import com.example.musicapp.settings.presentation.DownloadsPathCommunication
+import com.example.musicapp.settings.presentation.SettingsViewModel
 import com.example.musicapp.trending.domain.TrackDomain
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
-import com.example.musicapp.updatesystem.data.MainViewModelMapper
-import com.example.musicapp.updatesystem.data.UpdateSystemRepository
-import com.example.musicapp.updatesystem.data.cloud.UpdateFirebaseService
-import com.example.musicapp.updatesystem.presentation.UpdateDialogViewModel
 import com.example.musicapp.userplaylists.data.cache.PlaylistDao
 import com.example.musicapp.userplaylists.domain.PlaylistDomain
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Binds
 import dagger.Module
@@ -111,12 +126,13 @@ class AppModule {
         private const val data_store_name = "settings"
         private const val token_key = "tken_key"
         private const val owner_id_key = "owner_id_key"
+        private const val notifications_ids_key = "notifications_ids_key"
+        private const val downloads_file_path_key = "downloads_file_path_key"
         private const val db_name = "music_app_db"
         private const val topic_name = "update_topic"
         private const val test_topic_name = "test_topic_name"
-        const val api_version = "5.131"
+        const val api_version = "5.91"//"5.131"
         const val mainPlaylistId = Int.MIN_VALUE //playlist of current account music
-        private const val cachedTracksdbFileName = "MelismaCache"
     }
 
     @Provides
@@ -180,7 +196,7 @@ class AppModule {
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
             .setLevel(
-                HttpLoggingInterceptor.Level.BODY
+                HttpLoggingInterceptor.Level.NONE
             )
     }
 
@@ -291,6 +307,13 @@ class AppModule {
         return OwnerIdStore.Base(stringPreferencesKey(owner_id_key), dataStore)
     }
 
+    @Singleton
+    @Provides
+    fun provideNotificationsIdsDataStore(dataStore: DataStore<Preferences>): NotificationsIdsDataStore{
+        return NotificationsIdsDataStore.Base(stringSetPreferencesKey(notifications_ids_key),dataStore)
+    }
+
+
     @Provides
     @Singleton
     fun  provideImageLoaderForPlaylists(context: Context): ImageLoader {
@@ -299,12 +322,6 @@ class AppModule {
             else PaintBackgroundShadow.BelowApiP,
             context
         )
-    }
-
-    @Singleton
-    @Provides
-    fun provideUpdateFirebaseService(): UpdateFirebaseService.Base{
-        return UpdateFirebaseService.Base(Firebase.firestore)
     }
 
     @Provides
@@ -340,29 +357,25 @@ class AppModule {
        return  BlurEffectAnimator.Base()
     }
 
+
+
     @Provides
     @Singleton
-    fun provideSimpleCache(context: Context): SimpleCache{
-        return SimpleCache(
-            File(context.externalCacheDir!!.path,cachedTracksdbFileName),
-            NoOpCacheEvictor(),
-            StandaloneDatabaseProvider(context)
-        )
+    fun provideFirebaseFirestore(): FirebaseFirestore{
+        return FirebaseFirestore.getInstance()
     }
 
     @Provides
     @Singleton
-    fun provideCacheDataSourceFactory(simpleCache: SimpleCache,cacheKeyFactory: CacheKeyFactory,transfer: DataTransfer<String>): CacheDataSource.Factory{
-        return CacheDataSource.Factory()
-            .setCache(simpleCache)
-            .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
-//            .setCacheKeyFactory({dataSpec->
-//                Log.d("tag", "provideCacheDataSourceFactory: key ${dataSpec.key} transfer ${dataSpec.uri.toString()}")
-//                return@setCacheKeyFactory dataSpec.key ?: dataSpec.uri.toString()
-//            })
+    fun provideDownloadFolderPathStore(dataStore: DataStore<Preferences>): DownloadFolderPathStore {
+        return DownloadFolderPathStore.Base(stringPreferencesKey(downloads_file_path_key),dataStore)
     }
 
-
+    @Provides
+    @Singleton
+    fun provideDownloadManager(context: Context): DownloadManager {
+        return context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    }
 }
 
 @Module
@@ -372,6 +385,93 @@ interface AppBindModule{
     @Binds
     fun bindSearchQueryFriendCommunication(obj: SearchQueryFriendCommunication.Base):
             SearchQueryFriendCommunication
+
+    @Singleton
+    @Binds
+    fun bindDownloadsPathCommunication(obj: DownloadsPathCommunication.Base):
+            DownloadsPathCommunication
+
+    @Singleton
+    @Binds
+    fun bindDownloadedTracksSizeCommunication(obj: DownloadedTracksSizeCommunication.Base):
+            DownloadedTracksSizeCommunication
+
+    @Singleton
+    @Binds
+    fun bindDownloadInteractor(obj: DownloadInteractor.Base):
+            DownloadInteractor
+
+    @Singleton
+    @Binds
+    fun bindDownloadTracksRepository(obj: DownloadTracksRepository.Base):
+            DownloadTracksRepository
+
+    @Singleton
+    @Binds
+    fun bindDownloadCloudDataSource(obj: DownloadCloudDataSource.Base):
+            DownloadCloudDataSource
+
+    @Singleton
+    @Binds
+    fun bindDownloadTracksCacheDataSource(obj: DownloadTracksCacheDataSource.Base):
+            DownloadTracksCacheDataSource
+
+    @Singleton
+    @Binds
+    fun bindNotificationIconBadgeCommunication(obj: NotificationIconBadgeCommunication.Base):
+            NotificationIconBadgeCommunication
+
+    @Singleton
+    @Binds
+    fun bindNotificationsResultToUiBadgeMapper(obj: NotificationsResultToUiBadgeMapper.Base):
+            NotificationsResultToUiBadgeMapper
+
+    @Singleton
+    @Binds
+    fun bindNotificationIdsRepository(obj: NotificationIdsRepository.Base):
+            NotificationIdsRepository
+
+
+
+    @Singleton
+    @Binds
+    fun bindNotificationsUpdateOnAppStart(obj: NotificationsUpdateOnAppStart.Base):
+            NotificationsUpdateOnAppStart
+
+    @Singleton
+    @Binds
+    fun bindNotificationListCommunication(obj: NotificationListCommunication.Base):
+            NotificationListCommunication
+
+    @Singleton
+    @Binds
+    fun bindNotificationsUiStateCommunication(obj: NotificationsUiStateCommunication.Base):
+            NotificationsUiStateCommunication
+
+    @Singleton
+    @Binds
+    fun bindNotificationsResultToUiMapper(obj: NotificationsResultToUiMapper.Base):
+            NotificationsResultToUiMapper
+
+    @Singleton
+    @Binds
+    fun bindSearchNotificationsInteractor(obj: NotificationsInteractor.Base):
+            NotificationsInteractor
+
+    @Singleton
+    @Binds
+    fun bindSearchCheckForPermissions(obj: CheckForPermissions.Base):
+            CheckForPermissions
+
+    @Singleton
+    @Binds
+    fun bindSearchNotificationsRepository(obj: NotificationsRepository.Base):
+            NotificationsRepository
+
+    @Singleton
+    @Binds
+    fun bindNotificationsFirebaseService(obj: NotificationsFirebaseService.Base):
+            NotificationsFirebaseService
 
     @Singleton
     @Binds
@@ -386,21 +486,10 @@ interface AppBindModule{
     @Singleton
     fun bindMediaIdTransfer(obj: DataTransfer.MediaIdTransfer): DataTransfer<String>
 
-    @Binds
-    @Singleton
-    fun bindCacheKeyFactory(obj: BaseCacheKeyFactory): CacheKeyFactory
 
     @Binds
     @Singleton
-    fun bindHlsCacheQueueStore(obj: HlsCacheQueueStore.Base): HlsCacheQueueStore
-
-    @Binds
-    @Singleton
-    fun bindHlsDownloaderCacheRepository(obj: HlsDownloaderCacheRepository.Base): HlsDownloaderCacheRepository
-
-    @Binds
-    @Singleton
-    fun bindHLSCachingCompleteCommunication(obj: HLSCachingResultCommunication.Base): HLSCachingResultCommunication
+    fun bindHLSCachingCompleteCommunication(obj: DownloadCompleteCommunication.Base): DownloadCompleteCommunication
 
     @Binds
     @Singleton
@@ -524,11 +613,8 @@ interface AppBindModule{
 
     @Binds
     @Singleton
-    fun bindToMediaItemMapper(obj: ToMediaItemMapper): Mapper<TrackCache, MediaItem>
+    fun bindToMediaItemMapper(obj: ToMediaItemMapper.Base):  ToMediaItemMapper
 
-    @Binds
-    @Singleton
-    fun bindMainViewModelMapper(obj: MainViewModelMapper.Base): MainViewModelMapper
 
     @Singleton
     @Binds
@@ -622,10 +708,6 @@ interface AppBindModule{
 
     @Binds
     @Singleton
-    fun bingUpdateSystemRepository(obj: UpdateSystemRepository.Base): UpdateSystemRepository
-
-    @Binds
-    @Singleton
     fun bindTracksResultToSingleUiEventCommunicationMapper(obj: TracksResultToUiEventCommunicationMapper.Base): TracksResultToUiEventCommunicationMapper
 
     @Binds
@@ -656,9 +738,14 @@ interface AppBindModule{
     @[IntoMap ViewModelKey(AddTrackDialogViewModel::class)]
     fun bindMusicDialogViewModel(musicDialogViewModel: AddTrackDialogViewModel): ViewModel
 
+
     @Binds
-    @[IntoMap ViewModelKey(UpdateDialogViewModel::class)]
-    fun bindUpdateDialogViewModel(updateDialogViewModel: UpdateDialogViewModel): ViewModel
+    @[IntoMap ViewModelKey(NotificationsViewModel::class)]
+    fun bindNotificationsViewModel(NotificationsViewModel: NotificationsViewModel): ViewModel
+
+    @Binds
+    @[IntoMap ViewModelKey(SettingsViewModel::class)]
+    fun bindSettingsViewModel(settingsViewModel: SettingsViewModel): ViewModel
 
     @Binds
     fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

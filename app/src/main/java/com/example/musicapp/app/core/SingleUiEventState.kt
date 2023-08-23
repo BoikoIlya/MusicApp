@@ -18,8 +18,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.media3.common.util.UnstableApi
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
-import com.example.musicapp.hlscachesystem.presentation.HLSCacheService
-import com.example.musicapp.main.presentation.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -88,28 +86,6 @@ sealed interface SingleUiEventState{
     }
 
 
-    data class LoadUpdate(
-        private val apkUrl: String,
-    ) : SingleUiEventState{
-
-
-        override fun apply(
-            fragmentManager: FragmentManager,
-            context: Context,
-            binding: ActivityMainBinding,
-        ) {
-
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(apkUrl)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
-        }
-
-        override fun applyForBottomSheet(decorView: View,context: Context,) = Unit
-
-
-    }
-
 
 
     data class ShowDialog(
@@ -128,18 +104,6 @@ sealed interface SingleUiEventState{
 
     }
 
-    object LaunchHLSCacheService: SingleUiEventState {
-        override fun apply(
-            fragmentManager: FragmentManager,
-            context: Context,
-            binding: ActivityMainBinding,
-        ) {
-           if(!context.isServiceRunning<HLSCacheService>())
-               context.startForegroundService(Intent(context, HLSCacheService::class.java))
-        }
-
-        override fun applyForBottomSheet(decorView: View, context: Context) = Unit
-    }
 
 }
 

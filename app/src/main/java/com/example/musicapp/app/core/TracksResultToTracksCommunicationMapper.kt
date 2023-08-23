@@ -24,13 +24,6 @@ interface TracksResultToTracksCommunicationMapper<T>: TracksResult.Mapper<Unit>{
         protected abstract fun showError(message: String): T
         protected abstract fun showSuccess(): T
 
-        override suspend fun map(
-            message: String,
-            list: List<MediaItem>,
-            albumDescription: String,
-            albumName: String,
-            albumImgUrl: String
-        ) = Unit
     }
 }
 

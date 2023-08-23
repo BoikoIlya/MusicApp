@@ -24,7 +24,7 @@
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Queue:"
+        android:text="@string/queue"
         android:textColor="@color/black"
         android:textSize="@dimen/h3"
         android:textStyle="bold"

@@ -49,7 +49,6 @@ class BaseFavoritesTracksCloudDataSource @Inject constructor(
             val tracksCount =
                 service.getTracksCount(
                     accountDataStore.token(),
-                    //"188607073",
                     accountDataStore.ownerId(),
                     captchaDataStore.captchaId(),
                     captchaDataStore.captchaEnteredData()
@@ -67,7 +66,6 @@ class BaseFavoritesTracksCloudDataSource @Inject constructor(
                     async(dispatchersList.io()) {
                         service.getTracks(
                             accessToken = accountDataStore.token(),
-                            //owner_id =     "188607073",
                             owner_id = accountDataStore.ownerId(),
                             count = PACKET_SIZE,
                             offset = offset,

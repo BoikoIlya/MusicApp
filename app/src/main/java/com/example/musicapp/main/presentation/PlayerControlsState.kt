@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.R
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.ToMediaItemMapper
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.small_img_url
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.player.presentation.PlayerViewModel
@@ -49,7 +50,7 @@ interface PlayerControlsState {
             with(binding) {
 
                 imageLoader.loadImage(
-                    track.mediaMetadata.extras?.getString(ToMediaItemMapper.small_img_url) ?: "",
+                    track.mediaMetadata.extras?.getString(small_img_url) ?: "",
                     trackImg, cacheStrategy = DiskCacheStrategy.NONE,
                 )
                 songNameTv.text = track.mediaMetadata.title

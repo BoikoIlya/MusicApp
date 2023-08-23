@@ -3,7 +3,6 @@ package com.example.musicapp.favorites.presentation
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
@@ -18,16 +17,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicapp.R
 import com.example.musicapp.app.core.BlurEffectAnimator
 import com.example.musicapp.app.core.ClickListener
-import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.FavoritesFragment
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.di.FavoriteComponent
-import com.example.musicapp.main.data.AuthorizationRepository
 import com.example.musicapp.main.di.App
 import com.example.musicapp.trending.presentation.*
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -57,9 +55,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
     private lateinit var layoutManager: LinearLayoutManager
 
-
-    @Inject
-    lateinit var authRepository: AuthorizationRepository ///temp
 
 
     override fun onAttach(context: Context) {
@@ -123,7 +118,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
         }
 
         lifecycleScope.launch{
-            viewModel.collectHlsCachingCompleteCommunication(this@FavoritesTracksFragment){
+            viewModel.collectDownloadCompleteCommunication(this@FavoritesTracksFragment){
                 it.apply(viewModel)
             }
         }
@@ -155,12 +150,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
         }
 
         binding.mainMenuBtn.setOnClickListener {
-            lifecycleScope.launch(DispatchersList.Base().io()) {
-              //  authRepository.logout()
-                Log.d("tag", "onViewCreated: start clearing")
-                imageLoader.clearData()
-                Log.d("tag", "onViewCreated: end clearing")
-            }
+           findNavController().navigate(R.id.action_favoritesFragment_to_settingsFragment)
         }
 
         super.onViewCreated(view, savedInstanceState)

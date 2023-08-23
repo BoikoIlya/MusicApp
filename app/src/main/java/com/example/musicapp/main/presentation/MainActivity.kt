@@ -1,16 +1,13 @@
 package com.example.musicapp.main.presentation
 
-import android.content.Intent
+import android.app.DownloadManager
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -20,20 +17,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.musicapp.R
-import com.example.musicapp.app.core.ConnectionChecker
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.main.di.App
 import com.example.musicapp.databinding.ActivityMainBinding
-import com.example.musicapp.player.di.PlayerModule
+import com.example.musicapp.downloader.presentation.DownloadTrackBroadcastReceiver
 import com.example.musicapp.player.presentation.PlayerFragment
 import com.example.musicapp.queue.presenatation.QueueFragment
 import com.example.musicapp.searchhistory.presentation.ViewPagerFragmentsAdapter
-import com.example.musicapp.vkauth.presentation.AuthActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @UnstableApi class MainActivity : FragmentActivity() {
@@ -50,12 +42,15 @@ import javax.inject.Inject
 
     private lateinit var bottomSheet: BottomSheetBehavior<ConstraintLayout>
 
+    private lateinit var downloadBroadcastReceiver: DownloadTrackBroadcastReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val fragments = listOf(PlayerFragment(), QueueFragment())
+        downloadBroadcastReceiver = DownloadTrackBroadcastReceiver()
 
         binding.bottomSheet.bottomSheetVp.adapter =
             ViewPagerFragmentsAdapter(supportFragmentManager,lifecycle, fragments)
@@ -74,7 +69,7 @@ import javax.inject.Inject
         val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHost.navController
         binding.bottomNavView.setupWithNavController(navController)
-
+        val badge = binding.bottomNavView.getOrCreateBadge(R.id.notificationsFragment)
 
 
 
@@ -129,6 +124,11 @@ import javax.inject.Inject
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.collectNotificationBadgeCommunication(this@MainActivity){
+                badge.isVisible = it
+            }
+        }
 
         binding.playBtn.setOnClickListener {
             if ((it as ToggleButton).isChecked)
@@ -149,7 +149,6 @@ import javax.inject.Inject
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
-
         binding.bottomNavView.setOnItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it,navController)
             return@setOnItemSelectedListener true
@@ -164,6 +163,7 @@ import javax.inject.Inject
             }else finish()
         }
 
+        registerReceiver(downloadBroadcastReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     companion object{
@@ -177,11 +177,18 @@ import javax.inject.Inject
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode==MainViewModel.permissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED){
-            viewModel.dontShowPermission()
-        }
+            if(
+            requestCode==MainViewModel.notificationsPermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED ||
+            requestCode==MainViewModel.writeExternalStoragePermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED
+            )
+                viewModel.dontShowPermission()
+
+        viewModel.updateNotifications()
     }
 
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(downloadBroadcastReceiver)
+    }
 }

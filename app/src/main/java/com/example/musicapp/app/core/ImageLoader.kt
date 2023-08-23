@@ -154,7 +154,6 @@ interface ImageLoader {
 
 
                  })
-                 //.apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                  .diskCacheStrategy(DiskCacheStrategy.NONE)
                  .into(targetView)
 

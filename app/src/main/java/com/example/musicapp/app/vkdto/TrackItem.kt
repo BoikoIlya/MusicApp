@@ -7,6 +7,11 @@ import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.musicapp.app.core.ToMediaItemMapper
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.big_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_in_millis
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_id
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.trending.domain.TrackDomain
 import java.util.concurrent.TimeUnit
@@ -36,7 +41,7 @@ data class TrackItem(
    private val stories_cover_allowed: Boolean,
    private val subtitle: String?,
    private val title: String,
-   private val track_code: String,
+   private val track_code: String?,
    private val url: String
 ){
 
@@ -63,7 +68,7 @@ data class TrackItem(
         stories_cover_allowed,
         subtitle,
         title,
-        track_code,
+        track_code?:"",
         url
     )
 
@@ -224,18 +229,18 @@ data class TrackItem(
                 val durationString = String.format("%02d:%02d", minutes, seconds)
 
                 val extraData = Bundle()
-                extraData.putString(ToMediaItemMapper.track_duration_formatted, durationString)
+                extraData.putString(track_duration_formatted, durationString)
                 extraData.putString(
-                    ToMediaItemMapper.big_img_url,
+                    big_img_url,
                     album?.thumb?.photo_1200 ?: ""
                 )
                 extraData.putString(
-                    ToMediaItemMapper.small_img_url,
+                    small_img_url,
                     album?.thumb?.photo_135 ?: ""
                 )
-                extraData.putInt(ToMediaItemMapper.track_id, id)
-                extraData.putFloat(ToMediaItemMapper.track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
-                extraData.putInt(ToMediaItemMapper.owner_id,owner_id)
+                extraData.putInt(track_id, id)
+                extraData.putFloat(track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
+                extraData.putInt(ToMediaItemMapper.Base.owner_id,owner_id)
 
                 return MediaItem.Builder()
                     .setMediaId(id.toString())

@@ -27,6 +27,7 @@ import com.example.musicapp.player.presentation.AudioFocusChangeListener
 import com.example.musicapp.player.presentation.DeleteTrackFromPlayerMenuDialogViewModel
 import com.example.musicapp.player.presentation.MediaSessionCallBack
 import com.example.musicapp.player.presentation.PlayerViewModel
+import com.example.musicapp.player.presentation.SleepTimer
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
 import dagger.Binds
 import dagger.Module
@@ -49,20 +50,9 @@ class PlayerModule {
     fun provideMediaPlayer(
         context: Context,
         listener: ControllerListener,
-        cacheDataSourceFactory: CacheDataSource.Factory
     ): ExoPlayer {
-//        return ExoPlayer.Builder(context)
-//            .setMediaSourceFactory(
-//                HlsMediaSource.Factory(cacheDataSourceFactory))
-//            .build().also { it.addListener(listener) }
         return ExoPlayer.Builder(context)
-            .setMediaSourceFactory(
-                HlsMediaSource.Factory(DefaultHttpDataSource.Factory()))
             .build().also { it.addListener(listener) }
-//        return ExoPlayer.Builder(context)
-//            .setMediaSourceFactory(
-//                HlsMediaSource.Factory(DefaultHlsDataSourceFactory(DefaultHttpDataSource.Factory())))
-//            .build().also { it.addListener(listener) } //BEFORE
 
     }
 
@@ -122,6 +112,10 @@ interface BindsPlayerModule{
     @Binds
     @PlayerServiceScope
     fun bindControllerListener(obj: ControllerListener.Base): ControllerListener
+
+    @Binds
+    @PlayerServiceScope
+    fun bindSleepTimer(obj: SleepTimer.Base): SleepTimer
 
     @Binds
     @[IntoMap ViewModelKey(PlayerViewModel::class)]

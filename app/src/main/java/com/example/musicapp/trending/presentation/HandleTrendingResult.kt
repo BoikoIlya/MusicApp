@@ -10,6 +10,8 @@ import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.trending.domain.TopBarItemDomain
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +22,7 @@ interface HandleTrendingResult {
 
     fun handle(
         coroutineScope: CoroutineScope,
-        fetchData: suspend ()-> TrendingResult,
+        fetchData: suspend ()-> Flow<TrendingResult>,
     )
 
     class Base @Inject constructor(
@@ -31,12 +33,13 @@ interface HandleTrendingResult {
 
         override fun handle(
             coroutineScope: CoroutineScope,
-            fetchData: suspend () -> TrendingResult,
+            fetchData: suspend () -> Flow<TrendingResult>,
         ) {
             communication.showUiState(TrendingUiState.Loading)
             coroutineScope.launch(dispatchersList.io()) {
-                val result = fetchData.invoke()
-                 result.map(mapper)
+                 fetchData.invoke().collectLatest {result->
+                     result.map(mapper)
+                 }
             }
 
         }
@@ -48,18 +51,18 @@ class TrendingResultMapper @Inject constructor(
     private val playlistsMapper: TopBarItemDomain.Mapper<TrendingTopBarItemUi>,
     private val tracksMapper: TrackDomain.Mapper<MediaItem>,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-    private val temporaryTracksCache: TemporaryTracksCache
 ): TrendingResult.Mapper<Unit>{
 
     override suspend fun map(data: Pair<List<TopBarItemDomain>, List<TrackDomain>>, message: String) {
-        communication.showUiState(TrendingUiState.DisableLoading)
-        if(data.second.isEmpty()) {
-            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(message))
-        } else {
-            communication.showData(data.second.map { it.map(tracksMapper) })
-        }
-        Log.d("tag", "map: ${data.first.size} ${data.second.size} ")
         communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
+        if(data.second.isNotEmpty()) {
+            communication.showData(data.second.map { it.map(tracksMapper) })
+            communication.showUiState(TrendingUiState.DisableLoading)
+        }
+        if(message.isNotEmpty()) {
+            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(message))
+            communication.showUiState(TrendingUiState.DisableLoading)
+        }
     }
 
 }

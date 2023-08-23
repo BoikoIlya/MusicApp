@@ -12,8 +12,7 @@ import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.PlayerControlsCommunication
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
-import com.example.musicapp.player.presentation.AudioFocusChangeListener
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_id
 import com.example.musicapp.player.presentation.PlayingTrackIdCommunication
 import com.example.musicapp.player.presentation.TrackPlaybackPositionCommunication
 import com.example.musicapp.trending.presentation.MediaControllerWrapper
@@ -83,7 +82,6 @@ interface ControllerListener: Player.Listener {
 
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            //Log.d("tag", "playMusic: ${mediaItem!!.mediaMetadata.title} ${mediaItem.mediaId} ${mediaItem.localConfiguration!!.uri}")
             if(reason==MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
             playerControls.map(PlayerControlsState.Play(mediaItem!!))
             selectedTrackCommunication.map(mediaItem)

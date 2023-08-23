@@ -92,7 +92,6 @@ interface SearchRepository<T:Any>: SearchQueryRepository {
                 mapper,
                 tokenStore,
                 handleResponse,
-                // cachedTracks,
                 captchaDataStore
             )
     }

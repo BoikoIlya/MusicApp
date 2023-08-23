@@ -60,7 +60,6 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
             private const val captcha_sid_field = "captcha_sid"
             private const val un_authorized_code = 5
             private const val captcha_code = 14
-            private const val access_denied =15
         }
 
         @Throws(IOException::class)
@@ -78,7 +77,6 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
                             error.get(captcha_sid_field).asString,
                             error.get(captcha_img_field).asString
                         )
-                       // access_denied-> AccessDeniedException()
                         else -> VkException.Base(errorCode)
                     }
                 }

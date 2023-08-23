@@ -11,7 +11,7 @@ import javax.inject.Inject
  **/
 interface OwnerIdStore: SettingsDataStore<String> {
 
-    class Base @Inject constructor(
+    class Base (
         ownerIdKey: Preferences.Key<String>,
         store: DataStore<Preferences>,
     ): OwnerIdStore, SettingsDataStore.Abstract<String>(ownerIdKey,store,"")

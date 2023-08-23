@@ -5,9 +5,8 @@ import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import com.example.musicapp.R
 import com.example.musicapp.app.core.Mapper
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.is_cached
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.is_cached
 import com.example.musicapp.databinding.FavoritesMenuDialogBottomSheetBinding
-import javax.inject.Inject
 
 /**
  * Created by HP on 09.08.2023.
@@ -23,9 +22,9 @@ interface MediaItemToFavoritesBottomSheetMenuMapper: Mapper<MediaItem, Unit> {
 
         override fun map(data: MediaItem) {
            val drawableAndTintColor = if(data.mediaMetadata.extras!!.getBoolean(is_cached)){
-                binding.cacheOption.text = context.getString(R.string.remove_from_cache)
+                binding.cacheOption.text = context.getString(R.string.remove_from_downloads)
                 binding.cacheOption.setOnClickListener {
-                    viewModel.removeFromCache()
+                    viewModel.removeFromDownloads()
                     dismiss.invoke()
                 }
                Pair(
@@ -33,9 +32,9 @@ interface MediaItemToFavoritesBottomSheetMenuMapper: Mapper<MediaItem, Unit> {
                     ContextCompat.getColorStateList(context, R.color.red)
                )
             }else{
-                binding.cacheOption.text = context.getString(R.string.save_to_cache )
+                binding.cacheOption.text = context.getString(R.string.download )
                binding.cacheOption.setOnClickListener {
-                   viewModel.saveToCache()
+                   viewModel.download()
                     dismiss.invoke()
                }
                Pair(

@@ -13,6 +13,10 @@
         android:icon="@drawable/heart"
         />
     <item
+        android:id="@+id/notificationsFragment"
+        android:icon="@drawable/notification"
+        />
+    <item
         android:id="@+id/searchHistoryFragment"
         android:icon="@drawable/search"
         />

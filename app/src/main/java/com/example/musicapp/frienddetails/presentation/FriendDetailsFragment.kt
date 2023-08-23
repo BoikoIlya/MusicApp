@@ -74,10 +74,7 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.historyTitle.text = viewModel.readFirstAndSecondName()
-        //binding.clearHistoryBtn.text = String.format("0 ${getString(R.string.tracks)}")
         binding.clearHistoryBtn.visibility = View.GONE
-        //ДОДЕЛАТЬ СЧЕТИЧК ТРЕКОВ
-
         binding.backBtnSearch.visibility = View.VISIBLE
 
 

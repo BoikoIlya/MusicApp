@@ -19,10 +19,11 @@ import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Mapper
 import com.example.musicapp.app.core.DeleteItemDialog
 import com.example.musicapp.app.core.Selector
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.is_cached
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.small_img_url
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.is_cached
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_id
+
 import com.example.musicapp.databinding.TrackItemBinding
 import com.example.musicapp.favoritesplaylistdetails.presentation.AdapterViewHolder
 
@@ -65,7 +66,6 @@ open class TracksAdapter(
  ): RecyclerView.Adapter<AdapterViewHolder>(),
     Mapper<List<MediaItem>,Unit>,Select, Scroller, MediaItemsAdapter {
 
-    protected val tracksCurrentList = mutableListOf<MediaItem>()
     protected var selectedTrackPosition = -1
     protected var selectedTrack: MediaItem? = null //For case when selected track will collect faster than tracks
     private val diff = AsyncListDiffer(this,TracksDiffUtilItemCallback())
@@ -88,28 +88,16 @@ open class TracksAdapter(
         )
     }
 
-    override fun getItemCount(): Int = diff.currentList.size //tracksCurrentList.size
+    override fun getItemCount(): Int = diff.currentList.size
 
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
-          //  holder.bind(tracksCurrentList[position], position, selectedTrackPosition)
             holder.bind(diff.currentList[position], position, selectedTrackPosition)
     }
-
-    //private lateinit var result: DiffUtil.DiffResult
 
 
     override fun map(data: List<MediaItem>) {
         recyclerViewState = layoutManager.onSaveInstanceState()
-//        val diff = TracksDiffUtilCallback(data, tracksCurrentList)
-//        result = DiffUtil.calculateDiff(diff)
-//        tracksCurrentList.clear()
-//        tracksCurrentList.addAll(data)
-//        result.dispatchUpdatesTo(this@TracksAdapter)
-
-
         diff.submitList(data)
-//        tracksCurrentList.clear()
-//        tracksCurrentList.addAll(data)
 
         if(selectedTrack!=null) newPosition(selectedTrack!!)
         else selectedTrack = null
@@ -119,7 +107,7 @@ open class TracksAdapter(
     override fun newPosition(mediaItem: MediaItem) {
         if (mediaItem.mediaId.isEmpty()) return
         val old = selectedTrackPosition
-        //val position = tracksCurrentList.indexOfFirst { it.mediaId == mediaItem.mediaId }
+
         val position = diff.currentList.indexOfFirst { it.mediaId == mediaItem.mediaId }
         if (position!=-1 ){
             selectedTrackPosition = position
@@ -138,12 +126,10 @@ open class TracksAdapter(
 
 
     override fun navigateToMenu(data: MediaItem, position: Int) {
-        //navigator.navigateToMenu(tracksCurrentList[position],position)
         navigator.navigateToMenu(diff.currentList[position],position)
     }
 
     override fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int) {
-      //  viewModel.launchDeleteItemDialog(tracksCurrentList[position])
         viewModel.launchDeleteItemDialog(diff.currentList[position])
     }
 
@@ -192,30 +178,6 @@ open class TracksViewHolder(
 
 }
 
-class TracksDiffUtilCallback(
-    private val newList: List<MediaItem>,
-    private val oldList: List<MediaItem>,
-): DiffUtil.Callback() {
-
-    override fun getOldListSize(): Int = oldList.size
-
-    override fun getNewListSize(): Int = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return newList[newItemPosition].mediaId == oldList[oldItemPosition].mediaId
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return  newList[newItemPosition].mediaId==oldList[oldItemPosition].mediaId
-                && newList[newItemPosition].mediaMetadata.title==oldList[oldItemPosition].mediaMetadata.title
-                && newList[newItemPosition].mediaMetadata.artist==oldList[oldItemPosition].mediaMetadata.artist
-                && newList[newItemPosition].mediaMetadata.artworkUri==oldList[oldItemPosition].mediaMetadata.artworkUri
-                && newList[newItemPosition].mediaMetadata.albumTitle==oldList[oldItemPosition].mediaMetadata.albumTitle
-                && newList[newItemPosition].mediaMetadata.isPlayable==oldList[oldItemPosition].mediaMetadata.isPlayable
-                && newList[newItemPosition].mediaMetadata.extras?.getString(track_id)==oldList[oldItemPosition].mediaMetadata.extras?.getString(track_id)
-                && newList[newItemPosition].mediaMetadata.extras?.getBoolean(is_cached)==oldList[oldItemPosition].mediaMetadata.extras?.getBoolean(is_cached)
-           }
-}
 
 class TracksDiffUtilItemCallback: DiffUtil.ItemCallback<MediaItem>(){
 

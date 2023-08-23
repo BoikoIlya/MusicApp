@@ -16,5 +16,32 @@
         android:icon="@drawable/plus"
         android:iconTint="@color/green"
         />
+    <item
+        android:title="@string/sleep_timer"
+        android:icon="@drawable/access_time"
+        >
+        <menu>
+        <item
+            android:id="@+id/min_15"
+            android:title="@string/_15_min"
+           />
+        <item
+            android:id="@+id/min_30"
+            android:title="@string/_30_min"
+            />
+        <item
+            android:id="@+id/hour_1"
+            android:title="@string/_1_hour"
+            />
+        <item
+            android:id="@+id/hour_2"
+            android:title="@string/_2_hour"
+            />
+        <item
+            android:id="@+id/disable"
+            android:title="@string/disable"
+            />
+        </menu>
+    </item>
 
 </menu>

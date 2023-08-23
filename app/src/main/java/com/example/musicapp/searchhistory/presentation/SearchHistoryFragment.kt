@@ -81,20 +81,6 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
             tab.text = tabTitlesList[position]
         }.attach()
 
-
-
-
-       //
-
-
-//        lifecycleScope.launch {
-//            viewModel.collectViewPagerPageIndexCommunication(this@SearchHistoryFragment){
-//                binding.searchHistoryViewPager.setCurrentItem(it,true)
-//
-//            }
-//        }
-
-
         binding.searchHistoryViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
 
             override fun onPageSelected(position: Int) {

@@ -25,17 +25,21 @@ data class SearchPlaylistItem(
    private val genres: List<Any>,
    private val is_following: Boolean,
    private val photo: Photo?=null,
-   private val permissions: Any,
+   private val thumbs: List<PlaylistThumb>?,
+   private val permissions: Any?,
    private val subtitle_badge: Boolean,
    private val play_button: Boolean,
    private val access_key: String,
    private val album_type: String,
-   private val exclusive: Boolean
+   private val exclusive: Boolean,
+   private val is_blocked: Boolean?
 ){
 
     companion object{
-        private const val amount_of_images_need = 4
+         const val amount_of_images_need = 4
     }
+
+    fun isBlocked() = is_blocked?:false
 
     fun <T>map(mapper: Mapper<T>):T = mapper.map(
         id,
@@ -51,7 +55,8 @@ data class SearchPlaylistItem(
         genres,
         is_following,
         photo,
-        permissions,
+        thumbs?: emptyList(),
+        permissions?: Any(),
         subtitle_badge,
         play_button,
         access_key,
@@ -75,6 +80,7 @@ data class SearchPlaylistItem(
             genres: List<Any>,
             is_following: Boolean,
             photo: Photo?=null,
+            thumbs: List<PlaylistThumb>,
             permissions: Any,
             subtitle_badge: Boolean,
             play_button: Boolean,
@@ -103,6 +109,7 @@ data class SearchPlaylistItem(
             genres: List<Any>,
             is_following: Boolean,
             photo: Photo?,
+            thumbs: List<PlaylistThumb>,
             permissions: Any,
             subtitle_badge: Boolean,
             play_button: Boolean,
@@ -112,12 +119,18 @@ data class SearchPlaylistItem(
         ): PlaylistUi {
             val listOfStates = emptyList<PlaylistThumbsState>().toMutableList()
 
-            if(photo==null) listOfStates.add(PlaylistThumbsState.LoadImages("" + R.drawable.im))
-            else listOfStates.add(PlaylistThumbsState.LoadImages(photo.photo_300))
+            listOfStates.addAll(thumbs.map { PlaylistThumbsState.LoadImages(it.photo_300) })
 
-            repeat(amount_of_images_need-listOfStates.size){
+            if(listOfStates.isEmpty()){
+                if(photo==null) listOfStates.add(PlaylistThumbsState.LoadImages(""))
+                else listOfStates.add(PlaylistThumbsState.LoadImages(photo.photo_300))
+            }
+
+            while (listOfStates.size< amount_of_images_need){
                 listOfStates.add(PlaylistThumbsState.Empty)
             }
+
+
 
             return PlaylistUi(
                 playlistId = id.toString(),
@@ -147,6 +160,7 @@ data class SearchPlaylistItem(
             genres: List<Any>,
             is_following: Boolean,
             photo: Photo?,
+            thumbs: List<PlaylistThumb>,
             permissions: Any,
             subtitle_badge: Boolean,
             play_button: Boolean,
@@ -154,6 +168,17 @@ data class SearchPlaylistItem(
             album_type: String,
             exclusive: Boolean,
         ): PlaylistDomain {
+
+            val list = emptyList<String>().toMutableList()
+
+            list.addAll(thumbs.map { it.photo_300 })
+
+            if(list.isEmpty()){
+                if(photo!=null) list.add(photo.photo_300)
+            }
+
+
+
             return PlaylistDomain(
                 playlistId = id.toString(),
                 title = title,
@@ -161,7 +186,7 @@ data class SearchPlaylistItem(
                 count = count,
                 description = description,
                 ownerId = owner_id,
-                thumbs = listOf(photo?.photo_300?:"")
+                thumbs = list
             )
         }
 
@@ -185,6 +210,7 @@ data class SearchPlaylistItem(
             genres: List<Any>,
             is_following: Boolean,
             photo: Photo?,
+            thumbs: List<PlaylistThumb>,
             permissions: Any,
             subtitle_badge: Boolean,
             play_button: Boolean,
@@ -192,6 +218,17 @@ data class SearchPlaylistItem(
             album_type: String,
             exclusive: Boolean,
         ): PlaylistCache {
+
+            val list = emptyList<String>().toMutableList()
+
+            list.addAll(thumbs.map { it.photo_300 })
+
+            if(list.isEmpty()){
+                if(photo!=null) list.add(photo.photo_300)
+            }
+
+            //if(list.isEmpty()) list.add("")
+
             return PlaylistCache(
                 playlistId = id.toString()+friendId,
                 title = title,
@@ -200,7 +237,7 @@ data class SearchPlaylistItem(
                 update_time = update_time,
                 description = description,
                 owner_id = owner_id,
-                thumbs = listOf(photo?.photo_300?:"")
+                thumbs = list
             )
         }
 

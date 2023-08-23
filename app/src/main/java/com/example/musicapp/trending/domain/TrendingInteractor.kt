@@ -6,11 +6,13 @@ import com.example.musicapp.trending.data.TrendingRepository
 import com.example.musicapp.trending.presentation.TrendingResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 interface MusicInteractor{
 
-    suspend fun fetchData():TrendingResult
+    suspend fun fetchData(): Flow<TrendingResult>
 
 
 
@@ -26,19 +28,18 @@ interface TrendingInteractor: MusicInteractor {
         private val transfer: PlaylistIdTransfer,
     ): TrendingInteractor{
 
-        override suspend fun fetchData(): TrendingResult =
+        override suspend fun fetchData(): Flow<TrendingResult> = flow {
           handleUnauthorizedResponse.handle(
               {
-                  coroutineScope {
-                      val playlists = async { repository.fetchTopBarItems().sortedBy { it.sortPriority() } }
-                      val tracks = async { repository.fetchTracks() }
-                      return@coroutineScope TrendingResult.Success(Pair(playlists.await(),tracks.await()))
-                  }
+                      val topBarItems = repository.fetchTopBarItems().sortedBy { it.sortPriority() }
+                      emit(TrendingResult.Success(Pair(topBarItems, emptyList())))
+                      val tracks =  repository.fetchTracks()
+                      emit(TrendingResult.Success(Pair(topBarItems, tracks)))
               },
               { errorMessage, _ ->
-                  return@handle TrendingResult.Error(errorMessage,repository.fetchTopBarItems().sortedBy { it.sortPriority() })
+                  emit(TrendingResult.Error(errorMessage,repository.fetchTopBarItems().sortedBy { it.sortPriority() }))
               }
-          )
+          ) }
 
         override fun savePlaylistId(id: String) = transfer.save(id)
 

@@ -82,12 +82,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/menu"
+                android:src="@drawable/setting"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@+id/textInputLayout2"
                 app:layout_constraintStart_toEndOf="@id/textInputLayout2"
                 app:layout_constraintTop_toTopOf="@+id/textInputLayout2"
-                android:tint="@color/gray" />
+                android:tint="@color/black" />
 
             <TextView
                 android:id="@+id/title_favorites"

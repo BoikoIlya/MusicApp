@@ -16,8 +16,8 @@ import com.example.musicapp.app.core.TrackChecker
 import com.example.musicapp.app.core.TracksResultToUiEventCommunicationMapper
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
-import com.example.musicapp.hlscachesystem.presentation.HLSCachingResult
-import com.example.musicapp.hlscachesystem.presentation.HLSCachingResultCommunication
+import com.example.musicapp.downloader.presentation.DownloadResult
+import com.example.musicapp.downloader.presentation.DownloadCompleteCommunication
 import com.example.musicapp.main.data.TemporaryTracksCache
 import com.example.musicapp.main.di.AppModule.Companion.mainPlaylistId
 import com.example.musicapp.main.presentation.PlayerCommunication
@@ -42,7 +42,7 @@ class FavoritesTracksViewModel @Inject constructor(
     private val handleTracksSortedSearch: HandleFavoritesTracksSortedSearch,
     private val managerResource: ManagerResource,
     private val temporaryTracksCache: TemporaryTracksCache,
-    private val hlsCachingCompleteCommunication: HLSCachingResultCommunication
+    private val downloadCompleteCommunication: DownloadCompleteCommunication
 ): BaseViewModel<FavoritesUiState>(
     playerCommunication,
     favoritesTracksCommunication,
@@ -95,7 +95,7 @@ class FavoritesTracksViewModel @Inject constructor(
         playMusic(shuffled.first())
     }
 
-    fun clearHlsCachingState() = hlsCachingCompleteCommunication.map(HLSCachingResult.Empty)
+    fun clearDownloadState() = downloadCompleteCommunication.map(DownloadResult.Empty)
 
     override fun launchDeleteItemDialog(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
         interactor.saveItemToTransfer(item)
@@ -113,10 +113,10 @@ class FavoritesTracksViewModel @Inject constructor(
         collector: FlowCollector<FavoritesUiState>
     ) = favoritesTracksCommunication.collectLoading(owner, collector)
 
-    suspend fun collectHlsCachingCompleteCommunication(
+    suspend fun collectDownloadCompleteCommunication(
         owner: LifecycleOwner,
-        collector: FlowCollector<HLSCachingResult>
-    ) = hlsCachingCompleteCommunication.collect(owner, collector)
+        collector: FlowCollector<DownloadResult>
+    ) = downloadCompleteCommunication.collect(owner, collector)
 }
 
 

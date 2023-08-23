@@ -17,7 +17,8 @@ class BaseFavoritesPlaylistsCacheDataSource @Inject constructor(
 ): FavoritesCacheDataSource<PlaylistCache> {
 
     override suspend fun contains(data: Pair<String, String>): Boolean {
-       return playlistDao.contains(data.first)!=null
+       return playlistDao.getPlaylistsOrderByUpdateTime(data.first, mainPlaylistId.toString()).first().isNotEmpty()
+    //contains(data.first)!=null
     }
 
     override suspend fun removeFromDB(id: Int) {

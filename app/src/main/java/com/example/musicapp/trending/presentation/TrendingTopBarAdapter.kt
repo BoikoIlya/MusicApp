@@ -18,49 +18,29 @@ import com.example.musicapp.databinding.TrendingTopBarItemBinding
 class TrendingTopBarAdapter(
     private val imageLoader: ImageLoader,
     private val navController: NavController
-   // private val context: Context
+
 ): RecyclerView.Adapter<TopBarViewHolder>(), Mapper<List<TrendingTopBarItemUi>, Unit> {
 
     private val playlists = mutableListOf<TrendingTopBarItemUi>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopBarViewHolder {
 
-//        when(viewType){
-//            R.layout.title_item -> TitleViewHolder(
-//                TitleItemBinding.inflate(
-//                    LayoutInflater.from(parent.context),
-//                    parent,
-//                    false
-//                ))
-           //  else ->
-        return      TopBarViewHolder(
+        return TopBarViewHolder(
             TrendingTopBarItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 ), navController, imageLoader
             )
-        //}
+
     }
 
     override fun getItemCount(): Int = playlists.size
 
-//    override fun getItemViewType(position: Int): Int {
-//        return when(position){
-//            0-> R.layout.title_item
-//            1-> R.layout.playlist_item
-//            else -> R.layout.title_item
-//        }
-//    }
+
 
     override fun onBindViewHolder(holder: TopBarViewHolder, position: Int) {
-//        when(position){
-//                0-> holder.bind(context.getString(R.string.trending_header),null)
-//                1->
-//                2-> holder.bind(context.getString(R.string.top_200_recommendations),null)
-//        }
        holder.bind(playlists[position])
-     //   holder.bind("",playlists[position])
     }
 
     override  fun map(data: List<TrendingTopBarItemUi>) {
@@ -74,11 +54,6 @@ class TrendingTopBarAdapter(
 
 }
 
-abstract class TrendingViewHolderAbstract(view: View):ViewHolder(view){
-
-   abstract fun bind(message: String,playlistUi: TrendingTopBarItemUi?)
-
-}
 
 class TopBarViewHolder(
     private val binding: TrendingTopBarItemBinding,
@@ -92,10 +67,6 @@ class TopBarViewHolder(
         playlistUi.map(mapper)
     }
 
-//    override fun bind(message: String, playlistUi: PlaylistUi?) {
-//        Log.d("tag", "bind: playlist")
-//        playlistUi?.map(mapper)
-//    }
 }
 
 class PlaylistDiffUtilCallback(

@@ -8,11 +8,5 @@ import com.example.musicapp.favorites.presentation.TracksResult
  **/
 class TracksResultEmptyMapper: TracksResultToUiEventCommunicationMapper {
     override suspend fun map(message: String, list: List<MediaItem>, error: Boolean,newId: Int) = Unit
-    override suspend fun map(
-        message: String,
-        list: List<MediaItem>,
-        albumDescription: String,
-        albumName: String,
-        albumImgUrl: String,
-    ) = Unit
+
 }

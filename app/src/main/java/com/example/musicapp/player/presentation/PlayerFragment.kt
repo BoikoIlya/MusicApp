@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RenderEffect
 import android.graphics.Shader
+import android.icu.util.TimeUnit
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -29,10 +30,10 @@ import com.example.musicapp.R
 import com.example.musicapp.app.core.BlurEffectAnimator
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.big_img_url
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.small_img_url
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_formatted
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_duration_in_millis
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.big_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.small_img_url
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_formatted
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_duration_in_millis
 import com.example.musicapp.databinding.PlayerFragmentBinding
 import com.example.musicapp.main.di.App
 import com.example.musicapp.main.presentation.PlayerCommunicationState
@@ -193,6 +194,11 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
                 when (menuItem.itemId) {
                     R.id.add_to_playlist_option -> viewModel.launchDeleteItemDialog(currentTrackId,currentTrack)
                     R.id.add_option -> viewModel.checkAndAddTrackToFavorites(currentTrack)
+                    R.id.min_15 -> viewModel.setupSleepTime(15)
+                    R.id.min_30 ->viewModel.setupSleepTime(30)
+                    R.id.hour_1 ->viewModel.setupSleepTime(60)
+                    R.id.hour_2 ->viewModel.setupSleepTime(120)
+                    R.id.disable->viewModel.disableSleepTimer()
                 }
                 return@setOnMenuItemClickListener true
             }

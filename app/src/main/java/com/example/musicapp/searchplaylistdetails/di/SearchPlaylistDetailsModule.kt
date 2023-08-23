@@ -38,32 +38,6 @@ interface SearchPlaylistDetailsModule {
 
 
 
-
-
-//    @PlaylistScope
-//    @Binds
-//    fun bindPlaylistInteractor(obj: PlaylistInteractor.Base):
-//            PlaylistInteractor
-
-//    @PlaylistScope
-//    @Binds
-//    fun bindToTrackResultMapper(obj: PlaylistDataDomain.ToTrackResultMapper):
-//            PlaylistDataDomain.Mapper<TracksResult>
-
-
-
-//    @Binds
-//    @FavoritesPlaylistDetailsScope
-//    fun bindPlaylistDomainToIdMapper(obj: PlaylistDomain.ToIdMapper): PlaylistDomain.Mapper<Int>
-//
-//    @Binds
-//    @FavoritesPlaylistDetailsScope
-//    fun bindPlaylistDomainTitleIsEmptyMapper(obj: PlaylistDomain.TitleIsEmpty): PlaylistDomain.Mapper<Boolean>
-//
-//    @Binds
-//    @FavoritesPlaylistDetailsScope
-//    fun bindHandlePlaylistDataCache(obj: HandlePlaylistDataCache.Base): HandlePlaylistDataCache
-
     @Binds
     @SearchPlaylistDetailsScope
     fun bindPlaylistCloudToDomainMapper(obj: SearchPlaylistItem.ToPlaylistDomainMapper): SearchPlaylistItem.Mapper<PlaylistDomain>
@@ -115,10 +89,7 @@ interface SearchPlaylistDetailsModule {
     fun bindPlaylistStateCommunication(obj: PlaylistDetailsStateCommunication.Base):
             PlaylistDetailsStateCommunication
 
-//    @Reusable
-//    @Binds
-//    fun bindPlaylistDataCommunication(obj: PlaylistDataCommunication.Base):
-//            PlaylistDataCommunication
+
 
     @Reusable
     @Binds
@@ -138,11 +109,7 @@ interface SearchPlaylistDetailsModule {
 @Module
 class SearchPlaylistDetailsProvidesModule{
 
-//    @Provides
-//    @PlaylistsScope
-//    fun providePlaylistDomainToIdsMapper(): PlaylistDomain.Mapper<Pair<Int,Int>>{
-//        return  PlaylistDomain.ToIdsMapper()
-//    }
+
 
     @Provides
     @SearchPlaylistDetailsScope

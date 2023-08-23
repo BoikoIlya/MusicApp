@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -24,27 +25,15 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListOfPlaylists(list: List<PlaylistCache>)
 
-    @Query("SELECT playlists_table.playlistId, title, is_following, count, update_time, description, owner_id, thumbs " +
-            "FROM playlists_table " +
-            "LEFT JOIN friends_and_playlists_table ON friends_and_playlists_table.playlistId = playlists_table.playlistId " +
-            "WHERE title LIKE '%' || :query || '%' AND playlists_table.playlistId != :mainPlaylistId AND friends_and_playlists_table.friendId IS NULL" +
-            " ORDER BY update_time DESC"
-    )
+
+    @Query("SELECT * FROM playlists_table WHERE title LIKE '%' || :query || '%' AND playlistId NOT IN (SELECT playlistId FROM friends_and_playlists_table) AND playlistId != :mainPlaylistId ORDER BY update_time DESC")
     fun getPlaylistsOrderByUpdateTime(query: String, mainPlaylistId: String): Flow<List<PlaylistCache>>
 
-    @Query("SELECT playlists_table.playlistId, title, is_following, count, update_time, description, owner_id, thumbs " +
-            "FROM playlists_table " +
-            "LEFT JOIN friends_and_playlists_table ON friends_and_playlists_table.playlistId = playlists_table.playlistId " +
-            " WHERE title LIKE '%' || :query || '%' AND playlists_table.playlistId != :mainPlaylistId AND is_following = :isFollowing AND friends_and_playlists_table.friendId IS NULL" +
-            " ORDER BY update_time DESC"
-    )
+
+    @Query("SELECT * FROM playlists_table WHERE title LIKE '%' || :query || '%' AND playlistId NOT IN (SELECT playlistId FROM friends_and_playlists_table) AND playlistId != :mainPlaylistId AND is_following = :isFollowing ORDER BY update_time DESC")
     fun getPlaylistsFollowedOrNotOrderByUpdateTime(query: String, mainPlaylistId: String, isFollowing:Boolean): Flow<List<PlaylistCache>>
 
-    @Query("SELECT playlists_table.playlistId, title, is_following, count, update_time, description, owner_id, thumbs " +
-            "FROM playlists_table " +
-            "LEFT JOIN friends_and_playlists_table ON friends_and_playlists_table.playlistId = playlists_table.playlistId " +
-            "WHERE title = :title AND friends_and_playlists_table.friendId IS NULL")
-    suspend fun contains(title: String):PlaylistCache?
+
 
     @Query("DELETE FROM playlists_table WHERE playlistId = :id")
     suspend fun deletePlaylist(id: String)
@@ -52,13 +41,7 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists_table WHERE  playlistId = :playlistId")
     fun getPlaylistById(playlistId: String): Flow<PlaylistCache?>
 
-    //@Query("DELETE FROM playlists_table WHERE playlistId NOT IN (:list) AND playlistId!=:mainPlaylistId")
-//    @Query("DELETE FROM playlists_table " +
-//            "WHERE playlistId NOT IN (:list) " +
-//            "AND playlistId != :mainPlaylistId " +
-//            "AND (SELECT COUNT(*) FROM friends_and_playlists_table " +
-//            "      WHERE friends_and_playlists_table.playlistId = playlists_table.playlistId " +
-//            "      AND friends_and_playlists_table.friendId IS NULL) = 0")
+
     @Query("DELETE FROM playlists_table WHERE playlistId NOT IN (:list) AND playlistId != :mainPlaylistId " +
             "AND (SELECT COUNT(*) FROM friends_and_playlists_table " +
             "      WHERE friends_and_playlists_table.playlistId = playlists_table.playlistId " +
@@ -96,6 +79,17 @@ interface PlaylistDao {
             "(SELECT playlistId FROM friends_and_playlists_table WHERE friendId = :friendId)")
     suspend fun deletePlaylistsOfFriendNotInList(items: List<String>, friendId: Int)
 
+
+    @Query("DELETE FROM playlists_table " +
+            "WHERE playlistId IN " +
+            "(SELECT playlistId FROM friends_and_playlists_table WHERE friendId = :friendId)")
+    suspend fun deletePlaylistsOfFriend(friendId: Int)
+
+    @Transaction
+    suspend fun clearAndAddFriendPlaylists(items: List<PlaylistCache>, friendId: Int){
+        deletePlaylistsOfFriend(friendId)
+        insertListOfPlaylists(items)
+    }
 
     @Query("SELECT playlists_table.playlistId, title, is_following, count, update_time, description, owner_id, thumbs " +
             "FROM playlists_table " +

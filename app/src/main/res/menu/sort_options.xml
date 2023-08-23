@@ -3,21 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <item android:title="@string/sort_by" />
+    <item
+        android:title="@string/sort_by"
+        app:showAsAction="never"
+        />
     <item
         android:icon="@drawable/access_time"
         android:id="@+id/byTime"
         android:title="@string/by_time"
-        app:showAsAction="never"/>
+        />
 
     <item
         android:icon="@drawable/title"
         android:id="@+id/byName"
         android:title="@string/by_name"
-        app:showAsAction="never"/>
+        />
     <item
         android:icon="@drawable/author"
         android:id="@+id/byArtist"
         android:title="@string/by_artist"
-        app:showAsAction="never"/>
+       />
 </menu>

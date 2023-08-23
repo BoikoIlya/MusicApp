@@ -17,6 +17,7 @@ import com.example.musicapp.favorites.domain.FavoritesTracksInteractor
 import com.example.musicapp.favorites.presentation.UiCommunication
 import com.example.musicapp.main.data.CheckAuthRepository
 import com.example.musicapp.main.data.TemporaryTracksCache
+import com.example.musicapp.notifications.presentation.NotificationsUpdateOnAppStart
 import com.example.musicapp.vkauth.presentation.AuthActivity
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
@@ -38,7 +39,8 @@ class MainViewModel @Inject constructor(
     private val slideViewPagerCommunication: SlideViewPagerCommunication,
     private val permissionCheckCommunication: PermissionCheckCommunication,
     private val sdkChecker: SDKChecker,
-    private val captchaRepository: CaptchaRepository
+    private val captchaRepository: CaptchaRepository,
+    private val notificationsUpdateOnAppStart: NotificationsUpdateOnAppStart
 ): BaseViewModel<Unit>(
     playerCommunication,
     UiCommunication.EmptyCommunication(),
@@ -52,13 +54,16 @@ class MainViewModel @Inject constructor(
 
 
     companion object{
-        const val permissionRequestCode = 0
+        const val notificationsPermissionRequestCode = 0
+        const val writeExternalStoragePermissionRequestCode = 1
     }
 
     init {
         checkAuth()
         firebaseMessagingWrapper.subscribeToTopic()
         notificationPermissionCheck()
+        writeExternalStoragePermissionCheck()
+        updateNotifications()
         handleCaptcha()
     }
 
@@ -72,19 +77,34 @@ class MainViewModel @Inject constructor(
             permissionCheckCommunication.map(
                 PermissionCheckState.CheckForPermission(
                     Manifest.permission.POST_NOTIFICATIONS,
-                    permissionRequestCode))
+                    notificationsPermissionRequestCode))
         },{})
 
     }
 
+    fun writeExternalStoragePermissionCheck(){
+        sdkChecker.check(SDKCheckerState.BelowApi29,{
+            permissionCheckCommunication.map(
+                PermissionCheckState.CheckForPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    writeExternalStoragePermissionRequestCode))
+        },{})
+    }
+
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
         authorizationRepository.isNotAuthorized().collect{
-
             if(it) activityNavigationCommunication.map(ActivityNavigationState.Navigate(AuthActivity::class.java))
         }
     }
 
-    fun dontShowPermission() { permissionCheckCommunication.map(PermissionCheckState.Empty)}
+    fun dontShowPermission() {
+        permissionCheckCommunication.map(PermissionCheckState.Empty)
+
+    }
+
+    fun updateNotifications(){
+        notificationsUpdateOnAppStart.update(viewModelScope)
+    }
 
     fun clearDisablePlayer() = playerCommunication.map(PlayerCommunicationState.Disabled)
 
@@ -128,4 +148,8 @@ class MainViewModel @Inject constructor(
         collector: FlowCollector<PermissionCheckState>
     ) = permissionCheckCommunication.collect(owner,collector)
 
+     suspend fun collectNotificationBadgeCommunication(
+        owner: LifecycleOwner,
+        collector: FlowCollector<Boolean>,
+    ) = notificationsUpdateOnAppStart.collectNotificationBadgeCommunication(owner,collector)
 }

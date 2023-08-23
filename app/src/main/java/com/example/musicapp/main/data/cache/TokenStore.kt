@@ -11,7 +11,7 @@ import javax.inject.Inject
  **/
 interface TokenStore: SettingsDataStore<String> {
 
-    class Base @Inject constructor(
+    class Base(
         tokenKey: Preferences.Key<String>,
         store: DataStore<Preferences>
     ): TokenStore, SettingsDataStore.Abstract<String>(tokenKey,store,"")

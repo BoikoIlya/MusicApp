@@ -64,7 +64,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
         binding.pullToRefresh.setRefreshViewParams(
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                250,
+                250
             ))
 
 
@@ -106,11 +106,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
                 dpToPx = dpToPx
                 )
 
-//        val errorAdapter = ErrorLayoutAdapter(clickListener =object :ClickListener<Unit>{
-//            override fun onClick(data: Unit) {
-//                viewModel.loadData()
-//            }
-//        })
+
 
         val playlistSectionAdapter = PlaylistSectionAdapter(
             playlistAdapter = playlistsAdapter,
@@ -129,11 +125,6 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
                 tracksAdapter
             )
         binding.scrollUpButton.setupWithRecycler(binding.trendingRcv)
-
-//        binding.trendingRcv.layoutManager = LinearLayoutManager(requireContext(),
-//            RecyclerView.HORIZONTAL,false)
-//
-//        binding.playlistRcv.adapter = playlistsAdapter
 
 
         lifecycleScope.launch {

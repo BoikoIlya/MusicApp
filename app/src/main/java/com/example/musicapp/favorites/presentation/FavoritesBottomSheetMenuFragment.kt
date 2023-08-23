@@ -47,7 +47,6 @@ class FavoritesBottomSheetMenuFragment : BottomSheetDialogFragment(R.layout.favo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("tag", "onViewCreated: ")
         val mapper = MediaItemToFavoritesBottomSheetMenuMapper.Base(
             binding,
             requireContext(),

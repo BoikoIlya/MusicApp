@@ -1,14 +1,11 @@
 package com.example.musicapp.frienddetails.data.cache
 
-import android.util.Log
 import com.example.musicapp.app.core.DispatchersList
-import com.example.musicapp.app.core.MusicDatabase
 import com.example.musicapp.favorites.data.cache.TrackCache
 import com.example.musicapp.favorites.data.cache.TracksDao
 import com.example.musicapp.userplaylists.data.cache.PlaylistCache
 import com.example.musicapp.userplaylists.data.cache.PlaylistDao
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,22 +49,17 @@ interface FriendsDetailsCacheDataSource {
         override suspend fun insertPlaylists(list: List<PlaylistCache>, friendId: String) {
 
         coroutineScope {
+            val idsList = list.map { it.playlistId }
             launch(dispatchersList.io()) {
-                playlistsDao.insertListOfPlaylists(list)
+                playlistsDao.clearAndAddFriendPlaylists(list,friendId.toInt())
             }
             launch(dispatchersList.io()) {
-                friendsAndPlaylistsRelationDao.insertList(
-                    list.map { FriendAndPlaylistRelation(it.playlistId, friendId.toInt()) }
+                friendsAndPlaylistsRelationDao.clearAndInsertRelations(
+                    list.map { FriendAndPlaylistRelation(it.playlistId, friendId.toInt()) },
+                    friendId.toInt()
                 )
             }
 
-            val idsList = list.map { it.playlistId }
-            launch(dispatchersList.io()) {
-                playlistsDao.deletePlaylistsOfFriendNotInList(idsList, friendId.toInt())
-            }
-            launch(dispatchersList.io()) {
-                friendsAndPlaylistsRelationDao.deleteRelationsNotInList(idsList)
-            }
             }
         }
 

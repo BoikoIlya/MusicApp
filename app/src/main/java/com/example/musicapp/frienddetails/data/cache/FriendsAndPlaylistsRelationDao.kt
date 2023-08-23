@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.musicapp.userplaylists.data.cache.PlaylistCache
+import androidx.room.Transaction
 
 /**
  * Created by HP on 19.08.2023.
@@ -23,6 +23,13 @@ interface FriendsAndPlaylistsRelationDao {
     @Query("SELECT COUNT(*) FROM friends_and_playlists_table WHERE friendId = :friendId")
     fun friendPlaylistCount(friendId: Int): Int
 
-    @Query("DELETE FROM friends_and_playlists_table WHERE playlistId NOT IN (:list)")
-    fun deleteRelationsNotInList(list: List<String>)
+
+    @Query("DELETE FROM friends_and_playlists_table WHERE friendId = :friendId ")
+    fun deleteRelations(friendId: Int)
+
+    @Transaction
+    suspend fun clearAndInsertRelations(items: List<FriendAndPlaylistRelation>,friendId: Int){
+        deleteRelations(friendId)
+        insertList(items)
+    }
 }

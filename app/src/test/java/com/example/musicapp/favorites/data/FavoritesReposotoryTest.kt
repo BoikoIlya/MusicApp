@@ -135,15 +135,6 @@ class FavoritesReposotoryTest: ObjectCreator() {
             return message == expectedMessage
         }
 
-        override suspend fun map(
-            message: String,
-            list: List<MediaItem>,
-            albumDescription: String,
-            albumName: String,
-            albumImgUrl: String,
-        ): Boolean {
-            return message == expectedMessage
-        }
 
 
     }

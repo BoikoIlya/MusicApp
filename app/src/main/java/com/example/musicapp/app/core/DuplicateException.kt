@@ -19,5 +19,3 @@ class CaptchaNeededException(
         data.first.saveNewCaptchaData(id,url,data.second)
     }
 }
-
-//class AccessDeniedException: Exception()

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/friendsFragment"
+    app:startDestination="@id/favoritesFragment"
     >
 
     <fragment
@@ -18,6 +18,13 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             android:id="@+id/action_trendingFragment_to_playlistsFragment"
             app:destination="@id/playlistsFragment" />
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_trendingFragment_to_popularFragment"
+            app:destination="@id/popularFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
@@ -26,6 +33,13 @@
         <action
             android:id="@+id/action_favoritesFragment_to_favoritesBottomSheetMenuFragment"
             app:destination="@id/favoritesBottomSheetMenuFragment" />
+        <action
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_favoritesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchHistoryFragment"
@@ -154,4 +168,16 @@
             android:id="@+id/action_friendDetailsFragment_to_searchPlaylistDetailsFragment"
             app:destination="@id/searchPlaylistDetailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.musicapp.notifications.presentation.NotificationsFragment"
+        android:label="NotificationsFragment" />
+    <fragment
+        android:id="@+id/popularFragment"
+        android:name="com.example.musicapp.popular.presentation.PopularFragment"
+        android:label="PopularFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.musicapp.settings.presentation.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

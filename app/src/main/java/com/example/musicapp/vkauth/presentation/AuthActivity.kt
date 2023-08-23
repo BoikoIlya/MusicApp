@@ -1,6 +1,8 @@
 package com.example.musicapp.vkauth.presentation
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
@@ -48,7 +50,22 @@ class AuthActivity : AppCompatActivity() {
             viewModel.submit(binding.loginEdt.text.toString(),binding.passwordEdt.text.toString())
         }
 
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        binding.forgotPassword.setOnClickListener {
+            intent.data = Uri.parse(forgot_password_web_url)
+            startActivity(intent)
+        }
+
+        binding.createAccount.setOnClickListener {
+            intent.data = Uri.parse(create_vk_account_web_url)
+            startActivity(intent)
+        }
     }
 
 
+    companion object{
+        private const val create_vk_account_web_url = "https://id.vk.com/auth?v=1.46.0&app_id=7934655&uuid=28523cb43d&redirect_uri=https%3A%2F%2Fm.vk.com%2Fjoin&app_settings=W10%3D&action=eyJuYW1lIjoibm9fcGFzc3dvcmRfZmxvdyIsInBhcmFtcyI6eyJ0eXBlIjoic2lnbl91cCJ9fQ%3D%3D&scheme=bright_light"
+        private const val forgot_password_web_url = "https://id.vk.com/restore/#/resetPassword"
+    }
 }

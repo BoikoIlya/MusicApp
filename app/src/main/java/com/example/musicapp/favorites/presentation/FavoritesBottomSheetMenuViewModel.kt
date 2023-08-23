@@ -10,10 +10,9 @@ import com.example.musicapp.app.core.DispatchersList
 import com.example.musicapp.app.core.GlobalSingleUiEventCommunication
 import com.example.musicapp.app.core.ManagerResource
 import com.example.musicapp.app.core.SingleUiEventState
-import com.example.musicapp.hlscachesystem.data.HlsCacheQueueStore
-import com.example.musicapp.hlscachesystem.data.HlsDownloaderCacheRepository
-import com.example.musicapp.hlscachesystem.presentation.HLSCachingResult
-import com.example.musicapp.hlscachesystem.presentation.HLSCachingResultCommunication
+import com.example.musicapp.downloader.domain.DownloadInteractor
+import com.example.musicapp.downloader.presentation.DownloadResult
+import com.example.musicapp.downloader.presentation.DownloadCompleteCommunication
 import com.example.musicapp.trending.domain.TrackDomain
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,14 +23,13 @@ import javax.inject.Inject
 class FavoritesBottomSheetMenuViewModel @Inject constructor(
     private val resetSwipeActionCommunication: ResetSwipeActionCommunication,
     private val dispatchersList: DispatchersList,
-    private val hlsCacheQueueStore: HlsCacheQueueStore,
     private val transfer: DataTransfer<TrackDomain>,
     private val mapper: TrackDomain.Mapper<MediaItem>,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val connectionChecker: ConnectionChecker,
     private val managerResource: ManagerResource,
-    private val hlsCachingCompleteCommunication: HLSCachingResultCommunication,
-    private val hlsCacheRepository: HlsDownloaderCacheRepository
+    private val downloadInteractor: DownloadInteractor,
+    private val downloadCompleteCommunication: DownloadCompleteCommunication
 ): ViewModel() {
 
     fun readMediaItem() = transfer.read()!!.map(mapper)
@@ -40,26 +38,40 @@ class FavoritesBottomSheetMenuViewModel @Inject constructor(
         resetSwipeActionCommunication.map(Unit)
     }
 
-    fun saveToCache() = viewModelScope.launch(dispatchersList.io()){
+    fun download() = viewModelScope.launch(dispatchersList.io()){
         if(!connectionChecker.isDeviceHaveConnection()) {
             globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(
                 R.string.no_connection_message)))
             return@launch
         }
-        hlsCacheQueueStore.add(readMediaItem())
-        globalSingleUiEventCommunication.map(SingleUiEventState.LaunchHLSCacheService)
-        globalSingleUiEventCommunication.map(
-            SingleUiEventState.ShowSnackBar.Success(
-                managerResource.getString(R.string.caching_started)
-            ))
+        val mediaItem = readMediaItem()
+        val trackUri = mediaItem.localConfiguration?.uri
+        if(trackUri==null){
+            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(
+                R.string.unavailable_track)))
+            return@launch
+        }
+       val error = downloadInteractor.download(
+            trackUri,
+            mediaItem.mediaMetadata.title.toString(),
+            mediaItem.mediaMetadata.artist.toString()
+        )
+        if (error.isNotEmpty()) globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(error))
     }
 
-    fun removeFromCache() = viewModelScope.launch(dispatchersList.io()) {
-        hlsCacheRepository.remove(readMediaItem())
-        hlsCachingCompleteCommunication.map(HLSCachingResult.Completed)
+    fun removeFromDownloads() = viewModelScope.launch(dispatchersList.io()) {
+        val mediaItem = readMediaItem()
+       val error = downloadInteractor.deleteTrack(
+            mediaItem.mediaMetadata.title.toString(),
+            mediaItem.mediaMetadata.artist.toString()
+        )
         globalSingleUiEventCommunication.map(
-            SingleUiEventState.ShowSnackBar.Success(
-                managerResource.getString(R.string.success_remove_message)
-            ))
+        if(error.isEmpty())
+        {
+            downloadCompleteCommunication.map(DownloadResult.Completed)
+            SingleUiEventState.ShowSnackBar.Success(managerResource.getString(R.string.success_remove_message))
+        }
+        else SingleUiEventState.ShowSnackBar.Error(error)
+        )
     }
 }

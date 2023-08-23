@@ -23,7 +23,7 @@ class Base @Inject constructor(
     FriendsDetailsRepository.Abstract<SearchPlaylistItem, PlaylistCache>(mapper) {
 
     override suspend fun cloudData(friendId: String): List<SearchPlaylistItem> =
-        cloudDataSource.fetchPlaylists(friendId)
+        cloudDataSource.fetchPlaylists(friendId).filter { !it.isBlocked() }
 
     override suspend fun saveToCache(list: List<PlaylistCache>, friendId: String) =
         cache.insertPlaylists(list, friendId)

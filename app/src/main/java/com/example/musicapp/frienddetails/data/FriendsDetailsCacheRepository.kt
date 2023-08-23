@@ -40,9 +40,7 @@ interface FriendsDetailsCacheRepository {
         private val toPlaylistUiMapper: FriendPlaylistsCacheToUiMapper
     ): FriendsDetailsCacheRepository {
 
-        companion object{
-            const val tracks_chunk_size = 2000
-        }
+
 
         override suspend fun searchTracks(query: String): List<MediaItem> {
 
@@ -50,10 +48,7 @@ interface FriendsDetailsCacheRepository {
                     query,
                     transfer.read()!!.first.toInt()
                 )
-                //.map { trackList ->
-                      //  trackList
-                            .map { toMediaItemMapper.map(it) }
-                  //  }
+                .map { toMediaItemMapper.map(Pair(it, emptyList())) }
         }
 
         override suspend fun isFriendHaveTracks(): Boolean {

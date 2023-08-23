@@ -3,6 +3,7 @@ package com.example.musicapp.app.core
 import android.util.Log
 import androidx.media3.common.MediaItem
 import com.example.musicapp.addtoplaylist.domain.SelectedTrackDomain
+import com.example.musicapp.downloader.data.cache.DownloadTracksCacheDataSource
 import com.example.musicapp.favorites.data.SortingState
 import com.example.musicapp.favorites.data.cache.TracksDao
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,7 @@ import kotlin.system.measureTimeMillis
  **/
 interface CacheRepository<T> {
 
-    fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
+   suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
 
    suspend fun isDbEmpty(playlistId: String): Boolean
 
@@ -32,12 +33,14 @@ interface CacheRepository<T> {
 
     class BaseMediaItem @Inject constructor(
         private val dao: TracksDao,
-        private val mapper: ToMediaItemMapper
+        private val mapper: ToMediaItemMapper,
+        private val downloadsDataSource: DownloadTracksCacheDataSource
     ): Abstract<MediaItem>(dao),CacheRepository<MediaItem> {
 
-        override fun fetch(sortingState: SortingState,playlistId: String): Flow<List<MediaItem>> {
-               return sortingState.fetch(dao, playlistId).map { list ->
-                  list.map { mapper.map(it) } }
+        override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<MediaItem>> {
+            val downloadedFiles = downloadsDataSource.readListOfFileNamesAndPaths()
+            return sortingState.fetch(dao, playlistId).map { list ->
+                  list.map { mapper.map(Pair(it,downloadedFiles)) } }
         }
 
     }
@@ -47,7 +50,7 @@ interface CacheRepository<T> {
         private val mapper: TracksCacheToSelectedTracksDomainMapper
     ): Abstract<SelectedTrackDomain>(dao),CacheRepository<SelectedTrackDomain> {
 
-        override fun fetch(sortingState: SortingState,playlistId: String): Flow<List<SelectedTrackDomain>> =
+        override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<SelectedTrackDomain>> =
             sortingState.fetch(dao,playlistId).map {list-> mapper.map(list)}
 
     }

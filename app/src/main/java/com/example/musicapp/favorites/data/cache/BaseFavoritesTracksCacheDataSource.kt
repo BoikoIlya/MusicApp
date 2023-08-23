@@ -22,10 +22,9 @@ class BaseFavoritesTracksCacheDataSource @Inject constructor(
 
 
 
-        override suspend fun contains(data: Pair<String, String>): Boolean
-        = tracksDao.contains(data.first, data.second, mainPlaylistId) != null
+        override suspend fun contains(data: Pair<String, String>): Boolean =
+        tracksDao.contains(data.first, data.second, mainPlaylistId) != null
 
-//        override suspend fun containsInFavorites(): Boolean = tracksDao.containsI(data.first, data.second) != null
 
     override suspend fun insertWithNewId(newId: Int, data: TrackCache) {
             tracksDao.insertTrack(data.copy(trackId = newId.toString()))

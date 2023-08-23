@@ -41,8 +41,8 @@ sealed interface PlayerCommunicationState{
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
             trackDurationCommunication: TrackDurationCommunication
         ) {
-            controller.setMediaItems(tracks)
             currentQueueCommunication.map(tracks)
+            controller.setMediaItems(tracks)
         }
 
     }
@@ -67,6 +67,7 @@ sealed interface PlayerCommunicationState{
             controller.seekToDefaultPosition(position)
             controller.prepare()
             controller.playWhenReady = true
+
         }
     }
 

@@ -31,7 +31,6 @@ class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        // viewHolder.absoluteAdapterPosition-1 because first item is playlist description
         adapter.removeFromAdapter(viewModel,viewHolder.absoluteAdapterPosition - 1)
     }
 

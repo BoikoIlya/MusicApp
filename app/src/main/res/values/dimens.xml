@@ -4,4 +4,5 @@
       <dimen name="h3">20sp</dimen>
       <dimen name="body1">16sp</dimen>
       <dimen name="body2">14sp</dimen>
+      <dimen name="notification_stroke_width">3dp</dimen>
    </resources>

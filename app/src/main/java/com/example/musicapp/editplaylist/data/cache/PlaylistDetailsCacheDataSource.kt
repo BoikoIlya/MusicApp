@@ -34,15 +34,7 @@ interface PlaylistDetailsCacheDataSource {
     ): PlaylistDetailsCacheDataSource {
 
         override suspend fun savePlaylistTracks(playlistId: String,list: List<TrackCache>) {
-            val trackIds =list.map { it.trackId }
             coroutineScope {
-//                launch { tracksDao.insertListOfTracks(list) }
-//                launch {
-//                    playlistsAndTracksDao.insertRelationsList(list.map {
-//                        PlaylistsAndTracksRelation(playlistId, it.trackId)
-//                    })
-//                }
-//                launch { tracksDao.deleteTracksNotInListWithSinglePlaylist(trackIds, playlistId) }
                 launch(dispatchersList.io()){
                     playlistsAndTracksDao.clearAndInsertRelations(
                     playlistId,

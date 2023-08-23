@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.musicapp.app.core.ClickListener
 import com.example.musicapp.app.core.ImageLoader
 import com.example.musicapp.app.core.Selector
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
+import com.example.musicapp.app.core.ToMediaItemMapper.Base.Companion.track_id
 import com.example.musicapp.databinding.TrackItemBinding
 import com.example.musicapp.trending.presentation.TracksViewHolder
 

@@ -135,7 +135,7 @@ data class PlaylistDomain(
                     )
                     i++
                 }
-            if(thumbs.isEmpty()) listOfStates[0] = PlaylistThumbsState.LoadImages(""+ R.drawable.im)
+            if(thumbs.isEmpty()) listOfStates[0] = PlaylistThumbsState.LoadImages("")
 
             return PlaylistUi(
                 playlistId = playlistId,

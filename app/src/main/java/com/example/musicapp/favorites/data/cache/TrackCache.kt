@@ -23,5 +23,4 @@ data class TrackCache(
     val durationFormatted: String,
     val durationInMillis: Float,
     val ownerId: Int,
-   // val isCached: Boolean = false
 )

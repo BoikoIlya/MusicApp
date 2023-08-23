@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import com.example.musicapp.app.core.ToMediaItemMapper.Companion.track_id
 import com.example.musicapp.favorites.presentation.FavoritesUiState
 import com.example.musicapp.favorites.presentation.TracksResult
 import com.example.musicapp.favorites.presentation.UiCommunication
@@ -38,7 +37,7 @@ abstract class BaseViewModel<T>(
        temporaryTracksCache.saveCurrentPageTracks(queue)
     }
 
-    fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
+   open fun playMusic(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
        trackChecker.checkIfPlayable(item, playable = {
 
             val queue = temporaryTracksCache.map()

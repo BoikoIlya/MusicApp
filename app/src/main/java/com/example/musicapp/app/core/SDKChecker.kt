@@ -35,4 +35,8 @@ interface SDKCheckerState{
     object AboveApi32: SDKCheckerState{
         override fun apply(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
     }
+
+    object BelowApi29: SDKCheckerState{
+        override fun apply(): Boolean = Build.VERSION.SDK_INT<=Build.VERSION_CODES.P
+    }
 }

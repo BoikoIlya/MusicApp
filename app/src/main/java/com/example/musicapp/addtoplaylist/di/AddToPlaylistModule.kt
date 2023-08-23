@@ -51,15 +51,6 @@ interface AddToPlaylistModule {
     @AddToPlaylistScope
     fun bindACachedTracksCommunication(obj: CachedTracksCommunication.Base): CachedTracksCommunication
 
-//    @Binds
-//    @AddToPlaylistScope
-//    fun bindAddToPlaylistSelectBtnCommunication(obj: PlaylistDataCommunicationCommunication.Base): PlaylistDataCommunicationCommunication
-
-
-
-//    @Binds
-//    @AddToPlaylistScope
-//    fun bindHandleFavoritesListFromCacheSelected(obj: HandleFavoritesListFromCacheSelected.Base): HandleFavoritesListFromCacheSelected
 
     @Binds
     @[IntoMap ViewModelKey(AddToPlaylistViewModel::class)]

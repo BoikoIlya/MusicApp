@@ -71,10 +71,7 @@ class FriendPlaylistsViewModel @Inject constructor(
 
         viewModelScope.launch(dispatchersList.io()){
            val result =  cacheRepository.searchPlaylists(query)
-             //   .collectLatest {
-               // Log.d("tag", "searchPlylist: ${it.size}")
-                handleFriendPlaylistsFromCache.handle(result)
-            //}
+            handleFriendPlaylistsFromCache.handle(result)
         }
     }
 

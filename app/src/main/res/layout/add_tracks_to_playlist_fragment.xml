@@ -14,12 +14,12 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/left_chevron"
         android:tint="@color/gray"
-        app:layout_constraintBottom_toBottomOf="@+id/title"
+        app:layout_constraintBottom_toBottomOf="@+id/titleTv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/title" />
+        app:layout_constraintTop_toTopOf="@+id/titleTv" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,14 +44,14 @@
         android:text="@string/select"
         android:textSize="@dimen/body1"
         android:textColor="@color/orange"
-        app:layout_constraintBottom_toBottomOf="@+id/title"
+        app:layout_constraintBottom_toBottomOf="@+id/titleTv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/title"
-        app:layout_constraintTop_toTopOf="@+id/title" />
+        app:layout_constraintStart_toEndOf="@id/titleTv"
+        app:layout_constraintTop_toTopOf="@+id/titleTv" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/titleTv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"

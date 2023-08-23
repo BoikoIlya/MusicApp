@@ -58,7 +58,7 @@ class EditPlaylistFragment: PlaylistDataFragment(R.layout.playlist_data_fragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.title.setText(R.string.edit_playlist)
+        binding.titleTv.setText(R.string.edit_playlist)
 
        val mapper = PlaylistUi.ToEditPlaylistData(binding)
 

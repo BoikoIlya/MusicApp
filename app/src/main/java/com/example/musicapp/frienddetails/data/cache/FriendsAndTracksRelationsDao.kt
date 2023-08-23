@@ -21,8 +21,6 @@ interface FriendsAndTracksRelationsDao {
     @Query("SELECT COUNT(*) FROM friend_and_tracks_relations WHERE friendId = :friendId")
     fun friendTrackCount(friendId: Int): Int
 
-//    @Query("DELETE FROM friend_and_tracks_relations WHERE trackId NOT IN (:list) AND friendId =:friendId")
-//    fun deleteRelationsNotInList(list: List<String>,friendId: Int, itemsSize: Int)
 
     @Query("DELETE FROM friend_and_tracks_relations WHERE  friendId =:friendId")
     fun deleteRelationsNotInList(friendId: Int)
