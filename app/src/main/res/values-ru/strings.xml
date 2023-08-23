@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MusicApp</string>
+    <string name="app_name">Melisma</string>
     <string name="trending_header">Музыка Сегодня</string>
     <string name="search_track">Поиск…</string>
     <string name="no_connection_message">Нет интернет подключения</string>

@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "251566244381",
-    "project_id": "musicapp-e5351",
-    "storage_bucket": "musicapp-e5351.appspot.com"
+    "project_number": "352625537369",
+    "project_id": "melisma-98ded",
+    "storage_bucket": "melisma-98ded.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:251566244381:android:9419b8718944485ba33cf4",
+        "mobilesdk_app_id": "1:352625537369:android:5115417faac91a528d1c48",
         "android_client_info": {
-          "package_name": "com.example.musicapp"
+          "package_name": "com.kamancho.melisma"
         }
       },
       "oauth_client": [
         {
-          "client_id": "251566244381-hmih290geo1m8a8vo28eeooc44f4ilvn.apps.googleusercontent.com",
+          "client_id": "352625537369-ot9o1gg2hrb3qsnrag2h9nd2kpff4ltn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.musicapp",
+            "package_name": "com.kamancho.melisma",
             "certificate_hash": "8899d2af28c4d993467028c673ac2395646b5cfe"
           }
         },
         {
-          "client_id": "251566244381-avh1gh0r8eco67h90faal57uqd4g48f9.apps.googleusercontent.com",
+          "client_id": "352625537369-kv5f6ii4plf01bd7mgiiunucg9fd5qr6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBft0S9NK9ASdfleXpKjtsJ8-rwMe3yISA"
+          "current_key": "AIzaSyDiQ0h3U3fF-PDOQE1MeimiAt6DIHr_oYM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "251566244381-avh1gh0r8eco67h90faal57uqd4g48f9.apps.googleusercontent.com",
+              "client_id": "352625537369-kv5f6ii4plf01bd7mgiiunucg9fd5qr6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

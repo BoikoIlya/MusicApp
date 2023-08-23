@@ -1,0 +1,193 @@
+package com.kamancho.melisma.main.presentation
+
+import android.app.DownloadManager
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.view.View
+import android.widget.ToggleButton
+import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
+import com.kamancho.melisma.R
+import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.main.di.App
+import com.kamancho.melisma.databinding.ActivityMainBinding
+import com.kamancho.melisma.downloader.presentation.DownloadTrackBroadcastReceiver
+import com.kamancho.melisma.player.presentation.PlayerFragment
+import com.kamancho.melisma.queue.presenatation.QueueFragment
+import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@UnstableApi class MainActivity : FragmentActivity() {
+
+    lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
+    private lateinit var viewModel: MainViewModel
+
+    private lateinit var bottomSheet: BottomSheetBehavior<ConstraintLayout>
+
+    private lateinit var downloadBroadcastReceiver: DownloadTrackBroadcastReceiver
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val fragments = listOf(PlayerFragment(), QueueFragment())
+        downloadBroadcastReceiver = DownloadTrackBroadcastReceiver()
+
+        binding.bottomSheet.bottomSheetVp.adapter =
+            ViewPagerFragmentsAdapter(supportFragmentManager,lifecycle, fragments)
+
+
+        bottomSheet = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
+            peekHeight = 0
+        }
+
+        (this.application as App).appComponent.inject(this)
+        viewModel = ViewModelProvider(
+            this,
+            factory
+        )[MainViewModel::class.java]
+
+        val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHost.navController
+        binding.bottomNavView.setupWithNavController(navController)
+        val badge = binding.bottomNavView.getOrCreateBadge(R.id.notificationsFragment)
+
+
+
+        bottomSheet.addBottomSheetCallback(object :BottomSheetBehavior.BottomSheetCallback(){
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if(newState == BottomSheetBehavior.STATE_COLLAPSED)
+                    viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+
+        })
+
+        lifecycleScope.launch{
+            viewModel.collectActivityNavigationCommunication(this@MainActivity){
+                it.apply(this@MainActivity,viewModel)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.collectBottomSheetState(this@MainActivity){
+                bottomSheet.state = it
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.collectPlayerControls(this@MainActivity) {
+                it.apply(
+                    binding,
+                    imageLoader,
+                    viewModel
+                )
+            }
+        }
+
+        lifecycleScope.launch{
+            viewModel.collectSingleUiUpdateCommunication(this@MainActivity){
+                it.apply(supportFragmentManager,this@MainActivity, binding)
+            }
+        }
+
+
+        lifecycleScope.launch {
+            viewModel.collectSlideViewPagerCommunication(this@MainActivity){
+                binding.bottomSheet.bottomSheetVp.setCurrentItem(it,true)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.collectPermissionCheckCommunication(this@MainActivity){
+                it.apply(this@MainActivity)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.collectNotificationBadgeCommunication(this@MainActivity){
+                badge.isVisible = it
+            }
+        }
+
+        binding.playBtn.setOnClickListener {
+            if ((it as ToggleButton).isChecked)
+                viewModel.playerAction(PlayerCommunicationState.Pause)
+            else
+                viewModel.playerAction(PlayerCommunicationState.Resume)
+        }
+
+        binding.previousBtn.setOnClickListener {
+            viewModel.playerAction(PlayerCommunicationState.Previous)
+        }
+
+        binding.nextBtn.setOnClickListener {
+            viewModel.playerAction(PlayerCommunicationState.Next)
+        }
+
+        binding.bottomPlayerBar.setOnClickListener {
+            viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
+        }
+
+        binding.bottomNavView.setOnItemSelectedListener {
+            NavigationUI.onNavDestinationSelected(it,navController)
+            return@setOnItemSelectedListener true
+        }
+
+        onBackPressedDispatcher.addCallback(this){
+            if(bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
+                bottomSheet.state != BottomSheetBehavior.STATE_HIDDEN)
+                viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
+            else if(navController.backQueue.size > minimal_back_stack_size){
+                navController.popBackStack()
+            }else finish()
+        }
+
+        registerReceiver(downloadBroadcastReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    companion object{
+        private const val minimal_back_stack_size = 2
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            if(
+            requestCode==MainViewModel.notificationsPermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED ||
+            requestCode==MainViewModel.writeExternalStoragePermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED
+            )
+                viewModel.dontShowPermission()
+
+        viewModel.updateNotifications()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(downloadBroadcastReceiver)
+    }
+}

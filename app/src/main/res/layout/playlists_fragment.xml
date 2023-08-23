@@ -84,7 +84,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.musicapp.app.core.ScrollUpRecyclerButton
+    <com.kamancho.melisma.app.core.ScrollUpRecyclerButton
         android:id="@+id/scrollUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

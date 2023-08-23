@@ -8,16 +8,16 @@ plugins {
 }
 
 android {
-    namespace 'com.example.musicapp'
+    namespace 'com.kamancho.melisma'
     compileSdk 33
 
 
     defaultConfig {
-        applicationId "com.example.musicapp"
+        applicationId "com.kamancho.melisma"
         minSdk 26
         targetSdk 33
         versionCode 9
-        versionName "1.1.0-betta"
+        versionName "1.2.0-betta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -32,7 +32,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

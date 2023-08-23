@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/trendingFragment"
-        android:name="com.example.musicapp.trending.presentation.TrendingFragment"
+        android:name="com.kamancho.melisma.trending.presentation.TrendingFragment"
         android:label="TrendingFragment"
         >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.musicapp.favorites.presentation.FavoritesTracksFragment"
+        android:name="com.kamancho.melisma.favorites.presentation.FavoritesTracksFragment"
         android:label="FavoritesFragment" >
         <action
             android:id="@+id/action_favoritesFragment_to_favoritesBottomSheetMenuFragment"
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchHistoryFragment"
-        android:name="com.example.musicapp.searchhistory.presentation.SearchHistoryFragment"
+        android:name="com.kamancho.melisma.searchhistory.presentation.SearchHistoryFragment"
         android:label="SearchHistoryFragment" >
         <action
             android:id="@+id/action_searchHistoryFragment_to_searchFragment"
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/playlistsFragment"
-        android:name="com.example.musicapp.userplaylists.presentation.FavoritesPlaylistsFragment"
+        android:name="com.kamancho.melisma.userplaylists.presentation.FavoritesPlaylistsFragment"
         android:label="PlaylistsFragment" >
         <action
             android:id="@+id/action_playlistsFragment_to_playlistsMenuDialogBottomSheetFragment"
@@ -73,7 +73,7 @@
     </fragment>
     <dialog
         android:id="@+id/playlistsMenuDialogBottomSheetFragment"
-        android:name="com.example.musicapp.userplaylists.presentation.PlaylistsMenuDialogBottomSheetFragment"
+        android:name="com.kamancho.melisma.userplaylists.presentation.PlaylistsMenuDialogBottomSheetFragment"
         android:label="PlaylistsMenuDialogBottomSheetFragment" >
         <action
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -85,7 +85,7 @@
     </dialog>
     <fragment
         android:id="@+id/createPlaylistFragment"
-        android:name="com.example.musicapp.creteplaylist.presentation.CreatePlaylistFragment"
+        android:name="com.kamancho.melisma.creteplaylist.presentation.CreatePlaylistFragment"
         android:label="CreatePlaylistFragment"
         >
         <action
@@ -94,11 +94,11 @@
     </fragment>
     <dialog
         android:id="@+id/addToPlaylistFragment"
-        android:name="com.example.musicapp.addtoplaylist.presentation.AddToPlaylistFragment"
+        android:name="com.kamancho.melisma.addtoplaylist.presentation.AddToPlaylistFragment"
         android:label="AddToPlaylistFragment" />
     <fragment
         android:id="@+id/editPlaylistFragment"
-        android:name="com.example.musicapp.editplaylist.presentation.EditPlaylistFragment"
+        android:name="com.kamancho.melisma.editplaylist.presentation.EditPlaylistFragment"
         android:label="EditPlaylistFragment" >
         <action
             android:id="@+id/action_editPlaylistFragment_to_addToPlaylistFragment"
@@ -106,7 +106,7 @@
     </fragment>
     <dialog
         android:id="@+id/favoritesBottomSheetMenuFragment"
-        android:name="com.example.musicapp.favorites.presentation.FavoritesBottomSheetMenuFragment"
+        android:name="com.kamancho.melisma.favorites.presentation.FavoritesBottomSheetMenuFragment"
         android:label="FavoritesBottomSheetMenuFragment" >
         <action
             android:id="@+id/action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment"
@@ -114,7 +114,7 @@
     </dialog>
     <dialog
         android:id="@+id/selectPlaylistFragment"
-        android:name="com.example.musicapp.selectplaylist.presentation.SelectPlaylistFragment"
+        android:name="com.kamancho.melisma.selectplaylist.presentation.SelectPlaylistFragment"
         android:label="SelectPlaylistFragment" >
         <action
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -126,7 +126,7 @@
     </dialog>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.musicapp.search.presentation.SearchFragment"
+        android:name="com.kamancho.melisma.search.presentation.SearchFragment"
         android:label="SearchFragment" >
         <action
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -138,15 +138,15 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesPlaylistDetailsFragment"
-        android:name="com.example.musicapp.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsFragment"
+        android:name="com.kamancho.melisma.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsFragment"
         android:label="FavoritesPlaylistDetailsFragment" />
     <fragment
         android:id="@+id/searchPlaylistDetailsFragment"
-        android:name="com.example.musicapp.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
+        android:name="com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
         android:label="SearchPlaylistDetailsFragment" />
     <fragment
         android:id="@+id/friendsFragment"
-        android:name="com.example.musicapp.friends.presentation.FriendsFragment"
+        android:name="com.kamancho.melisma.friends.presentation.FriendsFragment"
         android:label="FriendsFragment" >
         <action
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -158,7 +158,7 @@
     </fragment>
     <fragment
         android:id="@+id/friendDetailsFragment"
-        android:name="com.example.musicapp.frienddetails.presentation.FriendDetailsFragment"
+        android:name="com.kamancho.melisma.frienddetails.presentation.FriendDetailsFragment"
         android:label="FriendDetailsFragment" >
         <action
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -170,14 +170,14 @@
     </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="com.example.musicapp.notifications.presentation.NotificationsFragment"
+        android:name="com.kamancho.melisma.notifications.presentation.NotificationsFragment"
         android:label="NotificationsFragment" />
     <fragment
         android:id="@+id/popularFragment"
-        android:name="com.example.musicapp.popular.presentation.PopularFragment"
+        android:name="com.kamancho.melisma.popular.presentation.PopularFragment"
         android:label="PopularFragment" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.musicapp.settings.presentation.SettingsFragment"
+        android:name="com.kamancho.melisma.settings.presentation.SettingsFragment"
         android:label="SettingsFragment" />
 </navigation>

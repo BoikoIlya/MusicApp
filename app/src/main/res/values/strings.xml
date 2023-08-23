@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MusicApp</string>
+    <string name="app_name">Melisma</string>
     <string name="trending_header">Today\'s Music is</string>
     <string name="search_track">Search…</string>
     <string name="no_connection_message">No internet connection</string>
