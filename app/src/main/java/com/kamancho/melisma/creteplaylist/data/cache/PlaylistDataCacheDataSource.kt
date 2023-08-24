@@ -47,6 +47,7 @@ interface PlaylistDataCacheDataSource {
 
         override suspend fun updatePlaylistThumbs(playlistId: String) {
             val images = playlistDao.selectFourFirstImagesFromPlaylistTracks(playlistId)
+                .filter { it.isNotEmpty() }
             playlistDao.insertPlaylist(
                 playlistDao.getPlaylistById(playlistId).first()?.copy(thumbs = images)
                     ?:throw NoSuchElementException()

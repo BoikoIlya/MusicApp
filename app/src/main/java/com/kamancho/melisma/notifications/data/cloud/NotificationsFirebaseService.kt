@@ -1,6 +1,6 @@
 package com.kamancho.melisma.notifications.data.cloud
 
-import com.google.errorprone.annotations.Keep
+import androidx.annotation.Keep
 import com.kamancho.melisma.app.core.ConnectionChecker
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await

@@ -143,10 +143,12 @@
     <string name="friends_title">Friends</string>
     <string name="no_friends">No friends</string>
     <string name="notifications">Notifications</string>
-    <string name="update_info">d</string>
-    <string name="update_title">Update v1.2.4</string>
-    <string name="update_date">12.02.2023</string>
-    <string name="update_version">3</string>
+
+    <string name="update_info">New functionality:\n - Download tracks\n - Friends\n - Tracks and playlists of friends\n - Playlist search\n - Notifications\n - Popular tracks\n - Settings\n - Fixed a lot of minor bugs</string>
+    <string name="update_title">Update 1.2.0-betta</string>
+    <string name="update_date">24.08.2023</string>
+    <string name="update_version">10</string>
+
     <string name="please_give_notification_permission_to_make_function_app_properly">Please give notification permission to make app function properly</string>
     <string name="please_give_permission">Please give permission</string>
     <string name="go_to_settings">Go to settings</string>

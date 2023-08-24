@@ -7,6 +7,7 @@ import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.data.cache.TracksDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -15,9 +16,10 @@ import javax.inject.Inject
  **/
 interface CacheRepository<T> {
 
-   suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
+  suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
 
    suspend fun isDbEmpty(playlistId: String): Boolean
+
 
 
    abstract class Abstract<T>( private val dao: TracksDao): CacheRepository<T>{
@@ -38,6 +40,7 @@ interface CacheRepository<T> {
                   list.map { mapper.map(Pair(it,downloadedFiles)) } }
         }
 
+
     }
 
     class BaseSelected @Inject constructor(
@@ -45,8 +48,10 @@ interface CacheRepository<T> {
         private val mapper: TracksCacheToSelectedTracksDomainMapper
     ): Abstract<SelectedTrackDomain>(dao),CacheRepository<SelectedTrackDomain> {
 
-        override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<SelectedTrackDomain>> =
-            sortingState.fetch(dao,playlistId).map {list-> mapper.map(list)}
+        override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<SelectedTrackDomain>>{
+            return sortingState.fetch(dao,playlistId).map {list-> mapper.map(list)}
+        }
+
 
     }
 }

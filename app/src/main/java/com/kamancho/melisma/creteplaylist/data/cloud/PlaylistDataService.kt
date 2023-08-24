@@ -1,9 +1,10 @@
 package com.kamancho.melisma.creteplaylist.data.cloud
 
+import com.kamancho.melisma.app.vkdto.AddToPlaylistResponse
 import com.kamancho.melisma.app.vkdto.FollowPlaylistResponse
-import com.kamancho.melisma.favorites.data.cloud.TrackIdResponse
+import com.kamancho.melisma.app.vkdto.TrackIdResponse
 import com.kamancho.melisma.main.di.AppModule
-import com.kamancho.melisma.userplaylists.data.cloud.PlaylistDataResponse
+import com.kamancho.melisma.app.vkdto.PlaylistDataResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

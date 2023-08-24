@@ -32,7 +32,7 @@ interface TrendingRepository{
         companion object{
             private const val tracks_count = 200
             const val emptyDestination = 0
-            private const val resFolderPath = "android.resource://com.example.musicapp/"
+            private const val resFolderPath = "android.resource://com.kamancho.melisma/"
         }
 
         override suspend fun fetchTopBarItems(): List<TopBarItemDomain> = listOf(

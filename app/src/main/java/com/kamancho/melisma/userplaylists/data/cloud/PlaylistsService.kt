@@ -2,7 +2,7 @@ package com.kamancho.melisma.userplaylists.data.cloud
 
 import com.kamancho.melisma.app.vkdto.FavoritesPlaylistsDto
 import com.kamancho.melisma.app.vkdto.FollowPlaylistResponse
-import com.kamancho.melisma.favorites.data.cloud.TrackIdResponse
+import com.kamancho.melisma.app.vkdto.TrackIdResponse
 import com.kamancho.melisma.main.di.AppModule
 import retrofit2.http.GET
 import retrofit2.http.Query

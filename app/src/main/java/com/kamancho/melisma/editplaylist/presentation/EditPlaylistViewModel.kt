@@ -25,6 +25,7 @@ import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -73,20 +74,19 @@ class EditPlaylistViewModel @Inject constructor(
     }
 
     fun fetchTracks() = viewModelScope.launch(dispatchersList.io()) {
-         selectedTracksInteractor.map(
-           SortingState.ByTime(""),
-           currentPlaylist.map(toIdMapper)
-       ).collect {
-        val tracks =  it.map {track->
-            track.copy(selectedIconVisibility = View.GONE, backgroundColor = managerResource.getColor(R.color.white))
-           }
-            initialTrackList.apply {
-                clear()
-                addAll(tracks)
-            }
-        selectedTracksCommunication.map(tracks)
-        selectedTracksInteractor.saveList(tracks)
-       }
+           val selectedTracks = selectedTracksInteractor.map(
+                SortingState.ByTime(""),
+                currentPlaylist.map(toIdMapper)
+            )
+                val tracks =  selectedTracks.map {track->
+                    track.copy(selectedIconVisibility = View.GONE, backgroundColor = managerResource.getColor(R.color.white))
+                }
+                initialTrackList.apply {
+                    clear()
+                    addAll(tracks)
+                }
+                selectedTracksCommunication.map(tracks)
+                selectedTracksInteractor.saveList(tracks)
 
     }
 

@@ -11,9 +11,9 @@ import javax.inject.Inject
 interface SelectedTracksStore {
 
 
-    suspend fun saveList(list: List<SelectedTrackDomain>)
+     fun saveList(list: List<SelectedTrackDomain>)
 
-    suspend fun read():LinkedList<SelectedTrackDomain>
+     fun read():LinkedList<SelectedTrackDomain>
 
     class Base @Inject constructor() : SelectedTracksStore {
 
@@ -22,12 +22,12 @@ interface SelectedTracksStore {
 
 
 
-        override suspend fun saveList(list: List<SelectedTrackDomain>) {
-            data.clear()
-            data.addAll(list)
+        override  fun saveList(list: List<SelectedTrackDomain>) {
+                data.clear()
+                data.addAll(list)
         }
 
-        override suspend fun read(): LinkedList<SelectedTrackDomain> {
+        override  fun read(): LinkedList<SelectedTrackDomain> {
             val newList = LinkedList<SelectedTrackDomain>()
             newList.addAll(data)
             return newList

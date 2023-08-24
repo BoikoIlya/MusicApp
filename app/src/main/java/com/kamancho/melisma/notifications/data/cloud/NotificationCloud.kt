@@ -1,7 +1,7 @@
 package com.kamancho.melisma.notifications.data.cloud
 
 import android.os.Parcelable
-import com.google.errorprone.annotations.Keep
+import androidx.annotation.Keep
 import com.kamancho.melisma.app.core.Mapper
 import com.kamancho.melisma.notifications.domain.NotificationDomain
 import kotlinx.parcelize.Parcelize

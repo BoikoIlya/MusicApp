@@ -12,7 +12,9 @@ import com.kamancho.melisma.creteplaylist.presentation.SelectedTracksCommunicati
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.presentation.FavoritesUiState
 import com.kamancho.melisma.main.di.AppModule.Companion.mainPlaylistId
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,13 +45,11 @@ class AddToPlaylistViewModel @Inject constructor(
     }
 
 
+    fun fetchData(sortingState: SortingState = SortingState.ByTime(query)) = viewModelScope.launch(dispatchersList.io()) {
+            this@AddToPlaylistViewModel.sortingState = sortingState
+          val result = interactor.map(sortingState.copyObj(query), mainPlaylistId.toString())
+                handleCachedTracksSelected.handle(result)
 
-    fun fetchData(sortingState: SortingState = SortingState.ByTime(query))
-    = viewModelScope.launch(dispatchersList.io()){
-        this@AddToPlaylistViewModel.sortingState = sortingState
-        interactor.map(sortingState.copyObj(query),mainPlaylistId.toString()).collect{
-            handleCachedTracksSelected.handle(it)
-        }
     }
 
 
@@ -61,6 +61,7 @@ class AddToPlaylistViewModel @Inject constructor(
     override fun update(loading: Boolean) {
         viewModelScope.launch(dispatchersList.io()) {
             handlerFavoritesUiUpdate.handle(loading) { interactor.isDbEmpty() }
+            fetchData()
         }
     }
 

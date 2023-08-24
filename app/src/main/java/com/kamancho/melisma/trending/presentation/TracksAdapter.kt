@@ -73,6 +73,8 @@ open class TracksAdapter(
     init {
         diff.addListListener { previousList, currentList ->
             layoutManager.onRestoreInstanceState(recyclerViewState)
+            if(selectedTrack!=null) newPosition(selectedTrack!!)
+            else selectedTrack = null
         }
     }
 
@@ -97,9 +99,6 @@ open class TracksAdapter(
     override fun map(data: List<MediaItem>) {
         recyclerViewState = layoutManager.onSaveInstanceState()
         diff.submitList(data)
-
-        if(selectedTrack!=null) newPosition(selectedTrack!!)
-        else selectedTrack = null
     }
 
 

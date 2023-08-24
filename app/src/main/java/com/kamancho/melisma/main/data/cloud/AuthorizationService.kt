@@ -13,7 +13,7 @@ import retrofit2.http.Query
 @Keep
 interface AuthorizationService {
 
-
+    @Keep
     companion object{
         private const val GRAND_TYPE = "password"
         private const val CLIENT_ID = "6146827"

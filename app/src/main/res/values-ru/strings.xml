@@ -143,10 +143,12 @@
     <string name="friends_title">Друзья</string>
     <string name="no_friends">Нет друзей</string>
     <string name="notifications">Уведомления</string>
-    <string name="update_info">d</string>
-    <string name="update_title">Update v1.2.4</string>
-    <string name="update_date">12.02.2023</string>
-    <string name="update_version">3</string>
+
+    <string name="update_info">Новый функционал:\n - Скачивание треков\n - Друзья\n - Треки и плейлисты друзей\n - Поиск по плейлистам\n - Уведомления\n - Популярные треки\n - Настройки\n - Исправлено много мелких багов</string>
+    <string name="update_title">Обновление 1.2.0-betta</string>
+    <string name="update_date">24.08.2023</string>
+    <string name="update_version">10</string>
+
     <string name="please_give_notification_permission_to_make_function_app_properly">Пожалйста дайте разрешение на показ уведомлений что бы приложение могло функционировать правильно.</string>
     <string name="please_give_permission">Пожалуйста дайте разрешение</string>
     <string name="go_to_settings">Открыть настройки</string>

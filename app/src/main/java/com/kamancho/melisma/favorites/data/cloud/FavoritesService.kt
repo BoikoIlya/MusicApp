@@ -1,5 +1,8 @@
 package com.kamancho.melisma.favorites.data.cloud
 
+import androidx.annotation.Keep
+import com.kamancho.melisma.app.vkdto.CountResponse
+import com.kamancho.melisma.app.vkdto.TrackIdResponse
 import com.kamancho.melisma.app.vkdto.TracksCloud
 import com.kamancho.melisma.main.di.AppModule
 import retrofit2.http.GET
@@ -8,6 +11,7 @@ import retrofit2.http.Query
 /**
  * Created by HP on 17.06.2023.
  **/
+@Keep
 interface FavoritesService {
 
     @GET("/method/audio.get")

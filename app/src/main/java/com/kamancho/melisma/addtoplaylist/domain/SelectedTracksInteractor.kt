@@ -9,6 +9,7 @@ import com.kamancho.melisma.creteplaylist.presentation.SelectedTracksStore
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.main.di.AppModule.Companion.mainPlaylistId
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -19,11 +20,11 @@ interface SelectedTracksInteractor {
 
     suspend fun isDbEmpty(): Boolean
 
-    suspend fun handleItem(item: SelectedTrackUi): List<SelectedTrackUi>
+     fun handleItem(item: SelectedTrackUi): List<SelectedTrackUi>
 
-    suspend fun map(sortingState: SortingState, playlistId: String): Flow<List<SelectedTrackUi>>
+    suspend fun map(sortingState: SortingState, playlistId: String): List<SelectedTrackUi>
 
-    suspend fun saveList(list: List<SelectedTrackUi>)
+     fun saveList(list: List<SelectedTrackUi>)
 
     suspend fun selectedTracks(): List<SelectedTrackUi>
 
@@ -39,7 +40,7 @@ interface SelectedTracksInteractor {
 
         override suspend fun isDbEmpty(): Boolean = repository.isDbEmpty(mainPlaylistId.toString())
 
-        override suspend fun handleItem(item: SelectedTrackUi): List<SelectedTrackUi> {
+        override fun handleItem(item: SelectedTrackUi): List<SelectedTrackUi> {
             val selectedItems = store.read()
             val domainItem = item.map(toDomainMapper)
             val result = selectedItems.removeIf{ it.map(domainItem) }
@@ -49,13 +50,12 @@ interface SelectedTracksInteractor {
         }
 
 
-        override suspend fun map(sortingState: SortingState, playlistId: String): Flow<List<SelectedTrackUi>> {
+        override suspend fun map(sortingState: SortingState, playlistId: String): List<SelectedTrackUi> {
             val selectedItems = store.read()
-            val tracks = repository.fetch(sortingState, playlistId)
             var selectedTrackBackgroundColor =  0
             var selectedTrackIconVisibility =  0
-            return  tracks.map {list-> list.map { media ->
-                val result = selectedItems.find { it.map(media) } != null
+            return  repository.fetch(sortingState, playlistId).first().map { media ->
+                val result = selectedItems.contains(media) // find { it.map(media) } != null
                 if (result) {
                     selectedTrackBackgroundColor = managerResource.getColor(R.color.light_gray)
                     selectedTrackIconVisibility = View.VISIBLE
@@ -69,10 +69,9 @@ interface SelectedTracksInteractor {
                 )
                 media.map(mapper)
             }
-            }
         }
 
-        override suspend fun saveList(list: List<SelectedTrackUi>) = store.saveList(list.map { it.map(toDomainMapper) })
+        override fun saveList(list: List<SelectedTrackUi>) = store.saveList(list.map { it.map(toDomainMapper) })
         override suspend fun selectedTracks(): List<SelectedTrackUi> = store.read().map { it.map(defaultToUiMapper) }
     }
 }

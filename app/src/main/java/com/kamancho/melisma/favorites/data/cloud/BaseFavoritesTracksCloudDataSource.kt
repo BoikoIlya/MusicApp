@@ -1,5 +1,6 @@
 package com.kamancho.melisma.favorites.data.cloud
 
+import androidx.annotation.Keep
 import com.kamancho.melisma.app.core.DispatchersList
 import com.kamancho.melisma.app.core.FavoritesCloudDataSource
 import com.kamancho.melisma.app.vkdto.TrackItem
@@ -23,6 +24,7 @@ class BaseFavoritesTracksCloudDataSource @Inject constructor(
     ): FavoritesCloudDataSource<TrackItem> {
 
     companion object{
+        @Keep
         const val PACKET_SIZE: Int = 3000
     }
 

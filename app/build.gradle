@@ -16,7 +16,7 @@ android {
         applicationId "com.kamancho.melisma"
         minSdk 26
         targetSdk 33
-        versionCode 9
+        versionCode 10
         versionName "1.2.0-betta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
