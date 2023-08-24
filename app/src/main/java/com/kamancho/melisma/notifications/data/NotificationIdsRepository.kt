@@ -18,7 +18,8 @@ interface NotificationIdsRepository {
     ): NotificationIdsRepository {
 
         override suspend fun containInList(listOfNotificationsId: List<String>): Boolean {
-            return idsDataStore.read().first().any { it !in listOfNotificationsId }
+            val savedIds =idsDataStore.read().first()
+            return listOfNotificationsId.any { it !in savedIds }
         }
 
         override suspend fun rewrite(list: List<String>)  {

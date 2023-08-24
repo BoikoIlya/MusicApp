@@ -83,12 +83,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun writeExternalStoragePermissionCheck(){
-        sdkChecker.check(SDKCheckerState.BelowApi29,{
+        //sdkChecker.check(SDKCheckerState.BelowApi29,{
             permissionCheckCommunication.map(
                 PermissionCheckState.CheckForPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     writeExternalStoragePermissionRequestCode))
-        },{})
+       // },{})
     }
 
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {

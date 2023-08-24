@@ -52,7 +52,7 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
     private lateinit var currentTrack: MediaItem
 
-    private var currentTrackId = 0
+    private var currentTrackId = "0"
 
 
     override fun onAttach(context: Context) {

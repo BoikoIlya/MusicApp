@@ -81,7 +81,7 @@ interface ControllerListener: Player.Listener {
             if(reason==MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
             playerControls.map(PlayerControlsState.Play(mediaItem!!))
             selectedTrackCommunication.map(mediaItem)
-            playingTrackIdCommunication.map(mediaItem.mediaMetadata.extras!!.getInt(track_id))
+            playingTrackIdCommunication.map(mediaItem.mediaId)
             trackPlaybackPositionCommunication.clearPosition()
             super.onMediaItemTransition(mediaItem, reason)
         }

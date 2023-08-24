@@ -39,7 +39,6 @@ interface CheckForPermissions {
                         )
                     )
             }
-            else if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.P){
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -56,7 +55,7 @@ interface CheckForPermissions {
                             id = ""
                         )
                     )
-            }
+
             return notificationsList
         }
 

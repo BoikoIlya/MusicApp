@@ -22,7 +22,7 @@ interface TracksResultToUiEventCommunicationMapper: TracksResult.Mapper<Unit>{
                 return
             }
 
-            if(newId!=-1) playingTrackIdCommunication.map(newId)
+            if(newId!=-1) playingTrackIdCommunication.map(newId.toString())
 
             if(message.isNotEmpty())
                 singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Success(message))

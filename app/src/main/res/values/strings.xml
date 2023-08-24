@@ -170,7 +170,7 @@
     <string name="_2_hour">2 hour</string>
     <string name="disable">Disable</string>
     <string name="give_storage_permission">Please give permission to use storage</string>
-    <string name="give_storage_permission_to_be_able_download">Please give permission to use the storage to be able to download tracks.</string>
+    <string name="give_storage_permission_to_be_able_download">Please give permission to use the storage to be able to properly download and read tracks.</string>
     <string name="timer_was_set">The timer is set</string>
     <string name="timer_was_disabled">The timer is disabled</string>
     <string name="telegram_channel_of_app">Telegram channel of app</string>

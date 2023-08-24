@@ -194,7 +194,7 @@ class AppModule {
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
             .setLevel(
-                HttpLoggingInterceptor.Level.NONE
+                HttpLoggingInterceptor.Level.BODY
             )
     }
 

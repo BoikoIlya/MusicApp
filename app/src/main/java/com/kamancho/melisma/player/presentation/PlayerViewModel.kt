@@ -98,13 +98,13 @@ class PlayerViewModel @Inject constructor(
 
 
 
-     fun launchDeleteItemDialog(newId: Int,item: MediaItem): Job = viewModelScope.launch(dispatchersList.io()) {
+     fun launchDeleteItemDialog(newId: String,item: MediaItem): Job = viewModelScope.launch(dispatchersList.io()) {
         if (favoritesInteractor.containsTrackInDb(
                 Pair(item.mediaMetadata.title.toString(),
                     item.mediaMetadata.artist.toString())
             )){
                 favoritesInteractor.saveItemToTransfer(
-                    item.buildUpon().setMediaId(newId.toString().take(9)).build())
+                    item.buildUpon().setMediaId(newId.take(9)).build())
                 singleUiEventCommunication.map(
                     SingleUiEventState.ShowDialog(
                         DeleteTrackFromPlayerMenuDialog()
@@ -153,6 +153,6 @@ class PlayerViewModel @Inject constructor(
 
     suspend fun collectPlayingTrackIdCommunication(
         owner: LifecycleOwner,
-        collector: FlowCollector<Int>
+        collector: FlowCollector<String>
     ) = playingTrackIdCommunication.collect(owner, collector)
 }

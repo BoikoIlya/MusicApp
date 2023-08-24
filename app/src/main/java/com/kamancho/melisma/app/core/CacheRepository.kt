@@ -1,5 +1,6 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import com.kamancho.melisma.addtoplaylist.domain.SelectedTrackDomain
 import com.kamancho.melisma.downloader.data.cache.DownloadTracksCacheDataSource
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 /**
  * Created by HP on 16.07.2023.
@@ -37,7 +39,9 @@ interface CacheRepository<T> {
         override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<MediaItem>> {
             val downloadedFiles = downloadsDataSource.readListOfFileNamesAndPaths()
             return sortingState.fetch(dao, playlistId).map { list ->
-                  list.map { mapper.map(Pair(it,downloadedFiles)) } }
+                    list.map { mapper.map(Pair(it, downloadedFiles)) }
+                }
+
         }
 
 

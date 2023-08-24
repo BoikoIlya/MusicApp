@@ -170,7 +170,7 @@
     <string name="_2_hour">2 часa</string>
     <string name="disable">Выключить</string>
     <string name="give_storage_permission">Пожалуйста предоставьте разрешение на использование хранилища</string>
-    <string name="give_storage_permission_to_be_able_download">Пожалуйста, дайте разрешение на использование хранилища, чтобы иметь возможность скачивать треки.</string>
+    <string name="give_storage_permission_to_be_able_download">Пожалуйста, дайте разрешение на использование хранилища, чтобы иметь возможность корректно скачивать и считывать треки.</string>
     <string name="timer_was_set">Таймер установлен</string>
     <string name="timer_was_disabled">Таймер выключен</string>
     <string name="telegram_channel_of_app">Телеграм канал приложения</string>
