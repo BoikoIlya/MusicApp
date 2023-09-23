@@ -52,8 +52,8 @@ interface SelectedTracksInteractor {
 
         override suspend fun map(sortingState: SortingState, playlistId: String): List<SelectedTrackUi> {
             val selectedItems = store.read()
-            var selectedTrackBackgroundColor =  0
-            var selectedTrackIconVisibility =  0
+            var selectedTrackBackgroundColor: Int
+            var selectedTrackIconVisibility: Int
             return  repository.fetch(sortingState, playlistId).first().map { media ->
                 val result = selectedItems.contains(media) // find { it.map(media) } != null
                 if (result) {

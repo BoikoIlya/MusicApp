@@ -2,7 +2,9 @@ package com.kamancho.melisma.vkauth.presentation
 
 import android.content.Intent
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import com.kamancho.melisma.databinding.ActivityAuthBinding
+import com.kamancho.melisma.databinding.AuthFragmentBinding
 import com.kamancho.melisma.main.presentation.MainActivity
 
 /**
@@ -11,20 +13,20 @@ import com.kamancho.melisma.main.presentation.MainActivity
 sealed interface AuthUiState{
 
     fun apply(
-        binding: ActivityAuthBinding,
-        context: AuthActivity
+        binding: AuthFragmentBinding,
+        context: FragmentActivity
     )
 
     object Empty: AuthUiState{
-        override fun apply( binding: ActivityAuthBinding,
-                            context: AuthActivity) = Unit
+        override fun apply( binding: AuthFragmentBinding,
+                            context: FragmentActivity) = Unit
     }
 
     object Loading: AuthUiState{
 
         override fun apply(
-            binding: ActivityAuthBinding,
-            context: AuthActivity
+            binding: AuthFragmentBinding,
+            context: FragmentActivity
         )= with(binding) {
             errorTvAuth.visibility = View.GONE
             authProgress.visibility = View.VISIBLE
@@ -39,8 +41,8 @@ sealed interface AuthUiState{
         private val message: String
     ): AuthUiState{
         override fun apply(
-            binding: ActivityAuthBinding,
-            context: AuthActivity
+            binding: AuthFragmentBinding,
+            context: FragmentActivity
         ) = with(binding) {
             authProgress.visibility = View.GONE
             errorTvAuth.text = message
@@ -52,15 +54,18 @@ sealed interface AuthUiState{
 
     }
 
-    object Success: AuthUiState{
-        override fun apply(
-            binding: ActivityAuthBinding,
-            context: AuthActivity
-        ) {
-
-            context.startActivity(Intent(context, MainActivity::class.java))
-            context.finish()
+    object HideError: AuthUiState{
+        override fun apply(binding: AuthFragmentBinding, context: FragmentActivity) = with(binding) {
+            authProgress.visibility = View.GONE
+            errorTvAuth.text = ""
+            errorTvAuth.visibility = View.GONE
+            loginEdt.isEnabled = true
+            passwordEdt.isEnabled = true
+            loginBtn.visibility = View.VISIBLE
         }
 
     }
+
+
+
 }

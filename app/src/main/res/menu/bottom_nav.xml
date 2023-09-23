@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/trendingFragment"
+        android:id="@+id/recomendations_graph"
         android:icon="@drawable/tone"
+        android:title=""
         />
     <item
-        android:id="@+id/friendsFragment"
+        android:id="@+id/friends_graph"
         android:icon="@drawable/friends"
+        android:title=""
         />
     <item
-        android:id="@+id/favoritesFragment"
+        android:id="@+id/favorites_graph"
         android:icon="@drawable/heart"
+        android:title=""
         />
     <item
-        android:id="@+id/notificationsFragment"
+        android:id="@+id/notifications_graph"
         android:icon="@drawable/notification"
+        android:title=""
         />
     <item
-        android:id="@+id/searchHistoryFragment"
+        android:id="@+id/search_graph"
         android:icon="@drawable/search"
+        android:title=""
         />
 </menu>

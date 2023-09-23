@@ -36,11 +36,6 @@ abstract class PlaylistDetailsFragment: FavoritesFragment<MediaItem>(R.layout.fa
         binding.menu.visibility = View.GONE
         binding.backBtn.visibility = View.VISIBLE
 
-
-
-
-
-
         barAdapter = PlaylistDetailsBarAdapter(requireContext(),imageLoader, mainImageDiskCacheStrategy())
 
         val contactedAdapter =  ConcatAdapter(barAdapter,adapter as TracksAdapter)

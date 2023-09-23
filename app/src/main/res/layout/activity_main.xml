@@ -16,7 +16,7 @@
       android:layout_height="match_parent"
       app:defaultNavHost="true"
       android:background="@color/white"
-      app:navGraph="@navigation/main_nav_graph"
+      app:navGraph="@navigation/main_graph"
       />
 
 <FrameLayout

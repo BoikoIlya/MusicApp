@@ -49,7 +49,6 @@ interface FriendsDetailsCacheDataSource {
         override suspend fun insertPlaylists(list: List<PlaylistCache>, friendId: String) {
 
         coroutineScope {
-            val idsList = list.map { it.playlistId }
             launch(dispatchersList.io()) {
                 playlistsDao.clearAndAddFriendPlaylists(list,friendId.toInt())
             }

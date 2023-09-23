@@ -3,6 +3,7 @@ package com.kamancho.melisma.main.data.cloud
 
 import com.google.errorprone.annotations.Keep
 import com.kamancho.melisma.app.vkdto.TokenDto
+import retrofit2.Response
 import retrofit2.http.GET
 
 import retrofit2.http.Query
@@ -29,7 +30,9 @@ interface AuthorizationService {
         @Query("client_secret")  clientSecret: String = CLIENT_SECRET,
         @Query("username")  username: String,
         @Query("password")  password: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = API_VERS,
         @Query("2fa_supported")  twoFaSupported: String = TWO_FA_SUPPORT
-    ): TokenDto
+    ): Response<TokenDto>
 }

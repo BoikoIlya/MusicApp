@@ -24,7 +24,7 @@ interface FavoritesInteractor<D,C,N,U,E>: Interactor<U,E> {
             handleResponse.handle({
                 val newId = repository.addToFavorites(uiToDomainMapper.map(item))
                 success(message = managerResource.getString(R.string.success_add_message), newId = newId)
-            },{message,error->
+            },{message,_->
                 error(message = message)
             })
 
@@ -45,14 +45,14 @@ interface FavoritesInteractor<D,C,N,U,E>: Interactor<U,E> {
             handleResponse.handle({
                 repository.deleteData(id)
                 success(message = managerResource.getString(R.string.success_remove_message))
-            },{message,error->
+            },{ message, _ ->
                 error(message)
             })
 
         override suspend fun updateData(): String = handleResponse.handle({
             repository.updateData()
             ""
-            },{message,exception->
+            },{ message, _ ->
                 message
             })
 

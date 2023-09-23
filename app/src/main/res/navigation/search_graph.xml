@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_graph"
+    app:startDestination="@id/searchHistoryFragment">
+
+    <fragment
+        android:id="@+id/searchHistoryFragment"
+        android:name="com.kamancho.melisma.searchhistory.presentation.SearchHistoryFragment"
+        android:label="SearchHistoryFragment">
+        <action
+            android:id="@+id/action_searchHistoryFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.kamancho.melisma.search.presentation.SearchFragment"
+        android:label="SearchFragment">
+        <action
+            android:id="@+id/action_searchFragment_to_searchPlaylistDetailsFragment"
+            app:destination="@id/searchPlaylistDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchPlaylistDetailsFragment"
+        android:name="com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
+        android:label="SearchPlaylistDetailsFragment" />
+</navigation>

@@ -28,7 +28,7 @@ class FriendsAdapter(
     private var recyclerViewState: Parcelable? = null
 
     init {
-        diff.addListListener { previousList, currentList ->
+        diff.addListListener { _, _ ->
             layoutManager.onRestoreInstanceState(recyclerViewState)
         }
     }

@@ -145,9 +145,9 @@
     <string name="notifications">Notifications</string>
 
     <string name="update_info">New functionality:\n - Download tracks\n - Friends\n - Tracks and playlists of friends\n - Playlist search\n - Notifications\n - Popular tracks\n - Settings\n - Fixed a lot of minor bugs</string>
-    <string name="update_title">Update 1.2.0-betta</string>
-    <string name="update_date">24.08.2023</string>
-    <string name="update_version">10</string>
+    <string name="update_title">Update 1.3.0-betta</string>
+    <string name="update_date">17.09.2023</string>
+    <string name="update_version">13</string>
 
     <string name="please_give_notification_permission_to_make_function_app_properly">Please give notification permission to make app function properly</string>
     <string name="please_give_permission">Please give permission</string>
@@ -173,7 +173,11 @@
     <string name="give_storage_permission_to_be_able_download">Please give permission to use the storage to be able to properly download and read tracks.</string>
     <string name="timer_was_set">The timer is set</string>
     <string name="timer_was_disabled">The timer is disabled</string>
-    <string name="telegram_channel_of_app">Telegram channel of app</string>
+    <string name="subscribe_for_news">Subscribe for news</string>
     <string name="size">Size:&#160;</string>
     <string name="delete_all_downloaded_tracks">Delete all downloaded tracks</string>
+    <string name="click_to_go_to_website">Click to go to website</string>
+    <string name="artworks_are_taken_from_freepik_website">Artworks are taken from Freepik website</string>
+    <string name="icons_are_taken_from_flaticon_website">Icons are taken from Flaticon website</string>
+    <string name="something_went_wrong_try_later">Something went wrong, try later</string>
 </resources>

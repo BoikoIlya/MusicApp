@@ -71,7 +71,7 @@ open class TracksAdapter(
     private var recyclerViewState: Parcelable? = null
 
     init {
-        diff.addListListener { previousList, currentList ->
+        diff.addListListener { _, _ ->
             layoutManager.onRestoreInstanceState(recyclerViewState)
             if(selectedTrack!=null) newPosition(selectedTrack!!)
             else selectedTrack = null

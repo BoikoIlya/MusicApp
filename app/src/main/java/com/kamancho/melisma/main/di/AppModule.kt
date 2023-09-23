@@ -95,6 +95,8 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.errorprone.annotations.Keep
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import com.kamancho.melisma.BuildConfig
+import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -115,9 +117,9 @@ import javax.inject.Singleton
 class AppModule {
 
     companion object{
-        @Keep
+        @androidx.annotation.Keep
         private const val baseUrlAuthorization = "https://oauth.vk.com/"
-        @Keep
+        @androidx.annotation.Keep
         const val baseDataUrl = "https://api.vk.com/"
         private const val data_store_name = "settings"
         private const val token_key = "tken_key"
@@ -125,11 +127,12 @@ class AppModule {
         private const val notifications_ids_key = "notifications_ids_key"
         private const val downloads_file_path_key = "downloads_file_path_key"
         private const val db_name = "melisma_app_db"
-        @Keep
+        @androidx.annotation.Keep
         private const val topic_name = "update_topic"
         private const val test_topic_name = "test_topic_name"
-        @Keep
+        @androidx.annotation.Keep
         const val api_version = "5.91"//"5.131"
+        @androidx.annotation.Keep
         const val mainPlaylistId = Int.MIN_VALUE //playlist of current account music
     }
 
@@ -194,7 +197,9 @@ class AppModule {
     fun provideInterceptor(): Interceptor {
         return HttpLoggingInterceptor()
             .setLevel(
-                HttpLoggingInterceptor.Level.BODY
+                if(BuildConfig.DEBUG)
+                    HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.NONE
             )
     }
 
@@ -271,13 +276,12 @@ class AppModule {
     @Singleton
     @Provides
     fun provideAuthorizationRepo(
-        service: AuthorizationService,
+        cloud: AuthorizationCloudDataSource,
         cache: AccountDataStore,
-        handleError: HandleError,
         db: MusicDBManager,
         imageLoader: ImageLoader,
     ): AuthorizationRepository {
-        return AuthorizationRepository.Base(service,cache,handleError,db,imageLoader)
+        return AuthorizationRepository.Base(cloud,cache,db,imageLoader)
     }
 
     @Singleton
@@ -381,8 +385,13 @@ interface AppBindModule{
 
     @Singleton
     @Binds
+    fun bindAuthorizationCloudDataSource(obj: AuthorizationCloudDataSource.Base): AuthorizationCloudDataSource
+
+    @Singleton
+    @Binds
     fun bindSearchQueryFriendCommunication(obj: SearchQueryFriendCommunication.Base):
             SearchQueryFriendCommunication
+
 
     @Singleton
     @Binds

@@ -27,13 +27,11 @@ interface CaptchaRepository {
 
 
         override fun saveNewCaptchaData(id: String,url: String,actionCausedCaptcha: RepeatActionAfterCaptcha) {
-            Log.d("tag", "saveNewCaptchaData: $id  $url")
                 captchaDataSource.saveNewCaptchaData(id)
                 communication.map(Pair(url, actionCausedCaptcha))
         }
 
         override fun saveEnteredDataFromCaptcha(data: String) {
-            Log.d("tag", "saveEnterdCaptchaData: $data")
             captchaDataSource.saveEnteredDataFromCaptcha(data)
         }
 

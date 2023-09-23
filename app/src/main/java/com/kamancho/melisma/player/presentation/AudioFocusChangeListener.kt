@@ -14,7 +14,6 @@ class AudioFocusChangeListener @Inject constructor(
 ): AudioManager.OnAudioFocusChangeListener {
 
     override fun onAudioFocusChange(focusChange: Int) {
-        Log.d("tag", "onAudioFocusChange: $focusChange")
         when (focusChange) {
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> playerCommunication.map(PlayerCommunicationState.Pause)
 

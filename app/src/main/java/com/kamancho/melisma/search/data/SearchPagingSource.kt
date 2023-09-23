@@ -112,5 +112,5 @@ class PlaylistsSearchPagingSource (
     tokenStore = tokenStore,
     handleResponse = handleResponse,
     captchaDataStore = captchaDataStore,
-    additionalAction = {mediaItems,position ->}
+    additionalAction = { _, _ ->}
 )

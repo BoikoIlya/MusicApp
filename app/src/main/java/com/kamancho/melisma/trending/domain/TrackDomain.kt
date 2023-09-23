@@ -136,7 +136,7 @@ data class TrackDomain(
                 bigImgUrl = bigImgUrl,
                 smallImgUrl = smallImgUrl,
                 albumName = albumName,
-                date = Instant.now().epochSecond.toInt(),
+                date = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt() ,
                 durationFormatted = formatTimeSecondsToMinutesAndSeconds.format(duration),
                 durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
                 ownerId = ownerId

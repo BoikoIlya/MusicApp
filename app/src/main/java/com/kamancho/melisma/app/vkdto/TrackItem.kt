@@ -138,7 +138,7 @@ data class TrackItem(
                     url = url,
                     name = title,
                     artistName = artist,
-                    bigImgUrl = album?.thumb?.photo_1200 ?: "",
+                    bigImgUrl = album?.thumb?.photo_600 ?: "",
                     smallImgUrl = album?.thumb?.photo_135 ?: "",
                     albumName = album?.title ?: "",
                     date = date,

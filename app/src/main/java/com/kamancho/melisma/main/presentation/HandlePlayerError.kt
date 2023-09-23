@@ -21,7 +21,10 @@ interface HandlePlayerError {
 
         override suspend fun handle(e: PlaybackException, ): PlayerErrorState {
 
-            if(e.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED && connectionChecker.isDeviceHaveConnection())
+            if(
+                (e.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                || e.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND)
+                && connectionChecker.isDeviceHaveConnection())
                 return PlayerErrorState.SeekToNext(managerResource.getString(R.string.unavailable_track))
 
            val messageId =
@@ -30,7 +33,6 @@ interface HandlePlayerError {
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT->R.string.bad_connection_quality
                     else -> null
                }
-            Log.d("tag", "handle: ${e.errorCodeName}")
             e.printStackTrace()
             val message = if(messageId!=null) managerResource.getString(messageId) else e.errorCodeName
             return PlayerErrorState.ShowError(message)

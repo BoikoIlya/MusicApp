@@ -13,7 +13,7 @@ interface TrackCacheToDomainMapper: Mapper<TrackCache, TrackDomain> {
 
     class Base @Inject constructor(): TrackCacheToDomainMapper {
         override fun map(data: TrackCache): TrackDomain {
-            return return TrackDomain(
+            return TrackDomain(
                 id = data.trackId.toInt(),
                 track_url = data.url,
                 smallImgUrl = data.smallImgUrl,

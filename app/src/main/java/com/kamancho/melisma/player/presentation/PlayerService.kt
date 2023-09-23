@@ -25,13 +25,10 @@ class PlayerService: MediaSessionService(){
     @Inject
     lateinit var mediaSession: MediaSession
 
-    @Inject
-    lateinit var audioFocusRequest: AudioFocusRequest
-
     private lateinit var receiver: HeadPhonesReceiver
 
     @Inject
-    lateinit var audioManager: AudioManager
+    lateinit var audioFocusChange: AudioFocusChange
 
 
 
@@ -67,7 +64,7 @@ class PlayerService: MediaSessionService(){
         mediaSession.release()
         unregisterReceiver(receiver)
 
-        audioManager.abandonAudioFocusRequest(audioFocusRequest)
+        audioFocusChange.abandonAudioFocus()
         super.onDestroy()
     }
 }

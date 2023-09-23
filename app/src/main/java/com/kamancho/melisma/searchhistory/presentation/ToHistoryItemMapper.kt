@@ -14,7 +14,7 @@ interface ToHistoryItemMapper: Mapper<Pair<String,Int>, HistoryItemCache> {
 
         override fun map(data: Pair<String,Int>): HistoryItemCache {
             return HistoryItemCache(
-                time = Instant.now().toEpochMilli(),
+                time = System.currentTimeMillis(),
                 queryTerm = data.first,
                 historyType = data.second
             )

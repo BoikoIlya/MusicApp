@@ -8,7 +8,7 @@ import javax.inject.Inject
  **/
 interface FormatTimeSecondsToMinutesAndSeconds {
 
-    fun format(time: Int): String
+    fun format(timeSeconds: Int): String
 
     class Base @Inject constructor(): FormatTimeSecondsToMinutesAndSeconds{
 

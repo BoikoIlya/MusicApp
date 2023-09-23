@@ -1,5 +1,6 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import com.kamancho.melisma.captcha.data.CaptchaRepository
 import com.kamancho.melisma.captcha.data.RepeatActionAfterCaptcha
 
@@ -19,3 +20,13 @@ class CaptchaNeededException(
         data.first.saveNewCaptchaData(id,url,data.second)
     }
 }
+
+class AuthRedirectException(private val url: String): Exception(), Mapper<Unit,String> {
+    override fun map(data: Unit): String {
+       return url.trim('"')
+    }
+}
+
+class SomethingWentWrongTryLater: Exception()
+
+class InvalidAuthorizationData: Exception()

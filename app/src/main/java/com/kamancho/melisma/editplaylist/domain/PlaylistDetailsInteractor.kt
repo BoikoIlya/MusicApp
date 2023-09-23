@@ -23,7 +23,7 @@ interface PlaylistDetailsInteractor: UpdateInteractor {
             val ownerIdAndPlaylistId = transfer.read()!!.map(toOwnerIdAndPlaylistIdMapper)
             repository.fetch(ownerIdAndPlaylistId.second, ownerIdAndPlaylistId.first)
             ""
-        },{message,error->
+        },{ message, _ ->
             message
         })
 

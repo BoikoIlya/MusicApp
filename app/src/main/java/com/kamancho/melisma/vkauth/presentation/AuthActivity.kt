@@ -1,11 +1,19 @@
 package com.kamancho.melisma.vkauth.presentation
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.navArgs
+import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.ActivityAuthBinding
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.vkauth.di.AuthComponent
@@ -13,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class AuthActivity : AppCompatActivity() {
+class AuthActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityAuthBinding
 
@@ -35,33 +43,16 @@ class AuthActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
 
+        val navHost = supportFragmentManager.findFragmentById(R.id.auth_fragment_container) as NavHostFragment
+        val navController = navHost.navController
+
         lifecycleScope.launch{
-            viewModel.collectAuthState(this@AuthActivity){
-                it.apply(binding, this@AuthActivity)
+            viewModel.collectSingleAuthCommunication(this@AuthActivity){
+                Log.d("tag", "onCreate: AUTH ACT $it")
+                it.apply(viewModel,navController,this@AuthActivity,)
             }
         }
 
-
-        binding.loginBtn.setOnClickListener {
-            viewModel.submit(binding.loginEdt.text.toString(),binding.passwordEdt.text.toString())
-        }
-
-        val intent = Intent(Intent.ACTION_VIEW)
-
-        binding.forgotPassword.setOnClickListener {
-            intent.data = Uri.parse(forgot_password_web_url)
-            startActivity(intent)
-        }
-
-        binding.createAccount.setOnClickListener {
-            intent.data = Uri.parse(create_vk_account_web_url)
-            startActivity(intent)
-        }
     }
 
-
-    companion object{
-        private const val create_vk_account_web_url = "https://id.vk.com/auth?v=1.46.0&app_id=7934655&uuid=28523cb43d&redirect_uri=https%3A%2F%2Fm.vk.com%2Fjoin&app_settings=W10%3D&action=eyJuYW1lIjoibm9fcGFzc3dvcmRfZmxvdyIsInBhcmFtcyI6eyJ0eXBlIjoic2lnbl91cCJ9fQ%3D%3D&scheme=bright_light"
-        private const val forgot_password_web_url = "https://id.vk.com/restore/#/resetPassword"
-    }
 }

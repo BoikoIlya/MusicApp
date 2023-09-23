@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/friends_graph"
+    app:startDestination="@id/friendsFragment">
+
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.kamancho.melisma.friends.presentation.FriendsFragment"
+        android:label="FriendsFragment">
+        <action
+            android:id="@+id/action_friendsFragment_to_friendDetailsFragment"
+            app:destination="@id/friendDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendDetailsFragment"
+        android:name="com.kamancho.melisma.frienddetails.presentation.FriendDetailsFragment"
+        android:label="FriendDetailsFragment">
+        <action
+            android:id="@+id/action_friendDetailsFragment_to_searchPlaylistDetailsFragment"
+            app:destination="@id/searchPlaylistDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchPlaylistDetailsFragment"
+        android:name="com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
+        android:label="SearchPlaylistDetailsFragment" />
+</navigation>

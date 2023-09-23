@@ -2,6 +2,9 @@ package com.kamancho.melisma.main.presentation
 
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.os.Build
+import android.util.Log
+import androidx.media3.common.BuildConfig
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -10,6 +13,8 @@ import com.kamancho.melisma.app.core.DispatchersList
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.app.core.PlayerControlsCommunication
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.track_id
+import com.kamancho.melisma.player.presentation.AudioFocusChange
+import com.kamancho.melisma.player.presentation.AudioFocusChangeListener
 import com.kamancho.melisma.player.presentation.PlayingTrackIdCommunication
 import com.kamancho.melisma.player.presentation.TrackPlaybackPositionCommunication
 import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
@@ -33,8 +38,7 @@ interface ControllerListener: Player.Listener {
         private val dispatchersList: DispatchersList,
         private val handlePlayerError: HandlePlayerError,
         private val playingTrackIdCommunication: PlayingTrackIdCommunication,
-        private val audioManager: AudioManager,
-        private val audioFocusChangeListener: AudioFocusRequest
+        private val audioFocusChange: AudioFocusChange,
     ) : ControllerListener {
 
 
@@ -45,7 +49,7 @@ interface ControllerListener: Player.Listener {
                     controller.currentMediaItem ?: MediaItem.EMPTY
                 )
             )
-                audioManager.requestAudioFocus(audioFocusChangeListener)
+                audioFocusChange.requestAudioFocus()
             }
             else playerControls.map(
                 PlayerControlsState.Pause(

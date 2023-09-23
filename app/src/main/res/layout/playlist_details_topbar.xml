@@ -100,7 +100,7 @@
         android:maxLines="5"
         android:text="Våra bästa lokala stjärnor hela vägen från Kalix till Höör. Cover: Lisa Ekdahl"
         android:textColor="@color/gray"
-        android:textSize="@dimen/body1"
+        android:textSize="@dimen/body2"
         app:layout_constraintBottom_toBottomOf="@+id/playlist_img_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"

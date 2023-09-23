@@ -96,10 +96,24 @@ class SettingsFragment: Fragment(R.layout.settings_fragment) {
         binding.deleteDownloadedTracks.setOnClickListener {
             viewModel.deleteDownloadedTracksDialog()
         }
+
+        binding.flaticon.setOnClickListener {
+            val telegram = Intent(Intent.ACTION_VIEW)
+            telegram.data = Uri.parse(flaticonUrl)
+            startActivity(telegram)
+        }
+
+        binding.freepic.setOnClickListener {
+            val telegram = Intent(Intent.ACTION_VIEW)
+            telegram.data = Uri.parse(freepikUrl)
+            startActivity(telegram)
+        }
     }
 
     companion object{
         private const val telegramChannelUrl = "https://t.me/melismaApp"
         private const val telegramPackageName = "org.telegram.messenger"
+        private const val flaticonUrl = "https://www.flaticon.com/"
+        private const val freepikUrl = "https://www.freepik.com/"
     }
 }

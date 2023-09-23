@@ -8,7 +8,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:paddingBottom="140dp"
+        android:clipToPadding="false"
         >
 
         <ImageButton
@@ -142,14 +143,15 @@
                 android:drawablePadding="15dp"
                 android:text="Downloads/folder/path"
                 android:textColor="@color/black"
-                android:textSize="@dimen/body1"
+                android:textSize="@dimen/body2"
                 app:layout_constraintEnd_toEndOf="@+id/downloadsFolderTitle"
                 app:layout_constraintStart_toStartOf="@+id/downloadsFolderTitle"
                 app:layout_constraintTop_toBottomOf="@id/downloadsFolderTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/deleteDownloadedTracks"            android:layout_width="0dp"
+            android:id="@+id/deleteDownloadedTracks"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:paddingHorizontal="20dp"
@@ -189,7 +191,7 @@
                 android:drawablePadding="15dp"
                 android:text="Size: 38.04 MB"
                 android:textColor="@color/black"
-                android:textSize="@dimen/body1"
+                android:textSize="@dimen/body2"
                 app:layout_constraintEnd_toEndOf="@+id/deleteDownloadedTracksTitle"
                 app:layout_constraintStart_toStartOf="@+id/deleteDownloadedTracksTitle"
                 app:layout_constraintTop_toBottomOf="@id/deleteDownloadedTracksTitle" />
@@ -202,30 +204,126 @@
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:orientation="horizontal"
-            android:paddingHorizontal="15dp"
+            android:paddingHorizontal="20dp"
             android:paddingVertical="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/deleteDownloadedTracks">
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/telegram" />
+                android:src="@drawable/paper_plane" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="15dp"
-                android:text="@string/telegram_channel_of_app"
+                android:text="@string/subscribe_for_news"
                 android:textColor="@color/black"
                 android:textSize="@dimen/body1"
                 android:textStyle="bold"
 
                 />
         </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/flaticon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/telegram">
+
+            <ImageView
+                android:id="@+id/flaticonImg"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/world_wide_web"
+                app:layout_constraintBottom_toBottomOf="@id/flaticonDescr"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/flaticonTitle" />
+
+            <TextView
+                android:id="@+id/flaticonTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:drawablePadding="15dp"
+                android:text="@string/icons_are_taken_from_flaticon_website"
+                android:textColor="@color/black"
+                android:textSize="@dimen/body1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/flaticonImg"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/flaticonDescr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="15dp"
+                android:text="@string/click_to_go_to_website"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/body2"
+                app:layout_constraintEnd_toEndOf="@+id/flaticonTitle"
+                app:layout_constraintStart_toStartOf="@+id/flaticonTitle"
+                app:layout_constraintTop_toBottomOf="@id/flaticonTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/freepic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flaticon">
+
+            <ImageView
+                android:id="@+id/freepicImg"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/world_wide_web"
+                app:layout_constraintBottom_toBottomOf="@id/freepicDescr"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/freepicTitle" />
+
+            <TextView
+                android:id="@+id/freepicTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:drawablePadding="15dp"
+                android:text="@string/artworks_are_taken_from_freepik_website"
+                android:textColor="@color/black"
+                android:textSize="@dimen/body1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/freepicImg"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/freepicDescr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="15dp"
+                android:text="@string/click_to_go_to_website"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/body2"
+                app:layout_constraintEnd_toEndOf="@+id/freepicTitle"
+                app:layout_constraintStart_toStartOf="@+id/freepicTitle"
+                app:layout_constraintTop_toBottomOf="@id/freepicTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/logoutBtn"
@@ -243,7 +341,9 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/telegram" />
+            app:layout_constraintTop_toBottomOf="@id/freepic" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

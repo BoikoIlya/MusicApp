@@ -1,6 +1,7 @@
 package com.kamancho.melisma.app.core
 
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import okhttp3.RequestBody
@@ -54,7 +55,7 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
     internal class GsonResponseBodyConverter<T>(private val gson: Gson, private val type: Type) : Converter<ResponseBody, T> {
 
         companion object{
-            private const val error_field = "error"
+             const val error_field = "error"
             private const val error_code_field = "error_code"
             private const val captcha_img_field = "captcha_img"
             private const val captcha_sid_field = "captcha_sid"
@@ -64,12 +65,15 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
 
         @Throws(IOException::class)
         override fun convert(value: ResponseBody): T {
-
                 val jsonString = value.string()
                 val json = JsonParser.parseString(jsonString).asJsonObject
+
+
+
                 if (json.has(error_field))
                 {
                     val error = json.getAsJsonObject(error_field)
+
                     val errorCode = error.get(error_code_field).toString().toInt()
                     throw when(errorCode){
                         un_authorized_code ->UnAuthorizedException()
@@ -83,4 +87,5 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
                 else return gson.fromJson(jsonString, type)
         }
     }
+
 }

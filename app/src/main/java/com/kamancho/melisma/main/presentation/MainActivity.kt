@@ -3,17 +3,20 @@ package com.kamancho.melisma.main.presentation
 import android.app.DownloadManager
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ToggleButton
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
@@ -148,25 +151,26 @@ import javax.inject.Inject
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
-        binding.bottomNavView.setOnItemSelectedListener {
-            NavigationUI.onNavDestinationSelected(it,navController)
-            return@setOnItemSelectedListener true
-        }
+
+
 
         onBackPressedDispatcher.addCallback(this){
             if(bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
                 bottomSheet.state != BottomSheetBehavior.STATE_HIDDEN)
                 viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
-            else if(navController.backQueue.size > minimal_back_stack_size){
-                navController.popBackStack()
-            }else finish()
+            else if(navController.currentBackStack.value.size >= minimal_back_queue_size)
+                 {
+
+                    navController.popBackStack()
+            }
+            else finish()
         }
 
         registerReceiver(downloadBroadcastReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     companion object{
-        private const val minimal_back_stack_size = 2
+        private const val minimal_back_queue_size = 4
     }
 
 
@@ -176,11 +180,15 @@ import javax.inject.Inject
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            if(
-            requestCode==MainViewModel.notificationsPermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED ||
-            requestCode==MainViewModel.writeExternalStoragePermissionRequestCode && grantResults[0] != PackageManager.PERMISSION_GRANTED
-            )
+        if (grantResults.isEmpty()) return
+
+        if (
+            requestCode == MainViewModel.notificationsPermissionRequestCode &&
+            grantResults[0] != PackageManager.PERMISSION_GRANTED ||
+            requestCode == MainViewModel.writeExternalStoragePermissionRequestCode &&
+            grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 viewModel.dontShowPermission()
+            }
 
         viewModel.updateNotifications()
     }
@@ -190,4 +198,6 @@ import javax.inject.Inject
         super.onDestroy()
         unregisterReceiver(downloadBroadcastReceiver)
     }
+
+
 }

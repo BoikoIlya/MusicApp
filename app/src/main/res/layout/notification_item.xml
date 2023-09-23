@@ -41,6 +41,7 @@
         android:textSize="@dimen/body1"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/notificationImg"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/notificationImg"
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
@@ -50,7 +51,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="29.04.2023"
-        android:textSize="@dimen/body2"
+        android:textSize="@dimen/body3"
         android:textColor="@color/gray"
         />
 
@@ -63,8 +64,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Main features:\n - New disign\n - Dark mode\n - New playlists"
-        android:textSize="@dimen/body1"
+        android:textSize="@dimen/body2"
         android:textColor="@color/black"
+        android:ellipsize="end"
         />
 
     <com.google.android.material.button.MaterialButton
@@ -76,7 +78,7 @@
         android:textSize="@dimen/body1"
         android:textColor="@color/white"
         android:textStyle=""
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

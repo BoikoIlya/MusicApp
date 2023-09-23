@@ -36,7 +36,7 @@ class AuthorizationRepositoryTest {
         managerResource = TestManagerResource()
         authorizationRepository = AuthorizationRepository.Base(
             authorizationService = service,
-            accountData = tokenStore,
+            accountDataStore = tokenStore,
             handleError = HandleError.Base(managerResource),
             db = manageDBManager
         )

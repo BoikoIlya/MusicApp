@@ -5,6 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
 import androidx.media3.common.util.UnstableApi
 import com.kamancho.melisma.R
 import com.kamancho.melisma.main.presentation.MainActivity
@@ -26,17 +28,19 @@ class FCMService: FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-
-        val notificationChannel = NotificationChannel(
-            notification_channel_update_id,
-            notification_channel_update_name,
-            NotificationManager.IMPORTANCE_HIGH )
-
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.createNotificationChannel(notificationChannel)
 
-        val notification = Notification.Builder(this, notification_channel_update_id)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationChannel =  NotificationChannel(
+                notification_channel_update_id,
+                notification_channel_update_name,
+                NotificationManager.IMPORTANCE_HIGH )
+                notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+
+        val notification = NotificationCompat.Builder(this, notification_channel_update_id)
             .setContentTitle(message.notification?.title)
             .setContentText(message.notification?.body)
             .setSmallIcon(R.drawable.tone)

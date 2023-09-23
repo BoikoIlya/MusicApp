@@ -38,12 +38,12 @@ interface CheckForPermissions {
                             id = ""
                         )
                     )
-            }
+            }else {
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     ) != PackageManager.PERMISSION_GRANTED
-                )
+                        )
                     notificationsList.add(
                         NotificationDomain(
                             mainText = context.getString(R.string.give_storage_permission_to_be_able_download),
@@ -55,7 +55,7 @@ interface CheckForPermissions {
                             id = ""
                         )
                     )
-
+            }
             return notificationsList
         }
 

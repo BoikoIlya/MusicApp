@@ -56,6 +56,13 @@ interface NotificationUi{
         override fun apply(binding: NotificationItemBinding, context: Context) {
             super.apply(binding,context)
             binding.dateTv.text = date
+            binding.mainTextTv.maxLines = 5
+
+            binding.mainTextTv.setOnClickListener {
+                binding.mainTextTv.maxLines =
+                    if(binding.mainTextTv.maxLines==5) Int.MAX_VALUE
+                    else 5
+            }
         }
     }
 

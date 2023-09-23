@@ -15,7 +15,7 @@ class CantAddTrackFromPlayerMenuDialog: DialogFragment() {
         val dialog = AlertDialog.Builder(requireContext())
             .setMessage(R.string.cant_re_add)
             .setTitle(R.string.warning_title)
-            .setPositiveButton(R.string.ok) { p0, p1 -> }
+            .setPositiveButton(R.string.ok) { _, _ -> }
             .show()
         dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_corners_shape)
         return dialog

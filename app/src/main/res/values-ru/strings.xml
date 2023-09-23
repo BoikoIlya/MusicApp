@@ -117,7 +117,7 @@
     <string name="wrong_request">Неправильный запрос</string>
     <string name="no_rights_to_perform_this_action">Нет прав на выполнение этого действия</string>
     <string name="too_many_requests_per_second">Слишком много запросов в секунду</string>
-    <string name="authorization_failed">Ошибка авторизации</string>
+    <string name="authorization_failed">Не удалось авторизироваться</string>
     <string name="invalid_signature">Недействительная подпись</string>
     <string name="unknown_page">Неизвестная страница</string>
     <string name="app_is_disabled_by_developer">Приложение отключено разработчиком</string>
@@ -145,9 +145,9 @@
     <string name="notifications">Уведомления</string>
 
     <string name="update_info">Новый функционал:\n - Скачивание треков\n - Друзья\n - Треки и плейлисты друзей\n - Поиск по плейлистам\n - Уведомления\n - Популярные треки\n - Настройки\n - Исправлено много мелких багов</string>
-    <string name="update_title">Обновление 1.2.0-betta</string>
-    <string name="update_date">24.08.2023</string>
-    <string name="update_version">10</string>
+    <string name="update_title">Обновление 1.3.0-betta</string>
+    <string name="update_date">17.09.2023</string>
+    <string name="update_version">13</string>
 
     <string name="please_give_notification_permission_to_make_function_app_properly">Пожалйста дайте разрешение на показ уведомлений что бы приложение могло функционировать правильно.</string>
     <string name="please_give_permission">Пожалуйста дайте разрешение</string>
@@ -173,8 +173,12 @@
     <string name="give_storage_permission_to_be_able_download">Пожалуйста, дайте разрешение на использование хранилища, чтобы иметь возможность корректно скачивать и считывать треки.</string>
     <string name="timer_was_set">Таймер установлен</string>
     <string name="timer_was_disabled">Таймер выключен</string>
-    <string name="telegram_channel_of_app">Телеграм канал приложения</string>
+    <string name="subscribe_for_news">Подписаться на новости</string>
     <string name="size">Размер:&#160;</string>
     <string name="delete_all_downloaded_tracks">Удалить все скачанные треки</string>
     <string name="tracks_success_deelted">Треки успешно удалены</string>
+    <string name="click_to_go_to_website">Нажмите что бы перейти на вебсайт</string>
+    <string name="artworks_are_taken_from_freepik_website">Картинки взяты с стайта Freepik</string>
+    <string name="icons_are_taken_from_flaticon_website">Иконки взяты с стайта Flaticon</string>
+    <string name="something_went_wrong_try_later">Что то пошло не так, попробуйте позже</string>
 </resources>

@@ -68,7 +68,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.P)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.mainMenuBtn.visibility = View.VISIBLE
 

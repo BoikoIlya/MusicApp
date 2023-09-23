@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/favorites_graph"
+    app:startDestination="@id/favoritesFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.kamancho.melisma.settings.presentation.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.kamancho.melisma.favorites.presentation.FavoritesTracksFragment"
+        android:label="FavoritesFragment">
+        <action
+            android:id="@+id/action_favoritesFragment_to_favoritesBottomSheetMenuFragment"
+            app:destination="@id/favoritesBottomSheetMenuFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <dialog
+        android:id="@+id/favoritesBottomSheetMenuFragment"
+        android:name="com.kamancho.melisma.favorites.presentation.FavoritesBottomSheetMenuFragment"
+        android:label="FavoritesBottomSheetMenuFragment">
+        <action
+            android:id="@+id/action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment"
+            app:destination="@id/selectPlaylistFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/selectPlaylistFragment"
+        android:name="com.kamancho.melisma.selectplaylist.presentation.SelectPlaylistFragment"
+        android:label="SelectPlaylistFragment">
+        <action
+            android:id="@+id/action_selectPlaylistFragment_to_createPlaylistFragment"
+            app:destination="@id/createPlaylistFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </dialog>
+    <fragment
+        android:id="@+id/createPlaylistFragment"
+        android:name="com.kamancho.melisma.creteplaylist.presentation.CreatePlaylistFragment"
+        android:label="CreatePlaylistFragment">
+        <action
+            android:id="@+id/action_createPlaylistFragment_to_addToPlaylistFragment"
+            app:destination="@id/addToPlaylistFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/addToPlaylistFragment"
+        android:name="com.kamancho.melisma.addtoplaylist.presentation.AddToPlaylistFragment"
+        android:label="AddToPlaylistFragment" />
+</navigation>

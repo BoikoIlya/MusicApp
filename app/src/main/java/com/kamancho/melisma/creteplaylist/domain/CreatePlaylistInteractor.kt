@@ -89,7 +89,7 @@ interface PlaylistDataInteractor: EditPlaylistInteractor,CreatePlaylistInteracto
         ): PlaylistsResult = handleResponse.handle({
             repository.followPlaylist(playlist.map(toPlaylistDomainMapper))
             PlaylistsResult.Success(managerResource.getString(R.string.success_followed_message))
-        }, { message, e ->
+        }, { message, _ ->
             PlaylistsResult.Error(message)
         })
 

@@ -53,7 +53,7 @@ data class PlaylistDomain(
                 title = title,
                 is_following = is_following,
                 count = count,
-                update_time = Instant.now().toEpochMilli().toInt(),
+                update_time = System.currentTimeMillis().toInt(),
                 description = description,
                 owner_id = owner_id,
                 thumbs = thumbs

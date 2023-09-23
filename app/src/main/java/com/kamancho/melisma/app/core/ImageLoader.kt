@@ -57,7 +57,7 @@ interface ImageLoader {
 
 
         override fun loadImage(url: String, targetView: ImageView,placeholderId: Int,cacheStrategy: DiskCacheStrategy) {
-            Glide.with(targetView)
+            GlideApp.with(targetView)
                 .load(url)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .placeholder(placeholderId)
@@ -72,8 +72,7 @@ interface ImageLoader {
             imgBg: CardView,
             smallImageUrl: String
             ) {
-
-            Glide.with(targetView)
+            GlideApp.with(targetView)
                 .asBitmap()
                 .load(bigImageUrl)
                 .transition(withCrossFade())
@@ -106,7 +105,7 @@ interface ImageLoader {
         }
 
          override fun loadImageForPlaylist(url: String, targetView: ImageView,cacheStrategy: DiskCacheStrategy) {
-             Glide.with(targetView)
+             GlideApp.with(targetView)
                  .load(url)
                  .transition(DrawableTransitionOptions.withCrossFade())
                  .placeholder(R.drawable.tone_yellow)
@@ -121,7 +120,7 @@ interface ImageLoader {
              error: ()->Unit,
              success: ()->Unit,
          ) {
-             Glide.with(targetView)
+             GlideApp.with(targetView)
                  .load(url)
                  .transition(DrawableTransitionOptions.withCrossFade())
                  .listener(object :RequestListener<Drawable>{

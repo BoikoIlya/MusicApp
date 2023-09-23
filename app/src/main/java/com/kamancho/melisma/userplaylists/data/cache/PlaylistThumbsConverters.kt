@@ -1,5 +1,6 @@
 package com.kamancho.melisma.userplaylists.data.cache
 
+import androidx.annotation.Keep
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -7,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 /**
  * Created by HP on 13.07.2023.
  **/
+
 class PlaylistThumbsConverters {
 
     private val gson = Gson()
