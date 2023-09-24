@@ -19,7 +19,7 @@ import com.kamancho.melisma.main.presentation.MainActivity
 sealed interface SingleAuthState{
 
     fun apply(
-        viewModel: AuthViewModel,
+        viewModel: MainAuthViewModel,
         navController: NavController,
         context: FragmentActivity
         )
@@ -33,7 +33,7 @@ sealed interface SingleAuthState{
         }
 
         override fun apply(
-            viewModel: AuthViewModel,
+            viewModel: MainAuthViewModel,
             navController: NavController,
             context: FragmentActivity
         ) {
@@ -45,7 +45,7 @@ sealed interface SingleAuthState{
 
     object LaunchMainActivity: SingleAuthState{
         override fun apply(
-            viewModel: AuthViewModel,
+            viewModel: MainAuthViewModel,
             navController: NavController,
             context: FragmentActivity
         ) {
@@ -60,7 +60,7 @@ sealed interface SingleAuthState{
     ) : SingleAuthState {
 
         override fun apply(
-            viewModel: AuthViewModel,
+            viewModel: MainAuthViewModel,
             navController: NavController,
             context: FragmentActivity
         ) {

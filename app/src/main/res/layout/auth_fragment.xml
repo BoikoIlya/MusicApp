@@ -32,9 +32,22 @@
             android:textSize="@dimen/h1"
             />
 
+        <TextView
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/use_alternative_authorization"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/body2"
+            android:id="@+id/alternative_auth"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            />
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="5dp"
             style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:hint="@string/phone_or_email"
             android:layout_width="match_parent"
@@ -94,6 +107,9 @@
                 android:id="@+id/forgot_password"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 />
+
+
+
         </FrameLayout>
 
         <TextView

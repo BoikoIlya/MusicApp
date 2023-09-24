@@ -32,7 +32,7 @@ class AuthWebViewFragment : Fragment(R.layout.auth_web_view_fragment) {
 
     private lateinit var viewModel: AuthViewModel
 
-    val args:AuthWebViewFragmentArgs by navArgs()
+    private val args:AuthWebViewFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

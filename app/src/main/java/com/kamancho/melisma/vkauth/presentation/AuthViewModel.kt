@@ -1,5 +1,6 @@
 package com.kamancho.melisma.vkauth.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,12 +28,9 @@ class AuthViewModel @Inject constructor(
     private val singleAuthCommunication: SingleAuthCommunication,
     private val activityNavigationCommunication: ActivityNavigationCommunication,
     private val mapper: AuthResult.Mapper,
-    private val captchaRepository: CaptchaRepository,
 ): ViewModel() {
 
-    init {
-        handleCaptcha()
-    }
+
 
     fun submit(login: String, password: String) = viewModelScope.launch(dispatchersList.io()) {
         authCommunication.map(AuthUiState.Loading)
@@ -40,7 +38,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun handleUrl(url: String) = viewModelScope.launch(dispatchersList.io()) {
-        if(url.contains(access_token) && url.contains(user_id)) {
+        if(url.contains(access_token) && url.contains(user_id) && !url.contains(auth_redirect)) {
             interactor.saveAccountData(url)
             activityNavigationCommunication.map(ActivityNavigationState.Empty)
             singleAuthCommunication.map(SingleAuthState.LaunchMainActivity)
@@ -51,24 +49,17 @@ class AuthViewModel @Inject constructor(
     companion object{
          const val access_token: String = "access_token"
          const val user_id: String = "user_id"
+         const val auth_redirect: String = "auth_redirect"
     }
 
-    fun handleCaptcha() = viewModelScope.launch(dispatchersList.io()) {
-        captchaRepository.collectCaptchaData{
-            if(it.first.isNotEmpty())
-                singleAuthCommunication.map(SingleAuthState.ShowDialog(CaptchaFragmentDialog()))
-        }
-    }
+
 
     suspend fun collectAuthState(
         owner: LifecycleOwner,
         collector: FlowCollector<AuthUiState>
     ) = authCommunication.collect(owner, collector)
 
-    suspend fun collectSingleAuthCommunication(
-        owner: LifecycleOwner,
-        collector: FlowCollector<SingleAuthState>
-    ) = singleAuthCommunication.collect(owner, collector)
+
 
 
 }

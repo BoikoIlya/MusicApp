@@ -1,5 +1,6 @@
 package com.kamancho.melisma.main.data.cloud
 
+import android.util.Log
 import androidx.annotation.Keep
 import com.google.gson.JsonParser
 import com.kamancho.melisma.app.core.AuthRedirectException
@@ -68,8 +69,8 @@ interface AuthorizationCloudDataSource {
                         if(errorCode!=null) VkException.Base(errorCode)
                         else SomethingWentWrongTryLater()
                     }
-                }
 
+                }
             }
         }
     }

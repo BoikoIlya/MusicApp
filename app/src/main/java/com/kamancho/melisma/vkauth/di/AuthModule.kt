@@ -9,6 +9,7 @@ import com.kamancho.melisma.vkauth.domain.AuthorizationInteractor
 import com.kamancho.melisma.vkauth.presentation.AuthCommunication
 import com.kamancho.melisma.vkauth.presentation.AuthResultMapper
 import com.kamancho.melisma.vkauth.presentation.AuthViewModel
+import com.kamancho.melisma.vkauth.presentation.MainAuthViewModel
 import com.kamancho.melisma.vkauth.presentation.SingleAuthCommunication
 import dagger.Binds
 import dagger.Module
@@ -32,10 +33,6 @@ interface AuthModule{
     @AuthScope
     fun bindAuthorizationIntercator(obj: AuthorizationInteractor.Base): AuthorizationInteractor
 
-//    @Reusable
-//    @Binds
-//    fun bindRedirectionCommunication(obj: SingleAuthCommunication.Base): SingleAuthCommunication
-
 
     @Reusable
     @Binds
@@ -43,7 +40,11 @@ interface AuthModule{
 
     @Binds
     @[IntoMap ViewModelKey(AuthViewModel::class)]
-    fun bindTrendingViewModel(authViewModel: AuthViewModel): ViewModel
+    fun bindAuthViewModel(authViewModel: AuthViewModel): ViewModel
+
+    @Binds
+    @[IntoMap ViewModelKey(MainAuthViewModel::class)]
+    fun bindMainAuthViewModel(authViewModel: MainAuthViewModel): ViewModel
 
 }
 

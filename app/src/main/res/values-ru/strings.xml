@@ -181,4 +181,5 @@
     <string name="artworks_are_taken_from_freepik_website">Картинки взяты с стайта Freepik</string>
     <string name="icons_are_taken_from_flaticon_website">Иконки взяты с стайта Flaticon</string>
     <string name="something_went_wrong_try_later">Что то пошло не так, попробуйте позже</string>
+    <string name="use_alternative_authorization"><u>Aльтернативнaz авторизация</u></string>
 </resources>

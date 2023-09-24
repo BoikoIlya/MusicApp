@@ -30,7 +30,7 @@ class AuthActivity : FragmentActivity() {
 
     private lateinit var authComponent: AuthComponent
 
-    private lateinit var viewModel: AuthViewModel
+    private lateinit var viewModel: MainAuthViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,14 +41,13 @@ class AuthActivity : FragmentActivity() {
         authComponent = (this.applicationContext as App).appComponent.authComponent().build()
         authComponent.inject(this)
 
-        viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[MainAuthViewModel::class.java]
 
         val navHost = supportFragmentManager.findFragmentById(R.id.auth_fragment_container) as NavHostFragment
         val navController = navHost.navController
 
         lifecycleScope.launch{
             viewModel.collectSingleAuthCommunication(this@AuthActivity){
-                Log.d("tag", "onCreate: AUTH ACT $it")
                 it.apply(viewModel,navController,this@AuthActivity,)
             }
         }
