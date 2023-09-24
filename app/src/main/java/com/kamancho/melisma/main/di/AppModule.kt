@@ -92,10 +92,10 @@ import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
 import com.kamancho.melisma.userplaylists.data.cache.PlaylistDao
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.errorprone.annotations.Keep
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kamancho.melisma.BuildConfig
+import com.kamancho.melisma.favorites.di.FavoritesScope
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
 import dagger.Binds
 import dagger.Module
@@ -352,15 +352,6 @@ class AppModule {
 
 
 
-
-    @Provides
-    @Singleton
-    fun provideBlurEffectAnimator(): BlurEffectAnimator{
-       return  BlurEffectAnimator.Base()
-    }
-
-
-
     @Provides
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore{
@@ -382,6 +373,10 @@ class AppModule {
 
 @Module
 interface AppBindModule{
+
+    @Binds
+    @Singleton
+    fun bindMediaItemsPagingSource(obj: PagingSource.MediaItemsPaging): PagingSource<TrackCache>
 
     @Singleton
     @Binds

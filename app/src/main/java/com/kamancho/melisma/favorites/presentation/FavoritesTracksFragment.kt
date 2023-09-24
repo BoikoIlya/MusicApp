@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -15,17 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
-import com.kamancho.melisma.app.core.BlurEffectAnimator
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.PagingListener
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.di.FavoriteComponent
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.trending.presentation.*
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -44,8 +42,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
     @Inject
     lateinit var imageLoader: ImageLoader
 
-    @Inject
-    lateinit var blurEffectAnimator: BlurEffectAnimator
 
     private lateinit var favoriteComponent: FavoriteComponent
 
@@ -55,7 +51,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
     private lateinit var layoutManager: LinearLayoutManager
 
-
+    private lateinit var pagingSource: PagingListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -96,6 +92,11 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
         super.adapter = tracksAdapter
 
+        pagingSource = PagingListener(30,15) {
+            viewModel.fetchData()
+        }
+        binding.favoritesRcv.addOnScrollListener(pagingSource)
+
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallBackFavorites(tracksAdapter, viewModel, requireContext()))
         itemTouchHelper.attachToRecyclerView(binding.favoritesRcv)
         binding.favoritesRcv.adapter = tracksAdapter
@@ -128,7 +129,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
         }
 
         binding.menu.setOnClickListener {
-            blurEffectAnimator.show(view.rootView as View)
             val popup = PopupMenu(requireContext(), it,0, 0, R.style.popupOverflowMenu)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popup.setForceShowIcon(true)
@@ -137,9 +137,8 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
             popup.show()
 
 
-            popup.setOnDismissListener { blurEffectAnimator.hide(view.rootView as View) }
-
             popup.setOnMenuItemClickListener { menuItem ->
+                viewModel.resetOffset()
                 when (menuItem.itemId) {
                     R.id.byTime -> viewModel.fetchData(SortingState.ByTime())
                     R.id.byName -> viewModel.fetchData(SortingState.ByName())
@@ -165,6 +164,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
     override fun search(query: String) {
        viewModel.saveQuery(query)
         viewModel.fetchData()
+        viewModel.resetOffset()
     }
 
 

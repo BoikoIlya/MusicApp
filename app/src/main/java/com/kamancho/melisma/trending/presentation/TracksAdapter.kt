@@ -153,7 +153,7 @@ open class TracksViewHolder(
                 extras?.getString(small_img_url)?:"",
                 trackImg, cacheStrategy = cacheStrategy)
             songNameTv.text = title?.take(50)
-            authorTv.text = context.getString(R.string.divider_dot) + artist?.take(50)
+            authorTv.text =  "%s%s".format(context.getString(R.string.divider_dot), artist?.take(50))
             trackDurationTv.text =extras?.getString(track_duration_formatted)?:""
             addBtn.visibility = addBtnVisibility
             downloadedIcon.isVisible =extras?.getBoolean(is_cached)?:false

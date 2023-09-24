@@ -61,9 +61,9 @@ class FavoritesTracksViewModel @Inject constructor(
     }
 
 
-
     override fun update(loading:Boolean) {
         viewModelScope.launch(dispatchersList.io()) {
+            cachedTracksRepository.resetOffset()
             handlerFavoritesUiUpdate.handle(loading) {
                 cachedTracksRepository.isDbEmpty(mainPlaylistId.toString())
             }
@@ -79,8 +79,19 @@ class FavoritesTracksViewModel @Inject constructor(
     }
 
     fun fetchData(sortingState: SortingState) =
-        handleTracksSortedSearch.handle(sortingState,viewModelScope,query,mainPlaylistId.toString())
-    fun fetchData() = handleTracksSortedSearch.handle(viewModelScope,query,mainPlaylistId.toString())
+        handleTracksSortedSearch.handle(
+            sortingState,
+            viewModelScope,
+            query,
+            mainPlaylistId.toString(),
+        )
+    fun fetchData() = handleTracksSortedSearch.handle(
+        viewModelScope,
+        query,
+        mainPlaylistId.toString(),
+    )
+
+    fun resetOffset() = cachedTracksRepository.resetOffset()
 
     fun shuffle() = viewModelScope.launch(dispatchersList.io()) {
         val list = temporaryTracksCache.readCurrentPageTracks()

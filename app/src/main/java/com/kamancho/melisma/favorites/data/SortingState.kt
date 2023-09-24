@@ -1,5 +1,7 @@
 package com.kamancho.melisma.favorites.data
 
+import androidx.media3.common.MediaItem
+import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.favorites.data.cache.TrackCache
 import com.kamancho.melisma.favorites.data.cache.TracksDao
 import kotlinx.coroutines.flow.Flow
@@ -11,50 +13,90 @@ interface SortingState {
 
     fun copyObj(query: String): SortingState
 
-    fun fetch(
+   suspend fun fetch(
         cache: TracksDao,
-        playlistId: String
+        playlistId: String,
+        pagingSource: PagingSource<TrackCache>
     ): Flow<List<TrackCache>>
 
 
-    data class ByTime(
-        private val query: String = ""
-    ) : SortingState{
+    abstract class Abstract(
+        private val query: String
+    ): SortingState {
 
-
-        override fun copyObj(query: String): SortingState = ByTime(query)
-
-
-        override  fun fetch(
+        override suspend fun fetch(
             cache: TracksDao,
+            playlistId: String,
+            pagingSource: PagingSource<TrackCache>
+        ): Flow<List<TrackCache>> {
+
+            return pagingSource.newPage { offset, pageSize ->
+                fetchFromDb(cache,query, offset, pageSize,playlistId)
+            }
+
+        }
+
+        protected abstract suspend fun fetchFromDb(
+            cache: TracksDao,
+            query: String,
+            offset: Int,
+            pageSize: Int,
             playlistId: String
-        ): Flow<List<TrackCache>> =  cache.getAllTracksByTime(query,playlistId)
+        ): Flow<List<TrackCache>>
+    }
+
+    data class ByTime(
+        private val query: String = "",
+    ) : Abstract(query){
+
+
+        override fun copyObj( query: String): SortingState = ByTime(query)
+
+
+
+        override suspend fun fetchFromDb(
+            cache: TracksDao,
+            query: String,
+            offset: Int,
+            pageSize: Int,
+            playlistId: String,
+        ): Flow<List<TrackCache>> =  cache.getAllTracksByTime(query,playlistId,pageSize,offset)
+
+
     }
 
     data class ByName(
-        private val query: String = ""
-    ): SortingState{
+        private val query: String = "",
+    ): Abstract(query){
 
         override fun copyObj(query: String): SortingState = ByName(query)
 
 
-        override  fun fetch(
+        override suspend fun fetchFromDb(
             cache: TracksDao,
-            playlistId: String
-        ):  Flow<List<TrackCache>> =  cache.getTracksByName(query,playlistId)
+            query: String,
+            offset: Int,
+            pageSize: Int,
+            playlistId: String,
+        ): Flow<List<TrackCache>>  = cache.getTracksByName(query,playlistId,pageSize,offset)
+
     }
 
     data class ByArtist(
-        private val query: String = ""
-    ): SortingState{
+        private val query: String = "",
+    ): Abstract(query){
+
 
         override fun copyObj(query: String): SortingState = ByArtist(query)
 
 
-        override  fun fetch(
+        override suspend fun fetchFromDb(
             cache: TracksDao,
-            playlistId: String
-        ):  Flow<List<TrackCache>> = cache.getTracksByArtist(query,playlistId)
+            query: String,
+            offset: Int,
+            pageSize: Int,
+            playlistId: String,
+        ): Flow<List<TrackCache>>  = cache.getTracksByArtist(query,playlistId,pageSize,offset)
     }
 
 }

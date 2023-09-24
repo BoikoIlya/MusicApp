@@ -1,5 +1,6 @@
 package com.kamancho.melisma.vkauth.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,12 +28,9 @@ class AuthViewModel @Inject constructor(
     private val singleAuthCommunication: SingleAuthCommunication,
     private val activityNavigationCommunication: ActivityNavigationCommunication,
     private val mapper: AuthResult.Mapper,
-    private val captchaRepository: CaptchaRepository,
 ): ViewModel() {
 
-    init {
-        handleCaptcha()
-    }
+
 
     fun submit(login: String, password: String) = viewModelScope.launch(dispatchersList.io()) {
         authCommunication.map(AuthUiState.Loading)
@@ -53,22 +51,14 @@ class AuthViewModel @Inject constructor(
          const val user_id: String = "user_id"
     }
 
-    fun handleCaptcha() = viewModelScope.launch(dispatchersList.io()) {
-        captchaRepository.collectCaptchaData{
-            if(it.first.isNotEmpty())
-                singleAuthCommunication.map(SingleAuthState.ShowDialog(CaptchaFragmentDialog()))
-        }
-    }
+
 
     suspend fun collectAuthState(
         owner: LifecycleOwner,
         collector: FlowCollector<AuthUiState>
     ) = authCommunication.collect(owner, collector)
 
-    suspend fun collectSingleAuthCommunication(
-        owner: LifecycleOwner,
-        collector: FlowCollector<SingleAuthState>
-    ) = singleAuthCommunication.collect(owner, collector)
+
 
 
 }
