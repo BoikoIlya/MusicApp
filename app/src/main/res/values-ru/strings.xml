@@ -6,7 +6,7 @@
     <string name="no_connection_message">Нет интернет подключения</string>
     <string name="service_is_unavailable">Сервис недоступен</string>
     <string name="no_element">Треки не найдены</string>
-    <string name="top_200_recommendations">Топ 200 Рекомендаций</string>
+    <string name="recommendations">Рекомендации</string>
     <string name="bad_gatawey_message">Плохой шлюз</string>
     <string name="server_error_message">Ошибка сервера, попоробуйте позже</string>
     <string name="too_many_requests">Слишком много запросов</string>

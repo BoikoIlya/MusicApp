@@ -1,6 +1,5 @@
 package com.kamancho.melisma.favorites.data
 
-import androidx.media3.common.MediaItem
 import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.favorites.data.cache.TrackCache
 import com.kamancho.melisma.favorites.data.cache.TracksDao
@@ -30,7 +29,7 @@ interface SortingState {
             pagingSource: PagingSource<TrackCache>
         ): Flow<List<TrackCache>> {
 
-            return pagingSource.newPage { offset, pageSize ->
+            return pagingSource.newPageFlow { offset, pageSize ->
                 fetchFromDb(cache,query, offset, pageSize,playlistId)
             }
 

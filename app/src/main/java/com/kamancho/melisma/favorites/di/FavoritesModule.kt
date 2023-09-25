@@ -12,6 +12,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 
 /**
  * Created by HP on 21.03.2023.
@@ -21,8 +22,11 @@ interface FavoritesModule {
 
     @Binds
     @FavoritesScope
-    fun bindCachedTracksRepositoryBaseMediaItem(obj: CacheRepository.BaseMediaItem): CacheRepository<MediaItem>
+    fun bindMediaItemsPagingSource(obj: PagingSource.MediaItemsPaging): PagingSource<TrackCache>
 
+    @Binds
+    @FavoritesScope
+    fun bindCachedTracksRepositoryBaseMediaItem(obj: CacheRepository.BaseMediaItem): CacheRepository<MediaItem>
 
 
     @FavoritesScope

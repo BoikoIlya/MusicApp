@@ -9,6 +9,7 @@ import com.kamancho.melisma.app.core.CreatePlaylistInteractor
 import com.kamancho.melisma.app.core.EditPlaylistInteractor
 import com.kamancho.melisma.app.core.ExtendedGsonConverterFactory
 import com.kamancho.melisma.app.core.MusicDatabase
+import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.app.core.PlaylistDataInteractor
 import com.kamancho.melisma.app.core.TracksCacheToSelectedTracksDomainMapper
 import com.kamancho.melisma.app.vkdto.PlaylistItem
@@ -30,6 +31,7 @@ import com.kamancho.melisma.editplaylist.presentation.EditPlaylistViewModel
 import com.kamancho.melisma.editplaylist.presentation.EditPlaylistUpdateMapper
 import com.kamancho.melisma.editplaylist.presentation.TitleStateCommunication
 import com.kamancho.melisma.favorites.data.cache.PlaylistsCacheToDomainMapper
+import com.kamancho.melisma.favorites.data.cache.TrackCache
 import com.kamancho.melisma.favoritesplaylistdetails.data.cache.TracksCacheToFollowedPlaylistTracksCacheMapper
 import com.kamancho.melisma.main.di.AppModule
 import com.kamancho.melisma.main.di.ViewModelKey
@@ -53,6 +55,10 @@ import retrofit2.Retrofit
  **/
 @Module
 interface PlaylistDataModule {
+
+    @Binds
+    @PlaylistDataScope
+    fun bindMediaItemsPagingSource(obj: PagingSource.MediaItemsPaging): PagingSource<TrackCache>
 
     @Binds
     @Reusable

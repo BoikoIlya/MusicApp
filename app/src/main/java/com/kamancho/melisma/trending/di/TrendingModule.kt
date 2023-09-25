@@ -2,6 +2,9 @@ package com.kamancho.melisma.trending.di
 
 import androidx.lifecycle.ViewModel
 import com.kamancho.melisma.app.core.ExtendedGsonConverterFactory
+import com.kamancho.melisma.app.core.PagingSource
+import com.kamancho.melisma.favorites.data.cache.TrackCache
+import com.kamancho.melisma.favorites.di.FavoritesScope
 import com.kamancho.melisma.main.di.AppModule
 import com.kamancho.melisma.main.di.ViewModelKey
 import com.kamancho.melisma.trending.data.TrendingRepository
@@ -26,6 +29,13 @@ import retrofit2.Retrofit
 interface TrendingModule{
 
 
+    @Binds
+    @TrendingScope
+    fun bindTrackDomainPagingSource(obj: PagingSource.TrackDomainPaging): PagingSource<TrackDomain>
+
+    @Binds
+    @TrendingScope
+    fun bindTrendingBottomPaggingStateCommunication(obj: TrendingBottomPaggingStateCommunication.Base): TrendingBottomPaggingStateCommunication
 
     @Binds
     @TrendingScope

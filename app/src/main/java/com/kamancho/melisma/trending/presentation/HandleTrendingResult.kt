@@ -8,6 +8,7 @@ import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.trending.domain.TopBarItemDomain
 import com.kamancho.melisma.trending.domain.TrackDomain
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,23 +24,44 @@ interface HandleTrendingResult {
         fetchData: suspend ()-> Flow<TrendingResult>,
     )
 
+    fun handleNewPage(
+        coroutineScope: CoroutineScope,
+        fetchData: suspend ()-> Flow<TrendingResult>,
+    )
+
     class Base @Inject constructor(
         private val communication: TrendingCommunication,
         private val dispatchersList: DispatchersList,
         private val mapper: TrendingResult.Mapper<Unit>,
     ): HandleTrendingResult{
 
+        private var job: Job? = null
+
         override fun handle(
             coroutineScope: CoroutineScope,
             fetchData: suspend () -> Flow<TrendingResult>,
         ) {
             communication.showUiState(TrendingUiState.Loading)
-            coroutineScope.launch(dispatchersList.io()) {
+            job?.cancel()
+            job = coroutineScope.launch(dispatchersList.io()) {
                  fetchData.invoke().collectLatest {result->
                      result.map(mapper)
                  }
             }
 
+        }
+
+        override fun handleNewPage(
+            coroutineScope: CoroutineScope,
+            fetchData: suspend () -> Flow<TrendingResult>,
+        ) {
+            communication.showBottomPagingState(TrendingBottomPagingState.LoadingBottom)
+            job?.cancel()
+            job = coroutineScope.launch(dispatchersList.io()) {
+                fetchData.invoke().collectLatest {result->
+                    result.map(mapper)
+                }
+            }
         }
     }
 }
@@ -56,9 +78,11 @@ class TrendingResultMapper @Inject constructor(
         if(data.second.isNotEmpty()) {
             communication.showData(data.second.map { it.map(tracksMapper) })
             communication.showUiState(TrendingUiState.DisableLoading)
+            communication.showBottomPagingState(TrendingBottomPagingState.DisableLoadingBottom)
         }
         if(message.isNotEmpty()) {
-            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(message))
+            //globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(message))
+            communication.showBottomPagingState(TrendingBottomPagingState.Error(message))
             communication.showUiState(TrendingUiState.DisableLoading)
         }
     }

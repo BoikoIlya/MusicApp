@@ -28,6 +28,8 @@ interface SelectedTracksInteractor {
 
     suspend fun selectedTracks(): List<SelectedTrackUi>
 
+    fun resetOffset()
+
     class Base @Inject constructor(
         private val toDomainMapper: SelectedTrackUi.Mapper<SelectedTrackDomain>,
         private val repository: CacheRepository<SelectedTrackDomain>,
@@ -73,5 +75,6 @@ interface SelectedTracksInteractor {
 
         override fun saveList(list: List<SelectedTrackUi>) = store.saveList(list.map { it.map(toDomainMapper) })
         override suspend fun selectedTracks(): List<SelectedTrackUi> = store.read().map { it.map(defaultToUiMapper) }
+        override fun resetOffset() = repository.resetOffset()
     }
 }

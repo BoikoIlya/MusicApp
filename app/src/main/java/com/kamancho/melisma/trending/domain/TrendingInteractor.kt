@@ -20,6 +20,8 @@ interface TrendingInteractor: MusicInteractor {
 
     fun savePlaylistId(id: String)
 
+    fun resetOffset()
+
     class Base @Inject constructor(
         private val repository: TrendingRepository,
         private val handleUnauthorizedResponse: HandleResponse,
@@ -40,6 +42,7 @@ interface TrendingInteractor: MusicInteractor {
           ) }
 
         override fun savePlaylistId(id: String) = transfer.save(id)
+        override fun resetOffset() = repository.resetOffset()
 
     }
 

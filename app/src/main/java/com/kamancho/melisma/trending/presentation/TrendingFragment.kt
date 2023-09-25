@@ -3,6 +3,7 @@ package com.kamancho.melisma.trending.presentation
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.FavoritesFragment
+import com.kamancho.melisma.app.core.PagingListener
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.databinding.TrendingFragmentBinding
@@ -99,7 +101,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
         val recommendationsTitleAdapter =
             TitleAdapter(
-                text = getString(R.string.top_200_recommendations),
+                text = getString(R.string.recommendations),
                 textSize = resources.getDimension(R.dimen.h3)/ resources.displayMetrics.scaledDensity,
                 margins = listOf(25,0,0,15),
                 typeface = Typeface.NORMAL,
@@ -114,6 +116,10 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
         )
 
 
+        val loadStateAdapter = PagingLoadStateAdapter {
+            viewModel.loadNewPage()
+        }
+
         binding.trendingRcv.adapter = tracksAdapter
         (binding.trendingRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
         binding.trendingRcv.adapter =
@@ -121,11 +127,16 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
                 mainTitleAdapter,
                 playlistSectionAdapter,
                 recommendationsTitleAdapter,
-              //  errorAdapter,
-                tracksAdapter
+                tracksAdapter,
+                loadStateAdapter
             )
         binding.scrollUpButton.setupWithRecycler(binding.trendingRcv)
 
+        val pagingListener = PagingListener(100,5){
+            loadStateAdapter.loadPage()
+        }
+
+        binding.trendingRcv.addOnScrollListener(pagingListener)
 
         lifecycleScope.launch {
             viewModel.collectState(this@TrendingFragment){
@@ -133,6 +144,11 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.collectBottomPagingState(this@TrendingFragment){
+                it.apply(pagingListener,loadStateAdapter)
+            }
+        }
 
         lifecycleScope.launch{
             viewModel.collectPlaylists(this@TrendingFragment){
@@ -154,12 +170,13 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
 
         lifecycleScope.launch{
             viewModel.collectSelectedTrack(this@TrendingFragment){
+                Log.d("tag", "newPosition: $it")
                 tracksAdapter.newPosition(it)
             }
         }
 
         binding.pullToRefresh.setOnRefreshListener{
-            viewModel.loadData()
+            viewModel.refreshData()
         }
 
     }

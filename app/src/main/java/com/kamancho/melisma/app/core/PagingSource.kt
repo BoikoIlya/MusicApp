@@ -1,11 +1,10 @@
 package com.kamancho.melisma.app.core
 
 import android.util.Log
-import androidx.media3.common.MediaItem
 import com.kamancho.melisma.favorites.data.cache.TrackCache
+import com.kamancho.melisma.trending.domain.TrackDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -14,10 +13,13 @@ import javax.inject.Inject
  **/
 interface PagingSource<T> {
 
-    suspend fun newPage(
+    suspend fun newPageFlow(
         block: suspend (Int,Int)->Flow<List<T>>
-
     ): Flow<List<T>>
+
+    suspend fun newPage(
+        block: suspend (Int,Int)->List<T>
+    ): List<T>
 
     fun resetOffset()
 
@@ -30,7 +32,7 @@ interface PagingSource<T> {
         private var isDbTrigger: Boolean = false
         private var flowTriggerCount:Int =0
 
-        override suspend fun newPage(block: suspend (Int,Int) -> Flow<List<T>>): Flow<List<T>> {
+        override suspend fun newPageFlow(block: suspend (Int, Int) -> Flow<List<T>>): Flow<List<T>> {
             flowTriggerCount = 0
 
 
@@ -39,7 +41,7 @@ interface PagingSource<T> {
 
                     isDbTrigger = flowTriggerCount>=1
                     flowTriggerCount++
-                    Log.d("tag", "newPage: ${this.pageSize*this.offset} $pageSize $isDbTrigger")
+                    Log.d("tag", "newPageFlow: ${this.pageSize*this.offset} $pageSize $isDbTrigger")
 
                    val result =
                        if(isDbTrigger){
@@ -59,6 +61,20 @@ interface PagingSource<T> {
 
         }
 
+       override suspend fun newPage(block: suspend (Int, Int) -> List<T>): List<T> {
+
+           val result = block.invoke(this.pageSize*this.offset,this.pageSize)
+
+           totalList.addAll(result)
+
+           val newTotalList = emptyList<T>().toMutableList()
+           newTotalList.addAll(totalList)
+
+           this.offset++
+
+          return newTotalList
+       }
+
        override fun resetOffset() {
            offset = 0
            totalList.clear()
@@ -69,4 +85,8 @@ interface PagingSource<T> {
     class MediaItemsPaging @Inject constructor():
         Abstract<TrackCache>(30),
         PagingSource<TrackCache>
+
+    class TrackDomainPaging @Inject constructor():
+        Abstract<TrackDomain>(100),
+        PagingSource<TrackDomain>
 }

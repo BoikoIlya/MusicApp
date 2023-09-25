@@ -48,11 +48,12 @@ class AddToPlaylistViewModel @Inject constructor(
 
     fun fetchData(sortingState: SortingState = SortingState.ByTime(query)) = viewModelScope.launch(dispatchersList.io()) {
             this@AddToPlaylistViewModel.sortingState = sortingState
-          val result = interactor.map(sortingState.copyObj(query), mainPlaylistId.toString())
+            val result = interactor.map(sortingState.copyObj(query), mainPlaylistId.toString())
                 handleCachedTracksSelected.handle(result)
 
     }
 
+    fun resetOffset() = interactor.resetOffset()
 
     fun handleItemClick(item: SelectedTrackUi) = viewModelScope.launch(dispatchersList.io()) {
         selectedTracksCommunication.map( interactor.handleItem(item))
@@ -61,6 +62,7 @@ class AddToPlaylistViewModel @Inject constructor(
 
     override fun update(loading: Boolean) {
         viewModelScope.launch(dispatchersList.io()) {
+            interactor.resetOffset()
             handlerFavoritesUiUpdate.handle(loading) { interactor.isDbEmpty() }
             fetchData()
         }

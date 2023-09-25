@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_graph"
-    app:startDestination="@+id/favorites_graph"
+    app:startDestination="@+id/recomendations_graph"
     >
     <include app:graph="@navigation/recomendations_graph"/>
     <include app:graph="@navigation/friends_graph"/>

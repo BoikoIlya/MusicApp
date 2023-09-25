@@ -13,6 +13,7 @@ import com.kamancho.melisma.main.data.TemporaryTracksCache
 import com.kamancho.melisma.main.presentation.PlayerCommunication
 import com.kamancho.melisma.trending.domain.TrendingInteractor
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -40,10 +41,15 @@ class TrendingViewModel @Inject constructor(
 
 
     init {
-        loadData()
+        refreshData()
     }
 
-    fun loadData() = handleTrendingResult.handle(viewModelScope) {
+    fun refreshData() = handleTrendingResult.handle(viewModelScope) {
+        interactor.resetOffset()
+        interactor.fetchData()
+    }
+
+    fun loadNewPage() = handleTrendingResult.handleNewPage(viewModelScope) {
         interactor.fetchData()
     }
 
@@ -55,4 +61,8 @@ class TrendingViewModel @Inject constructor(
     ) = trendingCommunication.collectPlaylists(owner, collector)
 
 
+    suspend fun collectBottomPagingState(
+        owner: LifecycleOwner,
+        collector: FlowCollector<TrendingBottomPagingState>,
+    ) = trendingCommunication.collectBottomPagingState(owner, collector)
 }

@@ -18,6 +18,10 @@ class PagingListener(
     private var isLastPage = false
     private var isScrolling = false
 
+    fun setLoading(isLoading: Boolean) {
+        this.isLoading = isLoading
+    }
+
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
@@ -49,7 +53,6 @@ class PagingListener(
 
         isScrolling = newState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE
         if(newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            Log.d("tag", "onScrollStateChanged: ")
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
             val visibleItemCount = layoutManager.childCount

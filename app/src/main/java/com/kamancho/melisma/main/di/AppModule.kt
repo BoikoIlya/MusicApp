@@ -95,7 +95,6 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kamancho.melisma.BuildConfig
-import com.kamancho.melisma.favorites.di.FavoritesScope
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
 import dagger.Binds
 import dagger.Module
@@ -198,7 +197,7 @@ class AppModule {
         return HttpLoggingInterceptor()
             .setLevel(
                 if(BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BODY
+                    HttpLoggingInterceptor.Level.BASIC
                 else HttpLoggingInterceptor.Level.NONE
             )
     }
@@ -328,7 +327,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
+    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper {
         return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
     }
 
@@ -351,10 +350,9 @@ class AppModule {
     }
 
 
-
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): FirebaseFirestore{
+    fun provideFirebaseFirestore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
 
@@ -374,9 +372,7 @@ class AppModule {
 @Module
 interface AppBindModule{
 
-    @Binds
-    @Singleton
-    fun bindMediaItemsPagingSource(obj: PagingSource.MediaItemsPaging): PagingSource<TrackCache>
+
 
     @Singleton
     @Binds

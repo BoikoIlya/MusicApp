@@ -14,8 +14,16 @@ interface TrendingCommunication: CollectTrendings, UiCommunication<TrendingUiSta
 
     fun showPlayLists(playlists: List<TrendingTopBarItemUi>)
 
+    fun showBottomPagingState(state: TrendingBottomPagingState)
+
+    suspend fun collectBottomPagingState(
+        owner: LifecycleOwner,
+        collector: FlowCollector<TrendingBottomPagingState>,
+    )
+
     class Base @Inject constructor(
         private val trendingPlaylistsCommunication: TrendingPlaylistsCommunication,
+        private val trendingBottomPaggingStateCommunication: TrendingBottomPaggingStateCommunication,
         trendingStateCommunication: TrendingStateCommunication,
         trendingTracksCommunication: TrendingTracksCommunication
     ): TrendingCommunication,
@@ -23,6 +31,13 @@ interface TrendingCommunication: CollectTrendings, UiCommunication<TrendingUiSta
             trendingStateCommunication,trendingTracksCommunication){
 
         override fun showPlayLists(playlists: List<TrendingTopBarItemUi>) = trendingPlaylistsCommunication.map(playlists)
+
+        override fun showBottomPagingState(state: TrendingBottomPagingState) = trendingBottomPaggingStateCommunication.map(state)
+
+        override suspend fun collectBottomPagingState(
+            owner: LifecycleOwner,
+            collector: FlowCollector<TrendingBottomPagingState>,
+        ) = trendingBottomPaggingStateCommunication.collect(owner, collector)
 
         override suspend fun collectPlaylists(
             owner: LifecycleOwner,
