@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kamancho.melisma.R
 import com.kamancho.melisma.addtoplaylist.di.AddToPlaylistComponent
-import com.kamancho.melisma.app.core.BlurEffectAnimator
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment.Companion.loading_animation
 import com.kamancho.melisma.app.core.FavoritesFragmentBottomSheet
@@ -38,9 +37,6 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
     private lateinit var component: AddToPlaylistComponent
 
     private lateinit var viewModel: AddToPlaylistViewModel
-
-    @Inject
-    lateinit var blurEffectAnimator: BlurEffectAnimator
 
 
     override fun onAttach(context: Context) {
@@ -94,14 +90,12 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
         }
 
         binding.menu.setOnClickListener {
-            blurEffectAnimator.show(view.rootView)
             val popup = PopupMenu(requireContext(), it,0, 0, R.style.popupOverflowMenu)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popup.setForceShowIcon(true)
             }
             popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
             popup.show()
-            popup.setOnDismissListener { blurEffectAnimator.hide(view.rootView) }
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.byTime -> viewModel.fetchData(SortingState.ByTime())

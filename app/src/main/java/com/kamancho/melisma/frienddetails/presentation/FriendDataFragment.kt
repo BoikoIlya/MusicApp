@@ -67,7 +67,6 @@ abstract class FriendDataFragment<T>: Fragment(R.layout.friend_details_list) {
 
         lifecycleScope.launch{
             viewModel.collectState(this@FriendDataFragment){
-                Log.d("tag", "onViewCreated: $it")
                 it.apply(
                     binding.message,
                     binding.pullToRefresh,
@@ -78,7 +77,6 @@ abstract class FriendDataFragment<T>: Fragment(R.layout.friend_details_list) {
 
         lifecycleScope.launch{
             viewModel.collectData(this@FriendDataFragment){
-                Log.d("tag", "onViewCreated: ${it.size}")
                 adapter.map(it)
                 onRecyclerDataUpdate(it)
             }

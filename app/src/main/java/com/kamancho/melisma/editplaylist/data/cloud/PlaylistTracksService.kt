@@ -1,5 +1,6 @@
 package com.kamancho.melisma.editplaylist.data.cloud
 
+import com.kamancho.melisma.app.vkdto.CountResponse
 import com.kamancho.melisma.app.vkdto.FavoritePlaylistByIdResponse
 import com.kamancho.melisma.app.vkdto.SearchPlaylistByIdResponse
 import com.kamancho.melisma.app.vkdto.TracksCloud
@@ -17,12 +18,12 @@ interface PlaylistTracksService {
         @Query("access_token")  accessToken: String,
         @Query("album_id")  album_id: String,
         @Query("owner_id") owner_id: String,
+        @Query("count") count: Int,
+        @Query("offset") offset: Int,
         @Query("captcha_sid") captcha_sid:String,
         @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version,
     ): TracksCloud
-
-
 
     @GET("/method/audio.getPlaylistById")
     suspend fun getFavoritePlaylistById(
@@ -43,4 +44,13 @@ interface PlaylistTracksService {
         @Query("captcha_key") captcha_key:String,
         @Query("v") apiVersion: String = AppModule.api_version,
     ): SearchPlaylistByIdResponse
+
+    @GET("/method/audio.getCount")
+    suspend fun getTracksCount(
+        @Query("access_token")  accessToken: String,
+        @Query("owner_id") owner_id: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
+        @Query("v")  apiVersion: String = AppModule.api_version
+    ): CountResponse
 }

@@ -16,7 +16,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
-import com.kamancho.melisma.app.core.BlurEffectAnimator
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.big_img_url
@@ -45,8 +44,6 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
     @Inject
     lateinit var imageLoader: ImageLoader
 
-    @Inject
-    lateinit var blurEffectAnimator: BlurEffectAnimator
 
     private lateinit var viewModel: PlayerViewModel
 
@@ -169,14 +166,12 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
         }
 
         binding.playerMenuBtn.setOnClickListener {
-            blurEffectAnimator.show(view.rootView as View)
             val popup = PopupMenu(requireContext(), it, 0, 0, R.style.popupOverflowMenu)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 popup.setForceShowIcon(true)
             popup.menuInflater.inflate(R.menu.player_options, popup.menu)
             popup.show()
 
-            popup.setOnDismissListener { blurEffectAnimator.hide(view.rootView as View) }
             popup.setOnMenuItemClickListener { menuItem ->
 
                 when (menuItem.itemId) {

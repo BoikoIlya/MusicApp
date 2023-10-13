@@ -106,6 +106,7 @@ sealed interface PlayerCommunicationState{
             controller.clearMediaItems()
             currentQueueCommunication.map(emptyList())
             playerControls.map(PlayerControlsState.Disabled)
+            selectedTrackCommunication.map(MediaItem.EMPTY)
         }
 
     }

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
-import com.kamancho.melisma.app.core.BlurEffectAnimator
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
@@ -44,8 +43,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
     @Inject
     lateinit var imageLoader: ImageLoader
 
-    @Inject
-    lateinit var blurEffectAnimator: BlurEffectAnimator
 
     private lateinit var favoriteComponent: FavoriteComponent
 
@@ -128,16 +125,12 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
         }
 
         binding.menu.setOnClickListener {
-            blurEffectAnimator.show(view.rootView as View)
             val popup = PopupMenu(requireContext(), it,0, 0, R.style.popupOverflowMenu)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popup.setForceShowIcon(true)
             }
             popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
             popup.show()
-
-
-            popup.setOnDismissListener { blurEffectAnimator.hide(view.rootView as View) }
 
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {

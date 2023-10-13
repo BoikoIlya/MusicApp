@@ -183,11 +183,15 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition() {
-             controller?.seekToDefaultPosition()
+             try {
+                 controller?.seekToDefaultPosition()
+             }catch(e: Exception){ }
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
+             try {
              controller?.seekToDefaultPosition(mediaItemIndex)
+             }catch(e: Exception){ }
          }
 
          override fun seekTo(positionMs: Long) {

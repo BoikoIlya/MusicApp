@@ -355,14 +355,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideBlurEffectAnimator(): BlurEffectAnimator{
-       return  BlurEffectAnimator.Base()
-    }
-
-
-
-    @Provides
-    @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore{
         return FirebaseFirestore.getInstance()
     }

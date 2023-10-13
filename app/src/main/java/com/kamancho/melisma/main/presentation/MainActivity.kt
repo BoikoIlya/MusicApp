@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ToggleButton
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.ViewModelProvider
@@ -123,6 +124,7 @@ import javax.inject.Inject
         lifecycleScope.launch {
             viewModel.collectPermissionCheckCommunication(this@MainActivity){
                 it.apply(this@MainActivity)
+                Log.d("tag", "onCreate: $it ")
             }
         }
 
@@ -166,7 +168,12 @@ import javax.inject.Inject
             else finish()
         }
 
-        registerReceiver(downloadBroadcastReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        ContextCompat.registerReceiver(
+            this,
+            downloadBroadcastReceiver,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     companion object{
@@ -183,9 +190,7 @@ import javax.inject.Inject
         if (grantResults.isEmpty()) return
 
         if (
-            requestCode == MainViewModel.notificationsPermissionRequestCode &&
-            grantResults[0] != PackageManager.PERMISSION_GRANTED ||
-            requestCode == MainViewModel.writeExternalStoragePermissionRequestCode &&
+            requestCode == MainViewModel.permissionRequestCode &&
             grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 viewModel.dontShowPermission()
             }

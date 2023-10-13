@@ -181,4 +181,6 @@
     <string name="icons_are_taken_from_flaticon_website">Icons are taken from Flaticon website</string>
     <string name="something_went_wrong_try_later">Something went wrong, try later</string>
     <string name="use_alternative_authorization"><u>Alternative authorization</u></string>
+    <string name="read_more">Read more</string>
+    <string name="collapse">Collapse</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.kamancho.melisma.userplaylists.data.cloud
 
+import com.kamancho.melisma.app.vkdto.CountResponse
 import com.kamancho.melisma.app.vkdto.FavoritesPlaylistsDto
 import com.kamancho.melisma.app.vkdto.FollowPlaylistResponse
 import com.kamancho.melisma.app.vkdto.TrackIdResponse
@@ -20,8 +21,10 @@ interface PlaylistsService {
     suspend fun getPlaylists(
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
+        @Query("v")  apiVersion: String = AppModule.api_version,
         @Query("count") count: Int = playlists_count,
-        @Query("v")  apiVersion: String = AppModule.api_version
     ):FavoritesPlaylistsDto
 
     @GET("/method/audio.followPlaylist")
@@ -29,6 +32,8 @@ interface PlaylistsService {
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: Int,
         @Query("playlist_id") playlist_id: Int,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ):FollowPlaylistResponse
 
@@ -37,6 +42,10 @@ interface PlaylistsService {
         @Query("access_token")  accessToken: String,
         @Query("owner_id") owner_id: String,
         @Query("playlist_id") playlist_id: Int,
+        @Query("captcha_sid") captcha_sid:String,
+        @Query("captcha_key") captcha_key:String,
         @Query("v")  apiVersion: String = AppModule.api_version
     ): TrackIdResponse
+
+
 }

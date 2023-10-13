@@ -43,7 +43,7 @@ class FriendsAdapter(
         )
     }
 
-    override fun getItemCount(): Int = diff.currentList.size //friends.size
+    override fun getItemCount(): Int = diff.currentList.size
 
     override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
        holder.bind(diff.currentList[position])

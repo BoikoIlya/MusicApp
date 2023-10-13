@@ -88,7 +88,7 @@ class MainViewModelTest: ObjectCreator() {
     fun `test init`(){
         assertEquals(1,firebaseMessagingWrapper.list.size)
         assertEquals(0,actyvityNavigationCommuniacation.states.size)
-        assertEquals(PermissionCheckState.CheckForPermission::class,permissionCheckCommunication.stateList.last()::class)
+        assertEquals(PermissionCheckState.CheckForPermissions::class,permissionCheckCommunication.stateList.last()::class)
     }
 
     @Test

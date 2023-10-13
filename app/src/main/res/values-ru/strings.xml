@@ -55,7 +55,7 @@
     <string name="results">Результатаы</string>
     <string name="shuffle">Перемешать</string>
     <string name="tracks">&#160;треков</string>
-    <string name="phone_or_email">Телефон или адресс электронной почты</string>
+    <string name="phone_or_email">Телефон или адрес электронной почты</string>
     <string name="password">Пароль</string>
     <string name="login">Войти</string>
     <string name="fill_all_fields">Заполните все поля</string>
@@ -181,5 +181,5 @@
     <string name="artworks_are_taken_from_freepik_website">Картинки взяты с стайта Freepik</string>
     <string name="icons_are_taken_from_flaticon_website">Иконки взяты с стайта Flaticon</string>
     <string name="something_went_wrong_try_later">Что то пошло не так, попробуйте позже</string>
-    <string name="use_alternative_authorization"><u>Aльтернативнaz авторизация</u></string>
+    <string name="use_alternative_authorization"><u>Aльтернативнaя авторизация</u></string>
 </resources>
