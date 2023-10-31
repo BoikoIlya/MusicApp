@@ -38,8 +38,6 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     playerCommunication: PlayerCommunication,
     favoritesInteractor: Interactor<MediaItem, TracksResult>,
     mapper: TracksResultToUiEventCommunicationMapper,
-    private val transfer: DataTransfer<PlaylistDomain>,
-    private val toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val toPlaylistIdMapper: PlaylistUi.Mapper<String>,
     private val cachedTracksRepository: CacheRepository<MediaItem>,
     private val playlistDetailsHandleUiUpdate: PlaylistDetailsHandleUiUpdate,
@@ -50,7 +48,8 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     private val mediaItemTransfer: DataTransfer<TrackDomain>,
     private val toTrackDomainMapper: MediaItemToTrackDomainMapper,
     private val resetSwipeActionCommunication: ResetSwipeActionCommunication,
-    private val isNotFollowedMapper :PlaylistUi.Mapper<Boolean>
+    private val isNotFollowedMapper :PlaylistUi.Mapper<Boolean>,
+    private val toOwnerIdMapper: PlaylistUi.Mapper<Int>
 ): PlaylistDetailsViewModel(
     playerCommunication,
     communication,
@@ -62,23 +61,35 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
 ), DeleteItemDialog {
 
     private var fetching: Job? = null
-    private val playlistUi = transfer.read()!!.map(toPlaylistUiMapper)
-    private val playlistId = playlistUi.map(toPlaylistIdMapper)
+    private lateinit var playlistUi:PlaylistUi
+    private lateinit var playlistId:String
 
-    init {
-        handlePlaylistDataCache.init(playlistUi)
-        fetchFromCache("")
-        fetchPlaylistData()
-        update(false)
-    }
 
-    override fun update(loading: Boolean) {
+
+
+
+    override fun update(id: String, loading: Boolean, shouldUpdate: Boolean) {
+        if(!shouldUpdate) return
+
         viewModelScope.launch(dispatchersList.io()) {
-            playlistDetailsHandleUiUpdate.handle(loading){
-                cachedTracksRepository.isDbEmpty(playlistId)
+            playlistDetailsHandleUiUpdate.handle(loading,playlistId,playlistUi.map(toOwnerIdMapper)){
+                cachedTracksRepository.isDbEmpty(id)
             }
         }
     }
+
+    fun handlePlaylistData(playlistUi: PlaylistUi, shouldUpdate: Boolean){
+        if(!shouldUpdate) return
+        this.playlistUi = playlistUi
+        this.playlistId = playlistUi.map(toPlaylistIdMapper)
+
+        handlePlaylistDataCache.init(playlistUi)
+        fetchFromCache("")
+        fetchPlaylistData()
+        handlePlaylistDataCache.handle(viewModelScope,playlistId)
+    }
+
+
 
     fun fetchFromCache(query: String) {
         fetching?.cancel()
@@ -93,7 +104,7 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     fun fetchPlaylistData() = handlePlaylistDataCache.handle(viewModelScope,playlistId)
 
     fun isNotFollowed(initItemTouchHelper:()->Unit){
-        if(playlistUi.map(isNotFollowedMapper)) initItemTouchHelper.invoke()
+        if(playlistUi!!.map(isNotFollowedMapper)) initItemTouchHelper.invoke()
     }
 
     fun addBtnVisibility() = if(playlistUi.map(isNotFollowedMapper)) View.GONE else View.VISIBLE

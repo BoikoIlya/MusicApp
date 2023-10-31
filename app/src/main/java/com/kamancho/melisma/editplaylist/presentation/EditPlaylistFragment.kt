@@ -8,6 +8,7 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.creteplaylist.di.PlaylistDataComponent
@@ -34,6 +35,8 @@ class EditPlaylistFragment: PlaylistDataFragment(R.layout.playlist_data_fragment
 
     private lateinit var textWatcher: TextWatcher
 
+    private val args: EditPlaylistFragmentArgs by navArgs()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         component = (context.applicationContext as App).appComponent
@@ -57,7 +60,13 @@ class EditPlaylistFragment: PlaylistDataFragment(R.layout.playlist_data_fragment
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setupCurrentPlaylist(args.playlistItem,savedInstanceState==null)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         binding.titleTv.setText(R.string.edit_playlist)
 
        val mapper = PlaylistUi.ToEditPlaylistData(binding)

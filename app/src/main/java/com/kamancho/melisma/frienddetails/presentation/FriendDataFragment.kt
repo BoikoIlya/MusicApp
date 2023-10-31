@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.FavoritesFragment
@@ -40,6 +41,7 @@ abstract class FriendDataFragment<T>: Fragment(R.layout.friend_details_list) {
 
     protected lateinit var component: FriendDetailsComponent
 
+    protected lateinit var layoutManager: LayoutManager
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,22 +79,26 @@ abstract class FriendDataFragment<T>: Fragment(R.layout.friend_details_list) {
 
         lifecycleScope.launch{
             viewModel.collectData(this@FriendDataFragment){
+                val state = layoutManager.onSaveInstanceState()
                 adapter.map(it)
+                layoutManager.onRestoreInstanceState(state)
                 onRecyclerDataUpdate(it)
             }
         }
 
         lifecycleScope.launch{
             (viewModel as FriendsDataViewModel).collectSearchQuery(this@FriendDataFragment){
-                (viewModel as FriendsDataViewModel).search(it)
+                (viewModel as FriendsDataViewModel).search(it,getFriendId())
             }
         }
 
         binding.pullToRefresh.setOnRefreshListener{
-            viewModel.update(true)
+            viewModel.update(getFriendId(),true,true)
         }
 
     }
 
     protected abstract fun onRecyclerDataUpdate(data: List<T>)
+
+    protected abstract fun getFriendId():String
 }

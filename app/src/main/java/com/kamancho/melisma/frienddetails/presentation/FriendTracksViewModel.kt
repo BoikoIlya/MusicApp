@@ -45,25 +45,23 @@ class FriendTracksViewModel @Inject constructor(
     trackChecker
 ),FriendsDataViewModel {
 
-    init {
-        search("")
-        update(false)
-    }
-
-    override fun update(loading: Boolean) {
+    override fun update(id: String, loading: Boolean,shouldUpdate: Boolean) {
+        if(!shouldUpdate) return
+        search("",id)
         viewModelScope.launch(dispatchersList.io()){
-            handleFriendsUpdate.handle(loading){ !cacheRepository.isFriendHaveTracks() }
-            search("")
+            handleFriendsUpdate.handle(loading,id){ !cacheRepository.isFriendHaveTracks(id) }
+            search("",id)
         }
     }
 
+
     private val searchJob: Job?=null
 
-   override fun search(query: String){
+   override fun search(query: String,id: String){
         searchJob?.cancel()
 
         viewModelScope.launch(dispatchersList.io()){
-           val result = cacheRepository.searchTracks(query)
+           val result = cacheRepository.searchTracks(query,id)
             handleFavoritesTracksFromCache.handle(result)
         }
     }

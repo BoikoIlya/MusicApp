@@ -121,7 +121,6 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
                 mainTitleAdapter,
                 playlistSectionAdapter,
                 recommendationsTitleAdapter,
-              //  errorAdapter,
                 tracksAdapter
             )
         binding.scrollUpButton.setupWithRecycler(binding.trendingRcv)

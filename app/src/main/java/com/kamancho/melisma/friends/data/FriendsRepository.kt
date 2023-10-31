@@ -18,7 +18,7 @@ interface FriendsRepository {
     class Base @Inject constructor(
         private val cloudDataSource: FriendsCloudDataSource,
         private val cache: FriendsDao,
-    ): FriendsRepository {
+    ) : FriendsRepository {
 
         override suspend fun updateFriends() {
             val cloudResult = cloudDataSource.fetchFriends()

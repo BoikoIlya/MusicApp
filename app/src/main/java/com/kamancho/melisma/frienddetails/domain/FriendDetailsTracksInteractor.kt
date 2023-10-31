@@ -15,17 +15,15 @@ interface FriendDetailsTracksInteractor: UpdateInteractor {
     class Base @Inject constructor(
         private val repository: BaseFriendsDetailsTracksRepository,
         private val handleResponse: HandleResponse,
-        private val transfer: FriendIdAndNameTransfer,
     ): FriendDetailsTracksInteractor{
 
-
-
-        override suspend fun updateData(): String = handleResponse.handle({
-            repository.update(transfer.read()!!.first)
+        override suspend fun update(id: String):String = handleResponse.handle({
+            repository.update(id)
             ""
         },{message,_->
             message
         })
+
 
     }
 }

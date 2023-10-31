@@ -32,14 +32,6 @@ interface DataTransfer<T> {
     class PlaylistTransfer @Inject constructor():
             DataTransfer<PlaylistDomain>, Abstract<PlaylistDomain>()
 
-    interface UpdateDialogTransfer: DataTransfer<Pair<String,String>> {
-
-        class Base @Inject constructor() :
-            UpdateDialogTransfer, DataTransfer.Abstract<Pair<String,String>>()
-    }
-
-    class MediaIdTransfer@Inject constructor():
-        DataTransfer<String>, Abstract<String>()
 
 
 }

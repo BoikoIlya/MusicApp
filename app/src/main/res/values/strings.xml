@@ -71,7 +71,7 @@
     <string name="warning_title">Warning!</string>
     <string name="ok">OK</string>
     <string name="player">Player</string>
-    <string name="login_with_vk">Login with VK</string>
+    <string name="login_with_vk">Use VKontakte account</string>
     <string name="start_time">00:00</string>
     <string name="new_playlist">New playlist</string>
     <string name="edit_playlist">Edit playlist</string>
@@ -183,4 +183,5 @@
     <string name="use_alternative_authorization"><u>Alternative authorization</u></string>
     <string name="read_more">Read more</string>
     <string name="collapse">Collapse</string>
+    <string name="playlist_not_found">Playlist not found</string>
 </resources>

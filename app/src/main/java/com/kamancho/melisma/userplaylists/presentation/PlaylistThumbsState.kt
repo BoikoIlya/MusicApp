@@ -1,14 +1,17 @@
 package com.kamancho.melisma.userplaylists.presentation
 
+import android.os.Parcelable
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.app.core.ImageLoader
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by HP on 13.07.2023.
  **/
-sealed interface PlaylistThumbsState{
+@Parcelize
+sealed interface PlaylistThumbsState: Parcelable{
 
     fun apply(
         imageView: ImageView,
@@ -17,7 +20,7 @@ sealed interface PlaylistThumbsState{
     )
 
     fun map(): String
-
+    @Parcelize
     object Empty: PlaylistThumbsState {
 
         override fun apply(imageView: ImageView, imageLoader: ImageLoader,cacheStrategy: DiskCacheStrategy) {
@@ -26,7 +29,7 @@ sealed interface PlaylistThumbsState{
 
        override fun map(): String = ""
     }
-
+    @Parcelize
     data class LoadImages(
         private val url: String
     ): PlaylistThumbsState {

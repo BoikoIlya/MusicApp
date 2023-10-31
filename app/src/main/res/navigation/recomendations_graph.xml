@@ -63,7 +63,14 @@
     <fragment
         android:id="@+id/favoritesPlaylistDetailsFragment"
         android:name="com.kamancho.melisma.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsFragment"
-        android:label="FavoritesPlaylistDetailsFragment" />
+        android:label="FavoritesPlaylistDetailsFragment" >
+        <argument
+            android:name="favoritePlaylistId"
+            app:argType="string" />
+        <argument
+            android:name="playlistItem"
+            app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
+    </fragment>
     <dialog
         android:id="@+id/playlistsMenuDialogBottomSheetFragment"
         android:name="com.kamancho.melisma.userplaylists.presentation.PlaylistsMenuDialogBottomSheetFragment"
@@ -75,6 +82,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="playlistItem"
+            app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
     </dialog>
     <fragment
         android:id="@+id/editPlaylistFragment"
@@ -83,5 +93,8 @@
         <action
             android:id="@+id/action_editPlaylistFragment_to_addToPlaylistFragment"
             app:destination="@id/addToPlaylistFragment" />
+        <argument
+            android:name="playlistItem"
+            app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
     </fragment>
 </navigation>

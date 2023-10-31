@@ -3,9 +3,12 @@ package com.kamancho.melisma.search.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
@@ -14,6 +17,9 @@ import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.search.di.SearchComponent
 import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kamancho.melisma.searchhistory.presentation.SearchHistoryFragment.Companion.search_request_key
+import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState
+import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState.NavigateToSearch.Companion.search_type_arg_key
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
@@ -30,11 +36,14 @@ import javax.inject.Inject
 
     private lateinit var viewModel: SearchViewModel
 
+    private val args: SearchFragmentArgs by navArgs()
 
     private lateinit var searchComponent: SearchComponent
 
     private lateinit var tabTitlesList: List<String>
     private lateinit var fragments: List<Fragment>
+
+    private var viewPagerIndex: Int = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -48,8 +57,8 @@ import javax.inject.Inject
         )
 
         fragments = listOf(
-            BaseSearchTracksFragment(),
-            BaseSearchPlaylistsFragment()
+            BaseSearchTracksFragment.newInstance(args.searchQuery),
+            BaseSearchPlaylistsFragment.newInstance(args.searchQuery)
         )
 
     }
@@ -76,26 +85,35 @@ import javax.inject.Inject
 
 
 
-
-        val data = viewModel.readQuery()
-        binding.searchHistoryEdt.setText(data.first)
-        binding.searchHistoryViewPager.setCurrentItem(data.second,false)
+        viewPagerIndex = args.viewPagerIndex
+        binding.searchHistoryEdt.setText(args.searchQuery)
+        binding.searchHistoryViewPager.setCurrentItem(viewPagerIndex,false)
 
 
         binding.searchHistoryEdt.setOnFocusChangeListener { _, isFocused ->
-            if (isFocused) findNavController().popBackStack()
+            if (isFocused){
+                setFragmentResult(
+                    search_request_key,
+                    bundleOf(Pair(search_type_arg_key,viewPagerIndex))
+                )
+                findNavController().popBackStack()
+            }
         }
 
         binding.searchHistoryViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                viewModel.savePageIndex(position)
+                viewPagerIndex = position
 
             }
         })
 
 
         binding.backBtnSearch.setOnClickListener {
+            setFragmentResult(
+                search_request_key,
+                bundleOf(Pair(search_type_arg_key,viewPagerIndex))
+            )
             findNavController().popBackStack()
         }
 

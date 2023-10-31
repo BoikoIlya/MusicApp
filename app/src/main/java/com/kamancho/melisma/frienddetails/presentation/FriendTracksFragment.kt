@@ -2,6 +2,7 @@ package com.kamancho.melisma.frienddetails.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -28,11 +29,20 @@ class FriendTracksFragment: FriendDataFragment<MediaItem>() {
         component = (context.applicationContext as App).appComponent.friendDetailsComponent().build()
         component.inject(this)
         viewModel = ViewModelProvider(this, factory)[FriendTracksViewModel::class.java]
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.update(requireArguments().getString(ARG_KEY)!!,false,savedInstanceState==null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+
         binding.message.text = getString(R.string.no_favorite_tracks)
-        binding.friendDetailsRcv.layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = LinearLayoutManager(requireContext())
+        binding.friendDetailsRcv.layoutManager = layoutManager
 
         val tracksAdapter = TracksAdapter(
             context =requireContext(),
@@ -63,7 +73,23 @@ class FriendTracksFragment: FriendDataFragment<MediaItem>() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun getFriendId(): String = requireArguments().getString(ARG_KEY)!!
+
     override fun onRecyclerDataUpdate(data: List<MediaItem>) {
         (viewModel as FriendTracksViewModel).saveCurrentPageQueue(data)
     }
+
+    companion object {
+        private const val ARG_KEY = "argument_key"
+
+        fun newInstance(friendId: String): FriendTracksFragment {
+            val fragment = FriendTracksFragment()
+            val args = Bundle()
+            args.putString(ARG_KEY, friendId)
+            fragment.arguments = args
+            return fragment
+        }
+
+    }
+
 }

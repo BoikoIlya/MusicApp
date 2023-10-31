@@ -1,8 +1,6 @@
 package com.kamancho.melisma.main.presentation
 
-import android.media.AudioFocusRequest
-import android.media.AudioManager
-import android.os.Build
+
 import android.util.Log
 import androidx.media3.common.BuildConfig
 import androidx.media3.common.MediaItem
@@ -12,9 +10,6 @@ import androidx.media3.common.Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANG
 import com.kamancho.melisma.app.core.DispatchersList
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.app.core.PlayerControlsCommunication
-import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.track_id
-import com.kamancho.melisma.player.presentation.AudioFocusChange
-import com.kamancho.melisma.player.presentation.AudioFocusChangeListener
 import com.kamancho.melisma.player.presentation.PlayingTrackIdCommunication
 import com.kamancho.melisma.player.presentation.TrackPlaybackPositionCommunication
 import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
@@ -38,24 +33,26 @@ interface ControllerListener: Player.Listener {
         private val dispatchersList: DispatchersList,
         private val handlePlayerError: HandlePlayerError,
         private val playingTrackIdCommunication: PlayingTrackIdCommunication,
-        private val audioFocusChange: AudioFocusChange,
     ) : ControllerListener {
+
 
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            if (isPlaying) {playerControls.map(
+            if (isPlaying) {
+                playerControls.map(
                 PlayerControlsState.Play(
                     controller.currentMediaItem ?: MediaItem.EMPTY
                 )
             )
-                audioFocusChange.requestAudioFocus()
             }
-            else playerControls.map(
-                PlayerControlsState.Pause(
-                    controller.currentMediaItem ?: MediaItem.EMPTY
+            else {
+                playerControls.map(
+                    PlayerControlsState.Pause(
+                        controller.currentMediaItem ?: MediaItem.EMPTY
+                    )
                 )
-            )
+            }
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -79,7 +76,6 @@ interface ControllerListener: Player.Listener {
             }
             super.onPlayerError(error)
         }
-
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             if(reason==MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return

@@ -15,6 +15,19 @@ interface HandleUpdate {
         isDbEmpty: suspend ()->Boolean
     )
 
+    suspend fun handle(
+        loading: Boolean,
+        id: String,
+        isDbEmpty: suspend ()->Boolean,
+    )
+
+    suspend fun handle(
+        loading: Boolean,
+        playlistId: String,
+        ownerId: Int,
+        isDbEmpty: suspend ()->Boolean,
+    )
+
     abstract class Abstract<M> (
         private val uiStateCommunication:FavoritesUiCommunication<M>,
         private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
@@ -27,6 +40,34 @@ interface HandleUpdate {
         ) {
             if(isDbEmpty.invoke() || loading) uiStateCommunication.showLoading(FavoritesUiState.Loading)
             val errorMessage = interactor.updateData()
+            if (errorMessage.isNotEmpty())
+                globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(errorMessage))
+
+            uiStateCommunication.showLoading(FavoritesUiState.DisableLoading)
+        }
+
+        override suspend fun handle(
+            loading: Boolean,
+            id: String,
+            isDbEmpty: suspend () -> Boolean,
+
+        ) {
+            if(isDbEmpty.invoke() || loading) uiStateCommunication.showLoading(FavoritesUiState.Loading)
+            val errorMessage = interactor.update(id)
+            if (errorMessage.isNotEmpty())
+                globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(errorMessage))
+
+            uiStateCommunication.showLoading(FavoritesUiState.DisableLoading)
+        }
+
+        override suspend fun handle(
+            loading: Boolean,
+            playlistId: String,
+            ownerId: Int,
+            isDbEmpty: suspend () -> Boolean
+        ) {
+            if(isDbEmpty.invoke() || loading) uiStateCommunication.showLoading(FavoritesUiState.Loading)
+            val errorMessage = interactor.update(ownerId, playlistId)
             if (errorMessage.isNotEmpty())
                 globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(errorMessage))
 

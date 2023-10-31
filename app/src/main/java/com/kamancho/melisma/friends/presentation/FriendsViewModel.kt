@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.kamancho.melisma.app.core.DispatchersList
 import com.kamancho.melisma.app.core.FavoritesViewModel
 import com.kamancho.melisma.favorites.presentation.FavoritesUiState
-import com.kamancho.melisma.frienddetails.domain.FriendIdAndNameTransfer
 import com.kamancho.melisma.friends.domain.FriendsInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.FlowCollector
@@ -24,7 +23,6 @@ class FriendsViewModel @Inject constructor(
     private val handleFriendsListFromCache: HandleFriendsListFromCache,
     private val handleFriendsUpdate: HandleFriendsUpdate,
     private val dispatchersList: DispatchersList,
-    private val transfer: FriendIdAndNameTransfer
 ): ViewModel(), FavoritesViewModel<FavoritesUiState,FriendUi> {
 
     init {
@@ -48,9 +46,6 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    fun saveFriendData(data: Pair<String,String>){
-        transfer.save(data)
-    }
 
     override suspend fun collectState(
         owner: LifecycleOwner,

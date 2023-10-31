@@ -23,6 +23,7 @@ import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetail
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsViewModel
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistLoadingCommunication
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -49,6 +50,10 @@ interface FavoritesPlaylistDetailsModule {
     @Binds
     @FavoritesPlaylistDetailsScope
     fun bindPlaylistDomainToIdMapper(obj: PlaylistDomain.ToIdMapper): PlaylistDomain.Mapper<String>
+
+    @Binds
+    @FavoritesPlaylistDetailsScope
+    fun bindPlaylistUiToOwnerIdMapper(obj: PlaylistUi.ToOwnerIdMapper): PlaylistUi.Mapper<Int>
 
     @Binds
     @FavoritesPlaylistDetailsScope

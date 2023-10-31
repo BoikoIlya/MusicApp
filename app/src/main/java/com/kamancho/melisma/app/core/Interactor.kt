@@ -19,7 +19,12 @@ interface AddToFavoritesInteractor<M,E>{
 
 interface UpdateInteractor{
 
-    suspend fun updateData(): String
+    suspend fun updateData(): String = ""
+
+
+    suspend fun update(id: String):String = ""
+
+    suspend fun update(ownerId: Int,playlistId: String):String = ""
 
 }
 

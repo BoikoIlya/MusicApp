@@ -53,7 +53,6 @@ class MainViewModel @Inject constructor(
 
     companion object{
         const val permissionRequestCode = 0
-        //const val writeExternalStoragePermissionRequestCode = 1
     }
 
     init {

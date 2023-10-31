@@ -9,15 +9,18 @@ import androidx.media3.common.MediaItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.Selector
+import com.kamancho.melisma.app.vkdto.TrackItem
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.search.di.SearchComponent
+import com.kamancho.melisma.trending.domain.TrackDomain
+import com.kamancho.melisma.trending.presentation.TracksAdapter
 import com.kamancho.melisma.trending.presentation.TracksViewHolder
 import kotlinx.coroutines.launch
 
 /**
  * Created by HP on 14.08.2023.
  **/
-class BaseSearchTracksFragment: SearchListFragment<MediaItem, TracksViewHolder>(){
+class BaseSearchTracksFragment: SearchListFragment<MediaItem, TracksViewHolder,TrackDomain,TrackItem>(){
 
     private lateinit var searchComponent: SearchComponent
 
@@ -29,9 +32,11 @@ class BaseSearchTracksFragment: SearchListFragment<MediaItem, TracksViewHolder>(
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.searchRcv.layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = LinearLayoutManager(requireContext())
+        binding.searchRcv.layoutManager = layoutManager
 
-        val tracksAdapter = SearchTracksPagingAdapter(  this.requireContext(),
+        val tracksAdapter = TracksAdapter(
+            requireContext(),
             playClickListener = object: Selector<MediaItem> {
                 override fun onSelect(data: MediaItem, position: Int) {
                     viewModel.playMusic(data)
@@ -39,8 +44,9 @@ class BaseSearchTracksFragment: SearchListFragment<MediaItem, TracksViewHolder>(
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {
                     viewModel.checkAndAddTrackToFavorites(data)
-                }
-            }, imageLoader)
+                }}, imageLoader = imageLoader, layoutManager = layoutManager
+        )
+
         adapter = tracksAdapter
 
 
@@ -54,6 +60,24 @@ class BaseSearchTracksFragment: SearchListFragment<MediaItem, TracksViewHolder>(
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun getQuery(): String = requireArguments().getString(ARG_KEY)?:""
 
+    override fun onRecyclerNewList(data: List<MediaItem>) {
+        viewModel.saveCurrentPageQueue(data)
+    }
+
+
+    companion object {
+        private const val ARG_KEY = "argument_key"
+
+        fun newInstance(query: String): BaseSearchTracksFragment {
+            val fragment = BaseSearchTracksFragment()
+            val args = Bundle()
+            args.putString(ARG_KEY, query)
+            fragment.arguments = args
+            return fragment
+        }
+
+    }
 
 }

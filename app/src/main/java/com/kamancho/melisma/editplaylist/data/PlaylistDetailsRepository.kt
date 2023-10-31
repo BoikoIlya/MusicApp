@@ -1,5 +1,6 @@
 package com.kamancho.melisma.editplaylist.data
 
+import android.util.Log
 import com.kamancho.melisma.app.vkdto.PlaylistItem
 import com.kamancho.melisma.editplaylist.data.cache.PlaylistDetailsCacheDataSource
 import com.kamancho.melisma.editplaylist.data.cloud.PlaylistDetailsCloudDataSource
@@ -29,6 +30,7 @@ interface PlaylistDetailsRepository {
             coroutineScope {
                 launch {
                     val cloudResult = cloud.fetchTracks(playlistId,ownerId)
+                    Log.d("tag", "fetch: ${cloudResult.size} ")
                     val playlistItem = cache.getPlaylistById(playlistId)
                     cache.savePlaylistTracks(
                         playlistId,

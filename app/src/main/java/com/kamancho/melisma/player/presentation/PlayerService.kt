@@ -3,8 +3,9 @@ package com.kamancho.melisma.player.presentation
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.os.Process
+import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -27,10 +28,6 @@ class PlayerService: MediaSessionService(){
 
     private lateinit var receiver: HeadPhonesReceiver
 
-    @Inject
-    lateinit var audioFocusChange: AudioFocusChange
-
-
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate() {
@@ -46,6 +43,8 @@ class PlayerService: MediaSessionService(){
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(receiver, intentFilter)
 
+
+
     }
 
 
@@ -55,6 +54,7 @@ class PlayerService: MediaSessionService(){
         if (!player.playWhenReady) {
              stopSelf()
         }
+
     }
 
 
@@ -63,8 +63,8 @@ class PlayerService: MediaSessionService(){
         player.release()
         mediaSession.release()
         unregisterReceiver(receiver)
-
-        audioFocusChange.abandonAudioFocus()
         super.onDestroy()
     }
+
+
 }

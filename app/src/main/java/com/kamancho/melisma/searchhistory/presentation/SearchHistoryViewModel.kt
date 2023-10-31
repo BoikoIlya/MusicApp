@@ -52,7 +52,7 @@ class SearchHistoryViewModel @Inject constructor(
         if(trimmedQuery.isNotEmpty()){
             searchHistoryInputStateCommunication.map(SearchHistoryTextInputState.ResetError)
             historyRepository.saveQueryInDB(trimmedQuery,currentHistoryType)
-            searchHistorySingleStateCommunication.map(SearchHistorySingleState.NavigateToSearch)
+            searchHistorySingleStateCommunication.map(SearchHistorySingleState.NavigateToSearch(query,currentHistoryType))
         }else {
             searchHistoryInputStateCommunication.map(SearchHistoryTextInputState.ShowError(
                 managerResource.getString(R.string.empty_input)

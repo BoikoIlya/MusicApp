@@ -17,7 +17,7 @@ import javax.inject.Inject
  **/
 interface PlaylistDetailsCloudDataSource {
 
-    suspend fun fetchTracks(playlistId: String,ownerId: Int): List<TrackItem>
+    suspend fun fetchTracks(playlistId: String, ownerId: Int): List<TrackItem>
 
     suspend fun fetchFavoritesPlaylistById(playlistId: String, ownerId: Int): PlaylistItem
 
@@ -27,45 +27,72 @@ interface PlaylistDetailsCloudDataSource {
         private val accountDataStore: AccountDataStore,
         private val service: PlaylistTracksService,
         private val captchaDataStore: CaptchaDataStore,
-        private val dispatchersList: DispatchersList
-    ): PlaylistDetailsCloudDataSource {
+    ) : PlaylistDetailsCloudDataSource {
 
-        override suspend fun fetchTracks(playlistId: String,ownerId: Int): List<TrackItem> {
-
-            val tracksCount =
-                service.getTracksCount(
-                    accountDataStore.token(),
-                    accountDataStore.ownerId(),
-                    captchaDataStore.captchaId(),
-                    captchaDataStore.captchaEnteredData()
-                ).response
-
-
-            val totalPackets = (tracksCount + PACKET_SIZE - 1) / PACKET_SIZE
-
-            return coroutineScope {
-
-                (0 until totalPackets).map { batchIndex ->
-
-                    val offset = batchIndex * PACKET_SIZE
-
-                    async(dispatchersList.io()) {
-                        service.getPlaylistTracks(
-                            accessToken = accountDataStore.token(),
-                            owner_id = ownerId.toString(),
-                            album_id = playlistId,
-                            count = PACKET_SIZE,
-                            offset = offset,
-                            captcha_sid = captchaDataStore.captchaId(),
-                            captcha_key = captchaDataStore.captchaEnteredData(),
-                        ).response.items
-                    }
-                }.awaitAll().flatten()
-            }
+        companion object {
+             const val packet_size: Int = 5000
         }
 
-        override suspend fun fetchFavoritesPlaylistById(playlistId: String, ownerId: Int): PlaylistItem {
-          return service.getFavoritePlaylistById(
+        override suspend fun fetchTracks(playlistId: String, ownerId: Int): List<TrackItem> {
+
+            val list = emptyList<TrackItem>().toMutableList()
+            var offset = 0
+            while (true) {
+                val result = service.getPlaylistTracks(
+                    accessToken = accountDataStore.token(),
+                    owner_id = ownerId.toString(),
+                    album_id = playlistId,
+                    count = packet_size,
+                    offset = offset,
+                    captcha_sid = captchaDataStore.captchaId(),
+                    captcha_key = captchaDataStore.captchaEnteredData(),
+                ).response.items
+
+                if (result.isEmpty()) break
+
+                list.addAll(result)
+                offset += packet_size
+
+            }
+            return list
+
+//            val tracksCount =
+//                service.getTracksCount(
+//                    accountDataStore.token(),
+//                    accountDataStore.ownerId(),
+//                    captchaDataStore.captchaId(),
+//                    captchaDataStore.captchaEnteredData()
+//                ).response
+//
+//
+//            val totalPackets = (tracksCount + PACKET_SIZE - 1) / PACKET_SIZE
+//
+//            return coroutineScope {
+//
+//                (0 until totalPackets).map { batchIndex ->
+//
+//                    val offset = batchIndex * PACKET_SIZE
+//
+//                    async(dispatchersList.io()) {
+//                        service.getPlaylistTracks(
+//                            accessToken = accountDataStore.token(),
+//                            owner_id = ownerId.toString(),
+//                            album_id = playlistId,
+//                            count = PACKET_SIZE,
+//                            offset = offset,
+//                            captcha_sid = captchaDataStore.captchaId(),
+//                            captcha_key = captchaDataStore.captchaEnteredData(),
+//                        ).response.items
+//                    }
+//                }.awaitAll().flatten()
+            //  }
+        }
+
+        override suspend fun fetchFavoritesPlaylistById(
+            playlistId: String,
+            ownerId: Int,
+        ): PlaylistItem {
+            return service.getFavoritePlaylistById(
                 accountDataStore.token(),
                 ownerId.toString(),
                 playlistId,
@@ -74,7 +101,10 @@ interface PlaylistDetailsCloudDataSource {
             ).response
         }
 
-        override suspend fun fetchSearchPlaylistById(playlistId: String, ownerId: Int): SearchPlaylistItem {
+        override suspend fun fetchSearchPlaylistById(
+            playlistId: String,
+            ownerId: Int,
+        ): SearchPlaylistItem {
             return service.getSearchPlaylistById(
                 accountDataStore.token(),
                 ownerId.toString(),

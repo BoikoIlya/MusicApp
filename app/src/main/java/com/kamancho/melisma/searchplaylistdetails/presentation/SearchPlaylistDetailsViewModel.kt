@@ -41,10 +41,12 @@ class SearchPlaylistDetailsViewModel @Inject constructor(
     private val toUiMapper: SearchPlaylistDetailsResult.Mapper<Unit>,
     private val followPlaylistInteractor: FollowPlaylistInteractor,
     private val playlistsResultUpdateToUiEventMapper: PlaylistsResultUpdateToUiEventMapper,
-    private val playlistDomainToUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val trackDomainToUiMapper: TrackDomain.Mapper<MediaItem>,
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
-    private val managerResource: ManagerResource
+    private val managerResource: ManagerResource,
+    private val toOwnerIdMapper: PlaylistUi.ToOwnerIdMapper,
+    private val toPlaylistIdMapper: PlaylistUi.ToIdMapper,
+    private val toTitleMapper: PlaylistUi.ToTitleMapper
 ): PlaylistDetailsViewModel(
     playerCommunication,
     communication,
@@ -55,20 +57,26 @@ class SearchPlaylistDetailsViewModel @Inject constructor(
     trackChecker
 ){
 
-    init {
-        communication.showPlaylistData(
-            searchPlaylistDetailsInteractor.initialPlaylistData().map(playlistDomainToUiMapper)
-        )
-        update(false)
+
+
+    fun initPlaylistData(playlistUi: PlaylistUi, shouldInit: Boolean){
+        if(!shouldInit) return
+        communication.showPlaylistData(playlistUi)
     }
 
-    override fun update(loading: Boolean) {
+    override fun update(playlist: PlaylistUi,loading: Boolean,shouldUpdate: Boolean) {
+        if(!shouldUpdate) return
         viewModelScope.launch(dispatchersList.io()) {
             communication.showLoading(FavoritesUiState.Loading)
-            searchPlaylistDetailsInteractor.fetch().map(toUiMapper)
+            searchPlaylistDetailsInteractor.fetch(
+                playlist.map(toOwnerIdMapper),
+                playlist.map(toPlaylistIdMapper)
+            ).map(toUiMapper)
             communication.showLoading(FavoritesUiState.DisableLoading)
         }
     }
+
+
 
     fun find(query: String) = viewModelScope.launch(dispatchersList.io()) {
         val result = searchPlaylistDetailsInteractor.find(query)
@@ -79,14 +87,14 @@ class SearchPlaylistDetailsViewModel @Inject constructor(
         }
     }
 
-    fun followPlaylist() = viewModelScope.launch(dispatchersList.io()) {
-        if(searchPlaylistDetailsInteractor.containsCurrentPlaylist()){
+    fun followPlaylist(playlist: PlaylistUi) = viewModelScope.launch(dispatchersList.io()) {
+        if(searchPlaylistDetailsInteractor.containsCurrentPlaylist(playlist.map(toTitleMapper))){
             globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(
                 R.string.playlist_already_followed
             )))
             return@launch
         }
-        followPlaylistInteractor.followPlaylist(searchPlaylistDetailsInteractor.initialPlaylistData().map(playlistDomainToUiMapper))
+        followPlaylistInteractor.followPlaylist(playlist)
             .map(playlistsResultUpdateToUiEventMapper)
     }
 

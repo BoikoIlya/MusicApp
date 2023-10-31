@@ -8,11 +8,13 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.PlaylistMenuDialogBottomSheetBinding
 import com.kamancho.melisma.main.di.App
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.kamancho.melisma.userplaylists.presentation.FavoritesPlaylistsFragment.Companion.playlist_key
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +29,8 @@ class PlaylistsMenuDialogBottomSheetFragment: BottomSheetDialogFragment(R.layout
     lateinit var factory: ViewModelProvider.Factory
 
     private val binding by viewBinding(PlaylistMenuDialogBottomSheetBinding::bind)
+
+    private val args: PlaylistsMenuDialogBottomSheetFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -62,9 +66,12 @@ class PlaylistsMenuDialogBottomSheetFragment: BottomSheetDialogFragment(R.layout
         }
 
         binding.editOption.setOnClickListener {
-            findNavController().navigate(R.id.action_playlistsMenuDialogBottomSheetFragment_to_editPlaylistFragment)
+            val bundle = Bundle()
+            bundle.putParcelable(playlist_key,args.playlistItem)
+            findNavController().navigate(R.id.action_playlistsMenuDialogBottomSheetFragment_to_editPlaylistFragment,bundle)
         }
     }
+
 
     override fun onPause() {
         super.onPause()

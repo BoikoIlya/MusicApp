@@ -70,24 +70,11 @@
         android:textColor="@color/black"
         android:ellipsize="end"
         />
-    <TextView
-        android:layout_marginEnd="10dp"
-        android:id="@+id/readMoreTv"
-        app:layout_constraintTop_toBottomOf="@id/mainTextTv"
-        app:layout_constraintStart_toStartOf="@id/mainTextTv"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/read_more"
-        android:textSize="@dimen/body2"
-        android:textColor="@color/gray"
-        android:textAlignment="center"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/notificationBtn"
-        app:layout_constraintTop_toBottomOf="@id/readMoreTv"
+        app:layout_constraintTop_toBottomOf="@id/mainTextTv"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@color/red"
         android:text="Move"

@@ -1,5 +1,6 @@
 package com.kamancho.melisma.searchhistory.presentation
 
+import android.os.Bundle
 import androidx.navigation.NavController
 import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.SearchHistoryFragmentBinding
@@ -15,13 +16,25 @@ sealed interface SearchHistorySingleState {
         binding: SearchHistoryFragmentBinding
     )
 
-    object NavigateToSearch: SearchHistorySingleState {
+    data class NavigateToSearch(
+        private val query: String,
+        private val historyType: Int
+    ): SearchHistorySingleState {
+
+        companion object{
+             const val search_query_arg_key = "searchQuery"
+             const val search_type_arg_key = "viewPagerIndex"
+        }
+
         override fun apply(
             navController: NavController,
             viewModel: SearchHistoryViewModel,
             binding: SearchHistoryFragmentBinding
         ) {
-            navController.navigate(R.id.action_searchHistoryFragment_to_searchFragment)
+            val bundle = Bundle()
+            bundle.putString(search_query_arg_key,query)
+            bundle.putInt(search_type_arg_key,historyType)
+            navController.navigate(R.id.action_searchHistoryFragment_to_searchFragment,bundle)
         }
     }
 

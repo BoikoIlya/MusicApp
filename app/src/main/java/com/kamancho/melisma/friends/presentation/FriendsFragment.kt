@@ -49,8 +49,11 @@ class FriendsFragment: FavoritesFragment<FriendUi>(R.layout.favorites_fragment) 
             diskCacheStrategy = DiskCacheStrategy.AUTOMATIC,
             clickListener = object : ClickListener<Pair<String,String>>{
                 override fun onClick(data: Pair<String,String>) {
-                    (favoritesViewModel as FriendsViewModel).saveFriendData(data)
-                    findNavController().navigate(R.id.action_friendsFragment_to_friendDetailsFragment)
+                    val bundle = Bundle()
+                    bundle.putString(friend_id_key,data.first)
+                    bundle.putString(friend_name_key,data.second)
+
+                    findNavController().navigate(R.id.action_friendsFragment_to_friendDetailsFragment,bundle)
                 }
             },
             layoutManager = binding.favoritesRcv.layoutManager as LayoutManager
@@ -65,5 +68,10 @@ class FriendsFragment: FavoritesFragment<FriendUi>(R.layout.favorites_fragment) 
 
     override fun search(query: String) {
         (favoritesViewModel as FriendsViewModel).search(query)
+    }
+
+    companion object{
+        private const val friend_id_key = "friendId"
+        private const val friend_name_key = "friendName"
     }
 }

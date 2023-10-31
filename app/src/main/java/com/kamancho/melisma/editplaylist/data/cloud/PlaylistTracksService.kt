@@ -45,12 +45,4 @@ interface PlaylistTracksService {
         @Query("v") apiVersion: String = AppModule.api_version,
     ): SearchPlaylistByIdResponse
 
-    @GET("/method/audio.getCount")
-    suspend fun getTracksCount(
-        @Query("access_token")  accessToken: String,
-        @Query("owner_id") owner_id: String,
-        @Query("captcha_sid") captcha_sid:String,
-        @Query("captcha_key") captcha_key:String,
-        @Query("v")  apiVersion: String = AppModule.api_version
-    ): CountResponse
 }

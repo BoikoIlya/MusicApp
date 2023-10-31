@@ -13,14 +13,15 @@ interface ConnectionChecker {
     suspend fun isDeviceHaveConnection(): Boolean
 
     class Base @Inject constructor(
-        private val context: Context
-    ) : ConnectionChecker{
+        private val context: Context,
+    ) : ConnectionChecker {
 
         override suspend fun isDeviceHaveConnection(): Boolean {
 
-            val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val manager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             return manager.getNetworkCapabilities(manager.activeNetwork)?.let {
-                        it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                         it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
             } ?: false
         }

@@ -31,6 +31,7 @@ import com.kamancho.melisma.editplaylist.presentation.EditPlaylistUpdateMapper
 import com.kamancho.melisma.editplaylist.presentation.TitleStateCommunication
 import com.kamancho.melisma.favorites.data.cache.PlaylistsCacheToDomainMapper
 import com.kamancho.melisma.favoritesplaylistdetails.data.cache.TracksCacheToFollowedPlaylistTracksCacheMapper
+import com.kamancho.melisma.favoritesplaylistdetails.di.FavoritesPlaylistDetailsScope
 import com.kamancho.melisma.main.di.AppModule
 import com.kamancho.melisma.main.di.ViewModelKey
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.HandlePlaylistDataCache
@@ -53,6 +54,10 @@ import retrofit2.Retrofit
  **/
 @Module
 interface PlaylistDataModule {
+
+    @Binds
+    @PlaylistDataScope
+    fun bindPlaylistUiToOwnerIdMapper(obj: PlaylistUi.ToOwnerIdMapper): PlaylistUi.Mapper<Int>
 
     @Binds
     @Reusable

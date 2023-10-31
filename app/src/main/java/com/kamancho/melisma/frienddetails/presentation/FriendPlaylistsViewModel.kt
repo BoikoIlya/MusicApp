@@ -1,5 +1,6 @@
 package com.kamancho.melisma.frienddetails.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,32 +29,32 @@ class FriendPlaylistsViewModel @Inject constructor(
     private val mapper: PlaylistUi.Mapper<PlaylistUi>
 ): FavoritesViewModel<FavoritesUiState, PlaylistUi>,FriendsDataViewModel, ViewModel() {
 
-    init {
-        search("")
-        update(false)
-    }
-
-    override fun update(loading: Boolean) {
+    override fun update(id: String, loading: Boolean,shouldUpdate: Boolean) {
+        if(!shouldUpdate) return
+        search("",id)
         viewModelScope.launch(dispatchersList.io()){
-            handleFriendsUpdate.handle(loading){ !cacheRepository.isFriendHavePlaylists() }
-            search("")
+            handleFriendsUpdate.handle(loading,id){ !cacheRepository.isFriendHavePlaylists(id) }
+            search("",id)
         }
     }
+
+
+
 
 
 
     private val searchJob: Job?=null
 
-   override fun search(query: String){
+   override fun search(query: String,id: String){
         searchJob?.cancel()
 
         viewModelScope.launch(dispatchersList.io()){
-           val result =  cacheRepository.searchPlaylists(query)
+           val result =  cacheRepository.searchPlaylists(query,id)
             handleFriendPlaylistsFromCache.handle(result)
         }
     }
 
-    fun savePlaylistData(item: PlaylistUi)  = interactor.savePlaylistData(item.map(mapper))
+
 
 
 
@@ -76,4 +77,6 @@ class FriendPlaylistsViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<List<PlaylistUi>>,
     ) = communication.collectData(owner,collector)
+
+
 }

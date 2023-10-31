@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.FlowCollector
  **/
 interface FriendsDataViewModel {
 
-    fun search(query: String)
+    //todo
+    fun search(query: String){}
+
+    fun search(query: String,id: String){}
 
     suspend fun collectSearchQuery(
         owner: LifecycleOwner,

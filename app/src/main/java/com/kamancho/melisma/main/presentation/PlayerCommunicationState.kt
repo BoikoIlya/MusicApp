@@ -1,6 +1,9 @@
 package com.kamancho.melisma.main.presentation
 
+import android.util.Log
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.kamancho.melisma.app.core.PlayerControlsCommunication
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
@@ -8,7 +11,7 @@ import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
 /**
  * Created by HP on 18.03.2023.
  **/
-sealed interface PlayerCommunicationState{
+sealed interface PlayerCommunicationState {
 
     fun apply(
         playerControls: PlayerControlsCommunication,
@@ -16,12 +19,13 @@ sealed interface PlayerCommunicationState{
         selectedTrackCommunication: SelectedTrackCommunication,
         controller: MediaControllerWrapper,
         singleUiEventCommunication: GlobalSingleUiEventCommunication,
-        trackDurationCommunication: TrackDurationCommunication
+        trackDurationCommunication: TrackDurationCommunication,
     )
 
     data class SetQueue(
-        private val tracks: List<MediaItem>,
-    ): PlayerCommunicationState{
+        private val tracksForController: List<MediaItem>,
+        private val tracksForQueue: List<MediaItem>
+    ) : PlayerCommunicationState {
 
 
         override fun apply(
@@ -30,20 +34,19 @@ sealed interface PlayerCommunicationState{
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
-            currentQueueCommunication.map(tracks)
-            controller.setMediaItems(tracks)
+            currentQueueCommunication.map(tracksForQueue)
+            controller.setMediaItems(tracksForController)
         }
 
     }
 
 
-
     data class Play(
         private val track: MediaItem,
         private val position: Int,
-    ): PlayerCommunicationState{
+    ) : PlayerCommunicationState {
 
         override fun apply(
             playerControls: PlayerControlsCommunication,
@@ -51,8 +54,9 @@ sealed interface PlayerCommunicationState{
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
+
             selectedTrackCommunication.map(track)
             playerControls.map(PlayerControlsState.Play(track))
             controller.seekToDefaultPosition(position)
@@ -63,28 +67,29 @@ sealed interface PlayerCommunicationState{
     }
 
 
-
-    object Pause: PlayerCommunicationState{
+    object Pause : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.pause()
         }
     }
 
-    object Resume: PlayerCommunicationState{
+
+
+    object Resume : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.prepare()
             controller.playWhenReady = true
@@ -93,14 +98,14 @@ sealed interface PlayerCommunicationState{
     }
 
 
-    object Disabled: PlayerCommunicationState{
+    object Disabled : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.stop()
             controller.clearMediaItems()
@@ -112,46 +117,49 @@ sealed interface PlayerCommunicationState{
     }
 
 
-
-    object Next: PlayerCommunicationState{
+    object Next : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.seekToNextMediaItem()
             controller.playWhenReady = true
+
+            Log.d("tag", "apply: ${controller.mediaItemCount} ")
         }
     }
 
-    object Previous: PlayerCommunicationState{
+    object Previous : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
+
             controller.seekToPreviousMediaItem()
             controller.playWhenReady = true
+
         }
 
     }
 
     data class RepeatMode(
-        private val repeatMode: Int
-    ): PlayerCommunicationState{
+        private val repeatMode: Int,
+    ) : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.repeatMode = this.repeatMode
         }
@@ -160,25 +168,25 @@ sealed interface PlayerCommunicationState{
 
 
     data class SeekToPosition(
-        private val position: Long
-            ) : PlayerCommunicationState{
+        private val position: Long,
+    ) : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.seekTo(position)
         }
     }
 
     data class ShuffleMode(
-        private val mode: Boolean
-        ): PlayerCommunicationState{
+        private val mode: Boolean,
+    ) : PlayerCommunicationState {
 
-        companion object{
+        companion object {
             const val ENABLE_SHUFFLE = true
             const val DISABLE_SHUFFLE = false
         }
@@ -189,16 +197,16 @@ sealed interface PlayerCommunicationState{
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
             controller.shuffleModeEnabled = mode
         }
     }
 
     data class AddMediaItems(
-        private val newPageMediaItems:  List<MediaItem>,
-        private val allQueue: List<MediaItem>
-    ): PlayerCommunicationState{
+        private val newPageMediaItems: List<MediaItem>,
+        private val allQueue: List<MediaItem>,
+    ) : PlayerCommunicationState {
         override fun apply(
             playerControls: PlayerControlsCommunication,
             currentQueueCommunication: CurrentQueueCommunication,
@@ -214,8 +222,8 @@ sealed interface PlayerCommunicationState{
     }
 
     data class Replpace(
-        private val mediaItem: MediaItem
-    ): PlayerCommunicationState{
+        private val mediaItem: MediaItem,
+    ) : PlayerCommunicationState {
 
         override fun apply(
             playerControls: PlayerControlsCommunication,
@@ -223,9 +231,9 @@ sealed interface PlayerCommunicationState{
             selectedTrackCommunication: SelectedTrackCommunication,
             controller: MediaControllerWrapper,
             singleUiEventCommunication: GlobalSingleUiEventCommunication,
-            trackDurationCommunication: TrackDurationCommunication
+            trackDurationCommunication: TrackDurationCommunication,
         ) {
-            controller.replaceMediaItem(controller.currentMediaItemIndex,mediaItem)
+            controller.replaceMediaItem(controller.currentMediaItemIndex, mediaItem)
         }
     }
 
