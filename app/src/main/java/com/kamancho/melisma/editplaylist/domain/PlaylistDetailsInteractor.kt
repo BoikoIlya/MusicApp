@@ -15,13 +15,10 @@ interface PlaylistDetailsInteractor: UpdateInteractor {
     class Base @Inject constructor(
         private val repository: PlaylistDetailsRepository,
         private val handleResponse: HandleResponse,
-        private val transfer: DataTransfer<PlaylistDomain>,
-        private val toOwnerIdAndPlaylistIdMapper: PlaylistDomain.Mapper<Pair<Int,String>>
     ): PlaylistDetailsInteractor {
 
-        override suspend fun updateData(): String = handleResponse.handle({
-            val ownerIdAndPlaylistId = transfer.read()!!.map(toOwnerIdAndPlaylistIdMapper)
-            repository.fetch(ownerIdAndPlaylistId.second, ownerIdAndPlaylistId.first)
+        override suspend fun update(ownerId: Int,playlistId: String): String = handleResponse.handle({
+            repository.fetch(playlistId,ownerId)
             ""
         },{ message, _ ->
             message

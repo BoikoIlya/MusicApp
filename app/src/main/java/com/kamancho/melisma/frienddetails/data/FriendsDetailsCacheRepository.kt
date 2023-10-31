@@ -6,7 +6,6 @@ import com.kamancho.melisma.favorites.data.cache.TracksDao
 import com.kamancho.melisma.frienddetails.data.cache.FriendPlaylistsCacheToUiMapper
 import com.kamancho.melisma.frienddetails.data.cache.FriendsAndPlaylistsRelationDao
 import com.kamancho.melisma.frienddetails.data.cache.FriendsAndTracksRelationsDao
-import com.kamancho.melisma.frienddetails.domain.FriendIdAndNameTransfer
 import com.kamancho.melisma.userplaylists.data.cache.PlaylistDao
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import javax.inject.Inject
@@ -16,16 +15,15 @@ import javax.inject.Inject
  **/
 interface FriendsDetailsCacheRepository {
 
-   suspend fun searchTracks(query: String): List<MediaItem>
+   suspend fun searchTracks(query: String,id: String): List<MediaItem>
 
-   suspend fun isFriendHaveTracks(): Boolean
+   suspend fun isFriendHaveTracks(id: String): Boolean
 
-   suspend fun isFriendHavePlaylists(): Boolean
+   suspend fun isFriendHavePlaylists(id: String): Boolean
 
-    fun searchPlaylists(query: String): List<PlaylistUi>
+    fun searchPlaylists(query: String,id: String): List<PlaylistUi>
 
     class Base @Inject constructor(
-        private val transfer: FriendIdAndNameTransfer,
         private val toMediaItemMapper: ToMediaItemMapper,
         private val dao: TracksDao,
         private val friendsAndTracksRelationsDao: FriendsAndTracksRelationsDao,
@@ -36,26 +34,26 @@ interface FriendsDetailsCacheRepository {
 
 
 
-        override suspend fun searchTracks(query: String): List<MediaItem> {
+        override suspend fun searchTracks(query: String,id: String): List<MediaItem> {
 
             return dao.getTracksOfFriend(
                     query,
-                    transfer.read()!!.first.toInt()
+                    id.toInt()
                 )
                 .map { toMediaItemMapper.map(Pair(it, emptyList())) }
         }
 
-        override suspend fun isFriendHaveTracks(): Boolean {
-            return friendsAndTracksRelationsDao.friendTrackCount(transfer.read()!!.first.toInt())!=0
+        override suspend fun isFriendHaveTracks(id: String): Boolean {
+            return friendsAndTracksRelationsDao.friendTrackCount(id.toInt())!=0
         }
 
-        override suspend fun isFriendHavePlaylists(): Boolean {
-            return friendsAndPlaylistsRelationDao.friendPlaylistCount(transfer.read()!!.first.toInt()) != 0
+        override suspend fun isFriendHavePlaylists(id: String): Boolean {
+            return friendsAndPlaylistsRelationDao.friendPlaylistCount(id.toInt()) != 0
         }
 
 
-        override fun searchPlaylists(query: String): List<PlaylistUi> {
-            return toPlaylistUiMapper.map(playlistsDao.getPlaylistsOfFriend(query, transfer.read()!!.first.toInt()))
+        override fun searchPlaylists(query: String,id: String): List<PlaylistUi> {
+            return toPlaylistUiMapper.map(playlistsDao.getPlaylistsOfFriend(query, id.toInt()))
         }
     }
 }

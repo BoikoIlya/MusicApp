@@ -1,97 +1,59 @@
 package com.kamancho.melisma.search.data
 
 import androidx.media3.common.MediaItem
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.kamancho.melisma.app.core.HandleResponse
+import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.app.core.SearchQueryRepository
+import com.kamancho.melisma.app.vkdto.SearchPlaylistItem
 import com.kamancho.melisma.app.vkdto.SearchPlaylistsCloud
+import com.kamancho.melisma.app.vkdto.TrackItem
 import com.kamancho.melisma.app.vkdto.TracksCloud
 import com.kamancho.melisma.captcha.data.cache.CaptchaDataStore
 import com.kamancho.melisma.main.data.TemporaryTracksCache
 import com.kamancho.melisma.main.data.cache.AccountDataStore
 import com.kamancho.melisma.search.data.cloud.PlaylistsCloudToPlaylistUiMapper
+import com.kamancho.melisma.search.data.cloud.SearchCloudDataSource
 import com.kamancho.melisma.search.data.cloud.SearchPlaylistsService
 import com.kamancho.melisma.search.data.cloud.SearchTracksService
 import com.kamancho.melisma.search.data.cloud.TracksCloudToMediaItemsMapper
 import com.kamancho.melisma.searchhistory.data.cache.SearchQueryTransfer
+import com.kamancho.melisma.trending.domain.TrackDomain
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
  * Created by HP on 29.04.2023.
  **/
-interface SearchRepository<T:Any>: SearchQueryRepository {
+interface SearchRepository<T> : SearchQueryRepository {
 
-    suspend fun search(searchTerm: String): Flow<PagingData<T>>
+    suspend fun search(searchTerm: String): List<T>
 
-    abstract class Abstract<N,T:Any> (
-        transfer: SearchQueryTransfer
-    ): SearchRepository<T>, SearchQueryRepository.Abstract(transfer) {
+    abstract class Abstract<T>(
+        transfer: SearchQueryTransfer,
+        private val pagingSource: PagingSource<T>,
+        private val cloud: SearchCloudDataSource<T>,
+    ) : SearchRepository<T>, SearchQueryRepository.Abstract(transfer) {
 
-        companion object{
-            const val page_size = 20
-        }
-        override suspend fun search(searchTerm: String): Flow<PagingData<T>> {
-            return Pager(
-                config = PagingConfig(
-                    pageSize = page_size,
-                    enablePlaceholders = false,
-                    prefetchDistance = 1,
-                    initialLoadSize = page_size
-                ),
-                pagingSourceFactory = { createPagingSource(searchTerm) }
-            ).flow
-        }
+        override suspend fun search(searchTerm: String): List<T> =
+            pagingSource.newPage { offset, pageSize ->
+                return@newPage cloud.fetch(searchTerm, offset, pageSize)
+            }
 
-        protected abstract fun createPagingSource(query: String): SearchPagingSource<N,T>
 
     }
 
     class BaseTracks @Inject constructor(
-        private val service: SearchTracksService,
-        private val mapper: TracksCloudToMediaItemsMapper,
-        private val tokenStore: AccountDataStore,
-        private val cachedTracks: TemporaryTracksCache,
-        private val handleResponse: HandleResponse,
-        private val captchaDataStore: CaptchaDataStore,
-        transfer: SearchQueryTransfer
-    ): SearchRepository<MediaItem>,
-        SearchRepository.Abstract<TracksCloud, MediaItem>(transfer){
-
-        override fun createPagingSource(query: String): SearchPagingSource<TracksCloud, MediaItem> =
-            MediaItemsSearchPagingSource(
-                service,
-                query,
-                mapper,
-                tokenStore,
-                handleResponse,
-                captchaDataStore,
-                cachedTracks
-            )
-    }
+        cloudDataSource: SearchCloudDataSource<TrackItem>,
+        pagingSource: PagingSource<TrackItem>,
+        transfer: SearchQueryTransfer,
+    ) : SearchRepository<TrackItem>,
+        SearchRepository.Abstract<TrackItem>(transfer, pagingSource, cloudDataSource)
 
     class BasePlaylists @Inject constructor(
-        private val service: SearchPlaylistsService,
-        private val mapper: PlaylistsCloudToPlaylistUiMapper,
-        private val tokenStore: AccountDataStore,
-        private val handleResponse: HandleResponse,
-        private val captchaDataStore: CaptchaDataStore,
-        transfer: SearchQueryTransfer
-    ): SearchRepository<PlaylistUi>,
-        SearchRepository.Abstract<SearchPlaylistsCloud, PlaylistUi>(transfer){
-
-        override fun createPagingSource(query: String): SearchPagingSource<SearchPlaylistsCloud, PlaylistUi> =
-            PlaylistsSearchPagingSource(
-                service,
-                query,
-                mapper,
-                tokenStore,
-                handleResponse,
-                captchaDataStore
-            )
-    }
+        cloudDataSource: SearchCloudDataSource<SearchPlaylistItem>,
+        pagingSource: PagingSource<SearchPlaylistItem>,
+        transfer: SearchQueryTransfer,
+    ) : SearchRepository<SearchPlaylistItem>,
+        SearchRepository.Abstract<SearchPlaylistItem>(transfer, pagingSource, cloudDataSource)
 
 }

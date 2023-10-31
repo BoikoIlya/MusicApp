@@ -12,5 +12,5 @@ data class FriendDomain(
    private val photoUrl: String
 ){
 
-    fun map() = FriendUi(id = id, firstAndSecondName = String.format("$firstName $secondName") , photoUrl = photoUrl)
+    fun map() = FriendUi(id = id, firstAndSecondName = String.format("$secondName $firstName") , photoUrl = photoUrl)
 }

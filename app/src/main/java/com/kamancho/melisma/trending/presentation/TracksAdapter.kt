@@ -2,7 +2,6 @@ package com.kamancho.melisma.trending.presentation
 
 import android.content.Context
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,7 +107,6 @@ open class TracksAdapter(
         val old = selectedTrackPosition
 
         val position = diff.currentList.indexOfFirst { it.mediaId == mediaItem.mediaId }
-        Log.d("tag", "newPosition: $position")
         if (position!=-1 ){
             selectedTrackPosition = position
             notifyItemChanged(position)
@@ -155,7 +153,7 @@ open class TracksViewHolder(
                 extras?.getString(small_img_url)?:"",
                 trackImg, cacheStrategy = cacheStrategy)
             songNameTv.text = title?.take(50)
-            authorTv.text =  "%s%s".format(context.getString(R.string.divider_dot), artist?.take(50))
+            authorTv.text = context.getString(R.string.divider_dot) + artist?.take(50)
             trackDurationTv.text =extras?.getString(track_duration_formatted)?:""
             addBtn.visibility = addBtnVisibility
             downloadedIcon.isVisible =extras?.getBoolean(is_cached)?:false
@@ -192,7 +190,7 @@ class TracksDiffUtilItemCallback: DiffUtil.ItemCallback<MediaItem>(){
                 && newItem.mediaMetadata.artworkUri==oldItem.mediaMetadata.artworkUri
                 && newItem.mediaMetadata.albumTitle==oldItem.mediaMetadata.albumTitle
                 && newItem.mediaMetadata.isPlayable==oldItem.mediaMetadata.isPlayable
-                //&& newItem.mediaMetadata.extras?.getString(track_id)==oldItem.mediaMetadata.extras?.getString(track_id)
+                && newItem.mediaMetadata.extras?.getString(track_id)==oldItem.mediaMetadata.extras?.getString(track_id)
                 && newItem.mediaMetadata.extras?.getBoolean(is_cached)==oldItem.mediaMetadata.extras?.getBoolean(is_cached)
     }
 

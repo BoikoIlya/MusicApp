@@ -40,6 +40,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/body1"
         android:textStyle="bold"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/notificationImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/notificationImg"
@@ -58,16 +59,18 @@
     <TextView
         android:id="@+id/mainTextTv"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintTop_toBottomOf="@id/dateTv"
         app:layout_constraintStart_toStartOf="@id/dateTv"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Main features:\n - New disign\n - Dark mode\n - New playlists"
+        android:text="Main features:\n - New disign\n - Dark mode\n - New playlists\n - New playlists\n - New playlists\n - New playlists"
         android:textSize="@dimen/body2"
         android:textColor="@color/black"
         android:ellipsize="end"
         />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/notificationBtn"

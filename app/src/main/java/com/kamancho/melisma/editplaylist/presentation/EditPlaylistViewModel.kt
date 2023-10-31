@@ -37,10 +37,11 @@ class EditPlaylistViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val playlistSaveBtnUiStateCommunication: PlaylistSaveBtnUiStateCommunication,
     private val playlistUiStateCommunication: PlaylistDataUiStateCommunication,
-    transfer: DataTransfer<PlaylistDomain>,
-    toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
+//    transfer: DataTransfer<PlaylistDomain>,
+//    toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val titleStateCommunication: TitleStateCommunication,
     private val toIdMapper: PlaylistUi.Mapper<String>,
+    private val toOwnerIdMapper: PlaylistUi.Mapper<Int>,
     private val playlistTracksInteractor: PlaylistDetailsInteractor,
     private val interactor: EditPlaylistInteractor,
     private val editPlaylistUpdateMapper: EditPlaylistUpdateMapper,
@@ -56,10 +57,15 @@ class EditPlaylistViewModel @Inject constructor(
     dispatchersList,
     selectedTracksInteractor
 ){
-    private var currentPlaylist: PlaylistUi = transfer.read()!!.map(toPlaylistUiMapper)
+    private lateinit var currentPlaylist: PlaylistUi
     private val initialTrackList = emptyList<SelectedTrackUi>().toMutableList()
 
-    init {
+
+
+    fun setupCurrentPlaylist(playlist: PlaylistUi, shouldSetup: Boolean){
+        if(!shouldSetup) return
+        this.currentPlaylist = playlist
+
         handlePlaylistDataCache.init(currentPlaylist)
         playlistSaveBtnUiStateCommunication.map(PlaylistDataSaveBtnUiState.Hide)
         updateData()
@@ -69,7 +75,7 @@ class EditPlaylistViewModel @Inject constructor(
 
     fun updateData() = viewModelScope.launch(dispatchersList.io()) {
         playlistUiStateCommunication.map(PlaylistDataUiState.Loading)
-        editPlaylistUpdateMapper.map(playlistTracksInteractor.updateData())
+        editPlaylistUpdateMapper.map(playlistTracksInteractor.update(currentPlaylist.map(toOwnerIdMapper),currentPlaylist.map(toIdMapper)))
         fetchTracks()
     }
 

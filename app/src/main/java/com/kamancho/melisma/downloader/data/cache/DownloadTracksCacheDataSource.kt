@@ -2,6 +2,7 @@ package com.kamancho.melisma.downloader.data.cache
 
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import kotlinx.coroutines.flow.first
 import java.io.File
 import javax.inject.Inject
@@ -13,7 +14,7 @@ interface DownloadTracksCacheDataSource {
 
     suspend fun createFile(name: String): Uri
 
-    suspend fun readListOfFileNamesAndPaths():  List<Pair<String,String>>
+    suspend fun readListOfFileNamesAndPaths(): List<Pair<String, String>>
 
     suspend fun deleteTrack(name: String)
 
@@ -21,11 +22,12 @@ interface DownloadTracksCacheDataSource {
 
     suspend fun downloadsSize(): Long
 
-    class Base @Inject constructor(
-        private val folderPathStore: DownloadFolderPathStore
-    ): DownloadTracksCacheDataSource{
 
-        companion object{
+    class Base @Inject constructor(
+        private val folderPathStore: DownloadFolderPathStore,
+    ) : DownloadTracksCacheDataSource {
+
+        companion object {
             const val defaultDownloadsFolderName = "MELISMA"
             const val fileExtension = ".mp3"
         }
@@ -42,11 +44,15 @@ interface DownloadTracksCacheDataSource {
 
             if (!folder.exists()) folder.mkdirs()
 
-            val mediaFile = File(folder, name + fileExtension)
+            val pattern = "[/:*?\"<>|]".toRegex()
+            val nameWithRemovedWrongCharacters = name
+                .replace(pattern, "_")
+
+            val mediaFile = File(folder, nameWithRemovedWrongCharacters + fileExtension)
             return Uri.fromFile(mediaFile)
         }
 
-        override suspend fun readListOfFileNamesAndPaths(): List<Pair<String,String>> {
+        override suspend fun readListOfFileNamesAndPaths(): List<Pair<String, String>> {
             val savedPath = folderPathStore.read().first()
             val folder =
                 if (savedPath.isEmpty())
@@ -56,7 +62,7 @@ interface DownloadTracksCacheDataSource {
                     )
                 else File(savedPath)
 
-              return  folder.listFiles()?.map { Pair(it.name,it.path) } ?: emptyList()
+            return folder.listFiles()?.map { Pair(it.name, it.path) } ?: emptyList()
         }
 
         override suspend fun deleteTrack(name: String) {
@@ -69,8 +75,11 @@ interface DownloadTracksCacheDataSource {
                     )
                 else File(savedPath)
 
-           val itemToDelete = folder.listFiles()?.find{ it.name.contains(name) }
-            itemToDelete?.delete()?: throw NoSuchElementException()
+            val pattern = "[/:*?\"<>|]".toRegex()
+            val nameWithRemovedWrongCharacters = name
+                .replace(pattern, "_")
+            val itemToDelete = folder.listFiles()?.find { it.name.contains(nameWithRemovedWrongCharacters) }
+            itemToDelete?.delete() ?: throw NoSuchElementException()
         }
 
         override suspend fun clearAllTracks() {
@@ -96,9 +105,9 @@ interface DownloadTracksCacheDataSource {
                     )
                 else File(savedPath)
 
-            var totalSizeInBytes:Long = 0
+            var totalSizeInBytes: Long = 0
             folder.listFiles()?.forEach {
-                totalSizeInBytes+=it.length()
+                totalSizeInBytes += it.length()
             }
             return totalSizeInBytes
         }

@@ -2,9 +2,11 @@ package com.kamancho.melisma.searchplaylistdetails.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,6 +25,8 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
     private lateinit var component: SearchPlaylistDetailsComponent
 
+    private val args: SearchPlaylistDetailsFragmentArgs by navArgs()
+
     override fun onAttach(context: Context) {
         component = (context.applicationContext as App).appComponent.playlistDataComponent().build()
             .searchPlaylistDetailsComponent().build()
@@ -31,7 +35,14 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
         super.onAttach(context)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (favoritesViewModel as SearchPlaylistDetailsViewModel)
+            .initPlaylistData(args.playlistItem,savedInstanceState==null)
+
+        (favoritesViewModel as SearchPlaylistDetailsViewModel)
+            .update(args.playlistItem,false,savedInstanceState==null)
+
         binding.mainMenuBtn.setImageResource(R.drawable.plus)
         binding.mainMenuBtn.visibility = View.VISIBLE
 
@@ -56,7 +67,7 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
 
         binding.mainMenuBtn.setOnClickListener {
-            (favoritesViewModel as SearchPlaylistDetailsViewModel).followPlaylist()
+            (favoritesViewModel as SearchPlaylistDetailsViewModel).followPlaylist(args.playlistItem)
         }
 
         super.onViewCreated(view, savedInstanceState)

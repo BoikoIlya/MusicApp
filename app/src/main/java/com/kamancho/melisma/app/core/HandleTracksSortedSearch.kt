@@ -2,7 +2,6 @@ package com.kamancho.melisma.app.core
 
 import androidx.media3.common.MediaItem
 import com.kamancho.melisma.favorites.data.SortingState
-import com.kamancho.melisma.favorites.presentation.FavoritesTracksViewModel
 import com.kamancho.melisma.favorites.presentation.HandleListFromCache
 import com.kamancho.melisma.favorites.presentation.HandleFavoritesTracksFromCache
 import kotlinx.coroutines.CoroutineScope
@@ -20,13 +19,13 @@ interface HandleTracksSortedSearch {
         sortingState: SortingState,
         scope: CoroutineScope,
         query: String,
-        playlistId: String,
+        playlistId: String
     )
 
     fun handle(
         scope: CoroutineScope,
         query: String,
-        playlistId: String,
+        playlistId: String
     )
 
     abstract class Abstract: HandleTracksSortedSearch {
@@ -37,7 +36,7 @@ interface HandleTracksSortedSearch {
             sortingState: SortingState,
             scope: CoroutineScope,
             query: String,
-            playlistId: String,
+            playlistId: String
         ) {
             this.sortState = sortingState
             fetch(scope, sortingState,query,playlistId)
@@ -46,14 +45,14 @@ interface HandleTracksSortedSearch {
         override fun handle(
             scope: CoroutineScope,
             query: String,
-            playlistId: String,
+            playlistId: String
         ) = fetch(scope,sortState,query,playlistId)
 
        protected abstract fun fetch(
            scope: CoroutineScope,
            sortingState: SortingState,
            query: String,
-           playlistId: String,
+           playlistId: String
        )
     }
 
@@ -68,7 +67,7 @@ interface HandleTracksSortedSearch {
             scope: CoroutineScope,
             sortingState: SortingState,
             query: String,
-            playlistId: String,
+            playlistId: String
         ) {
             fetching?.cancel()
             fetching = scope.launch(dispatchersList.io()) {

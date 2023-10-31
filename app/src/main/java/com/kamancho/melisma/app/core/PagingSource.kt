@@ -1,92 +1,65 @@
 package com.kamancho.melisma.app.core
 
-import android.util.Log
-import com.kamancho.melisma.favorites.data.cache.TrackCache
+import com.kamancho.melisma.app.vkdto.SearchPlaylistItem
+import com.kamancho.melisma.app.vkdto.TrackItem
 import com.kamancho.melisma.trending.domain.TrackDomain
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
- * Created by HP on 23.09.2023.
+ * Created by Ilya Boiko @camancho
+on 25.10.2023.
  **/
+
 interface PagingSource<T> {
 
-    suspend fun newPageFlow(
-        block: suspend (Int,Int)->Flow<List<T>>
-    ): Flow<List<T>>
 
     suspend fun newPage(
-        block: suspend (Int,Int)->List<T>
+        cloud: suspend (Int, Int) -> List<T>,
     ): List<T>
 
-    fun resetOffset()
+    abstract class Abstract<T>(
+        private val pageSize: Int,
+    ) : PagingSource<T> {
 
-   abstract class Abstract<T>(
-       private val pageSize:Int
-   ) : PagingSource<T>{
-
-        private var offset = 0
+        protected var offset = 0
         private val totalList = emptyList<T>().toMutableList()
-        private var isDbTrigger: Boolean = false
-        private var flowTriggerCount:Int =0
-
-        override suspend fun newPageFlow(block: suspend (Int, Int) -> Flow<List<T>>): Flow<List<T>> {
-            flowTriggerCount = 0
+        private var endOfData = false
 
 
-           return block.invoke(this.pageSize*this.offset,this.pageSize)
-                .map {
+        override suspend fun newPage(cloud: suspend (Int, Int) -> List<T>): List<T> {
+            if (endOfData) return totalList
 
-                    isDbTrigger = flowTriggerCount>=1
-                    flowTriggerCount++
-                    Log.d("tag", "newPageFlow: ${this.pageSize*this.offset} $pageSize $isDbTrigger")
+            val newPage = cloud.invoke(this.pageSize * this.offset, this.pageSize)
+            if (newPage.isEmpty()) {
+                endOfData = true
+                return totalList
+            }
 
-                   val result =
-                       if(isDbTrigger){
-                            totalList.clear()
-                            block.invoke(0,this.offset*pageSize).first()
-                       }
-                        else it
+            totalList.addAll(newPage)
 
-                    totalList.addAll(result)
+            val newTotalList = emptyList<T>().toMutableList()
+            newTotalList.addAll(totalList)
 
-                    val newTotalList = emptyList<T>().toMutableList()
-                    newTotalList.addAll(totalList)
-                    this.offset++
-                    newTotalList
 
-                }
-
+            this.offset++
+            return newTotalList
         }
 
-       override suspend fun newPage(block: suspend (Int, Int) -> List<T>): List<T> {
-
-           val result = block.invoke(this.pageSize*this.offset,this.pageSize)
-
-           totalList.addAll(result)
-
-           val newTotalList = emptyList<T>().toMutableList()
-           newTotalList.addAll(totalList)
-
-           this.offset++
-
-          return newTotalList
-       }
-
-       override fun resetOffset() {
-           offset = 0
-           totalList.clear()
-       }
 
     }
 
-    class MediaItemsPaging @Inject constructor():
-        Abstract<TrackCache>(30),
-        PagingSource<TrackCache>
+    class TracksPagingSource @Inject constructor() : Abstract<TrackItem>(pageSize),
+        PagingSource<TrackItem> {
+        companion object {
+            const val pageSize = 20
+        }
+    }
 
-    class TrackDomainPaging @Inject constructor():
-        Abstract<TrackDomain>(100),
-        PagingSource<TrackDomain>
+    class PlaylistsPagingSource @Inject constructor() : Abstract<SearchPlaylistItem>(pageSize),
+        PagingSource<SearchPlaylistItem> {
+        companion object {
+            const val pageSize = 20
+        }
+    }
+
 }

@@ -61,7 +61,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun setMediaItem(mediaItem: MediaItem) {
-             TODO("Not yet implemented")
+             controller?.setMediaItem(mediaItem)
          }
 
          override fun setMediaItem(mediaItem: MediaItem, startPositionMs: Long) {
@@ -183,7 +183,7 @@ interface MediaControllerWrapper: Player {
          }
 
          override fun seekToDefaultPosition() {
-             controller?.seekToDefaultPosition()
+                 controller?.seekToDefaultPosition()
          }
 
          override fun seekToDefaultPosition(mediaItemIndex: Int) {
@@ -356,7 +356,7 @@ interface MediaControllerWrapper: Player {
 
 
          override fun getMediaItemCount(): Int {
-             TODO("Not yet implemented")
+             return controller!!.mediaItemCount
          }
 
          override fun getMediaItemAt(index: Int): MediaItem {
@@ -532,5 +532,7 @@ interface MediaControllerWrapper: Player {
          override fun setDeviceMuted(muted: Boolean, flags: Int) {
              TODO("Not yet implemented")
          }
+
+
      }
  }

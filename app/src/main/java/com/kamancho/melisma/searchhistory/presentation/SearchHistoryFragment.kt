@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,6 +19,7 @@ import com.kamancho.melisma.databinding.SearchHistoryFragmentBinding
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.searchhistory.di.SearchHistoryComponent
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState.NavigateToSearch.Companion.search_type_arg_key
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -66,6 +68,17 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
             SearchHistoryListFragment.BaseSearchHistoryTracksListFragment(),
             SearchHistoryListFragment.BaseSearchHistoryPlaylistsListFragment()
         )
+    }
+
+    companion object{
+        const val search_request_key = "search_request_key"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener(search_request_key) { key, bundle ->
+          binding.searchHistoryViewPager.setCurrentItem(bundle.getInt(search_type_arg_key),false)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,7 +135,6 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
 
     override fun onStart() {
         super.onStart()
-        viewModel.readPageIndexState().apply(binding.searchHistoryViewPager)
         binding.searchHistoryEdt.requestFocus()
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.searchHistoryEdt, InputMethodManager.SHOW_IMPLICIT)

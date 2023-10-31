@@ -2,6 +2,7 @@ package com.kamancho.melisma.app.core
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.kamancho.melisma.downloader.data.cache.DownloadTracksCacheDataSource.Base.Companion.fileExtension
@@ -14,7 +15,7 @@ import javax.inject.Inject
  * Created by HP on 21.03.2023.
  **/
 
-interface ToMediaItemMapper: Mapper<Pair<TrackCache,List<Pair<String,String>>>, MediaItem> {
+interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>>, MediaItem> {
 
 
     class Base @Inject constructor() : ToMediaItemMapper {
@@ -41,9 +42,17 @@ interface ToMediaItemMapper: Mapper<Pair<TrackCache,List<Pair<String,String>>>, 
             extraData.putInt(owner_id, data.first.ownerId)
             extraData.putFloat(track_duration_in_millis, data.first.durationInMillis)
 
-            val downloadedFilepath = data.second.find {
-                it.first == String.format("${data.first.name} - ${data.first.artistName}$fileExtension")
-            }
+
+            val pattern = "[/:*?\"<>|]".toRegex()
+
+            val formatString = "%s - %s%s"
+            val formattedFilename = String.format(formatString, data.first.name, data.first.artistName, fileExtension)
+                .replace(pattern, "_")
+
+            val downloadedFilepath = data.second.find { it.first == formattedFilename }
+
+
+
 
             extraData.putBoolean(is_cached, downloadedFilepath != null)
 
@@ -63,6 +72,7 @@ interface ToMediaItemMapper: Mapper<Pair<TrackCache,List<Pair<String,String>>>, 
                 )
                 .setTag(UUID.randomUUID()) //random string to make hashcode different
                 .build()
+
         }
     }
 }

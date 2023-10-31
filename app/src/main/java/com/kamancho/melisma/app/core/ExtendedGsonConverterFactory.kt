@@ -75,6 +75,7 @@ class ExtendedGsonConverterFactory private constructor(private val gson: Gson) :
                     val error = json.getAsJsonObject(error_field)
 
                     val errorCode = error.get(error_code_field).toString().toInt()
+                    Log.d("tag", "convert: $errorCode ")
                     throw when(errorCode){
                         un_authorized_code ->UnAuthorizedException()
                         captcha_code -> CaptchaNeededException(

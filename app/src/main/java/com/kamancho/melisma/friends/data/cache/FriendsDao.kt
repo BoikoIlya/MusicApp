@@ -21,7 +21,8 @@ interface FriendsDao {
     suspend fun insertFriendsList(list: List<FriendCache>)
 
     @Query("SELECT * FROM friends_table " +
-            "WHERE (firstName LIKE '%' || :query || '%' OR secondName LIKE '%' || :query || '%')")
+            "WHERE (firstName LIKE '%' || :query || '%' OR secondName LIKE '%' || :query || '%') " +
+            "ORDER BY secondName")
      fun search(query: String): Flow<List<FriendCache>>
 
      @Query("DELETE FROM friends_table")

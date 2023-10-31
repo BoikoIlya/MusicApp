@@ -3,7 +3,15 @@ package com.kamancho.melisma.notifications.presentation
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import com.google.common.io.Files.append
 import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.NotificationItemBinding
 
@@ -32,7 +40,7 @@ interface NotificationUi{
             notificationBtn.visibility = btnVisibility
             dateTv.visibility = dateVisibility
             titleTv.text = titleText
-            mainTextTv.text = mainText
+            mainTextTv.setText(mainText, TextView.BufferType.SPANNABLE)
         }
 
         override fun map(): String = id
@@ -56,13 +64,8 @@ interface NotificationUi{
         override fun apply(binding: NotificationItemBinding, context: Context) {
             super.apply(binding,context)
             binding.dateTv.text = date
-            binding.mainTextTv.maxLines = 5
 
-            binding.mainTextTv.setOnClickListener {
-                binding.mainTextTv.maxLines =
-                    if(binding.mainTextTv.maxLines==5) Int.MAX_VALUE
-                    else 5
-            }
+
         }
     }
 

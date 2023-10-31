@@ -38,7 +38,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun handleUrl(url: String) = viewModelScope.launch(dispatchersList.io()) {
-        if(url.contains(access_token) && url.contains(user_id)) {
+        if(url.contains(access_token) && url.contains(user_id) && !url.contains(auth_redirect)) {
             interactor.saveAccountData(url)
             activityNavigationCommunication.map(ActivityNavigationState.Empty)
             singleAuthCommunication.map(SingleAuthState.LaunchMainActivity)
@@ -49,6 +49,7 @@ class AuthViewModel @Inject constructor(
     companion object{
          const val access_token: String = "access_token"
          const val user_id: String = "user_id"
+         const val auth_redirect: String = "auth_redirect"
     }
 
 

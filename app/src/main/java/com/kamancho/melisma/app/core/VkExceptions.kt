@@ -1,5 +1,6 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import com.kamancho.melisma.R
 import java.lang.Exception
 
@@ -14,6 +15,7 @@ interface VkException {
     class Base(private val code: Int) : Exception(), VkException {
 
         override suspend fun map(): Int {
+            Log.d("tag", "map: $code")
             return when (code) {
                 500 -> R.string.the_action_is_prohibited
                 300 -> R.string.the_album_is_full
@@ -22,6 +24,7 @@ interface VkException {
                 200 -> R.string.access_to_album_is_denied
                 150 -> R.string.wrong_timestamp
                 113 -> R.string.wrong_user_id
+                104-> R.string.playlist_not_found
                 101 -> R.string.wrong_app_id
                 100 -> R.string.wrong_paramenter
                 30 -> R.string.private_profile

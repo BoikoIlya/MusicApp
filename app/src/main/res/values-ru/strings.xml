@@ -6,7 +6,7 @@
     <string name="no_connection_message">Нет интернет подключения</string>
     <string name="service_is_unavailable">Сервис недоступен</string>
     <string name="no_element">Треки не найдены</string>
-    <string name="recommendations">Рекомендации</string>
+    <string name="top_200_recommendations">Топ 200 Рекомендаций</string>
     <string name="bad_gatawey_message">Плохой шлюз</string>
     <string name="server_error_message">Ошибка сервера, попоробуйте позже</string>
     <string name="too_many_requests">Слишком много запросов</string>
@@ -55,7 +55,7 @@
     <string name="results">Результатаы</string>
     <string name="shuffle">Перемешать</string>
     <string name="tracks">&#160;треков</string>
-    <string name="phone_or_email">Телефон или адресс электронной почты</string>
+    <string name="phone_or_email">Телефон или адрес электронной почты</string>
     <string name="password">Пароль</string>
     <string name="login">Войти</string>
     <string name="fill_all_fields">Заполните все поля</string>
@@ -71,7 +71,7 @@
     <string name="warning_title">Предупреждение!</string>
     <string name="ok">OK</string>
     <string name="player">Плеер</string>
-    <string name="login_with_vk">Войти с помощью VK</string>
+    <string name="login_with_vk">Используте ВКонтаке аккаунт</string>
     <string name="start_time">00:00</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="edit_playlist">Изменить плейлист</string>
@@ -181,4 +181,6 @@
     <string name="artworks_are_taken_from_freepik_website">Картинки взяты с стайта Freepik</string>
     <string name="icons_are_taken_from_flaticon_website">Иконки взяты с стайта Flaticon</string>
     <string name="something_went_wrong_try_later">Что то пошло не так, попробуйте позже</string>
+    <string name="use_alternative_authorization"><u>Aльтернативнaя авторизация</u></string>
+    <string name="playlist_not_found">Плейлист не найден</string>
 </resources>

@@ -10,7 +10,6 @@ import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.creteplaylist.presentation.SelectedTracksCommunication
 import com.kamancho.melisma.favorites.data.SortingState
-import com.kamancho.melisma.favorites.presentation.FavoritesTracksViewModel
 import com.kamancho.melisma.favorites.presentation.FavoritesUiState
 import com.kamancho.melisma.main.di.AppModule.Companion.mainPlaylistId
 import kotlinx.coroutines.Job
@@ -48,12 +47,11 @@ class AddToPlaylistViewModel @Inject constructor(
 
     fun fetchData(sortingState: SortingState = SortingState.ByTime(query)) = viewModelScope.launch(dispatchersList.io()) {
             this@AddToPlaylistViewModel.sortingState = sortingState
-            val result = interactor.map(sortingState.copyObj(query), mainPlaylistId.toString())
+          val result = interactor.map(sortingState.copyObj(query), mainPlaylistId.toString())
                 handleCachedTracksSelected.handle(result)
 
     }
 
-    fun resetOffset() = interactor.resetOffset()
 
     fun handleItemClick(item: SelectedTrackUi) = viewModelScope.launch(dispatchersList.io()) {
         selectedTracksCommunication.map( interactor.handleItem(item))
@@ -62,7 +60,6 @@ class AddToPlaylistViewModel @Inject constructor(
 
     override fun update(loading: Boolean) {
         viewModelScope.launch(dispatchersList.io()) {
-            interactor.resetOffset()
             handlerFavoritesUiUpdate.handle(loading) { interactor.isDbEmpty() }
             fetchData()
         }

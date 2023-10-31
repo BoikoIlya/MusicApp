@@ -13,26 +13,22 @@ import javax.inject.Inject
  **/
 interface FriendDetailsPlaylistsInteractor: UpdateInteractor {
 
-    fun savePlaylistData(item: PlaylistUi)
 
      class Base @Inject constructor(
          private val repository: BaseFriendsDetailsPlaylistsRepository,
          private val handleResponse: HandleResponse,
-         private val transfer: FriendIdAndNameTransfer,
-         private val playlistTransfer: DataTransfer<PlaylistDomain>,
          private val mapper: PlaylistUi.Mapper<PlaylistDomain>
     ): FriendDetailsPlaylistsInteractor{
 
-         override fun savePlaylistData(item: PlaylistUi) {
-             playlistTransfer.save(item.map(mapper))
-         }
 
-         override suspend fun updateData(): String = handleResponse.handle({
-            repository.update(transfer.read()!!.first)
-            ""
-        },{message,_->
-            message
-        })
+
+         override suspend fun update(id: String): String = handleResponse.handle({
+             repository.update(id)
+             ""
+         },{message,_->
+             message
+         })
+
 
     }
 

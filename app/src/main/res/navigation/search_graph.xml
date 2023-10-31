@@ -23,9 +23,19 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+        <argument
+            android:name="viewPagerIndex"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/searchPlaylistDetailsFragment"
         android:name="com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
-        android:label="SearchPlaylistDetailsFragment" />
+        android:label="SearchPlaylistDetailsFragment" >
+        <argument
+            android:name="playlistItem"
+            app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
+    </fragment>
 </navigation>

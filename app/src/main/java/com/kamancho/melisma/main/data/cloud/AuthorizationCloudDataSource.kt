@@ -69,8 +69,8 @@ interface AuthorizationCloudDataSource {
                         if(errorCode!=null) VkException.Base(errorCode)
                         else SomethingWentWrongTryLater()
                     }
-                }
 
+                }
             }
         }
     }

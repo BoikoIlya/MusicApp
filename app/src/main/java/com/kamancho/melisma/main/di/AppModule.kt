@@ -2,9 +2,12 @@ package com.kamancho.melisma.main.di
 
 
 import android.app.DownloadManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -17,8 +20,12 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
 import androidx.room.OnConflictStrategy
 import androidx.room.Room
@@ -67,7 +74,6 @@ import com.kamancho.melisma.player.presentation.PlayerService
 import com.kamancho.melisma.player.presentation.PlayingTrackIdCommunication
 import com.kamancho.melisma.player.presentation.TrackPlaybackPositionCommunication
 import com.kamancho.melisma.favoritesplaylistdetails.data.cache.PlaylistIdTransfer
-import com.kamancho.melisma.frienddetails.domain.FriendIdAndNameTransfer
 import com.kamancho.melisma.frienddetails.presentation.SearchQueryFriendCommunication
 import com.kamancho.melisma.notifications.data.NotificationIdsRepository
 import com.kamancho.melisma.notifications.data.NotificationsRepository
@@ -92,10 +98,13 @@ import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
 import com.kamancho.melisma.userplaylists.data.cache.PlaylistDao
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.errorprone.annotations.Keep
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kamancho.melisma.BuildConfig
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
+import com.kamancho.melisma.player.di.PlayerServiceScope
+import com.kamancho.melisma.player.presentation.MediaSessionCallBack
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -197,7 +206,7 @@ class AppModule {
         return HttpLoggingInterceptor()
             .setLevel(
                 if(BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BASIC
+                    HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.NONE
             )
     }
@@ -327,7 +336,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper {
+    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
         return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
     }
 
@@ -350,9 +359,11 @@ class AppModule {
     }
 
 
+
+
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): FirebaseFirestore {
+    fun provideFirebaseFirestore(): FirebaseFirestore{
         return FirebaseFirestore.getInstance()
     }
 
@@ -367,6 +378,8 @@ class AppModule {
     fun provideDownloadManager(context: Context): DownloadManager {
         return context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     }
+
+
 }
 
 @Module
@@ -475,14 +488,7 @@ interface AppBindModule{
     @Binds
     fun providesSearchQueryCommunication(obj: SearchQueryCommunication.Base): SearchQueryCommunication
 
-    @Singleton
-    @Binds
-    fun providesFriendIdAndNameTransfer(obj: FriendIdAndNameTransfer.Base): FriendIdAndNameTransfer
 
-
-    @Binds
-    @Singleton
-    fun bindMediaIdTransfer(obj: DataTransfer.MediaIdTransfer): DataTransfer<String>
 
 
     @Binds
@@ -601,9 +607,6 @@ interface AppBindModule{
     @Singleton
     fun bindMusicDialogAndNewIdTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<TrackDomain>
 
-    @Binds
-    @Singleton
-    fun bindUpdateDialogTransfer(obj: DataTransfer.UpdateDialogTransfer.Base): DataTransfer.UpdateDialogTransfer
 
     @Binds
     @Singleton

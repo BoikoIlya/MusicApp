@@ -61,14 +61,23 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
         val playlistsAdapter = PlaylistsAdapter(imageLoader,
             clickListener = object : ClickListener<PlaylistUi>{
                 override fun onClick(data: PlaylistUi) {
+                    //todo maybe need
                     viewModel.savePlaylist(data)
-                    findNavController().navigate(R.id.action_playlistsFragment_to_favoritesPlaylistDetailsFragment)
+
+                    val bundle = Bundle()
+                    bundle.putParcelable(playlist_key,data)
+                    bundle.putString(playlist_id_key,data.map(PlaylistUi.ToIdMapper()))
+                    findNavController().navigate(R.id.action_playlistsFragment_to_favoritesPlaylistDetailsFragment,bundle)
                 }
             },
             selector = object : Selector<PlaylistUi>{
                 override fun onSelect(data: PlaylistUi, position: Int) {
                     viewModel.savePlaylist(data)
-                    findNavController().navigate(R.id.action_playlistsFragment_to_playlistsMenuDialogBottomSheetFragment)
+
+                    val bundle = Bundle()
+                    bundle.putParcelable(playlist_key,data)
+
+                    findNavController().navigate(R.id.action_playlistsFragment_to_playlistsMenuDialogBottomSheetFragment,bundle)
                 }
             })
         super.adapter = playlistsAdapter
@@ -81,6 +90,10 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
         super.onViewCreated(view, savedInstanceState)
     }
 
+    companion object{
+         const val playlist_key = "playlistItem"
+        private const val playlist_id_key = "favoritePlaylistId"
+    }
 
 
 

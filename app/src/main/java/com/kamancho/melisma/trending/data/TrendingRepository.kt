@@ -1,10 +1,8 @@
 package com.kamancho.melisma.trending.data
 
 
-import android.util.Log
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ManagerResource
-import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.app.vkdto.TrackItem
 import com.kamancho.melisma.captcha.data.cache.CaptchaDataStore
 import com.kamancho.melisma.main.data.cache.AccountDataStore
@@ -23,18 +21,16 @@ interface TrendingRepository{
 
     suspend fun fetchTracks(): List<TrackDomain>
 
-    fun resetOffset()
-
     class Base @Inject constructor(
         private val service: TrendingService,
         private val toTrackDomain: TrackItem.Mapper<TrackDomain>,
         private val accountData: AccountDataStore,
         private val captchaDataStore: CaptchaDataStore,
-        private val managerResource: ManagerResource,
-        private val pagingSource: PagingSource<TrackDomain>
+        private val managerResource: ManagerResource
     ): TrendingRepository {
 
         companion object{
+            private const val tracks_count = 200
             const val emptyDestination = 0
             private const val resFolderPath = "android.resource://com.kamancho.melisma/"
         }
@@ -59,21 +55,14 @@ interface TrendingRepository{
 
 
         override suspend fun fetchTracks(): List<TrackDomain> =
-            pagingSource.newPage { offset, pageSize ->
-                Log.d("tag", "fetchTracks: $offset $pageSize ")
-                service.getRecommendations(
-                    accountData.token(),
-                    accountData.ownerId(),
-                    offset,
-                    pageSize,
-                    captchaDataStore.captchaId(),
-                    captchaDataStore.captchaEnteredData()
-                ).response.items
-                    .map { it.map(toTrackDomain) }
-
-            }
-
-        override fun resetOffset() = pagingSource.resetOffset()
+            service.getRecommendations(
+                accountData.token(),
+                accountData.ownerId(),
+                tracks_count,
+                captchaDataStore.captchaId(),
+                captchaDataStore.captchaEnteredData()
+            ).response.items
+                .map { it.map(toTrackDomain) }
 
 
     }

@@ -19,8 +19,6 @@ import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.main.di.App
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.kamancho.melisma.app.core.PagingListener
-import com.kamancho.melisma.favorites.presentation.FavoritesTracksViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,7 +59,13 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
         binding.backBtn.visibility = View.VISIBLE
         binding.titleFavorites.setText(R.string.select_tracks)
         binding.shuffleFavorites.visibility = View.GONE
-
+        binding.pullToRefresh.setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+        binding.pullToRefresh.setLottieAnimation(loading_animation)
+        binding.pullToRefresh.setRefreshViewParams(
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                250,
+            ))
 
         binding.favoritesRcv.layoutManager = LinearLayoutManager(requireContext())
 
@@ -76,10 +80,6 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
            )
         adapter = tracksAdapter
         binding.favoritesRcv.adapter = tracksAdapter
-        binding.favoritesRcv.addOnScrollListener(PagingListener(30,15){
-            viewModel.fetchData()
-        })
-
 
 
 
@@ -96,9 +96,7 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
             }
             popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
             popup.show()
-
             popup.setOnMenuItemClickListener { menuItem ->
-                viewModel.resetOffset()
                 when (menuItem.itemId) {
                     R.id.byTime -> viewModel.fetchData(SortingState.ByTime())
                     R.id.byName -> viewModel.fetchData(SortingState.ByName())
@@ -113,7 +111,6 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
 
 
     override fun search(query: String) {
-        viewModel.resetOffset()
         viewModel.saveQuery(query)
         viewModel.fetchData()
     }

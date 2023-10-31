@@ -1,9 +1,12 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.kamancho.melisma.favorites.presentation.FavoritesUiState
 import com.kamancho.melisma.favorites.presentation.TracksResult
 import com.kamancho.melisma.favorites.presentation.UiCommunication
@@ -14,6 +17,7 @@ import com.kamancho.melisma.main.presentation.PlayerCommunicationState
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Created by HP on 21.03.2023.
@@ -28,6 +32,7 @@ abstract class BaseViewModel<T>(
     private val trackChecker: TrackChecker,
 ): ViewModel(), CollectSelectedTrack, FavoritesViewModel<T,MediaItem>{
 
+
     fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
 
     fun saveCurrentPageQueue(queue: List<MediaItem>) = viewModelScope.launch(dispatchersList.io()){
@@ -38,17 +43,23 @@ abstract class BaseViewModel<T>(
        trackChecker.checkIfPlayable(item, playable = {
 
             val queue = temporaryTracksCache.map()
-
+                //85  100
+                // 80  85
             if(queue.isNotEmpty()){
+                val newQueue = queue.map {
+                    MediaItem.Builder()
+                        .setMediaId(it.mediaId)
+                        .build() }
                 withContext(dispatchersList.ui()) {
-                    playerCommunication.map(PlayerCommunicationState.SetQueue(queue))
+                    playerCommunication.map(PlayerCommunicationState.SetQueue(newQueue,queue))
                 }
             }
             val position = temporaryTracksCache.findTrackPosition(item.mediaId)
-
             withContext(dispatchersList.ui()) {
                playerCommunication.map(PlayerCommunicationState.Play(item,position))
-           }
+               //630 set queue  //526 play 2879 playback st
+                // 79            // 822   = 901
+           }  //740          // 652   =  1392 / 1310
        })
 
     }

@@ -10,7 +10,7 @@ interface TemporaryTracksCache {
 
       fun readCurrentPageTracks(): List<MediaItem>
 
-      suspend fun findTrackPosition(id: String):Int
+      fun findTrackPosition(id: String):Int
 
       suspend fun saveCurrentPageTracks(list: List<MediaItem>)
 
@@ -55,7 +55,7 @@ interface TemporaryTracksCache {
             }
         }
 
-        override suspend fun findTrackPosition(id: String): Int   {
+        override  fun findTrackPosition(id: String): Int   {
               return synchronized(currentPageTracks) {   currentPageTracks.indexOfFirst { it.mediaId == id }}
         }
     }
@@ -63,7 +63,7 @@ interface TemporaryTracksCache {
 
     object Empty: TemporaryTracksCache{
         override fun readCurrentPageTracks(): List<MediaItem> = emptyList()
-        override suspend fun findTrackPosition(id: String): Int = -1
+        override  fun findTrackPosition(id: String): Int = -1
         override suspend fun map(): List<MediaItem>  = emptyList()
         override suspend fun addPagingData(list: List<MediaItem>, isNewFirstPage: Boolean) = Unit
         override suspend fun saveCurrentPageTracks(list: List<MediaItem>)  = Unit

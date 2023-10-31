@@ -12,14 +12,18 @@ sealed interface PermissionCheckState{
 
     fun apply(context: Context)
 
-    data class CheckForPermission(
-        private val permission: String,
+    data class CheckForPermissions(
+        private val permissions: List<String>,
         private val permissionRequestCode: Int,
     ): PermissionCheckState{
 
         override fun apply(context: Context) {
-            if(ContextCompat.checkSelfPermission(context,permission) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(context as MainActivity, arrayOf(permission),permissionRequestCode)
+            val notGranted = mutableListOf<String>()
+            permissions.forEach{
+                if(ContextCompat.checkSelfPermission(context,it) != PackageManager.PERMISSION_GRANTED)
+                    notGranted.add(it)
+            }
+            ActivityCompat.requestPermissions(context as MainActivity, permissions.toTypedArray(),permissionRequestCode)
         }
     }
 

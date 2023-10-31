@@ -33,10 +33,6 @@ interface AuthModule{
     @AuthScope
     fun bindAuthorizationIntercator(obj: AuthorizationInteractor.Base): AuthorizationInteractor
 
-//    @Reusable
-//    @Binds
-//    fun bindRedirectionCommunication(obj: SingleAuthCommunication.Base): SingleAuthCommunication
-
 
     @Reusable
     @Binds

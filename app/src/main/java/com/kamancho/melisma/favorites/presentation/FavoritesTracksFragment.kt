@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -17,13 +18,13 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
-import com.kamancho.melisma.app.core.PagingListener
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.di.FavoriteComponent
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.trending.presentation.*
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -51,7 +52,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
     private lateinit var layoutManager: LinearLayoutManager
 
-    private lateinit var pagingSource: PagingListener
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -92,11 +93,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
         super.adapter = tracksAdapter
 
-        pagingSource = PagingListener(30,15) {
-            viewModel.fetchData()
-        }
-        binding.favoritesRcv.addOnScrollListener(pagingSource)
-
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallBackFavorites(tracksAdapter, viewModel, requireContext()))
         itemTouchHelper.attachToRecyclerView(binding.favoritesRcv)
         binding.favoritesRcv.adapter = tracksAdapter
@@ -136,9 +132,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
             popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
             popup.show()
 
-
             popup.setOnMenuItemClickListener { menuItem ->
-                viewModel.resetOffset()
                 when (menuItem.itemId) {
                     R.id.byTime -> viewModel.fetchData(SortingState.ByTime())
                     R.id.byName -> viewModel.fetchData(SortingState.ByName())
@@ -164,7 +158,6 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
     override fun search(query: String) {
        viewModel.saveQuery(query)
         viewModel.fetchData()
-        viewModel.resetOffset()
     }
 
 

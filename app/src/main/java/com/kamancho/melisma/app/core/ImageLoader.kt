@@ -56,13 +56,13 @@ interface ImageLoader {
      ): ImageLoader {
 
          companion object{
-             private const val duration_in_ms = 200
+             private const val transition_duration = 200
          }
 
         override fun loadImage(url: String, targetView: ImageView,placeholderId: Int,cacheStrategy: DiskCacheStrategy) {
             GlideApp.with(targetView)
                 .load(url)
-                .transition(DrawableTransitionOptions.withCrossFade(duration_in_ms))
+                .transition(DrawableTransitionOptions.withCrossFade(transition_duration))
                 .placeholder(placeholderId)
                 .diskCacheStrategy(cacheStrategy)
                 .into(targetView)
@@ -78,7 +78,7 @@ interface ImageLoader {
             GlideApp.with(targetView)
                 .asBitmap()
                 .load(bigImageUrl)
-                .transition(withCrossFade(duration_in_ms))
+                .transition(withCrossFade(transition_duration))
                 .placeholder(R.drawable.tone_yellow)
                 .listener(object :RequestListener<Bitmap>{
                     override fun onLoadFailed(
@@ -110,7 +110,7 @@ interface ImageLoader {
          override fun loadImageForPlaylist(url: String, targetView: ImageView,cacheStrategy: DiskCacheStrategy) {
              GlideApp.with(targetView)
                  .load(url)
-                 .transition(DrawableTransitionOptions.withCrossFade(duration_in_ms))
+                 .transition(DrawableTransitionOptions.withCrossFade(transition_duration))
                  .placeholder(R.drawable.tone_yellow)
                  .override(300,300)
                  .diskCacheStrategy(cacheStrategy)
@@ -125,7 +125,7 @@ interface ImageLoader {
          ) {
              GlideApp.with(targetView)
                  .load(url)
-                 .transition(DrawableTransitionOptions.withCrossFade(duration_in_ms))
+                 .transition(DrawableTransitionOptions.withCrossFade(transition_duration))
                  .listener(object :RequestListener<Drawable>{
                      override fun onLoadFailed(
                          e: GlideException?,

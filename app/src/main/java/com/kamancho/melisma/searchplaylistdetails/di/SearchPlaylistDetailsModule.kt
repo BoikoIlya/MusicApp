@@ -6,6 +6,7 @@ import com.kamancho.melisma.app.core.FollowPlaylistInteractor
 import com.kamancho.melisma.app.core.PlaylistDataInteractor
 import com.kamancho.melisma.app.vkdto.SearchPlaylistItem
 import com.kamancho.melisma.editplaylist.data.cloud.PlaylistTracksService
+import com.kamancho.melisma.favoritesplaylistdetails.di.FavoritesPlaylistDetailsScope
 import com.kamancho.melisma.main.di.AppModule
 
 import com.kamancho.melisma.main.di.ViewModelKey
@@ -21,6 +22,7 @@ import com.kamancho.melisma.searchplaylistdetails.presentation.BaseSearchPlaylis
 import com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsViewModel
 import com.kamancho.melisma.trending.presentation.SearchPlaylistDetailsResult
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import com.kamancho.melisma.userplaylists.presentation.PlaylistsResultUpdateToUiEventMapper
 import dagger.Binds
 import dagger.Module
@@ -36,7 +38,13 @@ import retrofit2.Retrofit
 @Module
 interface SearchPlaylistDetailsModule {
 
+    @Binds
+    @SearchPlaylistDetailsScope
+    fun bindPlaylistDomainToIdMapper(obj: PlaylistDomain.ToIdMapper): PlaylistDomain.Mapper<String>
 
+    @Binds
+    @SearchPlaylistDetailsScope
+    fun bindPlaylistUiToOwnerIdMapper(obj: PlaylistUi.ToOwnerIdMapper): PlaylistUi.Mapper<Int>
 
     @Binds
     @SearchPlaylistDetailsScope
@@ -44,7 +52,7 @@ interface SearchPlaylistDetailsModule {
 
     @Binds
     @SearchPlaylistDetailsScope
-    fun bindPlaylistDomainToTitleMapper(obj: PlaylistDomain.ToTitleMapper.Base): PlaylistDomain.ToTitleMapper
+    fun bindPlaylistUiToTitleMapper(obj: PlaylistUi.ToTitleMapper.Base): PlaylistUi.ToTitleMapper
 
     @Binds
     @SearchPlaylistDetailsScope

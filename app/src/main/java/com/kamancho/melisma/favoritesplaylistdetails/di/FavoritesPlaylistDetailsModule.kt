@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import com.kamancho.melisma.app.core.CacheRepository
 import com.kamancho.melisma.app.core.ExtendedGsonConverterFactory
-import com.kamancho.melisma.app.core.PagingSource
 import com.kamancho.melisma.editplaylist.data.PlaylistDetailsRepository
 import com.kamancho.melisma.editplaylist.data.cache.PlaylistDetailsCacheDataSource
 import com.kamancho.melisma.editplaylist.data.cloud.PlaylistDetailsCloudDataSource
 import com.kamancho.melisma.editplaylist.data.cloud.PlaylistTracksService
 import com.kamancho.melisma.editplaylist.domain.PlaylistDetailsInteractor
-import com.kamancho.melisma.favorites.data.cache.TrackCache
 import com.kamancho.melisma.favoritesplaylistdetails.data.cache.TracksCacheToFollowedPlaylistTracksCacheMapper
 import com.kamancho.melisma.main.di.AppModule
 
@@ -25,6 +23,7 @@ import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetail
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.FavoritesPlaylistDetailsViewModel
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistLoadingCommunication
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,9 +38,7 @@ import retrofit2.Retrofit
 @Module
 interface FavoritesPlaylistDetailsModule {
 
-    @Binds
-    @FavoritesPlaylistDetailsScope
-    fun bindMediaItemsPagingSource(obj: PagingSource.MediaItemsPaging): PagingSource<TrackCache>
+
 
     @FavoritesPlaylistDetailsScope
     @Binds
@@ -53,6 +50,10 @@ interface FavoritesPlaylistDetailsModule {
     @Binds
     @FavoritesPlaylistDetailsScope
     fun bindPlaylistDomainToIdMapper(obj: PlaylistDomain.ToIdMapper): PlaylistDomain.Mapper<String>
+
+    @Binds
+    @FavoritesPlaylistDetailsScope
+    fun bindPlaylistUiToOwnerIdMapper(obj: PlaylistUi.ToOwnerIdMapper): PlaylistUi.Mapper<Int>
 
     @Binds
     @FavoritesPlaylistDetailsScope

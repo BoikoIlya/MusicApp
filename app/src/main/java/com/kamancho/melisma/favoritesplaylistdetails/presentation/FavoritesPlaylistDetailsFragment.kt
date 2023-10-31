@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
-
+    private val args: FavoritesPlaylistDetailsFragmentArgs by navArgs()
 
     private lateinit var viewModel: FavoritesPlaylistDetailsViewModel
 
@@ -39,6 +40,11 @@ class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.handlePlaylistData(args.playlistItem,savedInstanceState==null)
+        viewModel.update(args.favoritePlaylistId,false,savedInstanceState==null)
+
+
+
         binding.favoritesRcv.layoutManager = LinearLayoutManager(requireContext())
         val  tracksAdapter = TracksAdapter(
             context = requireContext(),

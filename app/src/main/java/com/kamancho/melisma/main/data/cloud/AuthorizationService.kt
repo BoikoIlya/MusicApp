@@ -32,7 +32,7 @@ interface AuthorizationService {
         @Query("password")  password: String,
         @Query("captcha_sid") captcha_sid:String,
         @Query("captcha_key") captcha_key:String,
-        @Query("v")  apiVersion: String = API_VERS,
+        @Query("v") apiVersion: String = API_VERS,
         @Query("2fa_supported")  twoFaSupported: String = TWO_FA_SUPPORT
     ): Response<TokenDto>
 }

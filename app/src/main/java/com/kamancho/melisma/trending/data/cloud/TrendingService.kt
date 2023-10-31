@@ -13,7 +13,6 @@ interface TrendingService{
     suspend fun getRecommendations(
         @Query("access_token")  accessToken: String,
         @Query("owner_id")  owner_id: String,
-        @Query("offset ") offset:Int,
         @Query("count") count: Int,
         @Query("captcha_sid") captcha_sid:String,
         @Query("captcha_key") captcha_key:String,

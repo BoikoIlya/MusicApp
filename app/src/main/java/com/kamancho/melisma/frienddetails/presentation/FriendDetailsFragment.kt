@@ -4,10 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
@@ -39,6 +41,10 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
     private lateinit var fragments: List<Fragment>
     private lateinit var textWatcher: TextWatcher
 
+    private val args: FriendDetailsFragmentArgs by navArgs()
+
+    private lateinit var adapter: ViewPagerFragmentsAdapter
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -52,9 +58,11 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
         )
 
         fragments = listOf(
-            FriendTracksFragment(),
-            FriendPlaylistsFragment()
+            FriendTracksFragment.newInstance(args.friendId),
+            FriendPlaylistsFragment.newInstance(args.friendId)
         )
+
+
 
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -67,19 +75,23 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
         }
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.historyTitle.text = viewModel.readFirstAndSecondName()
+
+
+        binding.historyTitle.text = args.friendName
         binding.clearHistoryBtn.visibility = View.GONE
         binding.backBtnSearch.visibility = View.VISIBLE
 
-
-
-        binding.searchHistoryViewPager.adapter = ViewPagerFragmentsAdapter(
+        adapter = ViewPagerFragmentsAdapter(
             childFragmentManager,
             lifecycle,
             fragments
         )
+
+        binding.searchHistoryViewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout,binding.searchHistoryViewPager){tab,position->
             tab.text = tabTitlesList[position]
@@ -102,4 +114,6 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
         binding.searchHistoryEdt.removeTextChangedListener(textWatcher)
         super.onStop()
     }
+
+
 }

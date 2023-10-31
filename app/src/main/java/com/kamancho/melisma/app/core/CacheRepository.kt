@@ -5,7 +5,6 @@ import androidx.media3.common.MediaItem
 import com.kamancho.melisma.addtoplaylist.domain.SelectedTrackDomain
 import com.kamancho.melisma.downloader.data.cache.DownloadTracksCacheDataSource
 import com.kamancho.melisma.favorites.data.SortingState
-import com.kamancho.melisma.favorites.data.cache.TrackCache
 import com.kamancho.melisma.favorites.data.cache.TracksDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -19,35 +18,28 @@ import kotlin.system.measureTimeMillis
  **/
 interface CacheRepository<T> {
 
-    suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
+  suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<T>>
 
-    suspend fun isDbEmpty(playlistId: String): Boolean
+   suspend fun isDbEmpty(playlistId: String): Boolean
 
-    fun resetOffset()
 
-   abstract class Abstract<T>(
-       private val dao: TracksDao,
-       private val pagingSource: PagingSource<TrackCache>
-   ): CacheRepository<T>{
+
+   abstract class Abstract<T>( private val dao: TracksDao): CacheRepository<T>{
 
        override suspend fun isDbEmpty(playlistId: String): Boolean =
-           dao.count(playlistId)==0
-
-       override fun resetOffset() = pagingSource.resetOffset()
+           dao.getAllTracksByTime("",playlistId).first().isEmpty()
    }
 
     class BaseMediaItem @Inject constructor(
         private val dao: TracksDao,
         private val mapper: ToMediaItemMapper,
-        private val downloadsDataSource: DownloadTracksCacheDataSource,
-        private val pagingSource: PagingSource<TrackCache>
-    ): Abstract<MediaItem>(dao,pagingSource),CacheRepository<MediaItem> {
+        private val downloadsDataSource: DownloadTracksCacheDataSource
+    ): Abstract<MediaItem>(dao),CacheRepository<MediaItem> {
 
         override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<MediaItem>> {
-
             val downloadedFiles = downloadsDataSource.readListOfFileNamesAndPaths()
-            return sortingState.fetch(dao, playlistId,pagingSource).map { list ->
-                        list.map { mapper.map(Pair(it, downloadedFiles)) }
+            return sortingState.fetch(dao, playlistId).map { list ->
+                    list.map { mapper.map(Pair(it, downloadedFiles)) }
                 }
 
         }
@@ -57,12 +49,11 @@ interface CacheRepository<T> {
 
     class BaseSelected @Inject constructor(
         private val dao: TracksDao,
-        private val mapper: TracksCacheToSelectedTracksDomainMapper,
-        private val pagingSource: PagingSource<TrackCache>
-    ): Abstract<SelectedTrackDomain>(dao,pagingSource),CacheRepository<SelectedTrackDomain> {
+        private val mapper: TracksCacheToSelectedTracksDomainMapper
+    ): Abstract<SelectedTrackDomain>(dao),CacheRepository<SelectedTrackDomain> {
 
         override suspend fun fetch(sortingState: SortingState,playlistId: String): Flow<List<SelectedTrackDomain>>{
-            return sortingState.fetch(dao, playlistId,pagingSource).map {list-> mapper.map(list)}
+            return sortingState.fetch(dao,playlistId).map {list-> mapper.map(list)}
         }
 
 

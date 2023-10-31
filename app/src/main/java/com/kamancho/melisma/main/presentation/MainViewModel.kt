@@ -1,6 +1,5 @@
 package com.kamancho.melisma.main.presentation
 
-import android.Manifest
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.kamancho.melisma.app.core.BaseViewModel
@@ -8,7 +7,6 @@ import com.kamancho.melisma.captcha.data.CaptchaRepository
 import com.kamancho.melisma.app.core.DispatchersList
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.app.core.SDKChecker
-import com.kamancho.melisma.app.core.SDKCheckerState
 import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.app.core.TrackChecker
 import com.kamancho.melisma.app.core.TracksResultEmptyMapper
@@ -54,15 +52,13 @@ class MainViewModel @Inject constructor(
 
 
     companion object{
-        const val notificationsPermissionRequestCode = 0
-        const val writeExternalStoragePermissionRequestCode = 1
+        const val permissionRequestCode = 0
     }
 
     init {
         checkAuth()
         firebaseMessagingWrapper.subscribeToTopic()
-        notificationPermissionCheck()
-        writeExternalStoragePermissionCheck()
+        permissions()
         updateNotifications()
         handleCaptcha()
     }
@@ -71,23 +67,20 @@ class MainViewModel @Inject constructor(
         bottomSheetCommunication.map(state)
     }
 
+    fun permissions(){
+        val permissions = mutableListOf<String>()
+        val chain: PermissionsChain =
+            PermissionsChain.NotificationPermission(
+                PermissionsChain.WriteExternalStoragePermission(
+                    PermissionsChain.LastChainItem()))
 
-    fun notificationPermissionCheck()  {
-        sdkChecker.check(SDKCheckerState.AboveApi32,{
-            permissionCheckCommunication.map(
-                PermissionCheckState.CheckForPermission(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    notificationsPermissionRequestCode))
-        },{})
-
+        permissionCheckCommunication.map(
+            PermissionCheckState.CheckForPermissions(
+                chain.check(sdkChecker, permissions), permissionRequestCode
+            )
+        )
     }
 
-    fun writeExternalStoragePermissionCheck(){
-            permissionCheckCommunication.map(
-                PermissionCheckState.CheckForPermission(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    writeExternalStoragePermissionRequestCode))
-    }
 
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
         authorizationRepository.isNotAuthorized().collect{

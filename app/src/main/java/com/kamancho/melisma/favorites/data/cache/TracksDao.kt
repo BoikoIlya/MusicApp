@@ -23,28 +23,22 @@ interface TracksDao {
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId " +
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId " +
-            "ORDER BY date DESC "+
-            "LIMIT :limit OFFSET :offset "
-    )
-    fun getAllTracksByTime(query: String, playlistId: String, limit: Int, offset: Int): Flow<List<TrackCache>>
+            "ORDER BY date DESC")
+    fun getAllTracksByTime(query: String, playlistId: String): Flow<List<TrackCache>>
 
     @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId "+
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
-            "ORDER BY name "+
-            "LIMIT :limit OFFSET :offset "
-    )
-     fun getTracksByName(query: String,playlistId:String, limit: Int, offset: Int): Flow<List<TrackCache>>
+            "ORDER BY name")
+     fun getTracksByName(query: String,playlistId:String): Flow<List<TrackCache>>
 
     @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId "+
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
-            "ORDER BY artistName "+
-            "LIMIT :limit OFFSET :offset "
-    )
-     fun getTracksByArtist(query: String,playlistId:String, limit: Int, offset: Int): Flow<List<TrackCache>>
+            "ORDER BY artistName")
+     fun getTracksByArtist(query: String,playlistId:String): Flow<List<TrackCache>>
 
 
     @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
@@ -59,11 +53,7 @@ interface TracksDao {
     @Query("DELETE FROM tracks_table WHERE trackId =:id")
     suspend fun removeTrack(id: Int)
 
-    @Query("SELECT COUNT(*) " +
-            "FROM tracks_table " +
-            "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId "+
-            "WHERE  playlistId = :playlistId ")
-    suspend fun count(playlistId:String): Int
+
 
 
     @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +

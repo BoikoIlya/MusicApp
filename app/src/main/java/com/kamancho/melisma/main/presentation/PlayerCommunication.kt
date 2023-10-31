@@ -2,6 +2,7 @@ package com.kamancho.melisma.main.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.kamancho.melisma.app.core.PlayerControlsCommunication
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
@@ -36,7 +37,7 @@ interface PlayerCommunication: CollectPlayerControls, CollectCurrentQueue, Colle
                 selectedTrackCommunication,
                 controller,
                singleUiEventCommunication,
-               trackDurationCommunication
+               trackDurationCommunication,
             )
         }
 

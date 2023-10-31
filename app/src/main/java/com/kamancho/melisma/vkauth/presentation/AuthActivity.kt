@@ -48,7 +48,6 @@ class AuthActivity : FragmentActivity() {
 
         lifecycleScope.launch{
             viewModel.collectSingleAuthCommunication(this@AuthActivity){
-                Log.d("tag", "onCreate: AUTH ACT $it")
                 it.apply(viewModel,navController,this@AuthActivity,)
             }
         }

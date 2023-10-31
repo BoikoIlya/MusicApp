@@ -12,7 +12,7 @@ interface SelectedTrackCommunication: Communication.Mutable<MediaItem> {
 
 
     @Singleton
-    class Base @Inject constructor(): Communication.UiUpdate<MediaItem>(MediaItem.Builder().build()),
+    class Base @Inject constructor(): Communication.UiUpdate<MediaItem>(MediaItem.EMPTY),
         SelectedTrackCommunication
 
 }
