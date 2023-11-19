@@ -53,22 +53,25 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var downloadBroadcastReceiver: DownloadTrackBroadcastReceiver
 
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult())
-    { result->
-        if (result.resultCode != RESULT_OK && result.resultCode != RESULT_CANCELED)
-            viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(getString(R.string.update_failed)))
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult())
+        { result ->
+            if (result.resultCode != RESULT_OK && result.resultCode != RESULT_CANCELED)
+                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(getString(R.string.update_failed)))
 
-    }
+        }
 
     private val updateListener =
         InstallStateUpdatedListener { state ->
             if (state.installStatus() == InstallStatus.DOWNLOADED) {
                 viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Success(getString(R.string.update_will_install)))
                 updateManager.completeUpdate()
-            }else if (state.installStatus() == InstallStatus.FAILED){
-                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(
-                   String.format(getString(R.string.update_failed)+", "+getString(R.string.code)+" "+state.installErrorCode() )
-                ))
+            } else if (state.installStatus() == InstallStatus.FAILED) {
+                viewModel.sendSingleUiEvent(
+                    SingleUiEventState.ShowSnackBar.Error(
+                        String.format(getString(R.string.update_failed) + ", " + getString(R.string.code) + " " + state.installErrorCode())
+                    )
+                )
             }
         }
 
@@ -119,7 +122,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             viewModel.collectActivityNavigationCommunication(this@MainActivity) {
                 it.apply(this@MainActivity, viewModel)
-                it.apply(resultLauncher,updateListener,updateManager)
+                it.apply(resultLauncher, updateListener, updateManager)
             }
         }
 
@@ -218,8 +221,11 @@ class MainActivity : FragmentActivity() {
         if (
             requestCode == MainViewModel.permissionRequestCode &&
             grantResults[0] != PackageManager.PERMISSION_GRANTED
-        ) {
+        )
             viewModel.dontShowPermission()
+        else {
+            viewModel.disablePermissionCheck()
+            viewModel.reloadTracks()
         }
 
         viewModel.updateNotifications()

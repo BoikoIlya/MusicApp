@@ -23,7 +23,7 @@ interface SleepTimer {
 
 
         override suspend  fun setupTimer(durationMin: Long) {
-            val triggerAtMillis = TimeUnit.MINUTES.toMillis(durationMin)/4 + System.currentTimeMillis()
+            val triggerAtMillis = TimeUnit.MINUTES.toMillis(durationMin) + System.currentTimeMillis()
             while (true){
                 delay(1000)
                 if(triggerAtMillis<System.currentTimeMillis()) {

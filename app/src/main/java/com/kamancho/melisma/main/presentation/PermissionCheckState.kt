@@ -23,6 +23,7 @@ sealed interface PermissionCheckState{
                 if(ContextCompat.checkSelfPermission(context,it) != PackageManager.PERMISSION_GRANTED)
                     notGranted.add(it)
             }
+            if(notGranted.isEmpty()) return
             ActivityCompat.requestPermissions(context as MainActivity, permissions.toTypedArray(),permissionRequestCode)
         }
     }

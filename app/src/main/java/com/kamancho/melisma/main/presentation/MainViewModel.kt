@@ -11,6 +11,8 @@ import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.app.core.TrackChecker
 import com.kamancho.melisma.app.core.TracksResultEmptyMapper
 import com.kamancho.melisma.captcha.presentation.CaptchaFragmentDialog
+import com.kamancho.melisma.downloader.presentation.DownloadCompleteCommunication
+import com.kamancho.melisma.downloader.presentation.DownloadResult
 import com.kamancho.melisma.favorites.domain.FavoritesTracksInteractor
 import com.kamancho.melisma.favorites.presentation.UiCommunication
 import com.kamancho.melisma.main.data.CheckAuthRepository
@@ -38,7 +40,8 @@ class MainViewModel @Inject constructor(
     private val permissionCheckCommunication: PermissionCheckCommunication,
     private val sdkChecker: SDKChecker,
     private val captchaRepository: CaptchaRepository,
-    private val notificationsUpdateOnAppStart: NotificationsUpdateOnAppStart
+    private val notificationsUpdateOnAppStart: NotificationsUpdateOnAppStart,
+    private val downloadCompleteCommunication: DownloadCompleteCommunication
 ): BaseViewModel<Unit>(
     playerCommunication,
     UiCommunication.EmptyCommunication(),
@@ -114,6 +117,14 @@ class MainViewModel @Inject constructor(
         singleUiEventCommunication.map(event)
     }
 
+    fun reloadTracks() = viewModelScope.launch(dispatchersList.io()) {
+        downloadCompleteCommunication.map(DownloadResult.Completed)
+
+    }
+
+    fun disablePermissionCheck() = permissionCheckCommunication.map(PermissionCheckState.Empty)
+
+
     override suspend fun collectPlayerControls(
         owner: LifecycleOwner,
         collector: FlowCollector<PlayerControlsState>,
@@ -150,4 +161,5 @@ class MainViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<Boolean>,
     ) = notificationsUpdateOnAppStart.collectNotificationBadgeCommunication(owner,collector)
+
 }
