@@ -39,6 +39,7 @@
                     app:layout_constraintTop_toTopOf="@+id/search_edt" />
 
                 <EditText
+                    android:paddingEnd="15dp"
                     android:id="@+id/search_edt"
                     android:layout_width="0dp"
                     android:layout_height="40dp"

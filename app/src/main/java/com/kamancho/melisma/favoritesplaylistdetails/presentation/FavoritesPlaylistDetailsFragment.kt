@@ -38,15 +38,18 @@ class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
     }
 
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel.handlePlaylistData(args.playlistItem,savedInstanceState==null)
         viewModel.update(args.favoritePlaylistId,false,savedInstanceState==null)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
 
 
         binding.favoritesRcv.layoutManager = LinearLayoutManager(requireContext())
-        val  tracksAdapter = TracksAdapter(
+        val tracksAdapter = TracksAdapter(
             context = requireContext(),
             playClickListener =  object : Selector<MediaItem> {
                 override fun onSelect(data: MediaItem, position: Int) {
@@ -59,12 +62,12 @@ class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
             imageLoader = imageLoader,
             cacheStrategy = DiskCacheStrategy.AUTOMATIC,
-            addBtnVisibility = viewModel.addBtnVisibility(),
+            addBtnVisibility = viewModel.addBtnVisibility(args.playlistItem),
             layoutManager =  binding.favoritesRcv.layoutManager as RecyclerView.LayoutManager
         )
         adapter = tracksAdapter
 
-        viewModel.isNotFollowed {
+        viewModel.isNotFollowed(args.playlistItem) {
             val itemTouchHelper = ItemTouchHelper(
                 ItemTouchHelperCallBackPlaylistDetails(
                     tracksAdapter,
@@ -81,7 +84,14 @@ class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
                 }
             }
         }
+
+
         super.onViewCreated(view, savedInstanceState)
+
+        binding.pullToRefresh.setOnRefreshListener{
+            favoritesViewModel.update("", loading = true, shouldUpdate = true)
+        }
+
     }
 
      override fun search(query: String) {

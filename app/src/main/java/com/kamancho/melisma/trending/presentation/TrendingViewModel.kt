@@ -47,12 +47,15 @@ class TrendingViewModel @Inject constructor(
         interactor.fetchData()
     }
 
-    fun savePlaylistId(id: String) = interactor.savePlaylistId(id)
-
     override suspend fun collectPlaylists(
         owner: LifecycleOwner,
         collector: FlowCollector<List<TrendingTopBarItemUi>>,
     ) = trendingCommunication.collectPlaylists(owner, collector)
+
+     suspend fun collectEmbeddedPlaylists(
+        owner: LifecycleOwner,
+        collector: FlowCollector<List<TrendingTopBarItemUi>>,
+    ) = trendingCommunication.collectEmbeddedPlaylists(owner, collector)
 
 
 }

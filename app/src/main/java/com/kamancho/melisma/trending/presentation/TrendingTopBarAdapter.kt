@@ -42,7 +42,7 @@ class TrendingTopBarAdapter(
        holder.bind(playlists[position])
     }
 
-    override  fun map(data: List<TrendingTopBarItemUi>) {
+    override fun map(data: List<TrendingTopBarItemUi>) {
         val diff = PlaylistDiffUtilCallback(data, playlists)
         val result = DiffUtil.calculateDiff(diff)
         playlists.clear()

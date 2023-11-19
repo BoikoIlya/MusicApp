@@ -3,6 +3,7 @@ package com.kamancho.melisma.userplaylists.presentation
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
@@ -16,7 +17,7 @@ import javax.inject.Inject
 /**
  * Created by HP on 13.07.2023.
  **/
-
+@Keep
 @Parcelize
 data class PlaylistUi(
     private val playlistId: String,

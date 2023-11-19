@@ -3,6 +3,7 @@
     <string name="trending_header">Today\'s Music is</string>
     <string name="search_track">Search…</string>
     <string name="no_connection_message">No internet connection</string>
+    <string name="no_file_message">File not found</string>
     <string name="service_is_unavailable">Service is unavailable</string>
     <string name="no_element">"No tracks found"</string>
     <string name="top_200_recommendations">Top 200 Recommendations</string>
@@ -184,4 +185,18 @@
     <string name="read_more">Read more</string>
     <string name="collapse">Collapse</string>
     <string name="playlist_not_found">Playlist not found</string>
+    <string name="for_you">For you</string>
+    <string name="discoveries">Discoveries</string>
+    <string name="new_playlists">New</string>
+    <string name="playlists_1_day">Daily playlist 1</string>
+    <string name="playlists_2_day">Daily playlist 2</string>
+    <string name="playlists_3_day">Daily playlist 3</string>
+    <string name="playlists_4_day">Daily playlist 4</string>
+    <string name="playlists_of_week">Weekly playlist</string>
+    <string name="cant_follow_playlist">You can`t follow this playlist</string>
+    <string name="auth_suggest">Use vkontakte account for authorization, if it does not work, then choose an alternative authorization, it is done through the VK service Marusya. You can log in only with Vk account.</string>
+    <string name="update_failed">Update not installed</string>
+    <string name="code">code</string>
+    <string name="update_will_install">Update downloaded and will be installed now</string>
+
 </resources>

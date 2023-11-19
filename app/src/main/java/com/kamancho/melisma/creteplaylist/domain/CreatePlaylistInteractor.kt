@@ -1,10 +1,12 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import com.kamancho.melisma.R
 import com.kamancho.melisma.addtoplaylist.domain.SelectedTrackDomain
 import com.kamancho.melisma.addtoplaylist.presentation.SelectedTrackUi
 import com.kamancho.melisma.creteplaylist.data.PlaylistDataRepository
 import com.kamancho.melisma.creteplaylist.presentation.SelectedTracksStore
+import com.kamancho.melisma.trending.presentation.SearchPlaylistDetailsResult
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.kamancho.melisma.userplaylists.domain.PlaylistsResult
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
@@ -47,7 +49,8 @@ interface PlaylistDataInteractor: EditPlaylistInteractor,CreatePlaylistInteracto
         private val store: SelectedTracksStore,
         private val toTrackIdMapper: SelectedTrackDomain.Mapper<Int>,
         private val toTrackDomain: SelectedTrackUi.Mapper<SelectedTrackDomain>,
-        private val toPlaylistDomainMapper: PlaylistUi.Mapper<PlaylistDomain>
+        private val toPlaylistDomainMapper: PlaylistUi.Mapper<PlaylistDomain>,
+        private val toPlaylistIdMapper: PlaylistUi.Mapper<String>,
     ) : PlaylistDataInteractor
     {
 
@@ -87,10 +90,17 @@ interface PlaylistDataInteractor: EditPlaylistInteractor,CreatePlaylistInteracto
         override suspend fun followPlaylist(
             playlist: PlaylistUi
         ): PlaylistsResult = handleResponse.handle({
+            if(playlist.map(toPlaylistIdMapper).toInt()<0)
+                return@handle PlaylistsResult.Error(managerResource.getString(R.string.cant_follow_playlist))
             repository.followPlaylist(playlist.map(toPlaylistDomainMapper))
             PlaylistsResult.Success(managerResource.getString(R.string.success_followed_message))
-        }, { message, _ ->
-            PlaylistsResult.Error(message)
+        }, { message, e ->
+
+            return@handle if (e is VkException && e.isWrongParameter())
+                PlaylistsResult.Error(managerResource.getString(R.string.cant_follow_playlist))
+            else
+                PlaylistsResult.Error(message)
+
         })
 
 

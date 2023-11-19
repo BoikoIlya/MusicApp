@@ -66,4 +66,5 @@ interface Communication {
                 .collect(collector)
         }
     }
+
 }

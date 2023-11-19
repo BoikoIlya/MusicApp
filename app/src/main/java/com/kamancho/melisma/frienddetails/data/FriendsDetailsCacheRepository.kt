@@ -40,7 +40,7 @@ interface FriendsDetailsCacheRepository {
                     query,
                     id.toInt()
                 )
-                .map { toMediaItemMapper.map(Pair(it, emptyList())) }
+                .map { toMediaItemMapper.map(Pair(it, emptyMap())) }
         }
 
         override suspend fun isFriendHaveTracks(id: String): Boolean {

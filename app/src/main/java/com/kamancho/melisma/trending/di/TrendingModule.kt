@@ -10,9 +10,13 @@ import com.kamancho.melisma.trending.domain.TopBarItemDomain
 import com.kamancho.melisma.trending.domain.TrackDomain
 import com.kamancho.melisma.trending.domain.TrendingInteractor
 import com.kamancho.melisma.trending.presentation.*
+import com.kamancho.melisma.userplaylists.di.PlaylistsScope
+import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -24,6 +28,7 @@ import retrofit2.Retrofit
 
 @Module
 interface TrendingModule{
+
 
 
 
@@ -46,20 +51,28 @@ interface TrendingModule{
     fun bindHandleTrendingResult(obj: HandleTrendingResult.Base): HandleTrendingResult
 
     @Binds
-    @TrendingScope
+    @Reusable
     fun bindTrendingStateCommunication(obj: TrendingStateCommunication.Base): TrendingStateCommunication
 
     @Binds
-    @TrendingScope
+    @Reusable
     fun bindTrendingPlaylistCommunication(obj: TrendingPlaylistsCommunication.Base): TrendingPlaylistsCommunication
 
     @Binds
-    @TrendingScope
+    @Reusable
+    fun bindEmbeddedVkPlaylistsCommunication(obj: EmbeddedVkPlaylistsCommunication.Base): EmbeddedVkPlaylistsCommunication
+
+    @Binds
+    @Reusable
     fun bindTrendingTracksCommunication(obj: TrendingTracksCommunication.Base): TrendingTracksCommunication
 
     @Binds
-    @TrendingScope
+    @Reusable
     fun bindTrendingCommunication(obj: TrendingCommunication.Base): TrendingCommunication
+
+    @Binds
+    @TrendingScope
+    fun bindToPlaylistUiMapper(obj: PlaylistDomain.ToPlaylistUi): PlaylistDomain.Mapper<PlaylistUi>
 
     @Binds
     @TrendingScope
@@ -67,7 +80,7 @@ interface TrendingModule{
 
     @Binds
     @TrendingScope
-    fun bindToPlaylistUiMapper(obj: TopBarItemDomain.ToUiMapper): TopBarItemDomain.Mapper<TrendingTopBarItemUi>
+    fun bindTopBarItemDomainUiMapper(obj: TopBarItemDomain.ToUiMapper): TopBarItemDomain.Mapper<TrendingTopBarItemUi>
 
     @Binds
     @[IntoMap ViewModelKey(TrendingViewModel::class)]

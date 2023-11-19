@@ -92,7 +92,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             TitleAdapter(
                 text = getString(R.string.trending_header),
                 textSize = resources.getDimension(R.dimen.h1)/ resources.displayMetrics.scaledDensity,
-                margins = listOf(25,25,0,0),
+                margins = listOf(25,25,0,20),
                 typeface = Typeface.BOLD,
                 dpToPx = dpToPx
             )
@@ -101,7 +101,7 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             TitleAdapter(
                 text = getString(R.string.top_200_recommendations),
                 textSize = resources.getDimension(R.dimen.h3)/ resources.displayMetrics.scaledDensity,
-                margins = listOf(25,0,0,15),
+                margins = listOf(25,20,0,15),
                 typeface = Typeface.NORMAL,
                 dpToPx = dpToPx
                 )
@@ -113,6 +113,13 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             context = requireContext()
         )
 
+        val embededVkPlaylistsAdapter = TrendingTopBarAdapter(imageLoader,findNavController())
+
+        val secondPlaylistSectionAdapter = PlaylistSectionAdapter(
+            playlistAdapter = embededVkPlaylistsAdapter,
+            context = requireContext()
+        )
+
 
         binding.trendingRcv.adapter = tracksAdapter
         (binding.trendingRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
@@ -120,10 +127,13 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             ConcatAdapter(
                 mainTitleAdapter,
                 playlistSectionAdapter,
+                secondPlaylistSectionAdapter,
                 recommendationsTitleAdapter,
                 tracksAdapter
             )
         binding.scrollUpButton.setupWithRecycler(binding.trendingRcv)
+
+
 
 
         lifecycleScope.launch {
@@ -139,7 +149,11 @@ class TrendingFragment: Fragment(R.layout.trending_fragment) {
             }
         }
 
-
+        lifecycleScope.launch{
+            viewModel.collectEmbeddedPlaylists(this@TrendingFragment){
+                embededVkPlaylistsAdapter.map(it)
+            }
+        }
 
 
         lifecycleScope.launch{

@@ -3,7 +3,8 @@
     <string name="app_name">Melisma</string>
     <string name="trending_header">Музыка Сегодня</string>
     <string name="search_track">Поиск…</string>
-    <string name="no_connection_message">Нет интернет подключения</string>
+    <string name="no_connection_message">Нет интернет соединения</string>
+    <string name="no_file_message">Файл не найден</string>
     <string name="service_is_unavailable">Сервис недоступен</string>
     <string name="no_element">Треки не найдены</string>
     <string name="top_200_recommendations">Топ 200 Рекомендаций</string>
@@ -71,7 +72,7 @@
     <string name="warning_title">Предупреждение!</string>
     <string name="ok">OK</string>
     <string name="player">Плеер</string>
-    <string name="login_with_vk">Используте ВКонтаке аккаунт</string>
+    <string name="login_with_vk">Используйте аккаунт ВКонтаке</string>
     <string name="start_time">00:00</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="edit_playlist">Изменить плейлист</string>
@@ -144,7 +145,7 @@
     <string name="no_friends">Нет друзей</string>
     <string name="notifications">Уведомления</string>
 
-    <string name="update_info">Исправления:\n - Исправлена ошибка скачивния треков содержащих определенные символы\n - Исправлено автовключение музыки спустя некоторое время после того как была поставлена на паузу или при нахождениии в другом приложении\n - Исправлена вылет при включении в поиске трека который играет в данный момент\n - Небольшие изменения текста и интерфейса \n - Исправлена невозможность запуска музыки на андроид 14\n - Исправлен ситуация когда иногда вылетает приложения при долгом простое на фоне \n - Уменьшена задержка при запуске больших плейлистов</string>
+    <string name="update_info">Исправления:\n - Исправлена ошибка скачивания треков содержащих определенные символы\n - Исправлено автовключение музыки спустя некоторое время после того как была поставлена на паузу или при нахождениии в другом приложении\n - Исправлен вылет при включении в поиске трека который играет в данный момент\n - Небольшие изменения текста и интерфейса \n - Исправлена невозможность запуска музыки на андроид 14\n - Исправлена ситуация когда иногда вылетает приложения при долгом простое на фоне \n - Уменьшена задержка при запуске больших плейлистов</string>
     <string name="update_title">Обновление 1.3.3-betta</string>
     <string name="update_date">31.10.2023</string>
     <string name="update_version">16</string>
@@ -182,5 +183,20 @@
     <string name="icons_are_taken_from_flaticon_website">Иконки взяты с стайта Flaticon</string>
     <string name="something_went_wrong_try_later">Что то пошло не так, попробуйте позже</string>
     <string name="use_alternative_authorization"><u>Aльтернативнaя авторизация</u></string>
+    <string name="read_more">Читать далее</string>
+    <string name="collapse">Свернуть</string>
     <string name="playlist_not_found">Плейлист не найден</string>
+    <string name="for_you">Для вас</string>
+    <string name="discoveries">Открытия</string>
+    <string name="new_playlists">Новинки</string>
+    <string name="playlists_1_day">Плейлист дня 1</string>
+    <string name="playlists_2_day">Плейлист дня 2</string>
+    <string name="playlists_3_day">Плейлист дня 3</string>
+    <string name="playlists_4_day">Плейлист дня 4</string>
+    <string name="playlists_of_week">Плейлист недели</string>
+    <string name="cant_follow_playlist">Нелья подписаться на этот плейлист</string>
+    <string name="auth_suggest">Используйте аккаунт вконтакте для авторизации, если это не сработает, то выберите альтернативную авторизацию, это делается через сервис ВКОНТАКТЕ Маруся. Вы можете войти только используя ВК аккаунт.</string>
+    <string name="update_failed">Обновление не установлено</string>
+    <string name="update_will_install">Обновление загружено и будет сейчас установлено</string>
+    <string name="code">код</string>
 </resources>

@@ -32,9 +32,9 @@ interface HandlePlayerError {
                 when (e.errorCode) {
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED -> R.string.no_connection_message
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> R.string.bad_connection_quality
+                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND -> R.string.no_file_message
                     else -> null
                 }
-            e.printStackTrace()
             val message =
                 if (messageId != null) managerResource.getString(messageId) else e.errorCodeName
             return PlayerErrorState.ShowError(message)

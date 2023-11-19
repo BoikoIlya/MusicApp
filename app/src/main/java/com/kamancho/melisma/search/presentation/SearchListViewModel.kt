@@ -44,8 +44,16 @@ abstract class SearchListViewModel<T,R,N> (
     trackChecker
 ){
 
+    private var firstLoadAfterInit = false
+
+    init {
+        firstLoadAfterInit = true
+    }
+
     fun loadPage(query: String, shouldLoad: Boolean) = viewModelScope.launch(dispatchersList.io()) {
-        if(!shouldLoad) return@launch
+        if(!shouldLoad && !firstLoadAfterInit) return@launch
+        firstLoadAfterInit = false
+
         loadStateCommunication.map(PagingLoadState.Loading)
         interactor.load(query).map(mapperToUi)
     }

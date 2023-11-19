@@ -51,10 +51,15 @@ class TrendingResultMapper @Inject constructor(
     private val globalSingleUiEventCommunication: GlobalSingleUiEventCommunication,
 ): TrendingResult.Mapper<Unit>{
 
-    override suspend fun map(data: Pair<List<TopBarItemDomain>, List<TrackDomain>>, message: String) {
+
+    override suspend fun map(
+        data: Triple<List<TopBarItemDomain>, List<TrackDomain>, List<TopBarItemDomain>>,
+        message: String,
+    ) {
         communication.showPlayLists(data.first.map { it.map(playlistsMapper) })
         if(data.second.isNotEmpty()) {
             communication.showData(data.second.map { it.map(tracksMapper) })
+            communication.showEmbeddedPlaylists(data.third.map { it.map(playlistsMapper) })
             communication.showUiState(TrendingUiState.DisableLoading)
         }
         if(message.isNotEmpty()) {

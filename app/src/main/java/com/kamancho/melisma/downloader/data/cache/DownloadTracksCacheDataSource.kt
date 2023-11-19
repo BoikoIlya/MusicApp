@@ -14,7 +14,7 @@ interface DownloadTracksCacheDataSource {
 
     suspend fun createFile(name: String): Uri
 
-    suspend fun readListOfFileNamesAndPaths(): List<Pair<String, String>>
+    suspend fun readListOfFileNamesAndPaths(): Map<String, String>
 
     suspend fun deleteTrack(name: String)
 
@@ -32,6 +32,8 @@ interface DownloadTracksCacheDataSource {
             const val fileExtension = ".mp3"
         }
 
+        private val pattern = "[/:*?\"<>|]".toRegex()
+
         override suspend fun createFile(name: String): Uri {
             val savedPath = folderPathStore.read().first()
             val folder =
@@ -44,7 +46,7 @@ interface DownloadTracksCacheDataSource {
 
             if (!folder.exists()) folder.mkdirs()
 
-            val pattern = "[/:*?\"<>|]".toRegex()
+
             val nameWithRemovedWrongCharacters = name
                 .replace(pattern, "_")
 
@@ -52,7 +54,7 @@ interface DownloadTracksCacheDataSource {
             return Uri.fromFile(mediaFile)
         }
 
-        override suspend fun readListOfFileNamesAndPaths(): List<Pair<String, String>> {
+        override suspend fun readListOfFileNamesAndPaths(): Map<String, String> {
             val savedPath = folderPathStore.read().first()
             val folder =
                 if (savedPath.isEmpty())
@@ -61,8 +63,13 @@ interface DownloadTracksCacheDataSource {
                         defaultDownloadsFolderName
                     )
                 else File(savedPath)
+            val map = emptyMap<String,String>().toMutableMap()
 
-            return folder.listFiles()?.map { Pair(it.name, it.path) } ?: emptyList()
+           val files = folder.listFiles()
+
+            files?.forEach { map[it.name] = it.path }
+
+            return map
         }
 
         override suspend fun deleteTrack(name: String) {
@@ -75,7 +82,6 @@ interface DownloadTracksCacheDataSource {
                     )
                 else File(savedPath)
 
-            val pattern = "[/:*?\"<>|]".toRegex()
             val nameWithRemovedWrongCharacters = name
                 .replace(pattern, "_")
             val itemToDelete = folder.listFiles()?.find { it.name.contains(nameWithRemovedWrongCharacters) }

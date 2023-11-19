@@ -1,5 +1,6 @@
 package com.kamancho.melisma.app.core
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.presentation.HandleListFromCache
@@ -71,7 +72,9 @@ interface HandleTracksSortedSearch {
         ) {
             fetching?.cancel()
             fetching = scope.launch(dispatchersList.io()) {
+                Log.d("tag", "result 0: ")
                 repository.fetch(sortingState.copyObj(query),playlistId).collectLatest{
+                    Log.d("tag", "result 1: ${it.size} ")
                     handlerFavoritesListFromCache.handle(it)
                 }
             }

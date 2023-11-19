@@ -1,8 +1,9 @@
 package com.kamancho.melisma.trending.domain
 
-import com.kamancho.melisma.trending.data.TrendingRepository.Base.Companion.emptyDestination
 import com.kamancho.melisma.trending.presentation.TrendingTopBarItemUi
 import com.kamancho.melisma.trending.presentation.TrendingTopBarNavigationState
+import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import javax.inject.Inject
 
 /**
@@ -12,8 +13,8 @@ data class TopBarItemDomain(
     private val id: String,
     private val title: String,
     private val imgUrl: String,
-    private val onClickNavigationDestination: Int,
-    private val sortPriority: Int
+    private val onClickNavigationDestination: TrendingNavigationState,
+    private val sortPriority: Int = 0
 ){
 
     fun sortPriority() = sortPriority
@@ -23,27 +24,27 @@ data class TopBarItemDomain(
             id: String,
             title: String,
             imgUrl: String,
-            onClickNavigationDestination: Int,
+            onClickNavigationDestination: TrendingNavigationState,
         ): T
     }
 
     fun <T>map(mapper: Mapper<T>): T = mapper.map(id,title,imgUrl,onClickNavigationDestination)
 
-    class ToUiMapper @Inject constructor(): Mapper<TrendingTopBarItemUi> {
+    class ToUiMapper @Inject constructor(
+        private val mapper: PlaylistDomain.Mapper<PlaylistUi>
+    ): Mapper<TrendingTopBarItemUi> {
 
         override fun map(
             id: String,
             title: String,
             imgUrl: String,
-            onClickNavigationDestination: Int,
+            onClickNavigationDestination: TrendingNavigationState,
         ): TrendingTopBarItemUi {
             return TrendingTopBarItemUi(
                 id = id,
                 title = title,
                 imgUrl = imgUrl,
-                navigationState =
-                if(onClickNavigationDestination==emptyDestination) TrendingTopBarNavigationState.Empty
-                else TrendingTopBarNavigationState.Navigate(onClickNavigationDestination),
+                navigationState = onClickNavigationDestination.map(mapper)
             )
         }
     }

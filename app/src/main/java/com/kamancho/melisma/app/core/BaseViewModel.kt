@@ -56,7 +56,9 @@ abstract class BaseViewModel<T>(
             }
             val position = temporaryTracksCache.findTrackPosition(item.mediaId)
             withContext(dispatchersList.ui()) {
+                Log.d("tag", "playMusic: ")
                playerCommunication.map(PlayerCommunicationState.Play(item,position))
+                Log.d("tag", "playMusic: 1")
                //630 set queue  //526 play 2879 playback st
                 // 79            // 822   = 901
            }  //740          // 652   =  1392 / 1310

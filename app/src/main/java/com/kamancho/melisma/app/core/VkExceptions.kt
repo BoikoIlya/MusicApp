@@ -12,6 +12,8 @@ interface VkException {
 
     suspend fun map(): Int
 
+    fun isWrongParameter():Boolean
+
     class Base(private val code: Int) : Exception(), VkException {
 
         override suspend fun map(): Int {
@@ -54,6 +56,8 @@ interface VkException {
                 else -> R.string.oops_something_went_wrong_data
             }
         }
+
+        override fun isWrongParameter(): Boolean = code == 100
 
 
     }

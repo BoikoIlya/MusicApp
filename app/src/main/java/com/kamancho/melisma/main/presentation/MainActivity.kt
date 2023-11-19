@@ -3,20 +3,18 @@ package com.kamancho.melisma.main.presentation
 import android.app.DownloadManager
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ToggleButton
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.kamancho.melisma.R
@@ -28,10 +26,15 @@ import com.kamancho.melisma.player.presentation.PlayerFragment
 import com.kamancho.melisma.queue.presenatation.QueueFragment
 import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.InstallStatus
+import com.kamancho.melisma.app.core.SingleUiEventState
+import com.kamancho.melisma.update.UpdateManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@UnstableApi class MainActivity : FragmentActivity() {
+@UnstableApi
+class MainActivity : FragmentActivity() {
 
     lateinit var binding: ActivityMainBinding
 
@@ -41,11 +44,37 @@ import javax.inject.Inject
     @Inject
     lateinit var imageLoader: ImageLoader
 
+    @Inject
+    lateinit var updateManager: UpdateManager
+
     private lateinit var viewModel: MainViewModel
 
     private lateinit var bottomSheet: BottomSheetBehavior<ConstraintLayout>
 
     private lateinit var downloadBroadcastReceiver: DownloadTrackBroadcastReceiver
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult())
+    { result->
+        if (result.resultCode != RESULT_OK && result.resultCode != RESULT_CANCELED)
+            viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(getString(R.string.update_failed)))
+
+    }
+
+    private val updateListener =
+        InstallStateUpdatedListener { state ->
+            if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Success(getString(R.string.update_will_install)))
+                updateManager.completeUpdate()
+            }else if (state.installStatus() == InstallStatus.FAILED){
+                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(
+                   String.format(getString(R.string.update_failed)+", "+getString(R.string.code)+" "+state.installErrorCode() )
+                ))
+            }
+        }
+
+    companion object {
+        private const val minimal_back_queue_size = 4
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +85,7 @@ import javax.inject.Inject
         downloadBroadcastReceiver = DownloadTrackBroadcastReceiver()
 
         binding.bottomSheet.bottomSheetVp.adapter =
-            ViewPagerFragmentsAdapter(supportFragmentManager,lifecycle, fragments)
+            ViewPagerFragmentsAdapter(supportFragmentManager, lifecycle, fragments)
 
 
         bottomSheet = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
@@ -69,16 +98,17 @@ import javax.inject.Inject
             factory
         )[MainViewModel::class.java]
 
-        val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navHost =
+            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHost.navController
         binding.bottomNavView.setupWithNavController(navController)
         val badge = binding.bottomNavView.getOrCreateBadge(R.id.notificationsFragment)
 
 
 
-        bottomSheet.addBottomSheetCallback(object :BottomSheetBehavior.BottomSheetCallback(){
+        bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if(newState == BottomSheetBehavior.STATE_COLLAPSED)
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED)
                     viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
             }
 
@@ -86,14 +116,15 @@ import javax.inject.Inject
 
         })
 
-        lifecycleScope.launch{
-            viewModel.collectActivityNavigationCommunication(this@MainActivity){
-                it.apply(this@MainActivity,viewModel)
+        lifecycleScope.launch {
+            viewModel.collectActivityNavigationCommunication(this@MainActivity) {
+                it.apply(this@MainActivity, viewModel)
+                it.apply(resultLauncher,updateListener,updateManager)
             }
         }
 
         lifecycleScope.launch {
-            viewModel.collectBottomSheetState(this@MainActivity){
+            viewModel.collectBottomSheetState(this@MainActivity) {
                 bottomSheet.state = it
             }
         }
@@ -108,28 +139,27 @@ import javax.inject.Inject
             }
         }
 
-        lifecycleScope.launch{
-            viewModel.collectSingleUiUpdateCommunication(this@MainActivity){
-                it.apply(supportFragmentManager,this@MainActivity, binding)
+        lifecycleScope.launch {
+            viewModel.collectSingleUiUpdateCommunication(this@MainActivity) {
+                it.apply(supportFragmentManager, this@MainActivity, binding)
             }
         }
 
 
         lifecycleScope.launch {
-            viewModel.collectSlideViewPagerCommunication(this@MainActivity){
-                binding.bottomSheet.bottomSheetVp.setCurrentItem(it,true)
+            viewModel.collectSlideViewPagerCommunication(this@MainActivity) {
+                binding.bottomSheet.bottomSheetVp.setCurrentItem(it, true)
             }
         }
 
         lifecycleScope.launch {
-            viewModel.collectPermissionCheckCommunication(this@MainActivity){
+            viewModel.collectPermissionCheckCommunication(this@MainActivity) {
                 it.apply(this@MainActivity)
-                Log.d("tag", "onCreate: $it ")
             }
         }
 
         lifecycleScope.launch {
-            viewModel.collectNotificationBadgeCommunication(this@MainActivity){
+            viewModel.collectNotificationBadgeCommunication(this@MainActivity) {
                 badge.isVisible = it
             }
         }
@@ -156,17 +186,17 @@ import javax.inject.Inject
 
 
 
-        onBackPressedDispatcher.addCallback(this){
-            if(bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
-                bottomSheet.state != BottomSheetBehavior.STATE_HIDDEN)
+        onBackPressedDispatcher.addCallback(this) {
+            if (bottomSheet.state != BottomSheetBehavior.STATE_COLLAPSED &&
+                bottomSheet.state != BottomSheetBehavior.STATE_HIDDEN
+            )
                 viewModel.bottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
-            else if(navController.currentBackStack.value.size >= minimal_back_queue_size)
-                 {
-
-                    navController.popBackStack()
-            }
-            else finish()
+            else if (navController.currentBackStack.value.size >= minimal_back_queue_size) {
+                navController.popBackStack()
+            } else finish()
         }
+
+
 
         ContextCompat.registerReceiver(
             this,
@@ -176,24 +206,21 @@ import javax.inject.Inject
         )
     }
 
-    companion object{
-        private const val minimal_back_queue_size = 4
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isEmpty()) return
 
         if (
             requestCode == MainViewModel.permissionRequestCode &&
-            grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                viewModel.dontShowPermission()
-            }
+            grantResults[0] != PackageManager.PERMISSION_GRANTED
+        ) {
+            viewModel.dontShowPermission()
+        }
 
         viewModel.updateNotifications()
     }
@@ -202,7 +229,10 @@ import javax.inject.Inject
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(downloadBroadcastReceiver)
+        updateManager.unregisterListener(updateListener)
     }
 
 
 }
+
+

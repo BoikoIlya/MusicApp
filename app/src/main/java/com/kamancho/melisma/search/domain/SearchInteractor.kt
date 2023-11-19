@@ -1,6 +1,7 @@
 package com.kamancho.melisma.search.domain
 
 import android.util.Log
+import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.HandleResponse
 import com.kamancho.melisma.app.core.ManagerResource
 import com.kamancho.melisma.app.vkdto.SearchPlaylistItem
@@ -14,31 +15,36 @@ import javax.inject.Inject
  * Created by Ilya Boiko @camancho
 on 25.10.2023.
  **/
-interface SearchInteractor<T, R> {
+interface SearchInteractor<T, S> {
 
-    suspend fun load(query: String): SearchDomainState<R>
+    suspend fun load(query: String): SearchDomainState<S>
 
-    abstract class Abstract<T, R>(
+    abstract class Abstract<T, S>(
         private val handleResponse: HandleResponse,
         private val repository: SearchRepository<T>,
-    ) : SearchInteractor<T, R> {
+        private val managerResource: ManagerResource
+    ) : SearchInteractor<T, S> {
 
-        override suspend fun load(query: String): SearchDomainState<R> = handleResponse.handle({
+        override suspend fun load(query: String): SearchDomainState<S> = handleResponse.handle({
             val result = repository.search(query)
-            return@handle SearchDomainState.Success(map(result))
+            return@handle if(result.isEmpty())
+                    SearchDomainState.Error(managerResource.getString(R.string.nothing_found_message))
+                else
+                    SearchDomainState.Success(map(result))
         }, { message, e ->
             return@handle SearchDomainState.Error(message)
         })
 
-        protected abstract suspend fun map(data: List<T>): List<R>
+        protected abstract suspend fun map(data: List<T>): List<S>
     }
 
     class BaseTracks @Inject constructor(
         handleResponse: HandleResponse,
         repository: SearchRepository<TrackItem>,
         private val mapper: TrackItem.Mapper<TrackDomain>,
+        managerResource: ManagerResource
     ) : SearchInteractor<TrackItem, TrackDomain>,
-        Abstract<TrackItem, TrackDomain>(handleResponse, repository) {
+        Abstract<TrackItem, TrackDomain>(handleResponse, repository,managerResource) {
 
         override suspend fun map(data: List<TrackItem>): List<TrackDomain> =
             data.map { it.map(mapper) }
@@ -49,8 +55,9 @@ interface SearchInteractor<T, R> {
         handleResponse: HandleResponse,
         repository: SearchRepository<SearchPlaylistItem>,
         private val mapper: SearchPlaylistItem.Mapper<PlaylistDomain>,
+        managerResource: ManagerResource
     ) : SearchInteractor<SearchPlaylistItem, PlaylistDomain>,
-        Abstract<SearchPlaylistItem, PlaylistDomain>(handleResponse, repository) {
+        Abstract<SearchPlaylistItem, PlaylistDomain>(handleResponse, repository,managerResource) {
 
         override suspend fun map(data: List<SearchPlaylistItem>): List<PlaylistDomain> =
             data.map { it.map(mapper) }

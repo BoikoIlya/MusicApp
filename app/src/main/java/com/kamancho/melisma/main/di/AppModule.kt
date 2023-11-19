@@ -31,6 +31,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.kamancho.melisma.app.core.*
 import com.kamancho.melisma.app.vkdto.TrackItem
 import com.kamancho.melisma.captcha.data.CaptchaCommunication
@@ -73,7 +75,6 @@ import com.kamancho.melisma.musicdialog.presentation.AddTrackDialogViewModel
 import com.kamancho.melisma.player.presentation.PlayerService
 import com.kamancho.melisma.player.presentation.PlayingTrackIdCommunication
 import com.kamancho.melisma.player.presentation.TrackPlaybackPositionCommunication
-import com.kamancho.melisma.favoritesplaylistdetails.data.cache.PlaylistIdTransfer
 import com.kamancho.melisma.frienddetails.presentation.SearchQueryFriendCommunication
 import com.kamancho.melisma.notifications.data.NotificationIdsRepository
 import com.kamancho.melisma.notifications.data.NotificationsRepository
@@ -105,6 +106,7 @@ import com.kamancho.melisma.BuildConfig
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
 import com.kamancho.melisma.player.di.PlayerServiceScope
 import com.kamancho.melisma.player.presentation.MediaSessionCallBack
+import com.kamancho.melisma.update.UpdateManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -207,6 +209,7 @@ class AppModule {
             .setLevel(
                 if(BuildConfig.DEBUG)
                     HttpLoggingInterceptor.Level.BODY
+                    //HttpLoggingInterceptor.Level.BASIC
                 else HttpLoggingInterceptor.Level.NONE
             )
     }
@@ -379,7 +382,11 @@ class AppModule {
         return context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     }
 
-
+    @Provides
+    @Singleton
+    fun provideUpdateManager(context: Context): UpdateManager {
+        return UpdateManager.Base(AppUpdateManagerFactory.create(context))
+    }
 }
 
 @Module
@@ -608,9 +615,6 @@ interface AppBindModule{
     fun bindMusicDialogAndNewIdTransfer(obj: DataTransfer.MusicDialogTransfer): DataTransfer<TrackDomain>
 
 
-    @Binds
-    @Singleton
-    fun bindPlaylistIdTransfer(obj: PlaylistIdTransfer.Base): PlaylistIdTransfer
 
     @Binds
     @Singleton

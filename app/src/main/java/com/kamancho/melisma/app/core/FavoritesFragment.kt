@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -81,7 +82,8 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
         }
 
         lifecycleScope.launch {
-            favoritesViewModel.collectData(this@FavoritesFragment) {
+            favoritesViewModel.collectData(this@FavoritesFragment){
+                Log.d("tag", "onViewCreated: ${it.size}")
                 val state = binding.favoritesRcv.layoutManager?.onSaveInstanceState()
                 adapter.map(it)
                 binding.favoritesRcv.layoutManager?.onRestoreInstanceState(state)

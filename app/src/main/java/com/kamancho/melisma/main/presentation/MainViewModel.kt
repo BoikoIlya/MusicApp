@@ -84,7 +84,10 @@ class MainViewModel @Inject constructor(
 
     fun checkAuth() = viewModelScope.launch(dispatchersList.io()) {
         authorizationRepository.isNotAuthorized().collect{
-            if(it) activityNavigationCommunication.map(ActivityNavigationState.Navigate(AuthActivity::class.java))
+            activityNavigationCommunication.map(
+            if(it) ActivityNavigationState.Navigate(AuthActivity::class.java)
+            else ActivityNavigationState.LoggedIn
+            )
         }
     }
 
@@ -105,6 +108,10 @@ class MainViewModel @Inject constructor(
             if(it.first.isNotEmpty())
                 singleUiEventCommunication.map(SingleUiEventState.ShowDialog(CaptchaFragmentDialog()))
         }
+    }
+
+    fun sendSingleUiEvent(event: SingleUiEventState) = viewModelScope.launch(dispatchersList.io()) {
+        singleUiEventCommunication.map(event)
     }
 
     override suspend fun collectPlayerControls(

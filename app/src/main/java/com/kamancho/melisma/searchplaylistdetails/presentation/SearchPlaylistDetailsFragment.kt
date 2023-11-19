@@ -17,6 +17,8 @@ import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetail
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.searchplaylistdetails.di.SearchPlaylistDetailsComponent
 import com.kamancho.melisma.trending.presentation.TracksAdapter
+import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
+import javax.inject.Inject
 
 /**
  * Created by HP on 15.08.2023.
@@ -27,6 +29,7 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
     private val args: SearchPlaylistDetailsFragmentArgs by navArgs()
 
+
     override fun onAttach(context: Context) {
         component = (context.applicationContext as App).appComponent.playlistDataComponent().build()
             .searchPlaylistDetailsComponent().build()
@@ -35,13 +38,18 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
         super.onAttach(context)
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         (favoritesViewModel as SearchPlaylistDetailsViewModel)
             .initPlaylistData(args.playlistItem,savedInstanceState==null)
 
         (favoritesViewModel as SearchPlaylistDetailsViewModel)
             .update(args.playlistItem,false,savedInstanceState==null)
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
 
         binding.mainMenuBtn.setImageResource(R.drawable.plus)
         binding.mainMenuBtn.visibility = View.VISIBLE
@@ -71,6 +79,10 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
         }
 
         super.onViewCreated(view, savedInstanceState)
+
+        binding.pullToRefresh.setOnRefreshListener{
+            favoritesViewModel.update(args.playlistItem, loading = true, shouldUpdate = true)
+        }
     }
 
     override fun search(query: String) {

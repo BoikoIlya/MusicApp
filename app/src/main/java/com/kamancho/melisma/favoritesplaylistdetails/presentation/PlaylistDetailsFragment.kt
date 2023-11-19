@@ -1,7 +1,9 @@
 package com.kamancho.melisma.favoritesplaylistdetails.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -48,15 +50,18 @@ abstract class PlaylistDetailsFragment: FavoritesFragment<MediaItem>(R.layout.fa
         }
 
 
-
         viewLifecycleOwner.lifecycleScope.launch{
             (favoritesViewModel as PlaylistDetailsViewModel).collectPlaylistDataCommunication(this@PlaylistDetailsFragment){
-                barAdapter.setupPlaylist(it)
-                barAdapter.showTopBar(binding.searchFavorites.text.isEmpty())
+                Log.d("tag", "onViewCreated: ")
+                    barAdapter.setupPlaylist(it)
+                    barAdapter.showTopBar(binding.searchFavorites.text.isEmpty())
             }
         }
 
+
         super.onViewCreated(view, savedInstanceState)
+
+
     }
 
     override fun search(query: String) {

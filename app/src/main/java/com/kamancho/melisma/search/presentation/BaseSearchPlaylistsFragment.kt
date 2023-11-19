@@ -2,6 +2,7 @@ package com.kamancho.melisma.search.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,6 +15,7 @@ import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.search.di.SearchComponent
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.kamancho.melisma.userplaylists.presentation.FavoritesPlaylistsFragment.Companion.playlist_key
+import com.kamancho.melisma.userplaylists.presentation.PlaylistThumbsState
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
 import com.kamancho.melisma.userplaylists.presentation.PlaylistsAdapter
 import com.kamancho.melisma.userplaylists.presentation.PlaylistsViewHolder
@@ -43,8 +45,8 @@ class BaseSearchPlaylistsFragment: SearchListFragment<PlaylistUi, PlaylistsViewH
             clickListener = object : ClickListener<PlaylistUi>{
                 override fun onClick(data: PlaylistUi) {
 
-
                     val bundle = Bundle()
+
                     bundle.putParcelable(playlist_key,data)
                     findNavController().navigate(R.id.action_searchFragment_to_searchPlaylistDetailsFragment,bundle)
                 }

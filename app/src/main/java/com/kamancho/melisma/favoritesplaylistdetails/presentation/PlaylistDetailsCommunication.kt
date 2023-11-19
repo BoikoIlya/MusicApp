@@ -15,12 +15,17 @@ interface PlaylistDetailsCommunication: FavoritesUiCommunication<MediaItem>{
     fun showPlaylistData(playlistUi: PlaylistUi)
 
     suspend fun collectPlaylistDetails(owner: LifecycleOwner, collector: FlowCollector<PlaylistUi>)
+//
+//    fun showAddBtn(visibility: Int)
+//
+//    suspend fun collectAddBtnVisibility(owner: LifecycleOwner, collector: FlowCollector<Int>)
 
     class Base @Inject constructor(
         playlistTracksCommunication: PlaylistDetailsTracksCommunication,
         playlistStateCommunication: PlaylistDetailsStateCommunication,
         favoritesTracksLoadingCommunication: PlaylistLoadingCommunication,
-        private val playlistDataCommunication: PlaylistDataCommunication
+        private val playlistDataCommunication: PlaylistDataCommunication,
+      //  private val addBtnVisibilityCommunication: AddBtnVisibilityCommunication
     ): PlaylistDetailsCommunication, FavoritesUiCommunication.Abstract<MediaItem>(
         playlistStateCommunication,
         playlistTracksCommunication,
@@ -34,6 +39,13 @@ interface PlaylistDetailsCommunication: FavoritesUiCommunication<MediaItem>{
             owner: LifecycleOwner,
             collector: FlowCollector<PlaylistUi>,
         ) = playlistDataCommunication.collect(owner,collector)
+
+//        override fun showAddBtn(visibility: Int) = addBtnVisibilityCommunication.map(visibility)
+//
+//        override suspend fun collectAddBtnVisibility(
+//            owner: LifecycleOwner,
+//            collector: FlowCollector<Int>,
+//        ) = addBtnVisibilityCommunication.collect(owner,collector)
     }
 
 }

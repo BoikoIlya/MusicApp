@@ -1,5 +1,6 @@
 package com.kamancho.melisma.searchplaylistdetails.presentation
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.kamancho.melisma.R
@@ -56,16 +57,21 @@ class SearchPlaylistDetailsViewModel @Inject constructor(
     mapper,
     trackChecker
 ){
+    private var firstLoadAfterInit = false
 
-
+    init {
+        firstLoadAfterInit = true
+    }
 
     fun initPlaylistData(playlistUi: PlaylistUi, shouldInit: Boolean){
-        if(!shouldInit) return
+        if(!shouldInit && !firstLoadAfterInit) return
         communication.showPlaylistData(playlistUi)
     }
 
     override fun update(playlist: PlaylistUi,loading: Boolean,shouldUpdate: Boolean) {
-        if(!shouldUpdate) return
+        if(!shouldUpdate && !firstLoadAfterInit) return
+        firstLoadAfterInit = false
+
         viewModelScope.launch(dispatchersList.io()) {
             communication.showLoading(FavoritesUiState.Loading)
             searchPlaylistDetailsInteractor.fetch(
@@ -98,4 +104,9 @@ class SearchPlaylistDetailsViewModel @Inject constructor(
             .map(playlistsResultUpdateToUiEventMapper)
     }
 
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("tag", "onCleared: search ")
+    }
 }

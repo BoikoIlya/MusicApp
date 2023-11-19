@@ -1,8 +1,10 @@
 package com.kamancho.melisma.searchplaylistdetails.domain
 
 import android.util.Log
+import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.DataTransfer
 import com.kamancho.melisma.app.core.HandleResponse
+import com.kamancho.melisma.app.core.ManagerResource
 import com.kamancho.melisma.app.core.VkException
 import com.kamancho.melisma.app.vkdto.SearchPlaylistItem
 import com.kamancho.melisma.searchplaylistdetails.data.SearchPlaylistDetailsRepository
@@ -17,7 +19,7 @@ import javax.inject.Inject
  **/
 interface SearchPlaylistDetailsInteractor {
 
-    suspend fun fetch(ownerId: Int,playlistId: String): SearchPlaylistDetailsResult
+    suspend fun fetch(ownerId: Int, playlistId: String): SearchPlaylistDetailsResult
 
     suspend fun find(query: String): List<TrackDomain>
 
@@ -29,25 +31,26 @@ interface SearchPlaylistDetailsInteractor {
         private val handleResponse: HandleResponse,
         private val playlistCloudToDomainMapper: SearchPlaylistItem.Mapper<PlaylistDomain>,
         private val trackCacheToTrackDomainMapper: TrackCacheToDomainMapper,
-    ):SearchPlaylistDetailsInteractor{
+        private val managerResource: ManagerResource,
+    ) : SearchPlaylistDetailsInteractor {
 
-        override suspend fun fetch(ownerId: Int,playlistId: String): SearchPlaylistDetailsResult = handleResponse.handle({
-            val result = repository.fetch(playlistId,ownerId)
+        override suspend fun fetch(ownerId: Int, playlistId: String): SearchPlaylistDetailsResult =
+            handleResponse.handle({
+                val result = repository.fetch(playlistId, ownerId)
 
-            return@handle SearchPlaylistDetailsResult.Success(
-                result.first.map(playlistCloudToDomainMapper),
-                result.second.map { trackCacheToTrackDomainMapper.map(it) }
-            )
-        },{message,e->
-            return@handle SearchPlaylistDetailsResult.Error(message)
-        })
+                return@handle SearchPlaylistDetailsResult.Success(
+                    result.first.map(playlistCloudToDomainMapper),
+                    result.second.map { trackCacheToTrackDomainMapper.map(it) }
+                )
+            }, { message, _ ->
+                    SearchPlaylistDetailsResult.Error(message)
+            })
 
         override suspend fun find(query: String): List<TrackDomain> =
-           repository.find(query).map { trackCacheToTrackDomainMapper.map(it) }
+            repository.find(query).map { trackCacheToTrackDomainMapper.map(it) }
 
 
-
-        override suspend fun containsCurrentPlaylist(title:String): Boolean =
+        override suspend fun containsCurrentPlaylist(title: String): Boolean =
             repository.contains(title)
 
     }

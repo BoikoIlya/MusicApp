@@ -3,6 +3,7 @@ package com.kamancho.melisma.favoritesplaylistdetails.presentation
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.app.core.ImageLoader
@@ -55,4 +56,6 @@ class PlaylistDetailsBarAdapter(
             notifyItemRemoved(0)
         }else if(show && item.isNotEmpty()) notifyItemChanged(0)
     }
+
+
 }

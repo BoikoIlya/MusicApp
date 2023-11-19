@@ -43,6 +43,14 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_trendingFragment_to_searchPlaylistDetailsFragment2"
+            app:destination="@id/searchPlaylistDetailsFragment2"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            />
     </fragment>
     <fragment
         android:id="@+id/createPlaylistFragment"
@@ -93,6 +101,14 @@
         <action
             android:id="@+id/action_editPlaylistFragment_to_addToPlaylistFragment"
             app:destination="@id/addToPlaylistFragment" />
+        <argument
+            android:name="playlistItem"
+            app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchPlaylistDetailsFragment2"
+        android:name="com.kamancho.melisma.searchplaylistdetails.presentation.SearchPlaylistDetailsFragment"
+        android:label="SearchPlaylistDetailsFragment">
         <argument
             android:name="playlistItem"
             app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />

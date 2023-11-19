@@ -15,10 +15,11 @@ import javax.inject.Inject
  * Created by HP on 21.03.2023.
  **/
 
-interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>>, MediaItem> {
+interface ToMediaItemMapper : Mapper<Pair<TrackCache, Map<String, String>>, MediaItem> {
 
 
     class Base @Inject constructor() : ToMediaItemMapper {
+
 
         companion object {
             const val track_duration_in_millis = "duration"
@@ -31,7 +32,7 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>
             const val is_cached = "is_cached"
         }
 
-        override fun map(data: Pair<TrackCache, List<Pair<String, String>>>): MediaItem {
+        override fun map(data: Pair<TrackCache, Map<String, String>>): MediaItem {
 
             val extraData = Bundle()
             extraData.putString(track_duration_formatted, data.first.durationFormatted)
@@ -43,13 +44,15 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>
             extraData.putFloat(track_duration_in_millis, data.first.durationInMillis)
 
 
-            val pattern = "[/:*?\"<>|]".toRegex()
+            val formattedFilename = buildString {
+                val input = data.first.name + " - " + data.first.artistName
+                for (c in input) {
+                    append(if (c in "/:*?\"<>|") '_' else c)
+                }
+                append(fileExtension)
+            }
 
-            val formatString = "%s - %s%s"
-            val formattedFilename = String.format(formatString, data.first.name, data.first.artistName, fileExtension)
-                .replace(pattern, "_")
-
-            val downloadedFilepath = data.second.find { it.first == formattedFilename }
+            val downloadedFilepath = data.second[formattedFilename]
 
 
 
@@ -59,7 +62,7 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>
 
             return MediaItem.Builder()
                 .setMediaId(data.first.trackId)
-                .setUri(Uri.parse(downloadedFilepath?.second ?: data.first.url))
+                .setUri(Uri.parse(downloadedFilepath ?: data.first.url))
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(data.first.name)
@@ -67,7 +70,7 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, List<Pair<String, String>>
                         .setAlbumTitle(data.first.albumName)
                         .setArtworkUri(Uri.parse(data.first.smallImgUrl))
                         .setExtras(extraData)
-                        .setIsPlayable(data.first.url.isNotEmpty())
+                        .setIsPlayable(data.first.url.isNotEmpty() || downloadedFilepath != null)
                         .build()
                 )
                 .setTag(UUID.randomUUID()) //random string to make hashcode different

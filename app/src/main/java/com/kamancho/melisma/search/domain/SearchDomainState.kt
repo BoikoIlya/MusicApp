@@ -30,4 +30,5 @@ interface SearchDomainState<T> {
         override suspend fun map(mapper: Mapper<T>) = mapper.map(this, message)
 
     }
+
 }

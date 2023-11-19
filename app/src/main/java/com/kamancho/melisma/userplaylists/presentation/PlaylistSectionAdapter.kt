@@ -22,10 +22,8 @@ class PlaylistSectionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistSectionViewHolder {
         return PlaylistSectionViewHolder(
             binding = PlaylistSectionBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false),
-            context = context)
+                LayoutInflater.from(parent.context),parent,false),
+            context = context,)
     }
 
     override fun getItemCount(): Int = 1

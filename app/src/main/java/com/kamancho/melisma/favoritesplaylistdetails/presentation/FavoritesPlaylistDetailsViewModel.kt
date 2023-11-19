@@ -1,5 +1,6 @@
 package com.kamancho.melisma.favoritesplaylistdetails.presentation
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
@@ -63,14 +64,16 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     private var fetching: Job? = null
     private lateinit var playlistUi:PlaylistUi
     private lateinit var playlistId:String
+    private var firstLoadAfterInit = false
 
-
-
-
+    init {
+        firstLoadAfterInit = true
+    }
 
     override fun update(id: String, loading: Boolean, shouldUpdate: Boolean) {
-        if(!shouldUpdate) return
+        if(!shouldUpdate && !firstLoadAfterInit) return
 
+        firstLoadAfterInit = false
         viewModelScope.launch(dispatchersList.io()) {
             playlistDetailsHandleUiUpdate.handle(loading,playlistId,playlistUi.map(toOwnerIdMapper)){
                 cachedTracksRepository.isDbEmpty(id)
@@ -79,7 +82,7 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     }
 
     fun handlePlaylistData(playlistUi: PlaylistUi, shouldUpdate: Boolean){
-        if(!shouldUpdate) return
+        if(!shouldUpdate && !firstLoadAfterInit) return
         this.playlistUi = playlistUi
         this.playlistId = playlistUi.map(toPlaylistIdMapper)
 
@@ -103,11 +106,11 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
 
     fun fetchPlaylistData() = handlePlaylistDataCache.handle(viewModelScope,playlistId)
 
-    fun isNotFollowed(initItemTouchHelper:()->Unit){
-        if(playlistUi!!.map(isNotFollowedMapper)) initItemTouchHelper.invoke()
+    fun isNotFollowed(playlist: PlaylistUi,initItemTouchHelper:()->Unit){
+        if(playlist.map(isNotFollowedMapper)) initItemTouchHelper.invoke()
     }
 
-    fun addBtnVisibility() = if(playlistUi.map(isNotFollowedMapper)) View.GONE else View.VISIBLE
+    fun addBtnVisibility(playlist: PlaylistUi) = if(playlist.map(isNotFollowedMapper)) View.GONE else View.VISIBLE
 
     override fun launchDeleteItemDialog(item: MediaItem): Job = viewModelScope.launch(dispatchersList.io()) {
         mediaItemTransfer.save(toTrackDomainMapper.map(item))
@@ -120,5 +123,8 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
         flowCollector: FlowCollector<Unit>
     ) = resetSwipeActionCommunication.collect(owner,flowCollector)
 
-
+//    suspend fun collectAddBtnVisibility(
+//        owner: LifecycleOwner,
+//        flowCollector: FlowCollector<Int>
+//    ) = communication.collectAddBtnVisibility(owner,flowCollector)
 }

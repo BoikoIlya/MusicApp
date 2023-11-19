@@ -533,6 +533,13 @@ interface MediaControllerWrapper: Player {
              TODO("Not yet implemented")
          }
 
+         override fun setAudioAttributes(
+             audioAttributes: AudioAttributes,
+             handleAudioFocus: Boolean,
+         ) {
+             controller?.setAudioAttributes(audioAttributes, handleAudioFocus)
+         }
+
 
      }
  }

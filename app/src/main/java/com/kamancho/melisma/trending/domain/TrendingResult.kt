@@ -11,18 +11,19 @@ sealed interface TrendingResult {
    suspend fun <T>map(mapper: Mapper<T>):T
 
     interface Mapper<T>{
-        suspend fun map(data: Pair<List<TopBarItemDomain>, List<TrackDomain>>, message: String): T
+        suspend fun map(data: Triple<List<TopBarItemDomain>, List<TrackDomain>,List<TopBarItemDomain>>, message: String): T
     }
 
-    data class Success(private val data: Pair<List<TopBarItemDomain>, List<TrackDomain>>): TrendingResult {
+    data class Success(private val data: Triple<List<TopBarItemDomain>, List<TrackDomain>,List<TopBarItemDomain>>): TrendingResult {
         override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(data, "")
     }
 
     data class Error(
         private val message: String,
-        private val topBarItems: List<TopBarItemDomain>
+        private val topBarItems: List<TopBarItemDomain>,
+        private val embededVkPlaylists: List<TopBarItemDomain>,
     ): TrendingResult {
-        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(Pair(topBarItems, emptyList()), message)
+        override suspend fun <T> map(mapper: Mapper<T>): T = mapper.map(Triple(topBarItems, emptyList(),embededVkPlaylists), message)
     }
 
 }
