@@ -123,8 +123,5 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
         flowCollector: FlowCollector<Unit>
     ) = resetSwipeActionCommunication.collect(owner,flowCollector)
 
-//    suspend fun collectAddBtnVisibility(
-//        owner: LifecycleOwner,
-//        flowCollector: FlowCollector<Int>
-//    ) = communication.collectAddBtnVisibility(owner,flowCollector)
+
 }

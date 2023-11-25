@@ -84,9 +84,6 @@ interface SearchModule {
     @SearchScope
     fun bindCloudTrackToTrackDomainMapper(obj: TrackItem.Mapper.CloudTrackToTrackDomainMapper): TrackItem.Mapper<TrackDomain>
 
-//    @Binds
-//    @SearchScope
-//    fun bindToTrackUiMapper(obj: TrackDomain.ToTrackUiMapper): TrackDomain.Mapper<MediaItem>
 
     @Binds
     @SearchScope

@@ -55,37 +55,6 @@ interface PlaylistDetailsCloudDataSource {
 
             }
             return list
-
-//            val tracksCount =
-//                service.getTracksCount(
-//                    accountDataStore.token(),
-//                    accountDataStore.ownerId(),
-//                    captchaDataStore.captchaId(),
-//                    captchaDataStore.captchaEnteredData()
-//                ).response
-//
-//
-//            val totalPackets = (tracksCount + PACKET_SIZE - 1) / PACKET_SIZE
-//
-//            return coroutineScope {
-//
-//                (0 until totalPackets).map { batchIndex ->
-//
-//                    val offset = batchIndex * PACKET_SIZE
-//
-//                    async(dispatchersList.io()) {
-//                        service.getPlaylistTracks(
-//                            accessToken = accountDataStore.token(),
-//                            owner_id = ownerId.toString(),
-//                            album_id = playlistId,
-//                            count = PACKET_SIZE,
-//                            offset = offset,
-//                            captcha_sid = captchaDataStore.captchaId(),
-//                            captcha_key = captchaDataStore.captchaEnteredData(),
-//                        ).response.items
-//                    }
-//                }.awaitAll().flatten()
-            //  }
         }
 
         override suspend fun fetchFavoritesPlaylistById(

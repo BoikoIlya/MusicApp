@@ -361,7 +361,7 @@ class AppModule {
     fun provideNotificationsFirebaseService(
         connectionChecker: ConnectionChecker
     ): NotificationsFirebaseService{
-        return NotificationsFirebaseService.Base(connectionChecker = connectionChecker) //FirebaseFirestore.getInstance()
+        return NotificationsFirebaseService.Base(connectionChecker = connectionChecker)
     }
 
     @Provides
@@ -480,10 +480,6 @@ interface AppBindModule{
     fun bindSearchNotificationsRepository(obj: NotificationsRepository.Base):
             NotificationsRepository
 
-//    @Singleton
-//    @Binds
-//    fun bindNotificationsFirebaseService(obj: NotificationsFirebaseService.Base):
-//            NotificationsFirebaseService
 
     @Singleton
     @Binds

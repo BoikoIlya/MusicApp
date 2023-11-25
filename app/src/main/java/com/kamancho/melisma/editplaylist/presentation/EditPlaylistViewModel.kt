@@ -37,8 +37,6 @@ class EditPlaylistViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val playlistSaveBtnUiStateCommunication: PlaylistSaveBtnUiStateCommunication,
     private val playlistUiStateCommunication: PlaylistDataUiStateCommunication,
-//    transfer: DataTransfer<PlaylistDomain>,
-//    toPlaylistUiMapper: PlaylistDomain.Mapper<PlaylistUi>,
     private val titleStateCommunication: TitleStateCommunication,
     private val toIdMapper: PlaylistUi.Mapper<String>,
     private val toOwnerIdMapper: PlaylistUi.Mapper<Int>,

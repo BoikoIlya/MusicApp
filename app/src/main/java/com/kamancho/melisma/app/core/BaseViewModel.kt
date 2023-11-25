@@ -43,8 +43,7 @@ abstract class BaseViewModel<T>(
        trackChecker.checkIfPlayable(item, playable = {
 
             val queue = temporaryTracksCache.map()
-                //85  100
-                // 80  85
+
             if(queue.isNotEmpty()){
                 val newQueue = queue.map {
                     MediaItem.Builder()
@@ -56,12 +55,8 @@ abstract class BaseViewModel<T>(
             }
             val position = temporaryTracksCache.findTrackPosition(item.mediaId)
             withContext(dispatchersList.ui()) {
-                Log.d("tag", "playMusic: ")
                playerCommunication.map(PlayerCommunicationState.Play(item,position))
-                Log.d("tag", "playMusic: 1")
-               //630 set queue  //526 play 2879 playback st
-                // 79            // 822   = 901
-           }  //740          // 652   =  1392 / 1310
+           }
        })
 
     }
