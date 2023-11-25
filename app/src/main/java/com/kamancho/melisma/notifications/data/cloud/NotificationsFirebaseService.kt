@@ -16,7 +16,6 @@ interface NotificationsFirebaseService {
     suspend fun fetch(): List<NotificationCloud>
 
     class Base @Inject constructor(
-        private val cloudDB: FirebaseFirestore,
         private val connectionChecker: ConnectionChecker
     ): NotificationsFirebaseService {
 
@@ -25,6 +24,7 @@ interface NotificationsFirebaseService {
             private const val notifications_collection = "notifications"
         }
 
+        private val cloudDB = FirebaseFirestore.getInstance()
 
 
         override suspend fun fetch(): List<NotificationCloud> {

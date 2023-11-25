@@ -88,7 +88,10 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
                  }
              },
              cacheStrategy = DiskCacheStrategy.AUTOMATIC,
-             binding.favoritesRcv.layoutManager as LayoutManager
+             binding.favoritesRcv.layoutManager as LayoutManager,
+             onLongClick = {
+                 viewModel.showHint()
+             }
         )
 
         super.adapter = tracksAdapter

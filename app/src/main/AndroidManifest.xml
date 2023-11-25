@@ -28,6 +28,11 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlyticsCollectionEnabled}" />
 
+
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="@bool/FIREBASE_ANALYTICS_DEACTIVATED"/>
+
         <activity
             android:name="com.kamancho.melisma.main.presentation.MainActivity"
             android:exported="true"

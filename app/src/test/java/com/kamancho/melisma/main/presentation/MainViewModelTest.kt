@@ -149,9 +149,9 @@ class MainViewModelTest: ObjectCreator() {
 
 
 
-    class TestFirebaseMessagingWrapper: FirebaseMessagingWrapper{
+    class TestFirebaseMessagingWrapper: FirebaseInitializer{
         val list = emptyList<Int>().toMutableList()
-        override fun subscribeToTopic() {
+        override fun init() {
             list.add(1)
         }
 

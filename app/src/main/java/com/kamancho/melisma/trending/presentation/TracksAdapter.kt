@@ -61,7 +61,8 @@ open class TracksAdapter(
     private val addBtnVisibility: Int = View.VISIBLE,
     private val navigator: Navigator = Navigator.Empty,
     private val cacheStrategy: DiskCacheStrategy = DiskCacheStrategy.NONE,
-    private val layoutManager: LayoutManager
+    private val layoutManager: LayoutManager,
+    private val onLongClick:(()->Unit)? = null
  ): RecyclerView.Adapter<AdapterViewHolder>(),
     Mapper<List<MediaItem>,Unit>,Select, Scroller, MediaItemsAdapter {
 
@@ -85,7 +86,8 @@ open class TracksAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), playClickListener, saveClickListener,imageLoader,addBtnVisibility, cacheStrategy
+            ), playClickListener, saveClickListener,imageLoader,
+            addBtnVisibility, cacheStrategy,onLongClick
         )
     }
 
@@ -143,7 +145,8 @@ open class TracksViewHolder(
     private val saveClickListener: ClickListener<MediaItem>,
     private val imageLoader: ImageLoader,
     private val addBtnVisibility: Int,
-    private val cacheStrategy: DiskCacheStrategy = DiskCacheStrategy.AUTOMATIC
+    private val cacheStrategy: DiskCacheStrategy = DiskCacheStrategy.AUTOMATIC,
+    private val onLongClick:(()->Unit)? = null
 ): AdapterViewHolder(binding.root) {
 
 
@@ -172,6 +175,11 @@ open class TracksViewHolder(
             saveClickListener.onClick(item)
 
         }
+
+       binding.root.setOnLongClickListener {
+           onLongClick?.invoke()
+           return@setOnLongClickListener true
+       }
     }
 
 }

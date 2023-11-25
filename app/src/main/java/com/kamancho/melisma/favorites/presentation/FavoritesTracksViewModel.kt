@@ -90,9 +90,17 @@ class FavoritesTracksViewModel @Inject constructor(
             ))
             return@launch
         }
+
         val shuffled = list.shuffled()
+        val firstPlayable = shuffled.find { it.mediaMetadata.isPlayable!=false }
+        if(firstPlayable==null){
+            singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(
+                managerResource.getString(R.string.no_playable_tracks)
+            ))
+            return@launch
+        }
         temporaryTracksCache.saveCurrentPageTracks(shuffled)
-        playMusic(shuffled.first())
+        playMusic(firstPlayable)
     }
 
     fun clearDownloadState() = downloadCompleteCommunication.map(DownloadResult.Empty)
@@ -100,6 +108,13 @@ class FavoritesTracksViewModel @Inject constructor(
     override fun launchDeleteItemDialog(item: MediaItem) = viewModelScope.launch(dispatchersList.io()) {
         interactor.saveItemToTransfer(item)
         singleUiEventCommunication.map(SingleUiEventState.ShowDialog(DeleteTrackDialogFragment()))
+    }
+
+    fun showHint() = viewModelScope.launch(dispatchersList.io()) {
+        singleUiEventCommunication.map(
+            SingleUiEventState.ShowSnackBar.Success(
+                managerResource.getString(R.string.swipe_hint)
+            ))
     }
 
     suspend fun collectDeleteDialogCommunication(
@@ -117,6 +132,8 @@ class FavoritesTracksViewModel @Inject constructor(
         owner: LifecycleOwner,
         collector: FlowCollector<DownloadResult>
     ) = downloadCompleteCommunication.collect(owner, collector)
+
+
 }
 
 

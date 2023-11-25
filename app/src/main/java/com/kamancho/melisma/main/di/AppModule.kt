@@ -2,12 +2,9 @@ package com.kamancho.melisma.main.di
 
 
 import android.app.DownloadManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -20,18 +17,13 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
-import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
 import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.kamancho.melisma.app.core.*
 import com.kamancho.melisma.app.vkdto.TrackItem
@@ -99,13 +91,10 @@ import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
 import com.kamancho.melisma.userplaylists.data.cache.PlaylistDao
 import com.kamancho.melisma.userplaylists.domain.PlaylistDomain
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.errorprone.annotations.Keep
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kamancho.melisma.BuildConfig
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
-import com.kamancho.melisma.player.di.PlayerServiceScope
-import com.kamancho.melisma.player.presentation.MediaSessionCallBack
 import com.kamancho.melisma.update.UpdateManager
 import dagger.Binds
 import dagger.Module
@@ -339,8 +328,11 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseMessagingWrapper(): FirebaseMessagingWrapper{
-        return FirebaseMessagingWrapper.Base(FirebaseMessaging.getInstance(), topic_name)
+    fun provideFirebaseInitializer(): FirebaseInitializer{
+        return FirebaseInitializer.Base(
+            if(BuildConfig.DEBUG) test_topic_name
+            else topic_name
+            )
     }
 
     @Provides
@@ -366,8 +358,10 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): FirebaseFirestore{
-        return FirebaseFirestore.getInstance()
+    fun provideNotificationsFirebaseService(
+        connectionChecker: ConnectionChecker
+    ): NotificationsFirebaseService{
+        return NotificationsFirebaseService.Base(connectionChecker = connectionChecker) //FirebaseFirestore.getInstance()
     }
 
     @Provides
@@ -486,10 +480,10 @@ interface AppBindModule{
     fun bindSearchNotificationsRepository(obj: NotificationsRepository.Base):
             NotificationsRepository
 
-    @Singleton
-    @Binds
-    fun bindNotificationsFirebaseService(obj: NotificationsFirebaseService.Base):
-            NotificationsFirebaseService
+//    @Singleton
+//    @Binds
+//    fun bindNotificationsFirebaseService(obj: NotificationsFirebaseService.Base):
+//            NotificationsFirebaseService
 
     @Singleton
     @Binds

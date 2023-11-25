@@ -174,7 +174,7 @@
     <string name="give_storage_permission_to_be_able_download">Please give permission to use the storage to be able to properly download and read tracks.</string>
     <string name="timer_was_set">The timer is set</string>
     <string name="timer_was_disabled">The timer is disabled</string>
-    <string name="subscribe_for_news">Subscribe for news</string>
+    <string name="subscribe_for_news">Telegram channel Melisma</string>
     <string name="size">Size:&#160;</string>
     <string name="delete_all_downloaded_tracks">Delete all downloaded tracks</string>
     <string name="click_to_go_to_website">Click to go to website</string>
@@ -198,5 +198,8 @@
     <string name="update_failed">Update not installed</string>
     <string name="code">code</string>
     <string name="update_will_install">Update downloaded and will be installed now</string>
+    <string name="swipe_hint">You can swipe tracks in different directions</string>
+    <string name="no_playable_tracks">No playable tracks</string>
+    <string name="telegram_descr">Here you can ask questions and follow the news</string>
 
 </resources>

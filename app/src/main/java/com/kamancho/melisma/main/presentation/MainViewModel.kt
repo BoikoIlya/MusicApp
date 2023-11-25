@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(
     private val dispatchersList: DispatchersList,
     private val singleUiEventCommunication: GlobalSingleUiEventCommunication,
     private val bottomSheetCommunication: BottomSheetCommunication,
-    private val firebaseMessagingWrapper: FirebaseMessagingWrapper,
+    private val firebaseInitializer: FirebaseInitializer,
     favoritesInteractor: FavoritesTracksInteractor,
     private val authorizationRepository: CheckAuthRepository,
     private val activityNavigationCommunication: ActivityNavigationCommunication,
@@ -60,11 +60,13 @@ class MainViewModel @Inject constructor(
 
     init {
         checkAuth()
-        firebaseMessagingWrapper.subscribeToTopic()
-        permissions()
+        firebaseInitializer.init()
         updateNotifications()
+        permissions()
         handleCaptcha()
     }
+
+
 
     fun bottomSheetState(state: Int){
         bottomSheetCommunication.map(state)

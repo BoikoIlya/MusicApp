@@ -174,7 +174,7 @@
     <string name="give_storage_permission_to_be_able_download">Пожалуйста, дайте разрешение на использование хранилища, чтобы иметь возможность корректно скачивать и считывать треки.</string>
     <string name="timer_was_set">Таймер установлен</string>
     <string name="timer_was_disabled">Таймер выключен</string>
-    <string name="subscribe_for_news">Подписаться на новости</string>
+    <string name="subscribe_for_news">Телеграм канал Melisma</string>
     <string name="size">Размер:&#160;</string>
     <string name="delete_all_downloaded_tracks">Удалить все скачанные треки</string>
     <string name="tracks_success_deelted">Треки успешно удалены</string>
@@ -199,4 +199,7 @@
     <string name="update_failed">Обновление не установлено</string>
     <string name="update_will_install">Обновление загружено и будет сейчас установлено</string>
     <string name="code">код</string>
+    <string name="swipe_hint">Вы можете свайпать треки в разные стороны</string>
+    <string name="no_playable_tracks">Нет треков которые можно проиграть</string>
+    <string name="telegram_descr">Тут вы можете задать вопросы и следить за новостями</string>
 </resources>
