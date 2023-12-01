@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/sort"
+                android:src="@drawable/menu"
                 app:layout_constraintBottom_toBottomOf="@+id/title_favorites"
                 app:layout_constraintEnd_toEndOf="@+id/main_menu_btn"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />

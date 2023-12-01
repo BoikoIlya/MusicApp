@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/playlists_menu_item"
+        android:title="@string/favorites_playlists"
+        android:icon="@drawable/playlist1"
+        />
+    <item
+        android:id="@+id/sort_menu"
+        android:title="@string/sort"
+        android:icon="@drawable/sort"
+        >
+        <menu>
+            <item
+                android:icon="@drawable/access_time"
+                android:id="@+id/byTime"
+                android:title="@string/by_time"
+                />
+
+            <item
+                android:icon="@drawable/title"
+                android:id="@+id/byName"
+                android:title="@string/by_name"
+                />
+            <item
+                android:icon="@drawable/author"
+                android:id="@+id/byArtist"
+                android:title="@string/by_artist"
+                />
+        </menu>
+    </item>
+
+</menu>

@@ -67,7 +67,7 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
                     val bundle = Bundle()
                     bundle.putParcelable(playlist_key,data)
                     bundle.putString(playlist_id_key,data.map(PlaylistUi.ToIdMapper()))
-                    findNavController().navigate(R.id.action_playlistsFragment_to_favoritesPlaylistDetailsFragment,bundle)
+                    findNavController().navigate(R.id.favoritesPlaylistDetailsFragment,bundle)
                 }
             },
             selector = object : Selector<PlaylistUi>{

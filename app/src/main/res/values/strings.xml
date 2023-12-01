@@ -201,5 +201,6 @@
     <string name="swipe_hint">You can swipe tracks in different directions</string>
     <string name="no_playable_tracks">No playable tracks</string>
     <string name="telegram_descr">Here you can ask questions and follow the news</string>
+    <string name="sort">Sorting</string>
 
 </resources>

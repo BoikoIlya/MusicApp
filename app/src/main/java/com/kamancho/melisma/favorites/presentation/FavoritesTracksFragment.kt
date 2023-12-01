@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -24,7 +23,6 @@ import com.kamancho.melisma.favorites.di.FavoriteComponent
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.trending.presentation.*
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -132,7 +130,7 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popup.setForceShowIcon(true)
             }
-            popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
+            popup.menuInflater.inflate(R.menu.favorite_tracks_menu, popup.menu)
             popup.show()
 
             popup.setOnMenuItemClickListener { menuItem ->
@@ -140,6 +138,9 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
                     R.id.byTime -> viewModel.fetchData(SortingState.ByTime())
                     R.id.byName -> viewModel.fetchData(SortingState.ByName())
                     R.id.byArtist -> viewModel.fetchData(SortingState.ByArtist())
+                    R.id.playlists_menu_item ->
+                        findNavController()
+                            .navigate(R.id.action_favoritesFragment_to_favoritesPlaylistsFragment)
                 }
                 return@setOnMenuItemClickListener true
             }

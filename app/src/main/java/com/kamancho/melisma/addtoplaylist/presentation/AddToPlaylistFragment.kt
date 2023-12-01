@@ -54,6 +54,7 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
         BottomSheetBehavior.from(view.parent as View).apply {
             state = BottomSheetBehavior.STATE_EXPANDED
         }
+        binding.menu.setImageResource(R.drawable.sort)
         binding.backBtn.setImageResource(R.drawable.check)
         binding.backBtn. imageTintList = ContextCompat.getColorStateList(requireContext(),R.color.black)
         binding.backBtn.visibility = View.VISIBLE
@@ -94,7 +95,8 @@ class AddToPlaylistFragment: FavoritesFragmentBottomSheet<SelectedTrackUi>(R.lay
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popup.setForceShowIcon(true)
             }
-            popup.menuInflater.inflate(R.menu.sort_options, popup.menu)
+            popup.menuInflater.inflate(R.menu.sort_menu, popup.menu)
+
             popup.show()
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {

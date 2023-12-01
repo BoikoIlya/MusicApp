@@ -202,4 +202,6 @@
     <string name="swipe_hint">Вы можете свайпать треки в разные стороны</string>
     <string name="no_playable_tracks">Нет треков которые можно проиграть</string>
     <string name="telegram_descr">Тут вы можете задать вопросы и следить за новостями</string>
+    <string name="sort">Сортировка</string>
+
 </resources>
