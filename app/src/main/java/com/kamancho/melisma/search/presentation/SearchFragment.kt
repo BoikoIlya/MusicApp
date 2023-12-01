@@ -18,7 +18,6 @@ import com.kamancho.melisma.search.di.SearchComponent
 import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kamancho.melisma.searchhistory.presentation.SearchHistoryFragment.Companion.search_request_key
-import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState
 import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState.NavigateToSearch.Companion.search_type_arg_key
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
@@ -90,21 +89,22 @@ import javax.inject.Inject
         binding.searchHistoryViewPager.setCurrentItem(viewPagerIndex,false)
 
 
-        binding.searchHistoryEdt.setOnFocusChangeListener { _, isFocused ->
-            if (isFocused){
-                setFragmentResult(
+
+        binding.searchHistoryEdt.isFocusable = false
+
+
+        binding.searchHistoryEdt.setOnClickListener {
+            setFragmentResult(
                     search_request_key,
                     bundleOf(Pair(search_type_arg_key,viewPagerIndex))
                 )
                 findNavController().popBackStack()
-            }
         }
 
         binding.searchHistoryViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 viewPagerIndex = position
-
             }
         })
 
