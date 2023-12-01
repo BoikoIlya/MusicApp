@@ -18,8 +18,8 @@ android {
         applicationId "com.kamancho.melisma"
         minSdk 24
         targetSdk 34
-        versionCode 18
-        versionName "1.4.0-betta"
+        versionCode 20
+        versionName "1.4.2-betta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
