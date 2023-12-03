@@ -146,14 +146,14 @@
     <string name="notifications">Уведомления</string>
 
     <string name="update_info">
-        - Исправлена некорректный переход: когда с экрана поиска возвращаешся на экран твоих треков
+        - Исправлен некорректный переход: когда с экрана поиска возвращаешься на экран твоих треков
             вместо истории поиска на android 7-9\n
         - Изменено меню на экране моих треков: теперь оно включает сортировку и возможность открыть
             экран плейлистов
     </string>
     <string name="update_title">Обновление 1.4.2-betta</string>
     <string name="update_date">01.12.2023</string>
-    <string name="update_version">20</string>
+    <string name="update_version">21</string>
 
     <string name="please_give_notification_permission_to_make_function_app_properly">Пожалйста дайте разрешение на показ уведомлений что бы приложение могло функционировать правильно.</string>
     <string name="please_give_permission">Пожалуйста дайте разрешение</string>

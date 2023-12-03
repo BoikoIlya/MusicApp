@@ -153,7 +153,7 @@
     </string>
     <string name="update_title">Update 1.4.2-betta</string>
     <string name="update_date">01.12.2023</string>
-    <string name="update_version">20</string>
+    <string name="update_version">21</string>
 
     <string name="please_give_notification_permission_to_make_function_app_properly">Please give notification permission to make app function properly</string>
     <string name="please_give_permission">Please give permission</string>
