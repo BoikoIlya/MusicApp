@@ -104,7 +104,7 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
 
         lifecycleScope.launch {
             viewModel.collectTrackPosition(this@PlayerFragment) {
-                binding.slider.value = it.first
+                binding.slider.value = if(it.first>binding.slider.valueTo) binding.slider.valueTo else it.first
                 binding.currentPosition.text = it.second
             }
         }
