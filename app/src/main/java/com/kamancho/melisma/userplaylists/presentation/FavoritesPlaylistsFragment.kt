@@ -10,6 +10,7 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.userplaylists.di.PlaylistsComponent
@@ -38,6 +39,14 @@ open class FavoritesPlaylistsFragment: FavoritesFragment<PlaylistUi>(R.layout.fa
 
         viewModel = ViewModelProvider(this, factory)[PlaylistsViewModel::class.java]
         super.favoritesViewModel = viewModel
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

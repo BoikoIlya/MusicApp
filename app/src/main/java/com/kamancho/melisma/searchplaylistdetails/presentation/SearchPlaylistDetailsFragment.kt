@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetailsFragment
 import com.kamancho.melisma.main.di.App
@@ -29,6 +31,7 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
     private val args: SearchPlaylistDetailsFragmentArgs by navArgs()
 
+    private val mapper = PlaylistUi.ToIdMapper()
 
     override fun onAttach(context: Context) {
         component = (context.applicationContext as App).appComponent.playlistDataComponent().build()
@@ -45,6 +48,14 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
         (favoritesViewModel as SearchPlaylistDetailsViewModel)
             .update(args.playlistItem,false,savedInstanceState==null)
+
+        Logger.logFragment(
+            if(args.playlistItem.map(mapper).toInt()>0)
+            findNavController().currentDestination?.label.toString()
+            else "VkPlaylistDetailsFragment",
+            requireContext()
+        )
+
     }
 
 

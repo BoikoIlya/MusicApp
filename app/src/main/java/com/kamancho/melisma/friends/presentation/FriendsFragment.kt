@@ -12,6 +12,7 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.friends.di.FriendsComponent
 import com.kamancho.melisma.main.di.App
 import javax.inject.Inject
@@ -34,6 +35,14 @@ class FriendsFragment: FavoritesFragment<FriendUi>(R.layout.favorites_fragment) 
         component.inject(this)
         favoritesViewModel = ViewModelProvider(this, factory)[FriendsViewModel::class.java]
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

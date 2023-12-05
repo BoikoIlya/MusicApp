@@ -17,6 +17,7 @@ import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.search.di.SearchComponent
 import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.searchhistory.presentation.SearchHistoryFragment.Companion.search_request_key
 import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState.NavigateToSearch.Companion.search_type_arg_key
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,6 +61,14 @@ import javax.inject.Inject
             BaseSearchPlaylistsFragment.newInstance(args.searchQuery)
         )
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
 

@@ -18,6 +18,7 @@ import com.kamancho.melisma.frienddetails.di.FriendDetailsComponent
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.searchhistory.presentation.ViewPagerFragmentsAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kamancho.melisma.app.core.Logger
 import javax.inject.Inject
 
 /**
@@ -75,6 +76,13 @@ class FriendDetailsFragment: Fragment(R.layout.search_history_fragment) {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

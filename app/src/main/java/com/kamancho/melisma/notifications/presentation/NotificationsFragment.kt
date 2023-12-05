@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.FavoritesFragment
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.databinding.NotificationsFragmentBinding
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.main.di.AppComponent
@@ -40,6 +42,14 @@ class NotificationsFragment: Fragment(R.layout.notifications_fragment) {
 
         viewModel = ViewModelProvider(this, factory)[NotificationsViewModel::class.java]
         viewModel.hideNotificationsBadge()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

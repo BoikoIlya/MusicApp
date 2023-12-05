@@ -17,6 +17,7 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.di.FavoriteComponent
@@ -62,7 +63,13 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
 
     }
 
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.mainMenuBtn.visibility = View.VISIBLE

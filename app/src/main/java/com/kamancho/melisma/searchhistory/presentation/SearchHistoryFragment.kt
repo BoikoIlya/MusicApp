@@ -19,6 +19,7 @@ import com.kamancho.melisma.databinding.SearchHistoryFragmentBinding
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.searchhistory.di.SearchHistoryComponent
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.searchhistory.presentation.SearchHistorySingleState.NavigateToSearch.Companion.search_type_arg_key
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -79,6 +80,10 @@ class SearchHistoryFragment: Fragment(R.layout.search_history_fragment) {
         setFragmentResultListener(search_request_key) { key, bundle ->
           binding.searchHistoryViewPager.setCurrentItem(bundle.getInt(search_type_arg_key),false)
         }
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

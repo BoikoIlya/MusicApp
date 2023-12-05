@@ -6,12 +6,14 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.app.core.ClickListener
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.favoritesplaylistdetails.di.FavoritesPlaylistDetailsComponent
@@ -42,6 +44,10 @@ class FavoritesPlaylistDetailsFragment: PlaylistDetailsFragment() {
         super.onCreate(savedInstanceState)
         viewModel.handlePlaylistData(args.playlistItem,savedInstanceState==null)
         viewModel.update(args.favoritePlaylistId,false,savedInstanceState==null)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -18,6 +18,7 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
 import com.kamancho.melisma.databinding.NotificationsFragmentBinding
 import com.kamancho.melisma.main.di.App
@@ -51,6 +52,14 @@ class PopularFragment: Fragment(R.layout.notifications_fragment) {
         component.inject(this)
 
         viewModel = ViewModelProvider(this, factory)[PopularViewModel::class.java]
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.logFragment(
+            findNavController().currentDestination?.label.toString(),
+            requireContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
