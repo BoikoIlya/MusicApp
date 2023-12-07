@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ToggleButton
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -53,13 +55,7 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var downloadBroadcastReceiver: DownloadTrackBroadcastReceiver
 
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult())
-        { result ->
-            if (result.resultCode != RESULT_OK && result.resultCode != RESULT_CANCELED)
-                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(getString(R.string.update_failed)))
-
-        }
+    private lateinit var resultLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private val updateListener =
         InstallStateUpdatedListener { state ->
@@ -108,7 +104,6 @@ class MainActivity : FragmentActivity() {
         val badge = binding.bottomNavView.getOrCreateBadge(R.id.notificationsFragment)
 
 
-
         bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED)
@@ -118,6 +113,13 @@ class MainActivity : FragmentActivity() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
         })
+
+        resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult())
+        { result ->
+            if (result.resultCode != RESULT_OK && result.resultCode != RESULT_CANCELED)
+                viewModel.sendSingleUiEvent(SingleUiEventState.ShowSnackBar.Error(getString(R.string.update_failed)))
+
+        }
 
         lifecycleScope.launch {
             viewModel.collectActivityNavigationCommunication(this@MainActivity) {
