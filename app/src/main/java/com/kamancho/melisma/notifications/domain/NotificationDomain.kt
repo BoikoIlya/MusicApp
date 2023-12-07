@@ -23,9 +23,10 @@ data class NotificationDomain(
 ){
 
     companion object{
-        const val TYPE_PERMISSION = 0
-        const val TYPE_REDIRECTION = 1
-        const val TYPE_DEFAULT = 2
+        const val TYPE_REVIEW = 0
+        const val TYPE_PERMISSION = 1
+        const val TYPE_REDIRECTION = 2
+        const val TYPE_DEFAULT = 3
     }
 
 
@@ -60,6 +61,15 @@ data class NotificationDomain(
                    id = id
                )
            }
+           TYPE_REVIEW->NotificationUi.ReviewNotification(
+               id = "0",
+               title = titleText,
+               mainText = mainText.replace("\\n","\n"),
+               btnText = btnText,
+               stokeColor = managerResource.getColor(R.color.orange),
+               strokeWidth = managerResource.getDimensionPixelSize(R.dimen.notification_stroke_width),
+               colorStateList = managerResource.getColorStateList(R.color.orange)
+           )
            else -> throw Exception()
         }
     }

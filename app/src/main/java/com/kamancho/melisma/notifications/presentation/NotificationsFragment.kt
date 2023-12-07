@@ -64,7 +64,7 @@ class NotificationsFragment: Fragment(R.layout.notifications_fragment) {
         binding.notificationsRcv.layoutManager = LinearLayoutManager(requireContext())
         binding.scrollUpButton.setupWithRecycler(binding.notificationsRcv)
 
-        val adapter = NotificationsAdapter(requireContext())
+        val adapter = NotificationsAdapter(requireActivity())
         binding.notificationsRcv.adapter = adapter
         (binding.notificationsRcv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 

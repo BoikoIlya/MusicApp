@@ -145,4 +145,7 @@ dependencies {
     // AppMetrica SDK.
     implementation 'io.appmetrica.analytics:analytics:6.1.0'
 
+    //In-app-reviews
+    implementation("com.google.android.play:review:2.0.1")
+
 }

@@ -208,5 +208,8 @@
     <string name="no_playable_tracks">Нет треков которые можно проиграть</string>
     <string name="telegram_descr">Тут вы можете задать вопросы и следить за новостями</string>
     <string name="sort">Сортировка</string>
+    <string name="review_notification_text">Наше приложение постоянно развивается и становится все лучше и лучше для вас. Если вам нравится наше приложение, пожалуйста, оставьте хорошую оценку и отзыв. Мы будем стараться еще больше.</string>
+    <string name="little_request">Небольшая просьба</string>
+    <string name="leave_rating">Оценить</string>
 
 </resources>

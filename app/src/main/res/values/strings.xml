@@ -207,5 +207,7 @@
     <string name="no_playable_tracks">No playable tracks</string>
     <string name="telegram_descr">Here you can ask questions and follow the news</string>
     <string name="sort">Sorting</string>
-
+    <string name="review_notification_text">Our app is constantly evolving and getting better and better for you. If you like our app, please give a good rating and leave a review. We will try even harder.</string>
+    <string name="little_request">Little request</string>
+    <string name="leave_rating">Rate</string>
 </resources>

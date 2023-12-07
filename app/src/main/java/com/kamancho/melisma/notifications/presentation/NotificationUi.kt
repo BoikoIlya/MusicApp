@@ -9,11 +9,11 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import com.google.common.io.Files.append
+import com.google.android.play.core.review.ReviewException
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.NotificationItemBinding
+import com.kamancho.melisma.main.presentation.MainActivity
 
 /**
  * Created by HP on 21.08.2023.
@@ -69,7 +69,7 @@ interface NotificationUi{
         }
     }
 
-    data class PrimaryNotification(
+    open class PrimaryNotification(
         private val id: String,
         private val title: String,
         private val mainText: String,
@@ -77,7 +77,7 @@ interface NotificationUi{
         private val stokeColor: Int,
         private val strokeWidth: Int,
         private val colorStateList: ColorStateList,
-        private val intent: Intent,
+        private val intent: Intent?,
     ): Abstract(
         strokeWidth = strokeWidth,
         strokeColor = stokeColor,
@@ -99,4 +99,50 @@ interface NotificationUi{
             }
         }
     }
+
+    data class ReviewNotification(
+        private val id: String,
+        private val title: String,
+        private val mainText: String,
+        private val btnText: String,
+        private val stokeColor: Int,
+        private val strokeWidth: Int,
+        private val colorStateList: ColorStateList,
+    ): PrimaryNotification(
+        id = id,
+        title = title,
+        mainText = mainText,
+        btnText = btnText,
+        stokeColor = stokeColor,
+        strokeWidth = strokeWidth,
+        colorStateList = colorStateList,
+        intent = null
+    ){
+
+        override fun apply(binding: NotificationItemBinding, context: Context) {
+            super.apply(binding, context)
+            val manager = ReviewManagerFactory.create(context)
+
+            binding.notificationBtn.setOnClickListener {
+                Log.d("reviewErrorCode", "task: click")
+                manager.requestReviewFlow().addOnCompleteListener { task ->
+                    Log.d("reviewErrorCode", "task: ${task.isSuccessful}")
+                    if (task.isSuccessful) {
+                        manager.launchReviewFlow(context as MainActivity, task.result)
+                            .addOnFailureListener {
+                                Log.d("reviewErrorCode", "fail $it")
+                            }.addOnSuccessListener {
+                                Log.d("reviewErrorCode", "success: ")
+                            }
+                    } else {
+                        // There was some problem, log or handle the error code.
+                        val reviewErrorCode = (task.exception as ReviewException).message
+                        Log.d("reviewErrorCode", "error: $reviewErrorCode")
+                    }
+                }
+            }
+        }
+
+    }
+
 }
