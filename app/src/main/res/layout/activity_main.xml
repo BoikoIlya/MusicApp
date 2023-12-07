@@ -1,157 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
 
-  <androidx.fragment.app.FragmentContainerView
-      android:id="@+id/fragment_container"
-      android:name="androidx.navigation.fragment.NavHostFragment"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:defaultNavHost="true"
-      android:background="@color/white"
-      app:navGraph="@navigation/main_graph"
-      />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_graph" />
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_gravity="bottom"
-    >
-  <androidx.constraintlayout.widget.ConstraintLayout
-      android:layout_gravity="bottom"
-      app:layout_anchorGravity="top"
-      android:paddingHorizontal="15dp"
-      android:clickable="true"
-      android:id="@+id/bottomPlayerBar"
-      android:visibility="visible"
-      android:layout_width="match_parent"
-      android:layout_height="140dp"
-      android:background="@drawable/bottom_song_shape"
-      android:animateLayoutChanges="true"
-    >
-
-      <androidx.cardview.widget.CardView
-          android:layout_marginStart="10dp"
-          android:layout_marginTop="15dp"
-          android:id="@+id/bottomImgBg"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          app:cardCornerRadius="12dp"
-          android:elevation="10dp"
-          >
-
-      <ImageView
-          android:background="@color/white"
-          android:id="@+id/trackImg"
-          android:layout_width="50dp"
-          android:layout_height="50dp"
-          />
-      </androidx.cardview.widget.CardView>
-
-      <TextView
-          android:id="@+id/song_name_tv"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:paddingHorizontal="15dp"
-          android:text="Space Vandals"
-          android:textColor="@color/white"
-          android:textSize="@dimen/body1"
-          android:textStyle="bold"
-          app:layout_constraintEnd_toStartOf="@id/previous_btn"
-          app:layout_constraintStart_toEndOf="@+id/bottomImgBg"
-          app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
-
-      <TextView
-          android:id="@+id/song_author_name"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:paddingHorizontal="15dp"
-          android:text="Moderator"
-          android:textColor="@color/gray"
-          android:textSize="@dimen/body1"
-          app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
-          app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
-          app:layout_constraintStart_toStartOf="@+id/song_name_tv"
-          app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
-
-      <ImageButton
-          android:id="@+id/previous_btn"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="12dp"
-          android:background="?attr/selectableItemBackground"
-          android:src="@drawable/previous"
-          app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
-          app:layout_constraintEnd_toStartOf="@id/play_btn"
-          app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
-
-      <ToggleButton
-          android:id="@+id/play_btn"
-          android:layout_width="32dp"
-          android:layout_height="32dp"
-          android:layout_marginEnd="10dp"
-          android:background="@drawable/play_btn_selector"
-          android:textOff=""
-          android:textOn=""
-          app:layout_constraintBottom_toBottomOf="@+id/previous_btn"
-          app:layout_constraintEnd_toStartOf="@id/next_btn"
-          app:layout_constraintTop_toTopOf="@+id/previous_btn" />
-
-      <ImageButton
-          android:id="@+id/next_btn"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="12dp"
-          android:background="?attr/selectableItemBackgroundBorderless"
-          android:src="@drawable/next"
-          app:layout_constraintBottom_toBottomOf="@+id/play_btn"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="@+id/play_btn" />
-
-  </androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
 
-  <com.google.android.material.bottomnavigation.BottomNavigationView
-      android:id="@+id/bottom_nav_view"
-      android:layout_width="match_parent"
-      android:layout_height="60dp"
-      android:layout_gravity="bottom"
-      android:background="@drawable/bottom_nav_bg"
-      app:itemIconTint="@drawable/bottom_nav_selector"
-      android:backgroundTint="@color/orange"
-      app:itemActiveIndicatorStyle="@color/black"
-      app:menu="@menu/bottom_nav"
-      />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomPlayerBar"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_gravity="bottom"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bottom_song_shape"
+            android:clickable="true"
+            android:paddingHorizontal="15dp"
+            android:visibility="visible"
+            app:layout_anchorGravity="top">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/bottomImgBg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+                <ImageView
+                    android:id="@+id/trackImg"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/song_name_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingHorizontal="15dp"
+                android:text="Space Vandals"
+                android:textColor="@color/white"
+                android:textSize="@dimen/body1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/previous_btn"
+                app:layout_constraintStart_toEndOf="@+id/bottomImgBg"
+                app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
+
+            <TextView
+                android:id="@+id/song_author_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingHorizontal="15dp"
+                android:text="Moderator"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/body1"
+                app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
+                app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
+                app:layout_constraintStart_toStartOf="@+id/song_name_tv"
+                app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
+
+            <ImageButton
+                android:id="@+id/previous_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/previous"
+                app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
+                app:layout_constraintEnd_toStartOf="@id/play_btn"
+                app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
+
+            <ToggleButton
+                android:id="@+id/play_btn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/play_btn_selector"
+                android:textOff=""
+                android:textOn=""
+                app:layout_constraintBottom_toBottomOf="@+id/previous_btn"
+                app:layout_constraintEnd_toStartOf="@id/next_btn"
+                app:layout_constraintTop_toTopOf="@+id/previous_btn" />
+
+            <ImageButton
+                android:id="@+id/next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="@+id/play_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/play_btn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bottom_nav_bg"
+            android:backgroundTint="@color/orange"
+            app:itemActiveIndicatorStyle="@color/black"
+            app:itemIconTint="@drawable/bottom_nav_selector"
+            app:menu="@menu/bottom_nav" />
+
+
+    </FrameLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading_snow.json"
+        app:lottie_loop="true" />
 
 
     <include
         android:id="@+id/bottomSheet"
         layout="@layout/bottom_sheet_player"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
-
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

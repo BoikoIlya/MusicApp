@@ -28,8 +28,8 @@ interface NotificationsInteractor {
                 val updateNotification = NotificationDomain(managerResource.getString(R.string.update_version), managerResource.getString(R.string.update_info), managerResource.getString(R.string.update_title), managerResource.getString(R.string.update_date), NotificationDomain.TYPE_DEFAULT, "", "")
                 val reviewNotification = NotificationDomain("",managerResource.getString(R.string.review_notification_text),managerResource.getString(R.string.little_request),"", NotificationDomain.TYPE_REVIEW,managerResource.getString(R.string.leave_rating),"")
                 val notifications = checkForPermissions.check().toMutableList()
-                notifications.add(updateNotification)
                 notifications.add(reviewNotification)
+                notifications.add(updateNotification)
                 emit(NotificationResult.Success(notifications,true))
 
                 val cloudNotifications = repository.checkNotificationsCloud()
