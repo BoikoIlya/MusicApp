@@ -16,6 +16,8 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_graph" />
 
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -134,6 +136,16 @@
 
 
     </FrameLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_santa"
+        app:layout_anchor="@id/bottom_nav_view"
+        app:layout_anchorGravity="end"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="top"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="santa.json" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:layout_gravity="bottom"

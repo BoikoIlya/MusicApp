@@ -1,17 +1,21 @@
 package com.kamancho.melisma.main.presentation
 
+import android.animation.Animator.AnimatorListener
+import android.animation.ValueAnimator
 import android.app.DownloadManager
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.Animation
 import android.widget.ToggleButton
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.request.transition.ViewPropertyTransition.Animator
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.main.di.App
@@ -209,6 +214,28 @@ class MainActivity : FragmentActivity() {
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             ContextCompat.RECEIVER_EXPORTED
         )
+
+        binding.lottieSanta.addAnimatorListener(object : AnimatorListener{
+            override fun onAnimationStart(animation: android.animation.Animator) = Unit
+
+            override fun onAnimationEnd(animation: android.animation.Animator) {
+                val alphaAnimator = ValueAnimator.ofFloat(1f, 0f)
+                alphaAnimator.duration = 300
+                alphaAnimator.addUpdateListener { animation ->
+                    binding.lottieSanta.alpha = animation.animatedValue as Float
+                }
+                alphaAnimator.addListener(onEnd = {
+                    binding.lottieSanta.visibility = View.GONE
+                    binding.lottieSanta.isEnabled = false
+                })
+                alphaAnimator.start()
+            }
+
+            override fun onAnimationCancel(animation: android.animation.Animator) = Unit
+
+            override fun onAnimationRepeat(animation: android.animation.Animator) = Unit
+
+        })
     }
 
 
