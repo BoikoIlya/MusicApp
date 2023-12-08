@@ -83,7 +83,6 @@ abstract class FavoritesFragment<T>(layout: Int): Fragment(layout) {
 
         lifecycleScope.launch {
             favoritesViewModel.collectData(this@FavoritesFragment){
-                Log.d("tag", "onViewCreated: ${it.size}")
                 val state = binding.favoritesRcv.layoutManager?.onSaveInstanceState()
                 adapter.map(it)
                 binding.favoritesRcv.layoutManager?.onRestoreInstanceState(state)

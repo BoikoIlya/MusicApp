@@ -10,6 +10,7 @@ import androidx.media3.common.MediaItem
 import androidx.recyclerview.widget.ConcatAdapter
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
+import com.kamancho.melisma.app.core.CacheFetcher
 import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.trending.presentation.TracksAdapter
@@ -58,6 +59,15 @@ abstract class PlaylistDetailsFragment: FavoritesFragment<MediaItem>(R.layout.fa
             }
         }
 
+        lifecycleScope.launch {
+            (favoritesViewModel as PlaylistDetailsViewModel)
+                .collectDownloadCompleteCommunication(this@PlaylistDetailsFragment){
+                    it.apply(
+                        favoritesViewModel as PlaylistDetailsViewModel,
+                        binding.searchFavorites.text.toString()
+                    )
+                }
+        }
 
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,7 +82,9 @@ abstract class PlaylistDetailsFragment: FavoritesFragment<MediaItem>(R.layout.fa
         (favoritesViewModel as PlaylistDetailsViewModel).saveCurrentPageQueue(data)
     }
 
-
-
     protected abstract fun mainImageDiskCacheStrategy(): DiskCacheStrategy
+
+    companion object{
+        const val TRACKS_START_POSITION_PLAYLIST: Int = 1
+    }
 }

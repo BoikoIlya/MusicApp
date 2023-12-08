@@ -55,4 +55,18 @@ class DeleteTrackFromPlaylistDialogFragment : DialogFragment() {
         viewModel.resetSwipedItem()
     }
 
+    companion object{
+        private val PLAYLIST_ID = "PLAYLIST_ID"
+        private val AUDIO_ID = "AUDIO_ID"
+
+        fun newInstance(playlistId:Int,audioId: Int): DeleteTrackFromPlaylistDialogFragment{
+            val bundle = Bundle()
+            bundle.putInt(PLAYLIST_ID,playlistId)
+            bundle.putInt(AUDIO_ID,audioId)
+            val fragment = DeleteTrackFromPlaylistDialogFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
 }

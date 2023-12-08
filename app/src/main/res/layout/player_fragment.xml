@@ -78,7 +78,7 @@
             app:layout_constraintStart_toStartOf="@id/back_btn"
             app:layout_constraintTop_toBottomOf="@id/back_btn"
             app:lottie_autoPlay="true"
-            app:lottie_fileName="loading_green_circle.json"
+            app:lottie_fileName="green_circle.json"
             app:lottie_loop="true" />
 
     </androidx.cardview.widget.CardView>

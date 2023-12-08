@@ -2,7 +2,6 @@ package com.kamancho.melisma.searchplaylistdetails.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -15,17 +14,18 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
+import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetailsFragment
+import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistDetailsViewModel
 import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.searchplaylistdetails.di.SearchPlaylistDetailsComponent
 import com.kamancho.melisma.trending.presentation.TracksAdapter
 import com.kamancho.melisma.userplaylists.presentation.PlaylistUi
-import javax.inject.Inject
 
 /**
  * Created by HP on 15.08.2023.
  **/
-class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
+class SearchPlaylistDetailsFragment : PlaylistDetailsFragment() {
 
     private lateinit var component: SearchPlaylistDetailsComponent
 
@@ -37,22 +37,23 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
         component = (context.applicationContext as App).appComponent.playlistDataComponent().build()
             .searchPlaylistDetailsComponent().build()
         component.inject(this)
-        favoritesViewModel = ViewModelProvider(this, factory)[SearchPlaylistDetailsViewModel::class.java]
+        favoritesViewModel =
+            ViewModelProvider(this, factory)[SearchPlaylistDetailsViewModel::class.java]
         super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (favoritesViewModel as SearchPlaylistDetailsViewModel)
-            .initPlaylistData(args.playlistItem,savedInstanceState==null)
+            .initPlaylistData(args.playlistItem, savedInstanceState == null)
 
         (favoritesViewModel as SearchPlaylistDetailsViewModel)
-            .update(args.playlistItem,false,savedInstanceState==null)
+            .update(args.playlistItem, false, savedInstanceState == null)
 
         Logger.logFragment(
-            if(args.playlistItem.map(mapper).toInt()>0)
-            findNavController().currentDestination?.label.toString()
-            else "VkPlaylistDetailsFragment",
+            if (args.playlistItem.map(mapper).toInt() > 0)
+                findNavController().currentDestination?.label.toString()
+            else VK_PLAYLIST_SCREEN_LOG,
             requireContext()
         )
 
@@ -71,16 +72,28 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
             playClickListener = object : Selector<MediaItem> {
                 override fun onSelect(data: MediaItem, position: Int) {
                     (favoritesViewModel as SearchPlaylistDetailsViewModel).playMusic(data)
-                } },
+                }
+            },
             saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {
-                    (favoritesViewModel as SearchPlaylistDetailsViewModel).checkAndAddTrackToFavorites(data)
-                } },
+                    (favoritesViewModel as SearchPlaylistDetailsViewModel).checkAndAddTrackToFavorites(
+                        data
+                    )
+                }
+            },
 
             imageLoader = imageLoader,
             cacheStrategy = DiskCacheStrategy.NONE,
             addBtnVisibility = View.VISIBLE,
-            layoutManager =  binding.favoritesRcv.layoutManager as RecyclerView.LayoutManager
+            layoutManager = binding.favoritesRcv.layoutManager as RecyclerView.LayoutManager,
+            tracksStartPositionInRecycler = TRACKS_START_POSITION_PLAYLIST,
+            onLongClick = {
+                (favoritesViewModel as PlaylistDetailsViewModel).sendOneTimeEvent(
+                    SingleUiEventState.ShowSnackBar.Success(
+                        getString(R.string.swipe_hint)
+                    )
+                )
+            }
         )
         adapter = tracksAdapter
 
@@ -91,17 +104,20 @@ class SearchPlaylistDetailsFragment: PlaylistDetailsFragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        binding.pullToRefresh.setOnRefreshListener{
+        binding.pullToRefresh.setOnRefreshListener {
             favoritesViewModel.update(args.playlistItem, loading = true, shouldUpdate = true)
         }
     }
 
     override fun search(query: String) {
-        (favoritesViewModel as SearchPlaylistDetailsViewModel).find(query)
+        (favoritesViewModel as SearchPlaylistDetailsViewModel).fetchFromCache(query)
         super.search(query)
     }
 
     override fun mainImageDiskCacheStrategy(): DiskCacheStrategy = DiskCacheStrategy.NONE
 
+    companion object {
+        private const val VK_PLAYLIST_SCREEN_LOG = "VkPlaylistDetailsFragment"
+    }
 
 }

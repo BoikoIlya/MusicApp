@@ -19,6 +19,7 @@ import com.kamancho.melisma.app.core.FavoritesFragment
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.app.core.Logger
 import com.kamancho.melisma.app.core.Selector
+import com.kamancho.melisma.app.core.ToMediaItemMapper
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.di.FavoriteComponent
 import com.kamancho.melisma.main.di.App
@@ -86,10 +87,21 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
             }, saveClickListener = object : ClickListener<MediaItem> {
                 override fun onClick(data: MediaItem) {}
             }, imageLoader, View.GONE,
-             navigator = object :Navigator{
-                 override fun navigateToMenu(data: MediaItem, position: Int) {
+             leftSwipe = object :LeftSwipe{
+                 override fun onLeftSwipe(data: MediaItem, position: Int) {
                         viewModel.saveMediaItem(data)
-                        findNavController().navigate(R.id.action_favoritesFragment_to_favoritesBottomSheetMenuFragment)
+                        val bundle = Bundle()
+                        bundle.putParcelable(TRACK_URI_KEY,data.localConfiguration?.uri)
+                        bundle.putString(TRACK_TITLE_KEY,data.mediaMetadata.title.toString())
+                        bundle.putString(TRACK_ARTIST_KEY,data.mediaMetadata.artist.toString())
+                        bundle.putBoolean(TRACK_IS_CACHED_KEY, data.mediaMetadata.extras?.getBoolean(
+                            ToMediaItemMapper.Base.is_cached
+                        ) ?: false)
+                        bundle.putBoolean(ENABLE_ADD_TO_PLAYLIST_BTN_KEY,true)
+                        findNavController().navigate(
+                            R.id.action_favoritesFragment_to_favoritesBottomSheetMenuFragment,
+                            bundle
+                        )
                  }
              },
              cacheStrategy = DiskCacheStrategy.AUTOMATIC,
@@ -171,5 +183,11 @@ class FavoritesTracksFragment: FavoritesFragment<MediaItem>(R.layout.favorites_f
         viewModel.fetchData()
     }
 
-
+    companion object{
+        const val TRACK_URI_KEY = "trackUri"
+        const val TRACK_TITLE_KEY = "trackTitle"
+        const val TRACK_ARTIST_KEY = "trackArtist"
+        const val TRACK_IS_CACHED_KEY = "isCached"
+        const val ENABLE_ADD_TO_PLAYLIST_BTN_KEY = "enableAddToPlaylist"
+    }
 }

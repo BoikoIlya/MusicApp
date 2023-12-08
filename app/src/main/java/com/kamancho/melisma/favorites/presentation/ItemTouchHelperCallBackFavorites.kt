@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.DeleteItemDialog
+import com.kamancho.melisma.favoritesplaylistdetails.presentation.PlaylistTopBarViewHolder
 import com.kamancho.melisma.trending.presentation.MediaItemsAdapter
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import javax.inject.Inject
@@ -33,9 +34,9 @@ ItemTouchHelper.RIGHT + ItemTouchHelper.LEFT
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if(direction == ItemTouchHelper.LEFT)
-            adapter.navigateToMenu(MediaItem.EMPTY, viewHolder.absoluteAdapterPosition)
+            adapter.onLeftSwipe(MediaItem.EMPTY, viewHolder.absoluteAdapterPosition)
         else
-            adapter.removeFromAdapter(viewModel,viewHolder.absoluteAdapterPosition)
+            adapter.onRightSwipe(viewModel,viewHolder.absoluteAdapterPosition)
     }
 
 
@@ -101,5 +102,13 @@ ItemTouchHelper.RIGHT + ItemTouchHelper.LEFT
             actionState,
             isCurrentlyActive
         )
+    }
+
+    override fun getSwipeDirs(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        if(viewHolder is PlaylistTopBarViewHolder) return 0
+        return super.getSwipeDirs(recyclerView, viewHolder)
     }
 }

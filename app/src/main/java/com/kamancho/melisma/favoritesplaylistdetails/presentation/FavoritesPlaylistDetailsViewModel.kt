@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import com.kamancho.melisma.app.core.CacheFetcher
 import com.kamancho.melisma.app.core.CacheRepository
 import com.kamancho.melisma.app.core.DataTransfer
 import com.kamancho.melisma.app.core.DeleteItemDialog
@@ -16,6 +17,7 @@ import com.kamancho.melisma.app.core.SingleUiEventState
 import com.kamancho.melisma.app.core.TrackChecker
 import com.kamancho.melisma.app.core.TracksResultToUiEventCommunicationMapper
 import com.kamancho.melisma.deletetrackfromplaylist.presentation.DeleteTrackFromPlaylistDialogFragment
+import com.kamancho.melisma.downloader.presentation.DownloadCompleteCommunication
 import com.kamancho.melisma.favorites.data.SortingState
 import com.kamancho.melisma.favorites.presentation.ResetSwipeActionCommunication
 import com.kamancho.melisma.favorites.presentation.TracksResult
@@ -50,7 +52,8 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     private val toTrackDomainMapper: MediaItemToTrackDomainMapper,
     private val resetSwipeActionCommunication: ResetSwipeActionCommunication,
     private val isNotFollowedMapper :PlaylistUi.Mapper<Boolean>,
-    private val toOwnerIdMapper: PlaylistUi.Mapper<Int>
+    private val toOwnerIdMapper: PlaylistUi.Mapper<Int>,
+    private val downloadCompleteCommunication: DownloadCompleteCommunication
 ): PlaylistDetailsViewModel(
     playerCommunication,
     communication,
@@ -58,7 +61,9 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
     dispatchersList,
     favoritesInteractor,
     mapper,
-    trackChecker
+    trackChecker,
+    downloadCompleteCommunication,
+    singleUiEventCommunication
 ), DeleteItemDialog {
 
     private var fetching: Job? = null
@@ -94,7 +99,7 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
 
 
 
-    fun fetchFromCache(query: String) {
+   override fun fetchFromCache(query: String) {
         fetching?.cancel()
 
         fetching = viewModelScope.launch(dispatchersList.io()) {
@@ -106,15 +111,24 @@ class FavoritesPlaylistDetailsViewModel @Inject constructor(
 
     fun fetchPlaylistData() = handlePlaylistDataCache.handle(viewModelScope,playlistId)
 
-    fun isNotFollowed(playlist: PlaylistUi,initItemTouchHelper:()->Unit){
-        if(playlist.map(isNotFollowedMapper)) initItemTouchHelper.invoke()
+    fun isNotFollowed(
+        playlist: PlaylistUi,
+        followed: () -> Unit,
+        notFollowed: () -> Unit,
+    ){
+        if(playlist.map(isNotFollowedMapper)) notFollowed.invoke()
+        else followed.invoke()
     }
 
     fun addBtnVisibility(playlist: PlaylistUi) = if(playlist.map(isNotFollowedMapper)) View.GONE else View.VISIBLE
 
     override fun launchDeleteItemDialog(item: MediaItem): Job = viewModelScope.launch(dispatchersList.io()) {
         mediaItemTransfer.save(toTrackDomainMapper.map(item))
-        singleUiEventCommunication.map(SingleUiEventState.ShowDialog(DeleteTrackFromPlaylistDialogFragment()))
+        singleUiEventCommunication.map(SingleUiEventState.ShowDialog(
+            DeleteTrackFromPlaylistDialogFragment.newInstance(
+                playlistId.toInt(), item.mediaId.toInt()
+            )
+        ))
     }
 
 

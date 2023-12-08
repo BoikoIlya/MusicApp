@@ -210,4 +210,5 @@
     <string name="review_notification_text">Our app is constantly evolving and getting better and better for you. If you like our app, please give a good rating and leave a review. We will try even harder.</string>
     <string name="little_request">Little request</string>
     <string name="leave_rating">Rate</string>
+    <string name="delete_from_playlist">Delete from playlist</string>
 </resources>

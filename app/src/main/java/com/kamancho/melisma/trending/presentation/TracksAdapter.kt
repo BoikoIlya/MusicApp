@@ -37,32 +37,33 @@ interface Scroller{
     fun scrollToSelectedTrack(rcv: RecyclerView)
 }
 
-interface RemoveItem{
-    fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int)
+interface RightSwipe{
+    fun onRightSwipe(viewModel: DeleteItemDialog, position: Int)
 }
 
-interface Navigator{
+interface LeftSwipe{
 
-    fun navigateToMenu(data: MediaItem,position: Int)
+    fun onLeftSwipe(data: MediaItem, position: Int)
 
-    object Empty: Navigator {
-        override fun navigateToMenu(data: MediaItem,position: Int) = Unit
+    object Empty: LeftSwipe {
+        override fun onLeftSwipe(data: MediaItem, position: Int) = Unit
     }
 }
 
-interface MediaItemsAdapter: Navigator,RemoveItem
+interface MediaItemsAdapter: LeftSwipe,RightSwipe
 
 
 open class TracksAdapter(
     private val context: Context,
-    private val playClickListener:Selector<MediaItem> ,
+    private val playClickListener:Selector<MediaItem>,
     private val saveClickListener: ClickListener<MediaItem>,
     private val imageLoader: ImageLoader,
     private val addBtnVisibility: Int = View.VISIBLE,
-    private val navigator: Navigator = Navigator.Empty,
+    private val leftSwipe: LeftSwipe = LeftSwipe.Empty,
     private val cacheStrategy: DiskCacheStrategy = DiskCacheStrategy.NONE,
     private val layoutManager: LayoutManager,
-    private val onLongClick:(()->Unit)? = null
+    private val onLongClick:((MediaItem)->Unit)? = null,
+    private val tracksStartPositionInRecycler: Int = 0
  ): RecyclerView.Adapter<AdapterViewHolder>(),
     Mapper<List<MediaItem>,Unit>,Select, Scroller, MediaItemsAdapter {
 
@@ -125,12 +126,15 @@ open class TracksAdapter(
     }
 
 
-    override fun navigateToMenu(data: MediaItem, position: Int) {
-        navigator.navigateToMenu(diff.currentList[position],position)
+    override fun onLeftSwipe(data: MediaItem, position: Int) {
+        leftSwipe.onLeftSwipe(
+            diff.currentList[position-tracksStartPositionInRecycler],
+            position-tracksStartPositionInRecycler
+        )
     }
 
-    override fun removeFromAdapter(viewModel: DeleteItemDialog, position: Int) {
-        viewModel.launchDeleteItemDialog(diff.currentList[position])
+    override fun onRightSwipe(viewModel: DeleteItemDialog, position: Int) {
+        viewModel.launchDeleteItemDialog(diff.currentList[position-tracksStartPositionInRecycler])
     }
 
 
@@ -146,7 +150,7 @@ open class TracksViewHolder(
     private val imageLoader: ImageLoader,
     private val addBtnVisibility: Int,
     private val cacheStrategy: DiskCacheStrategy = DiskCacheStrategy.AUTOMATIC,
-    private val onLongClick:(()->Unit)? = null
+    private val onLongClick:((MediaItem)->Unit)? = null
 ): AdapterViewHolder(binding.root) {
 
 
@@ -177,7 +181,7 @@ open class TracksViewHolder(
         }
 
        binding.root.setOnLongClickListener {
-           onLongClick?.invoke()
+           onLongClick?.invoke(item)
            return@setOnLongClickListener true
        }
     }

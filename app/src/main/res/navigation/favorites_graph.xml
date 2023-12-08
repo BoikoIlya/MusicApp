@@ -41,6 +41,22 @@
         <action
             android:id="@+id/action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment"
             app:destination="@id/selectPlaylistFragment" />
+        <argument
+            android:name="trackUri"
+            app:argType="android.net.Uri"
+            app:nullable="true" />
+        <argument
+            android:name="trackTitle"
+            app:argType="string" />
+        <argument
+            android:name="trackArtist"
+            app:argType="string" />
+        <argument
+            android:name="isCached"
+            app:argType="boolean" />
+        <argument
+            android:name="enableAddToPlaylist"
+            app:argType="boolean" />
     </dialog>
     <dialog
         android:id="@+id/selectPlaylistFragment"

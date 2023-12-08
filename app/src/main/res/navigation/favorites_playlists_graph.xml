@@ -38,6 +38,9 @@
         <argument
             android:name="playlistItem"
             app:argType="com.kamancho.melisma.userplaylists.presentation.PlaylistUi" />
+        <action
+            android:id="@+id/action_favoritesPlaylistDetailsFragment_to_favoritesBottomSheetMenuFragment2"
+            app:destination="@id/favoritesBottomSheetMenuFragment2" />
     </fragment>
     <dialog
         android:id="@+id/playlistsMenuDialogBottomSheetFragment"
@@ -77,4 +80,25 @@
             android:id="@+id/action_createPlaylistFragment_to_addToPlaylistFragment"
             app:destination="@id/addToPlaylistFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/favoritesBottomSheetMenuFragment2"
+        android:name="com.kamancho.melisma.favorites.presentation.FavoritesBottomSheetMenuFragment"
+        android:label="FavoritesBottomSheetMenuFragment">
+        <argument
+            android:name="trackUri"
+            app:argType="android.net.Uri"
+            app:nullable="true" />
+        <argument
+            android:name="trackTitle"
+            app:argType="string" />
+        <argument
+            android:name="trackArtist"
+            app:argType="string" />
+        <argument
+            android:name="isCached"
+            app:argType="boolean" />
+        <argument
+            android:name="enableAddToPlaylist"
+            app:argType="boolean" />
+    </dialog>
 </navigation>

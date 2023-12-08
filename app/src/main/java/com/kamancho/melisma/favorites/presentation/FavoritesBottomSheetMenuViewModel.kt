@@ -7,6 +7,7 @@ import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ConnectionChecker
 import com.kamancho.melisma.app.core.DataTransfer
 import com.kamancho.melisma.app.core.DispatchersList
+import com.kamancho.melisma.app.core.DownloadViewModel
 import com.kamancho.melisma.app.core.GlobalSingleUiEventCommunication
 import com.kamancho.melisma.app.core.ManagerResource
 import com.kamancho.melisma.app.core.SingleUiEventState
@@ -30,7 +31,14 @@ class FavoritesBottomSheetMenuViewModel @Inject constructor(
     private val managerResource: ManagerResource,
     private val downloadInteractor: DownloadInteractor,
     private val downloadCompleteCommunication: DownloadCompleteCommunication
-): ViewModel() {
+): DownloadViewModel(
+    globalSingleUiEventCommunication,
+    connectionChecker,
+    managerResource,
+    downloadInteractor,
+    downloadCompleteCommunication,
+    dispatchersList
+) {
 
     fun readMediaItem() = transfer.read()!!.map(mapper)
 
@@ -38,40 +46,7 @@ class FavoritesBottomSheetMenuViewModel @Inject constructor(
         resetSwipeActionCommunication.map(Unit)
     }
 
-    fun download() = viewModelScope.launch(dispatchersList.io()){
-        if(!connectionChecker.isDeviceHaveConnection()) {
-            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(
-                R.string.no_connection_message)))
-            return@launch
-        }
-        val mediaItem = readMediaItem()
-        val trackUri = mediaItem.localConfiguration?.uri
-        if(trackUri==null){
-            globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(
-                R.string.unavailable_track)))
-            return@launch
-        }
-       val error = downloadInteractor.download(
-            trackUri,
-            mediaItem.mediaMetadata.title.toString(),
-            mediaItem.mediaMetadata.artist.toString()
-        )
-        if (error.isNotEmpty()) globalSingleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Error(error))
-    }
 
-    fun removeFromDownloads() = viewModelScope.launch(dispatchersList.io()) {
-        val mediaItem = readMediaItem()
-       val error = downloadInteractor.deleteTrack(
-            mediaItem.mediaMetadata.title.toString(),
-            mediaItem.mediaMetadata.artist.toString()
-        )
-        globalSingleUiEventCommunication.map(
-        if(error.isEmpty())
-        {
-            downloadCompleteCommunication.map(DownloadResult.Completed)
-            SingleUiEventState.ShowSnackBar.Success(managerResource.getString(R.string.success_remove_message))
-        }
-        else SingleUiEventState.ShowSnackBar.Error(error)
-        )
-    }
+
+
 }

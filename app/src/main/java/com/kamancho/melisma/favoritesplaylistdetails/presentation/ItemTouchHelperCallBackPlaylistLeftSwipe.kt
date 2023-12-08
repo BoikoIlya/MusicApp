@@ -3,10 +3,10 @@ package com.kamancho.melisma.favoritesplaylistdetails.presentation
 import android.content.Context
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
+import androidx.media3.common.MediaItem
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.kamancho.melisma.R
-import com.kamancho.melisma.app.core.DeleteItemDialog
 import com.kamancho.melisma.trending.presentation.MediaItemsAdapter
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import javax.inject.Inject
@@ -14,13 +14,13 @@ import javax.inject.Inject
 /**
  * Created by HP on 10.04.2023.
  **/
-class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
+class ItemTouchHelperCallBackPlaylistLeftSwipe @Inject constructor(
     private val adapter: MediaItemsAdapter,
-    private val viewModel: DeleteItemDialog,
+//    private val viewModel: DeleteItemDialog,
     private val context: Context,
 ) : ItemTouchHelper.SimpleCallback(
 0,
- ItemTouchHelper.RIGHT
+ ItemTouchHelper.LEFT
 ){
     override fun onMove(
         recyclerView: RecyclerView,
@@ -31,7 +31,8 @@ class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        adapter.removeFromAdapter(viewModel,viewHolder.absoluteAdapterPosition - 1)
+        //adapter.removeFromAdapter(viewModel,viewHolder.absoluteAdapterPosition - 1)
+        adapter.onLeftSwipe(MediaItem.EMPTY, viewHolder.absoluteAdapterPosition)
     }
 
 
@@ -45,7 +46,6 @@ class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
         isCurrentlyActive: Boolean
     ) {
 
-
             RecyclerViewSwipeDecorator.Builder(
                 c,
                 recyclerView,
@@ -58,10 +58,10 @@ class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
                 .addBackgroundColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.red
+                        R.color.green
                     )
                 )
-                .addActionIcon(R.drawable.bin)
+                .addActionIcon(R.drawable.download)
                 .create()
                 .decorate()
 
@@ -74,5 +74,13 @@ class ItemTouchHelperCallBackPlaylistDetails @Inject constructor(
             actionState,
             isCurrentlyActive
         )
+    }
+
+    override fun getSwipeDirs(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        if(viewHolder is PlaylistTopBarViewHolder) return 0
+        return super.getSwipeDirs(recyclerView, viewHolder)
     }
 }
