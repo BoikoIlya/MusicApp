@@ -6,4 +6,5 @@
       <dimen name="body2">15sp</dimen>
       <dimen name="body3">14sp</dimen>
       <dimen name="notification_stroke_width">3dp</dimen>
+      <dimen name="bottom_player_height_default">140dp</dimen>
    </resources>

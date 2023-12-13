@@ -83,9 +83,6 @@ class FavoritesBottomSheetMenuFragment : BottomSheetDialogFragment(R.layout.favo
             findNavController().navigate(R.id.action_favoritesBottomSheetMenuFragment_to_selectPlaylistFragment)
         }
 
-        binding.deleteFromPlaylistOption.setOnClickListener {
-
-        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

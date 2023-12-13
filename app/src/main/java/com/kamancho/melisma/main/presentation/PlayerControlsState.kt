@@ -7,8 +7,11 @@ import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.ImageLoader
+import com.kamancho.melisma.app.core.PlayerAction
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.small_img_url
 import com.kamancho.melisma.databinding.ActivityMainBinding
+import com.kamancho.melisma.databinding.ArtistsTracksDialogFragmentBinding
+import com.kamancho.melisma.databinding.BottomPlayerBinding
 import com.kamancho.melisma.databinding.PlayerFragmentBinding
 import com.kamancho.melisma.player.presentation.PlayerViewModel
 
@@ -19,9 +22,9 @@ import com.kamancho.melisma.player.presentation.PlayerViewModel
 interface PlayerControlsState {
 
     fun apply(
-        binding: ActivityMainBinding,
+        binding: BottomPlayerBinding,
         imageLoader: ImageLoader,
-        viewModel: MainViewModel,
+        viewModel: PlayerAction,
     )
 
     fun apply(
@@ -36,9 +39,9 @@ interface PlayerControlsState {
     ): PlayerControlsState {
 
         override fun apply(
-            binding: ActivityMainBinding,
+            binding: BottomPlayerBinding,
             imageLoader: ImageLoader,
-            viewModel: MainViewModel,
+            viewModel: PlayerAction,
         ) {
             with(binding) {
 
@@ -73,9 +76,9 @@ interface PlayerControlsState {
         ) : Active(track) {
 
             override fun apply(
-                binding: ActivityMainBinding,
+                binding: BottomPlayerBinding,
                 imageLoader: ImageLoader,
-                viewModel: MainViewModel,
+                viewModel: PlayerAction,
             ) = with(binding) {
                 super.apply(this, imageLoader, viewModel)
                 playBtn.isChecked = true
@@ -91,9 +94,9 @@ interface PlayerControlsState {
             private val track: MediaItem,
         ) : Active(track) {
             override fun apply(
-                binding: ActivityMainBinding,
+                binding: BottomPlayerBinding,
                 imageLoader: ImageLoader,
-                viewModel: MainViewModel,
+                viewModel: PlayerAction,
             ) = with(binding) {
                 super.apply(this, imageLoader, viewModel)
                 playBtn.isChecked = false
@@ -109,9 +112,9 @@ interface PlayerControlsState {
         object Disabled : PlayerControlsState {
 
             override fun apply(
-                binding: ActivityMainBinding,
+                binding: BottomPlayerBinding,
                 imageLoader: ImageLoader,
-                viewModel: MainViewModel,
+                viewModel: PlayerAction,
             ) {
                 binding.bottomPlayerBar.visibility = View.GONE
             }

@@ -6,6 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.kamancho.melisma.R
 import com.kamancho.melisma.databinding.ActivityMainBinding
@@ -24,7 +25,11 @@ sealed interface SingleUiEventState{
         binding: ActivityMainBinding,
     )
 
-    fun applyForBottomSheet(decorView: View,context: Context,)
+    fun applyForBottomSheet(
+        decorView: View,
+        context: Context,
+        anchorView: View? = null
+        )
 
     abstract class ShowSnackBar(
         private val message: String,
@@ -48,11 +53,15 @@ sealed interface SingleUiEventState{
                 snackBar
                     .setBackgroundTint(context.getColor(bgColorId))
                     .setTextColor(context.getColor(R.color.white))
-                    .setAnchorView(if (bottomPlayerBar.isVisible) bottomPlayerBar else bottomNavView)
+                    .setAnchorView(if (bottomPlayer.bottomPlayerBar.isVisible)bottomPlayer.bottomPlayerBar else bottomNavView)
                     .show()
         }
 
-        override fun applyForBottomSheet(decorView: View,context: Context,) {
+        override fun applyForBottomSheet(
+            decorView: View,
+            context: Context,
+            anchorView: View?
+        ) {
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(decorView.windowToken,0)
 
@@ -63,6 +72,7 @@ sealed interface SingleUiEventState{
             snackBar
                 .setBackgroundTint(context.getColor(bgColorId))
                 .setTextColor(context.getColor(R.color.white))
+                .setAnchorView(anchorView)
                 .show()
         }
 
@@ -91,10 +101,35 @@ sealed interface SingleUiEventState{
             dialog.show(fragmentManager, dialog.tag)
         }
 
-        override fun applyForBottomSheet(decorView: View,context: Context,) = Unit
+        override fun applyForBottomSheet(
+            decorView: View,
+            context: Context,
+            anchorView: View?
+        ) = Unit
 
     }
 
+    data class ShowFragment(
+        private val fragment: Fragment
+    ): SingleUiEventState {
+        override fun apply(
+            fragmentManager: FragmentManager,
+            context: Context,
+            binding: ActivityMainBinding,
+        ) {
+            fragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container,fragment)
+                .addToBackStack(fragment.tag)
+                .commit()
+        }
+
+        override fun applyForBottomSheet(
+            decorView: View,
+            context: Context,
+            anchorView: View?
+        ) = Unit
+    }
 
 }
 

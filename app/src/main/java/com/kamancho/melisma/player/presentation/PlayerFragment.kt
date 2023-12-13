@@ -6,9 +6,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
-import android.widget.SeekBar
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +28,8 @@ import com.kamancho.melisma.main.di.App
 import com.kamancho.melisma.main.presentation.PlayerCommunicationState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
+import com.kamancho.melisma.app.core.ToMediaItemMapper
+import com.kamancho.melisma.artisttracks.presentation.ArtistTracksDialogFragmentBottomSheet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -178,6 +180,7 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
                 when (menuItem.itemId) {
                     R.id.add_to_playlist_option -> viewModel.launchDeleteItemDialog(currentTrackId,currentTrack)
                     R.id.add_option -> viewModel.checkAndAddTrackToFavorites(currentTrack)
+                    R.id.artist_tracks-> viewModel.launchArtistsTracksBottomSheet(currentTrackId,currentTrack)
                     R.id.min_15 -> viewModel.setupSleepTime(15)
                     R.id.min_30 ->viewModel.setupSleepTime(30)
                     R.id.hour_1 ->viewModel.setupSleepTime(60)
@@ -198,8 +201,13 @@ class PlayerFragment: Fragment(R.layout.player_fragment) {
             val text = binding.songName.text.toString()+getString(R.string.dash)+binding.songAuthor.text.toString()
             val clipData= ClipData.newPlainText(text,text)
             clipboard.setPrimaryClip(clipData)
-            viewModel.showSnackBar(SingleUiEventState.ShowSnackBar.Success(getString(R.string.copied)+text))
+            viewModel.showSingleUiEventState(SingleUiEventState.ShowSnackBar.Success(getString(R.string.copied)+text))
             return@setOnLongClickListener true
+        }
+
+        binding.songAuthor.setOnClickListener {
+            Log.d("tag", "onViewCreated: $ ")
+            viewModel.launchArtistsTracksBottomSheet(currentTrackId,currentTrack)
         }
     }
 }

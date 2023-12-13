@@ -30,10 +30,10 @@ abstract class BaseViewModel<T>(
     private val interactor: Interactor<MediaItem,TracksResult>,
     private val mapper: TracksResultToUiEventCommunicationMapper,
     private val trackChecker: TrackChecker,
-): ViewModel(), CollectSelectedTrack, FavoritesViewModel<T,MediaItem>{
+): ViewModel(), CollectSelectedTrack, FavoritesViewModel<T,MediaItem>,PlayerAction{
 
 
-    fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
+    override fun playerAction(state: PlayerCommunicationState) = playerCommunication.map(state)
 
     fun saveCurrentPageQueue(queue: List<MediaItem>) = viewModelScope.launch(dispatchersList.io()){
        temporaryTracksCache.saveCurrentPageTracks(queue)
@@ -94,6 +94,11 @@ abstract class BaseViewModel<T>(
         owner: LifecycleOwner,
         collector: FlowCollector<FavoritesUiState>
     ) = Unit
+}
+
+interface PlayerAction{
+    fun playerAction(state: PlayerCommunicationState)
+
 }
 
 

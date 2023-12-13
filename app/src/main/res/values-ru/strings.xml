@@ -212,5 +212,7 @@
     <string name="little_request">Небольшая просьба</string>
     <string name="leave_rating">Оценить</string>
     <string name="delete_from_playlist">Удалить из плейлиста</string>
+    <string name="artists_tracks">Треки исполнитетелей</string>
+    <string name="artist_tracks">Треки исполнителей</string>
 
 </resources>

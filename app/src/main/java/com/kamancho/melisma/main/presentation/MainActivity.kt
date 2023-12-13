@@ -84,6 +84,8 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.bottomPlayer.root.layoutParams.height =
+            resources.getDimensionPixelSize(R.dimen.bottom_player_height_default)
 
         val fragments = listOf(PlayerFragment(), QueueFragment())
         downloadBroadcastReceiver = DownloadTrackBroadcastReceiver()
@@ -142,7 +144,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             viewModel.collectPlayerControls(this@MainActivity) {
                 it.apply(
-                    binding,
+                    binding.bottomPlayer,
                     imageLoader,
                     viewModel
                 )
@@ -174,22 +176,22 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        binding.playBtn.setOnClickListener {
+        binding.bottomPlayer.playBtn.setOnClickListener {
             if ((it as ToggleButton).isChecked)
                 viewModel.playerAction(PlayerCommunicationState.Pause)
             else
                 viewModel.playerAction(PlayerCommunicationState.Resume)
         }
 
-        binding.previousBtn.setOnClickListener {
+        binding.bottomPlayer.previousBtn.setOnClickListener {
             viewModel.playerAction(PlayerCommunicationState.Previous)
         }
 
-        binding.nextBtn.setOnClickListener {
+        binding.bottomPlayer.nextBtn.setOnClickListener {
             viewModel.playerAction(PlayerCommunicationState.Next)
         }
 
-        binding.bottomPlayerBar.setOnClickListener {
+        binding.bottomPlayer.bottomPlayerBar.setOnClickListener {
             viewModel.bottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
 

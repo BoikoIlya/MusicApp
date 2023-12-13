@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.kamancho.melisma.app.core.FormatTimeSecondsToMinutesAndSeconds
+import com.kamancho.melisma.app.core.ToMediaItemMapper
+import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.artistsIds
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.big_img_url
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.is_cached
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.owner_id
@@ -32,7 +34,8 @@ data class TrackDomain(
     private val date: Int,
     private val durationInSeconds: Int,
     private val ownerId: Int,
-    private val isCached: Boolean
+    private val isCached: Boolean,
+    private val artistsIds: List<String>
 ){
     interface Mapper<T>{
         fun map(
@@ -46,7 +49,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): T
     }
 
@@ -61,7 +65,8 @@ data class TrackDomain(
         date,
         durationInSeconds,
         ownerId,
-        isCached
+        isCached,
+        artistsIds
     )
 
     class ToTrackUiMapper @Inject constructor(
@@ -79,7 +84,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): MediaItem {
 
            val durationString = formatTimeSecondsToMinutesAndSeconds.format(duration)
@@ -92,6 +98,7 @@ data class TrackDomain(
             extraData.putInt(owner_id,ownerId)
             extraData.putFloat(track_duration_in_millis, TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat())
             extraData.putBoolean(is_cached,isCached)
+            extraData.putStringArrayList(ToMediaItemMapper.Base.artistsIds, ArrayList(artistsIds))
 
             return MediaItem.Builder()
                 .setMediaId(id.toString())
@@ -126,7 +133,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): TrackCache {
             return TrackCache(
                 trackId = id.toString(),
@@ -139,7 +147,8 @@ data class TrackDomain(
                 date = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt() ,
                 durationFormatted = formatTimeSecondsToMinutesAndSeconds.format(duration),
                 durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
-                ownerId = ownerId
+                ownerId = ownerId,
+                artistsIds = artistsIds
             )
         }
 
@@ -157,7 +166,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): Pair<Int, Int>  = Pair(ownerId,id)
 
 
@@ -176,7 +186,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): Int = id
 
 
@@ -194,7 +205,8 @@ data class TrackDomain(
             date: Int,
             duration: Int,
             ownerId: Int,
-            isCached: Boolean
+            isCached: Boolean,
+            artistsIds: List<String>
         ): Pair<String,String> {
             return Pair(name,artistName)
         }

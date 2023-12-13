@@ -211,4 +211,6 @@
     <string name="little_request">Little request</string>
     <string name="leave_rating">Rate</string>
     <string name="delete_from_playlist">Delete from playlist</string>
+    <string name="artists_tracks">Artists tracks</string>
+    <string name="artist_tracks">Artists tracks</string>
 </resources>

@@ -2,7 +2,6 @@ package com.kamancho.melisma.app.core
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.kamancho.melisma.downloader.data.cache.DownloadTracksCacheDataSource.Base.Companion.fileExtension
@@ -30,6 +29,7 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, Map<String, String>>, Medi
             const val date = "track_date"
             const val owner_id = "owner_id"
             const val is_cached = "is_cached"
+            const val artistsIds = "artistsIds"
         }
 
         override fun map(data: Pair<TrackCache, Map<String, String>>): MediaItem {
@@ -42,7 +42,7 @@ interface ToMediaItemMapper : Mapper<Pair<TrackCache, Map<String, String>>, Medi
             extraData.putInt(date, data.first.date)
             extraData.putInt(owner_id, data.first.ownerId)
             extraData.putFloat(track_duration_in_millis, data.first.durationInMillis)
-
+            extraData.putStringArrayList(artistsIds,ArrayList(data.first.artistsIds))
 
             val formattedFilename = buildString {
                 val input = data.first.name + " - " + data.first.artistName

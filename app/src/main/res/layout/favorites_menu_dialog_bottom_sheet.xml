@@ -48,20 +48,5 @@
         android:paddingVertical="15dp"
         />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:background="?attr/selectableItemBackground"
-        android:id="@+id/delete_from_playlist_option"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:drawableStart="@drawable/bin"
-        android:text="@string/delete_from_playlist"
-        android:drawablePadding="20dp"
-        android:drawableTint="@color/red"
-        android:textSize="@dimen/body1"
-        android:textColor="@color/black"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="15dp"
-        android:visibility="gone"
-        />
 
 </LinearLayout>

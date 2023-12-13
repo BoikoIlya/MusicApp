@@ -17,6 +17,11 @@
         android:iconTint="@color/green"
         />
     <item
+        android:id="@+id/artist_tracks"
+        android:title="@string/artist_tracks"
+        android:icon="@drawable/author"
+        />
+    <item
         android:title="@string/sleep_timer"
         android:icon="@drawable/access_time"
         >

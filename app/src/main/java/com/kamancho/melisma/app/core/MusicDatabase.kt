@@ -32,7 +32,7 @@ import com.kamancho.melisma.userplaylists.data.cache.PlaylistsAndTracksRelation
         FriendAndTracksRelation::class,
         FriendAndPlaylistRelation::class
                ],
-    version = 1,
+    version = 2,
     exportSchema = true,
     )
 @TypeConverters(PlaylistThumbsConverters::class)

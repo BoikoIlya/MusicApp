@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kamancho.melisma.R
+import com.kamancho.melisma.app.core.BaseViewModel
 import com.kamancho.melisma.app.core.ClickListener
 import com.kamancho.melisma.app.core.ImageLoader
 import com.kamancho.melisma.app.core.Mapper
@@ -137,6 +138,9 @@ open class TracksAdapter(
         viewModel.launchDeleteItemDialog(diff.currentList[position-tracksStartPositionInRecycler])
     }
 
+    fun <T>saveCurrPageTracks(viewModel: BaseViewModel<T>){
+        viewModel.saveCurrentPageQueue(diff.currentList)
+    }
 
 }
 

@@ -19,21 +19,21 @@ interface TracksDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListOfTracks(track: List<TrackCache>)
 
-    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
+    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId, artistsIds " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId " +
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId " +
             "ORDER BY date DESC")
     fun getAllTracksByTime(query: String, playlistId: String): Flow<List<TrackCache>>
 
-    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
+    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId, artistsIds " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId "+
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
             "ORDER BY name")
      fun getTracksByName(query: String,playlistId:String): Flow<List<TrackCache>>
 
-    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
+    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId, artistsIds " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON playlists_and_tracks_table.trackId = tracks_table.trackId "+
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND playlistId = :playlistId "+
@@ -41,7 +41,7 @@ interface TracksDao {
      fun getTracksByArtist(query: String,playlistId:String): Flow<List<TrackCache>>
 
 
-    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
+    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId, artistsIds " +
             "FROM tracks_table " +
             "INNER JOIN playlists_and_tracks_table ON  playlists_and_tracks_table.trackId = tracks_table.trackId " +
             "WHERE name = :name AND artistName = :artistName AND playlistId = :mainPlaylistId ")
@@ -56,7 +56,7 @@ interface TracksDao {
 
 
 
-    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId " +
+    @Query("SELECT tracks_table.trackId, url, name, artistName, bigImgUrl, smallImgUrl, albumName, date, durationFormatted, durationInMillis, ownerId, artistsIds " +
             "FROM tracks_table " +
             "INNER JOIN friend_and_tracks_relations ON friend_and_tracks_relations.trackId = tracks_table.trackId " +
             "WHERE (name LIKE '%' || :query || '%' OR artistName LIKE '%' || :query || '%') AND friendId = :friendId " +

@@ -42,6 +42,7 @@ class BaseFavoritesTracksCacheDataSource @Inject constructor(
 
         override suspend fun getById(id: Int): TrackCache = tracksDao.getById(id)?: throw NoSuchElementException()
 
-        override suspend fun update(list: List<TrackCache>) = savePlaylistTracks(mainPlaylistId.toString(),list)
+        override suspend fun update(list: List<TrackCache>) =
+            savePlaylistTracks(mainPlaylistId.toString(),list)
 
     }

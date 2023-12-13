@@ -23,6 +23,7 @@ import androidx.media3.session.SessionToken
 import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.kamancho.melisma.app.core.*
@@ -94,6 +95,9 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kamancho.melisma.BuildConfig
+import com.kamancho.melisma.artisttracks.data.cache.ArtistsTracksCacheDataSource
+import com.kamancho.melisma.artisttracks.di.ArtistsTracksScope
+import com.kamancho.melisma.artisttracks.presentation.PageChangerCommunication
 import com.kamancho.melisma.main.data.cloud.AuthorizationCloudDataSource
 import com.kamancho.melisma.update.UpdateManager
 import dagger.Binds
@@ -157,6 +161,7 @@ class AppModule {
     fun provideMusicAppDB(
         context: Context,
         mainPlaylist: ContentValues,
+        migration: Migration
     ): MusicDatabase{
         return Room.databaseBuilder(
             context,
@@ -172,7 +177,19 @@ class AppModule {
                     )
                 }
             })
+            .addMigrations(migration)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoomMigration1_to_2(): Migration{
+        return object : Migration(1,2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE ${TracksDao.table_name} ADD COLUMN artistsIds TEXT DEFAULT '' NOT NULL")
+            }
+
+        }
     }
 
     @Provides
@@ -387,6 +404,13 @@ class AppModule {
 interface AppBindModule{
 
 
+    @Binds
+    @Singleton
+    fun bindPageChangerCommunication(obj: PageChangerCommunication.Base): PageChangerCommunication
+
+    @Singleton
+    @Binds
+    fun bindArtistsTracksCacheDataSource(obj: ArtistsTracksCacheDataSource.Base): ArtistsTracksCacheDataSource
 
     @Singleton
     @Binds

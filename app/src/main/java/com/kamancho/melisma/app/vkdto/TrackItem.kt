@@ -132,6 +132,14 @@ data class TrackItem(
                 val seconds: Long = duration - TimeUnit.MINUTES.toSeconds(minutes)
                 val durationString = String.format("%02d:%02d", minutes, seconds)
 
+                val artistsIds =emptyList<String>().toMutableList()
+                main_artists?.forEach {
+                    artistsIds.add(it.id)
+                }
+
+                featured_artists?.forEach {
+                    artistsIds.add(it.id)
+                }
 
                 return TrackCache(
                     trackId = id.toString(),
@@ -145,6 +153,7 @@ data class TrackItem(
                     durationFormatted = durationString,
                     ownerId = owner_id,
                     durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
+                    artistsIds = artistsIds
                 )
             }
 
@@ -179,6 +188,15 @@ data class TrackItem(
                 url: String,
             ): TrackDomain {
 
+                val artistsIds =emptyList<String>().toMutableList()
+                main_artists?.forEach {
+                    artistsIds.add(it.id)
+                }
+
+                featured_artists?.forEach {
+                    artistsIds.add(it.id)
+                }
+
                 return TrackDomain(
                     id = id,
                     name = title,
@@ -190,7 +208,8 @@ data class TrackItem(
                     bigImgUrl = album?.thumb?.photo_1200 ?: "",
                     track_url = url,
                     ownerId = owner_id,
-                    isCached = false
+                    isCached = false,
+                    artistsIds = artistsIds
                 )
             }
 
@@ -294,6 +313,14 @@ data class TrackItem(
             val seconds: Long = duration - TimeUnit.MINUTES.toSeconds(minutes)
             val durationString = String.format("%02d:%02d", minutes, seconds)
 
+            val artistsIds =emptyList<String>().toMutableList()
+            main_artists?.forEach {
+                artistsIds.add(it.id)
+            }
+
+            featured_artists?.forEach {
+                artistsIds.add(it.id)
+            }
 
             return TrackCache(
                 trackId = id.toString()+friendId,
@@ -307,6 +334,7 @@ data class TrackItem(
                 durationFormatted = durationString,
                 ownerId = owner_id,
                 durationInMillis = TimeUnit.SECONDS.toMillis(duration.toLong()).toFloat(),
+                artistsIds = artistsIds
             )
         }
 

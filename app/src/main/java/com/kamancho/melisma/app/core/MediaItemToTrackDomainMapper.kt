@@ -1,6 +1,7 @@
 package com.kamancho.melisma.app.core
 
 import androidx.media3.common.MediaItem
+import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.artistsIds
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.big_img_url
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.is_cached
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.owner_id
@@ -32,6 +33,7 @@ interface MediaItemToTrackDomainMapper: Mapper<MediaItem, TrackDomain> {
                 ).toInt(),
                 ownerId = data.mediaMetadata.extras?.getInt(owner_id)!!,
                 isCached = data.mediaMetadata.extras?.getBoolean(is_cached)!!,
+                artistsIds = data.mediaMetadata.extras?.getStringArrayList(artistsIds)!!,
             )
         }
     }

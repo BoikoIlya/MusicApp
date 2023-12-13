@@ -24,7 +24,8 @@ interface TrackCacheToDomainMapper: Mapper<TrackCache, TrackDomain> {
                 date = data.date,
                 durationInSeconds = TimeUnit.MILLISECONDS.toSeconds(data.durationInMillis.toLong()).toInt() ,
                 ownerId = data.ownerId,
-                isCached = false
+                isCached = false,
+                artistsIds = data.artistsIds
             )
         }
     }

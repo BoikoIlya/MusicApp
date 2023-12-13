@@ -1,5 +1,6 @@
 package com.kamancho.melisma.player.di
 
+import com.kamancho.melisma.artisttracks.di.ArtistsTracksComponent
 import com.kamancho.melisma.player.presentation.DeleteTrackFromPlayerMenuDialog
 import com.kamancho.melisma.player.presentation.HeadPhonesReceiver
 import com.kamancho.melisma.player.presentation.PlayerFragment
@@ -26,4 +27,6 @@ interface PlayerComponent {
 
     fun inject(queueFragment: QueueFragment)
     fun inject(deleteTrackFromPlayerMenuDialog: DeleteTrackFromPlayerMenuDialog)
+
+    fun artistsTracksComponent(): ArtistsTracksComponent.Builder
 }

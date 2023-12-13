@@ -7,6 +7,7 @@ import androidx.media3.common.Player.REPEAT_MODE_ONE
 import com.kamancho.melisma.R
 import com.kamancho.melisma.app.core.*
 import com.kamancho.melisma.app.core.ToMediaItemMapper.Base.Companion.owner_id
+import com.kamancho.melisma.artisttracks.presentation.ArtistTracksDialogFragmentBottomSheet
 import com.kamancho.melisma.favorites.domain.FavoritesTracksInteractor
 import com.kamancho.melisma.main.presentation.*
 import com.kamancho.melisma.trending.presentation.MediaControllerWrapper
@@ -112,7 +113,7 @@ class PlayerViewModel @Inject constructor(
                 )
         }
         else
-            showSnackBar(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(R.string.not_contain_this_track)))
+            showSingleUiEventState(SingleUiEventState.ShowSnackBar.Error(managerResource.getString(R.string.not_contain_this_track)))
 
     }
     
@@ -120,7 +121,7 @@ class PlayerViewModel @Inject constructor(
         bottomSheetCommunication.map(newState)
     }
 
-     fun showSnackBar(snackBar: SingleUiEventState.ShowSnackBar) = viewModelScope.launch(dispatchersList.io()) {
+     fun showSingleUiEventState(snackBar: SingleUiEventState) = viewModelScope.launch(dispatchersList.io()) {
          singleUiEventCommunication.map(snackBar)
      }
 
@@ -137,6 +138,20 @@ class PlayerViewModel @Inject constructor(
          timerJob?.cancel()
          singleUiEventCommunication.map(SingleUiEventState.ShowSnackBar.Success(managerResource.getString(R.string.timer_was_disabled)))
      }
+
+     fun launchArtistsTracksBottomSheet(currentTrackId: String, currentTrack: MediaItem )
+      = viewModelScope.launch(dispatchersList.io()){
+         singleUiEventCommunication.map(
+             SingleUiEventState.ShowDialog(
+                 ArtistTracksDialogFragmentBottomSheet.newInstance(
+                     currentTrack.mediaMetadata.artist.toString().split(", "),
+                     currentTrack.mediaMetadata.extras?.getStringArrayList(ToMediaItemMapper.Base.artistsIds)?: emptyList(),
+                     currentTrackId
+                 )
+             )
+         )
+     }
+
 
 
     suspend fun collectTrackPosition(

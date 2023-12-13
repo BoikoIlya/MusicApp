@@ -11,8 +11,6 @@ import retrofit2.http.Query
 
 interface SearchTracksService {
 
-
-
     @GET("/method/audio.search")
     suspend fun search(
         @Query("access_token")  accessToken: String,

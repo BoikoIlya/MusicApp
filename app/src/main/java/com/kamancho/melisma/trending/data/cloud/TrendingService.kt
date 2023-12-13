@@ -7,8 +7,6 @@ import retrofit2.http.Query
 
 interface TrendingService{
 
-
-
     @GET("/method/audio.getRecommendations")
     suspend fun getRecommendations(
         @Query("access_token")  accessToken: String,

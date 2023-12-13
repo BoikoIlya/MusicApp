@@ -25,101 +25,15 @@
         android:orientation="vertical">
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bottomPlayerBar"
+        <include
+            android:id="@+id/bottom_player"
+            layout="@layout/bottom_player"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_gravity="bottom"
-            android:animateLayoutChanges="true"
-            android:background="@drawable/bottom_song_shape"
-            android:clickable="true"
-            android:paddingHorizontal="15dp"
-            android:visibility="visible"
-            app:layout_anchorGravity="top">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/bottomImgBg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:elevation="10dp"
-                app:cardCornerRadius="12dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/trackImg"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@color/white" />
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/song_name_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingHorizontal="15dp"
-                android:text="Space Vandals"
-                android:textColor="@color/white"
-                android:textSize="@dimen/body1"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/previous_btn"
-                app:layout_constraintStart_toEndOf="@+id/bottomImgBg"
-                app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
-
-            <TextView
-                android:id="@+id/song_author_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingHorizontal="15dp"
-                android:text="Moderator"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/body1"
-                app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
-                app:layout_constraintEnd_toEndOf="@+id/song_name_tv"
-                app:layout_constraintStart_toStartOf="@+id/song_name_tv"
-                app:layout_constraintTop_toBottomOf="@id/song_name_tv" />
-
-            <ImageButton
-                android:id="@+id/previous_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/previous"
-                app:layout_constraintBottom_toBottomOf="@+id/bottomImgBg"
-                app:layout_constraintEnd_toStartOf="@id/play_btn"
-                app:layout_constraintTop_toTopOf="@+id/bottomImgBg" />
-
-            <ToggleButton
-                android:id="@+id/play_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/play_btn_selector"
-                android:textOff=""
-                android:textOn=""
-                app:layout_constraintBottom_toBottomOf="@+id/previous_btn"
-                app:layout_constraintEnd_toStartOf="@id/next_btn"
-                app:layout_constraintTop_toTopOf="@+id/previous_btn" />
-
-            <ImageButton
-                android:id="@+id/next_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/next"
-                app:layout_constraintBottom_toBottomOf="@+id/play_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/play_btn" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
 
 
